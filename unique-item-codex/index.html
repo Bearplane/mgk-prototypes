@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Unique Item Codex — MGK Prototype</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-deep: #0d0a06;
+      --bg-panel: #1a1008;
+      --bg-card: #231508;
+      --bg-card-hover: #2d1c0a;
+      --border-gold: #8a6530;
+      --border-gold-bright: #c8a050;
+      --text-primary: #f0e8d0;
+      --text-gold: #c8a050;
+      --text-muted: #8a7050;
+      --text-green: #4aaa60;
+      --text-red: #cc4444;
+      --rarity-common: #9a9a9a;
+      --rarity-superior: #60c060;
+      --rarity-magic: #6080e0;
+      --rarity-rare: #c0c040;
+      --rarity-powerful: #e08030;
+      --rarity-mythic: #c050c0;
+      --rarity-unique: #c8a050;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg-deep);
+      font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    a { color: var(--text-gold); text-decoration: none; }
+    a:hover { color: var(--border-gold-bright); }
+
+    /* ── Nav ── */
+    .nav {
+      display: flex; align-items: center; gap: 16px;
+      padding: 12px 24px;
+      border-bottom: 1px solid var(--border-gold);
+      background: var(--bg-panel);
+    }
+    .nav-title { font-size: 13px; color: var(--text-muted); }
+    .nav a { font-size: 13px; }
+
+    /* ── Page layout ── */
+    .page { display: flex; flex: 1; gap: 0; }
+
+    /* ── Left: grid panel ── */
+    .grid-panel {
+      flex: 1;
+      padding: 24px;
+      border-right: 1px solid var(--border-gold);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      min-width: 0;
+    }
+
+    /* ── Header ── */
+    .panel-header {
+      text-align: center;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border-gold);
+    }
+    .panel-header h1 {
+      font-family: Georgia, serif;
+      font-size: 22px;
+      color: var(--text-gold);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+    .panel-header .corner { color: var(--border-gold); font-size: 18px; }
+    .panel-header .subtitle {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-style: italic;
+      margin-top: 4px;
+    }
+
+    /* ── Progress bar ── */
+    .progress-section { display: flex; flex-direction: column; gap: 6px; }
+    .progress-label {
+      display: flex; justify-content: space-between;
+      font-size: 12px; color: var(--text-muted);
+    }
+    .progress-label span { color: var(--text-gold); font-weight: 600; }
+    .progress-track {
+      height: 8px; background: #0d0a06;
+      border: 1px solid var(--border-gold);
+      border-radius: 4px; overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #8a6530, #c8a050);
+      border-radius: 4px;
+      transition: width 0.6s ease;
+    }
+
+    /* ── Filter tabs ── */
+    .filter-tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+    .filter-btn {
+      padding: 6px 14px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-gold);
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.15s;
+      font-family: inherit;
+    }
+    .filter-btn:hover { background: var(--bg-card-hover); color: var(--text-primary); }
+    .filter-btn.active {
+      background: #3a2508;
+      border-color: var(--border-gold-bright);
+      color: var(--text-gold);
+    }
+
+    /* ── Item grid ── */
+    .item-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+      gap: 10px;
+    }
+
+    /* ── Item card ── */
+    .item-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-gold);
+      border-radius: 6px;
+      padding: 10px 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: all 0.15s;
+      position: relative;
+      text-align: center;
+    }
+    .item-card:hover { background: var(--bg-card-hover); border-color: var(--border-gold-bright); transform: translateY(-2px); }
+    .item-card.selected { border-color: var(--border-gold-bright); background: #2d1a06; box-shadow: 0 0 12px rgba(200,160,80,0.2); }
+    .item-card.undiscovered { opacity: 0.55; cursor: default; filter: grayscale(0.3); }
+    .item-card.undiscovered:hover { transform: none; }
+
+    .item-icon {
+      width: 56px; height: 56px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .item-icon svg { width: 56px; height: 56px; }
+
+    .undiscovered .item-icon svg { filter: brightness(0.3); }
+
+    .item-name {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--text-gold);
+      line-height: 1.3;
+    }
+    .undiscovered .item-name { color: var(--text-muted); }
+
+    .item-slot-badge {
+      font-size: 9px;
+      color: var(--text-muted);
+      background: #0d0a06;
+      border: 1px solid #3a2508;
+      padding: 1px 5px;
+      border-radius: 3px;
+    }
+
+    .rarity-stars { font-size: 9px; letter-spacing: 1px; }
+
+    .new-badge {
+      position: absolute; top: 4px; right: 4px;
+      background: #4aaa60; color: #000;
+      font-size: 8px; font-weight: 700;
+      padding: 1px 4px; border-radius: 3px;
+      text-transform: uppercase;
+    }
+
+    .unknown-icon {
+      font-size: 24px; opacity: 0.3;
+    }
+
+    /* ── Right: detail panel ── */
+    .detail-panel {
+      width: 300px;
+      flex-shrink: 0;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .detail-empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      gap: 12px;
+      color: var(--text-muted);
+      text-align: center;
+    }
+    .detail-empty .empty-icon { font-size: 48px; opacity: 0.3; }
+    .detail-empty p { font-size: 13px; font-style: italic; }
+
+    .detail-content { display: flex; flex-direction: column; gap: 16px; }
+
+    .detail-icon-large {
+      width: 90px; height: 90px;
+      margin: 0 auto;
+      background: var(--bg-card);
+      border: 2px solid var(--border-gold-bright);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 0 20px rgba(200,160,80,0.15);
+    }
+    .detail-icon-large svg { width: 70px; height: 70px; }
+
+    .detail-title {
+      text-align: center;
+    }
+    .detail-title h2 {
+      font-family: Georgia, serif;
+      font-size: 18px;
+      color: var(--text-gold);
+    }
+    .detail-meta {
+      display: flex; gap: 8px; justify-content: center;
+      margin-top: 6px; flex-wrap: wrap;
+    }
+    .detail-slot {
+      font-size: 11px;
+      background: #0d0a06;
+      border: 1px solid var(--border-gold);
+      padding: 2px 8px;
+      border-radius: 3px;
+      color: var(--text-muted);
+    }
+    .detail-rarity {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 3px;
+      font-weight: 600;
+    }
+
+    .detail-divider {
+      height: 1px;
+      background: var(--border-gold);
+      opacity: 0.4;
+    }
+
+    .detail-affix {
+      background: #1a0f04;
+      border: 1px solid var(--border-gold);
+      border-left: 3px solid var(--border-gold-bright);
+      padding: 10px 12px;
+      border-radius: 0 6px 6px 0;
+    }
+    .detail-affix-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-gold);
+      margin-bottom: 4px;
+    }
+    .detail-affix p {
+      font-size: 13px;
+      color: var(--text-primary);
+      line-height: 1.5;
+      font-style: italic;
+    }
+
+    .detail-flavor {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-style: italic;
+      text-align: center;
+      line-height: 1.5;
+    }
+    .detail-flavor::before { content: '"'; }
+    .detail-flavor::after { content: '"'; }
+
+    .detail-discovery {
+      background: var(--bg-card);
+      border: 1px solid var(--border-gold);
+      border-radius: 6px;
+      padding: 10px 12px;
+    }
+    .detail-discovery-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-gold);
+      margin-bottom: 6px;
+    }
+    .detail-discovery p {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+    .detail-discovery .highlight { color: var(--text-primary); font-weight: 600; }
+
+    .detail-undiscovered {
+      text-align: center;
+      padding: 20px;
+      color: var(--text-muted);
+      font-style: italic;
+      font-size: 13px;
+      border: 1px dashed var(--border-gold);
+      border-radius: 6px;
+      opacity: 0.7;
+    }
+
+    /* hidden class */
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+<div class="nav">
+  <a href="../">← Back to Prototypes</a>
+  <span class="nav-title">/ Unique Item Codex — New Feature Concept</span>
+</div>
+
+<div class="page">
+
+  <!-- ── Left: Grid ── -->
+  <div class="grid-panel">
+
+    <div class="panel-header">
+      <div>
+        <span class="corner">✦</span>
+        <h1>Unique Items</h1>
+        <span class="corner">✦</span>
+      </div>
+      <div class="subtitle">Items of legend, scattered across the realm...</div>
+    </div>
+
+    <div class="progress-section">
+      <div class="progress-label">
+        <span>Discovery Progress</span>
+        <span>8 <span style="color:var(--text-muted);font-weight:400;">/ 21 discovered</span></span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" style="width: 38%"></div>
+      </div>
+    </div>
+
+    <div class="filter-tabs">
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="weapon">Weapons</button>
+      <button class="filter-btn" data-filter="armor">Armor</button>
+      <button class="filter-btn" data-filter="accessory">Accessories</button>
+      <button class="filter-btn" data-filter="undiscovered">Undiscovered</button>
+    </div>
+
+    <div class="item-grid" id="itemGrid"></div>
+
+  </div>
+
+  <!-- ── Right: Detail ── -->
+  <div class="detail-panel" id="detailPanel">
+    <div class="detail-empty" id="detailEmpty">
+      <div class="empty-icon">📖</div>
+      <p>Select an item to view its details</p>
+    </div>
+    <div class="detail-content hidden" id="detailContent">
+      <div class="detail-icon-large" id="detailIcon"></div>
+      <div class="detail-title">
+        <h2 id="detailName"></h2>
+        <div class="detail-meta">
+          <div class="detail-slot" id="detailSlot"></div>
+          <div class="detail-rarity" id="detailRarity"></div>
+        </div>
+      </div>
+      <div class="detail-divider"></div>
+      <div class="detail-affix" id="detailAffixBox">
+        <div class="detail-affix-label">Unique Affix</div>
+        <p id="detailAffix"></p>
+      </div>
+      <div class="detail-flavor" id="detailFlavor"></div>
+      <div class="detail-discovery" id="detailDiscoveryBox">
+        <div class="detail-discovery-label">Discovery</div>
+        <p id="detailDiscovery"></p>
+      </div>
+    </div>
+    <div class="detail-undiscovered hidden" id="detailUndiscovered">
+      <div style="font-size:32px;margin-bottom:12px;opacity:0.3">🔍</div>
+      <strong style="color:var(--text-gold);display:block;margin-bottom:8px;">???</strong>
+      Rumored to exist somewhere in the realm...<br><br>
+      Continue exploring dungeons and trading to uncover this item's secrets.
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // ── SVG icon generators ──
+  function weaponSVG(color='#c8a050') {
+    return `<svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="2" y="2" width="52" height="52" rx="6" fill="#1a1008" stroke="${color}" stroke-width="1.5"/>
+      <line x1="28" y1="8" x2="28" y2="42" stroke="${color}" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="18" y1="30" x2="38" y2="30" stroke="${color}" stroke-width="2" stroke-linecap="round"/>
+      <circle cx="28" cy="45" r="3" fill="${color}"/>
+      <polygon points="28,8 24,18 32,18" fill="${color}"/>
+    </svg>`;
+  }
+  function armorSVG(color='#c8a050') {
+    return `<svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="2" y="2" width="52" height="52" rx="6" fill="#1a1008" stroke="${color}" stroke-width="1.5"/>
+      <path d="M28 10 L44 18 L44 32 Q44 44 28 48 Q12 44 12 32 L12 18 Z" fill="#231508" stroke="${color}" stroke-width="2"/>
+      <path d="M28 16 L38 22 L38 32 Q38 40 28 43 Q18 40 18 32 L18 22 Z" fill="#1a1008" stroke="${color}" stroke-width="1"/>
+    </svg>`;
+  }
+  function accessorySVG(color='#c8a050') {
+    return `<svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="2" y="2" width="52" height="52" rx="6" fill="#1a1008" stroke="${color}" stroke-width="1.5"/>
+      <circle cx="28" cy="28" r="14" fill="none" stroke="${color}" stroke-width="2"/>
+      <circle cx="28" cy="28" r="6" fill="${color}" opacity="0.8"/>
+      <circle cx="28" cy="14" r="3" fill="${color}"/>
+      <circle cx="28" cy="42" r="3" fill="${color}"/>
+      <circle cx="14" cy="28" r="3" fill="${color}"/>
+      <circle cx="42" cy="28" r="3" fill="${color}"/>
+    </svg>`;
+  }
+  function offhandSVG(color='#c8a050') {
+    return `<svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="2" y="2" width="52" height="52" rx="6" fill="#1a1008" stroke="${color}" stroke-width="1.5"/>
+      <circle cx="28" cy="26" r="13" fill="#231508" stroke="${color}" stroke-width="2"/>
+      <circle cx="28" cy="26" r="7" fill="${color}" opacity="0.3"/>
+      <circle cx="28" cy="26" r="3" fill="${color}"/>
+      <line x1="28" y1="13" x2="28" y2="39" stroke="${color}" stroke-width="1" opacity="0.4"/>
+      <line x1="15" y1="26" x2="41" y2="26" stroke="${color}" stroke-width="1" opacity="0.4"/>
+      <path d="M24 42 Q28 48 32 42" stroke="${color}" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    </svg>`;
+  }
+  function unknownSVG() {
+    return `<svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="2" y="2" width="52" height="52" rx="6" fill="#0d0a06" stroke="#3a2508" stroke-width="1.5"/>
+      <text x="28" y="36" text-anchor="middle" font-size="24" fill="#3a2508" font-family="Georgia">?</text>
+    </svg>`;
+  }
+
+  function rarityColor(r) {
+    const c = ['#9a9a9a','#9a9a9a','#60c060','#6080e0','#c0c040','#e08030','#c050c0','#c8a050'];
+    return c[Math.min(r,7)] || '#c8a050';
+  }
+  function rarityLabel(r) {
+    const l = ['','Common','Superior','Magic','Rare','Powerful','Mythic','Unique'];
+    return l[Math.min(r,7)] || 'Unique';
+  }
+  function rarityStars(r) {
+    return '★'.repeat(Math.min(r,7)) + '☆'.repeat(Math.max(0,7-r));
+  }
+
+  // ── Item data ──
+  const items = [
+    // DISCOVERED
+    {
+      id:1, name:"Executioner's Decree", slot:"Hands", category:"weapon", rarity:4, discovered:true, isNew:false,
+      affix:"Any damage you deal against a target with 15% or less health will kill them instantly.",
+      flavor:"Off with their heads.",
+      discovery:"Found: <span class='highlight'>Day 15</span><br>Source: <span class='highlight'>Dungeon Drop — Redclaw's Lair</span><br>Times owned: <span class='highlight'>1</span>"
+    },
+    {
+      id:2, name:"Speedrunners", slot:"Light Boots", category:"armor", rarity:5, discovered:true, isNew:false,
+      affix:"Your magic find is increased by 400–500% in dungeons, but drops by 1–5% each second you remain.",
+      flavor:"Good things come to those who go as fast as they possibly can.",
+      discovery:"Found: <span class='highlight'>Day 31</span><br>Source: <span class='highlight'>Trading Post</span><br>Times owned: <span class='highlight'>1</span>"
+    },
+    {
+      id:3, name:"Blessed Bulwark", slot:"Shield", category:"armor", rarity:7, discovered:true, isNew:false,
+      affix:"Any time you reach 0 health, you are fully healed. May only occur once per wave.",
+      flavor:"We know not who blessed this item with such power. Is the purpose to save or to devour?",
+      discovery:"Found: <span class='highlight'>Day 42</span><br>Source: <span class='highlight'>Boss Drop — Cairnius the Watcher</span><br>Times owned: <span class='highlight'>1</span>"
+    },
+    {
+      id:4, name:"Lunar Cycle", slot:"Ring", category:"accessory", rarity:2, discovered:true, isNew:false,
+      affix:"During the night, your gold find is increased by 80–100%.",
+      flavor:"Especially in darkness, a hero must find the light.",
+      discovery:"Times owned: <span class='highlight'>2</span><br>Last found: <span class='highlight'>Day 38</span><br>Source: <span class='highlight'>Merchant Purchase</span>"
+    },
+    {
+      id:5, name:"The Templar's Rite", slot:"Sword", category:"weapon", rarity:2, discovered:true, isNew:false,
+      affix:"All of your attacks inflict burning on their target which deals 15–25% of your hit damage over 5 seconds.",
+      flavor:"Burn with the fury of the Heavens.",
+      discovery:"Found: <span class='highlight'>Day 8</span><br>Source: <span class='highlight'>World Drop</span><br>Times owned: <span class='highlight'>1</span>"
+    },
+    {
+      id:6, name:"Unleashed", slot:"Amulet", category:"accessory", rarity:7, discovered:true, isNew:true,
+      affix:"Your Attack Power and Spell Power is increased by 0.75–1% for every 0.5–1% of health you are missing.",
+      flavor:"Your suffering does not end with you.",
+      discovery:"Found: <span class='highlight'>Day 47</span><br>Source: <span class='highlight'>Elite Dungeon Drop</span><br>Times owned: <span class='highlight'>1</span>"
+    },
+    {
+      id:7, name:"Inner Peace", slot:"Bracers", category:"armor", rarity:2, discovered:true, isNew:false,
+      affix:"If you take a hit that deals more than 10–20% of your maximum health, gain 100% dodge chance for 4–8 seconds.",
+      flavor:"In your darkest hour, a moment of respite.",
+      discovery:"Found: <span class='highlight'>Day 19</span><br>Source: <span class='highlight'>Dungeon Drop</span><br>Times owned: <span class='highlight'>1</span>"
+    },
+    {
+      id:8, name:"Phantom Dancer", slot:"Medium Boots", category:"armor", rarity:3, discovered:true, isNew:false,
+      affix:"Your dodge chance increases by 5–15% every second, and resets to 0% when you dodge.",
+      flavor:"Be the ghost.",
+      discovery:"Found: <span class='highlight'>Day 27</span><br>Source: <span class='highlight'>Traveling Merchant</span><br>Times owned: <span class='highlight'>1</span>"
+    },
+    // UNDISCOVERED
+    {id:9, name:"Exalted Miner", slot:"Axe", category:"weapon", rarity:2, discovered:false},
+    {id:10, name:"Exalted Lumberjack", slot:"Axe", category:"weapon", rarity:2, discovered:false},
+    {id:11, name:"Exalted Herbalist", slot:"Dagger", category:"weapon", rarity:2, discovered:false},
+    {id:12, name:"Perfect Chum", slot:"Offhand", category:"armor", rarity:2, discovered:false},
+    {id:13, name:"Earthstompers", slot:"Heavy Boots", category:"armor", rarity:2, discovered:false},
+    {id:14, name:"Solar Cycle", slot:"Ring", category:"accessory", rarity:1, discovered:false},
+    {id:15, name:"The Righteous Hand", slot:"Mace", category:"weapon", rarity:2, discovered:false},
+    {id:16, name:"Unrestrained", slot:"Ring", category:"accessory", rarity:7, discovered:false},
+    {id:17, name:"Ambition", slot:"Sword", category:"weapon", rarity:3, discovered:false},
+    {id:18, name:"Awry", slot:"Ring", category:"accessory", rarity:2, discovered:false},
+    {id:19, name:"Fury of the Earth", slot:"Staff", category:"weapon", rarity:3, discovered:false},
+    {id:20, name:"Fury of the Sky", slot:"2H Mace", category:"weapon", rarity:3, discovered:false},
+    {id:21, name:"Stonefaulds", slot:"Heavy Legs", category:"armor", rarity:5, discovered:false},
+  ];
+
+  function iconForCategory(cat, rarity, discovered) {
+    if (!discovered) return unknownSVG();
+    const color = rarityColor(rarity);
+    if (cat === 'weapon') return weaponSVG(color);
+    if (cat === 'armor') return armorSVG(color);
+    if (cat === 'accessory') return accessorySVG(color);
+    return offhandSVG(color);
+  }
+
+  let activeFilter = 'all';
+  let selectedId = null;
+
+  function renderGrid() {
+    const grid = document.getElementById('itemGrid');
+    grid.innerHTML = '';
+    const filtered = items.filter(item => {
+      if (activeFilter === 'all') return true;
+      if (activeFilter === 'undiscovered') return !item.discovered;
+      return item.category === activeFilter;
+    });
+    filtered.forEach(item => {
+      const card = document.createElement('div');
+      card.className = 'item-card' + (item.discovered ? '' : ' undiscovered') + (selectedId === item.id ? ' selected' : '');
+      card.innerHTML = `
+        ${item.isNew ? '<div class="new-badge">New!</div>' : ''}
+        <div class="item-icon">${iconForCategory(item.category, item.rarity, item.discovered)}</div>
+        <div class="item-name">${item.discovered ? item.name : '???'}</div>
+        <div class="item-slot-badge">${item.discovered ? item.slot : '?'}</div>
+        <div class="rarity-stars" style="color:${item.discovered ? rarityColor(item.rarity) : '#3a2508'}">${item.discovered ? rarityStars(item.rarity) : '☆☆☆☆☆☆☆'}</div>
+      `;
+      if (item.discovered) {
+        card.addEventListener('click', () => { selectedId = item.id; renderGrid(); showDetail(item); });
+      } else {
+        card.addEventListener('click', () => { selectedId = item.id; renderGrid(); showUndiscovered(); });
+      }
+      grid.appendChild(card);
+    });
+  }
+
+  function showDetail(item) {
+    document.getElementById('detailEmpty').classList.add('hidden');
+    document.getElementById('detailUndiscovered').classList.add('hidden');
+    document.getElementById('detailContent').classList.remove('hidden');
+
+    const color = rarityColor(item.rarity);
+    document.getElementById('detailIcon').innerHTML = iconForCategory(item.category, item.rarity, true);
+    document.getElementById('detailName').textContent = item.name;
+    document.getElementById('detailSlot').textContent = item.slot;
+    const rarEl = document.getElementById('detailRarity');
+    rarEl.textContent = rarityLabel(item.rarity);
+    rarEl.style.background = color + '22';
+    rarEl.style.border = '1px solid ' + color;
+    rarEl.style.color = color;
+    document.getElementById('detailAffix').textContent = item.affix;
+    document.getElementById('detailFlavor').textContent = item.flavor;
+    document.getElementById('detailDiscovery').innerHTML = item.discovery;
+  }
+
+  function showUndiscovered() {
+    document.getElementById('detailEmpty').classList.add('hidden');
+    document.getElementById('detailContent').classList.add('hidden');
+    document.getElementById('detailUndiscovered').classList.remove('hidden');
+  }
+
+  // ── Filter buttons ──
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeFilter = btn.dataset.filter;
+      selectedId = null;
+      document.getElementById('detailEmpty').classList.remove('hidden');
+      document.getElementById('detailContent').classList.add('hidden');
+      document.getElementById('detailUndiscovered').classList.add('hidden');
+      renderGrid();
+    });
+  });
+
+  renderGrid();
+</script>
+</body>
+</html>

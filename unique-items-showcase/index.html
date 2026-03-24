@@ -152,15 +152,10 @@
       height: 100px;
       position: relative;
     }
-    .item-icon-wrap img {
-      width: 80px;
-      height: 80px;
-      object-fit: contain;
-      image-rendering: pixelated;
-    }
-    .item-icon-placeholder {
-      font-size: 48px;
-      opacity: 0.6;
+    .placeholder-icon {
+      width: 64px;
+      height: 64px;
+      opacity: 0.85;
     }
     .rarity-badge {
       position: absolute;
@@ -223,13 +218,6 @@
     }
     .item-flavor::before { content: '"'; }
     .item-flavor::after { content: '"'; }
-
-    /* Priority 2 placeholder icon */
-    .placeholder-icon {
-      width: 64px;
-      height: 64px;
-      opacity: 0.5;
-    }
 
     /* Section divider */
     .section-label {
@@ -299,8 +287,15 @@
     <div class="rarity-bar" style="background:#cc6020;"></div>
     <div class="item-icon-wrap">
       <span class="priority-badge">P1</span>
-      <img src="https://replicate.delivery/xezq/oLeEfwxAeCAzppqheghNbb0D7xWcxAP5AajfTyftN15e4vwJLA/out-0.webp" alt="Executioner's Decree" />
-      <span class="rarity-badge" style="background:#3a1a05;color:#cc6020;">Rare</span>
+      <!-- Armor / Hands → Shield icon -->
+      <svg class="placeholder-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M32 5 L8 17 L8 36 C8 50 18 58 32 62 C46 58 56 50 56 36 L56 17 Z" fill="#1a1008" stroke="#c8a050" stroke-width="2"/>
+        <path d="M32 13 L16 23 L16 37 C16 46 23 53 32 57 C41 53 48 46 48 37 L48 23 Z" fill="none" stroke="#8a6530" stroke-width="1.5"/>
+        <path d="M32 22 L32 50" stroke="#c8a050" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/>
+        <path d="M22 36 L42 36" stroke="#c8a050" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/>
+        <circle cx="32" cy="30" r="4" fill="#cc6020" opacity="0.6"/>
+      </svg>
+      <span class="rarity-badge" style="background:#3a1a05;color:#cc6020;">Powerful</span>
     </div>
     <div class="item-body">
       <div class="item-name">Executioner's Decree</div>
@@ -314,7 +309,16 @@
     <div class="rarity-bar" style="background:#8a8a8a;"></div>
     <div class="item-icon-wrap">
       <span class="priority-badge">P1</span>
-      <img src="https://replicate.delivery/xezq/Nerdazs02TTHZCdoZ1h47vGdJS7JsvrU3ORyDFOT16V6vwJLA/out-0.webp" alt="Exalted Miner" />
+      <!-- Weapon / Axe → Crossed swords icon -->
+      <svg class="placeholder-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <line x1="10" y1="10" x2="54" y2="54" stroke="#c8a050" stroke-width="3" stroke-linecap="round"/>
+        <line x1="8" y1="24" x2="24" y2="8" stroke="#8a6530" stroke-width="2.5" stroke-linecap="round"/>
+        <rect x="46" y="46" width="12" height="5" rx="2" fill="#8a6530" transform="rotate(45 52 48)"/>
+        <line x1="54" y1="10" x2="10" y2="54" stroke="#c8a050" stroke-width="3" stroke-linecap="round"/>
+        <line x1="56" y1="24" x2="40" y2="8" stroke="#8a6530" stroke-width="2.5" stroke-linecap="round"/>
+        <rect x="6" y="46" width="12" height="5" rx="2" fill="#8a6530" transform="rotate(-45 12 48)"/>
+        <circle cx="32" cy="32" r="4" fill="#c8a050" opacity="0.9"/>
+      </svg>
       <span class="rarity-badge" style="background:#2a2a2a;color:#aaa;">Common</span>
     </div>
     <div class="item-body">
@@ -329,7 +333,16 @@
     <div class="rarity-bar" style="background:#8a8a8a;"></div>
     <div class="item-icon-wrap">
       <span class="priority-badge">P1</span>
-      <img src="https://replicate.delivery/xezq/QnByHhMXUjrqOdDu5sBzneJdPWcshlL9lksmjn5eVqn3fCnsA/out-0.webp" alt="Exalted Lumberjack" />
+      <!-- Weapon / Axe → Crossed swords icon -->
+      <svg class="placeholder-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <line x1="10" y1="10" x2="54" y2="54" stroke="#c8a050" stroke-width="3" stroke-linecap="round"/>
+        <line x1="8" y1="24" x2="24" y2="8" stroke="#8a6530" stroke-width="2.5" stroke-linecap="round"/>
+        <rect x="46" y="46" width="12" height="5" rx="2" fill="#8a6530" transform="rotate(45 52 48)"/>
+        <line x1="54" y1="10" x2="10" y2="54" stroke="#c8a050" stroke-width="3" stroke-linecap="round"/>
+        <line x1="56" y1="24" x2="40" y2="8" stroke="#8a6530" stroke-width="2.5" stroke-linecap="round"/>
+        <rect x="6" y="46" width="12" height="5" rx="2" fill="#8a6530" transform="rotate(-45 12 48)"/>
+        <circle cx="32" cy="32" r="4" fill="#c8a050" opacity="0.9"/>
+      </svg>
       <span class="rarity-badge" style="background:#2a2a2a;color:#aaa;">Common</span>
     </div>
     <div class="item-body">
@@ -344,7 +357,16 @@
     <div class="rarity-bar" style="background:#8a8a8a;"></div>
     <div class="item-icon-wrap">
       <span class="priority-badge">P1</span>
-      <img src="https://replicate.delivery/xezq/jwz81WkLxyLoIRbH4FdYHFVSMhIpj0Xc0VYrAqMpArmevwJLA/out-0.webp" alt="Exalted Herbalist" />
+      <!-- Weapon / Dagger → Crossed swords icon -->
+      <svg class="placeholder-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <line x1="10" y1="10" x2="54" y2="54" stroke="#c8a050" stroke-width="3" stroke-linecap="round"/>
+        <line x1="8" y1="24" x2="24" y2="8" stroke="#8a6530" stroke-width="2.5" stroke-linecap="round"/>
+        <rect x="46" y="46" width="12" height="5" rx="2" fill="#8a6530" transform="rotate(45 52 48)"/>
+        <line x1="54" y1="10" x2="10" y2="54" stroke="#c8a050" stroke-width="3" stroke-linecap="round"/>
+        <line x1="56" y1="24" x2="40" y2="8" stroke="#8a6530" stroke-width="2.5" stroke-linecap="round"/>
+        <rect x="6" y="46" width="12" height="5" rx="2" fill="#8a6530" transform="rotate(-45 12 48)"/>
+        <circle cx="32" cy="32" r="4" fill="#c8a050" opacity="0.9"/>
+      </svg>
       <span class="rarity-badge" style="background:#2a2a2a;color:#aaa;">Common</span>
     </div>
     <div class="item-body">
@@ -359,7 +381,14 @@
     <div class="rarity-bar" style="background:#8a8a8a;"></div>
     <div class="item-icon-wrap">
       <span class="priority-badge">P1</span>
-      <img src="https://replicate.delivery/xezq/jYeKayIWchzuVS62Ct6vEwf2iRXHegN8KrcRyYGbtD76fFOZB/out-0.webp" alt="Perfect Chum" />
+      <!-- Offhand → Orb icon -->
+      <svg class="placeholder-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="32" cy="32" r="22" fill="#1a1008" stroke="#c8a050" stroke-width="2"/>
+        <circle cx="32" cy="32" r="14" fill="#0a1a0a" stroke="#8a6530" stroke-width="1.5"/>
+        <circle cx="26" cy="26" r="5" fill="#c8a050" opacity="0.18"/>
+        <circle cx="32" cy="32" r="5" fill="#0aacaa" opacity="0.75"/>
+        <path d="M32 10 L32 15 M32 49 L32 54 M10 32 L15 32 M49 32 L54 32" stroke="#c8a050" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
       <span class="rarity-badge" style="background:#2a2a2a;color:#aaa;">Common</span>
     </div>
     <div class="item-body">
@@ -374,7 +403,14 @@
     <div class="rarity-bar" style="background:#8a8a8a;"></div>
     <div class="item-icon-wrap">
       <span class="priority-badge">P1</span>
-      <img src="https://replicate.delivery/xezq/otRP6wofmwXwZqHDKpxEK48uoUFhIs8CRZZ8SGwlIUMAwwJLA/out-0.webp" alt="Earthstompers" />
+      <!-- Armor / Heavy Boots → Shield icon -->
+      <svg class="placeholder-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M32 5 L8 17 L8 36 C8 50 18 58 32 62 C46 58 56 50 56 36 L56 17 Z" fill="#1a1008" stroke="#c8a050" stroke-width="2"/>
+        <path d="M32 13 L16 23 L16 37 C16 46 23 53 32 57 C41 53 48 46 48 37 L48 23 Z" fill="none" stroke="#8a6530" stroke-width="1.5"/>
+        <path d="M32 22 L32 50" stroke="#c8a050" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/>
+        <path d="M22 36 L42 36" stroke="#c8a050" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/>
+        <circle cx="32" cy="30" r="4" fill="#8a8a8a" opacity="0.5"/>
+      </svg>
       <span class="rarity-badge" style="background:#2a2a2a;color:#aaa;">Common</span>
     </div>
     <div class="item-body">
@@ -389,7 +425,14 @@
     <div class="rarity-bar" style="background:#8a8a8a;"></div>
     <div class="item-icon-wrap">
       <span class="priority-badge">P1</span>
-      <img src="https://replicate.delivery/xezq/sfj3wDmhxgSCf0fnfWmjTiLxwqEWdYvkY5EjhUAK0MpPAGOZB/out-0.webp" alt="Lunar Cycle" />
+      <!-- Accessory / Ring → Ring/gem icon -->
+      <svg class="placeholder-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="32" cy="40" r="16" fill="none" stroke="#c8a050" stroke-width="2.5"/>
+        <circle cx="32" cy="40" r="9" fill="none" stroke="#8a6530" stroke-width="1.5"/>
+        <polygon points="32,8 20,26 32,34 44,26" fill="#5a7acc" stroke="#c8a050" stroke-width="1.5"/>
+        <line x1="24" y1="30" x2="32" y2="10" stroke="#c8a050" stroke-width="1" opacity="0.4"/>
+        <line x1="40" y1="30" x2="32" y2="10" stroke="#c8a050" stroke-width="1" opacity="0.4"/>
+      </svg>
       <span class="rarity-badge" style="background:#2a2a2a;color:#aaa;">Common</span>
     </div>
     <div class="item-body">
@@ -404,7 +447,14 @@
     <div class="rarity-bar" style="background:#8a8a8a;"></div>
     <div class="item-icon-wrap">
       <span class="priority-badge">P1</span>
-      <img src="https://replicate.delivery/xezq/mPI9CYmovsb1JJnr3jXTvTwItKR6oJiRAihSzqGn3DuBY4kF/out-0.webp" alt="Solar Cycle" />
+      <!-- Accessory / Ring → Ring/gem icon (solar variant) -->
+      <svg class="placeholder-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="32" cy="40" r="16" fill="none" stroke="#c8a050" stroke-width="2.5"/>
+        <circle cx="32" cy="40" r="9" fill="none" stroke="#8a6530" stroke-width="1.5"/>
+        <polygon points="32,8 20,26 32,34 44,26" fill="#cc9a20" stroke="#c8a050" stroke-width="1.5"/>
+        <line x1="24" y1="30" x2="32" y2="10" stroke="#c8a050" stroke-width="1" opacity="0.4"/>
+        <line x1="40" y1="30" x2="32" y2="10" stroke="#c8a050" stroke-width="1" opacity="0.4"/>
+      </svg>
       <span class="rarity-badge" style="background:#2a2a2a;color:#aaa;">Common</span>
     </div>
     <div class="item-body">
@@ -419,7 +469,16 @@
     <div class="rarity-bar" style="background:#8a8a8a;"></div>
     <div class="item-icon-wrap">
       <span class="priority-badge">P1</span>
-      <img src="https://replicate.delivery/xezq/RdVTdnz6AM7iK5du79uxeyCap52DzYgpuZDuDvVBAZjEwwJLA/out-0.webp" alt="The Templar's Rite" />
+      <!-- Weapon / Sword → Crossed swords icon -->
+      <svg class="placeholder-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <line x1="10" y1="10" x2="54" y2="54" stroke="#c8a050" stroke-width="3" stroke-linecap="round"/>
+        <line x1="8" y1="24" x2="24" y2="8" stroke="#8a6530" stroke-width="2.5" stroke-linecap="round"/>
+        <rect x="46" y="46" width="12" height="5" rx="2" fill="#8a6530" transform="rotate(45 52 48)"/>
+        <line x1="54" y1="10" x2="10" y2="54" stroke="#c8a050" stroke-width="3" stroke-linecap="round"/>
+        <line x1="56" y1="24" x2="40" y2="8" stroke="#8a6530" stroke-width="2.5" stroke-linecap="round"/>
+        <rect x="6" y="46" width="12" height="5" rx="2" fill="#8a6530" transform="rotate(-45 12 48)"/>
+        <circle cx="32" cy="32" r="4" fill="#c8a050" opacity="0.9"/>
+      </svg>
       <span class="rarity-badge" style="background:#2a2a2a;color:#aaa;">Common</span>
     </div>
     <div class="item-body">
@@ -434,7 +493,14 @@
     <div class="rarity-bar" style="background:#cc6020;"></div>
     <div class="item-icon-wrap">
       <span class="priority-badge">P1</span>
-      <img src="https://replicate.delivery/xezq/0fp8baaoH71kSy9zTTxiIFc57FvZoHCnUsbxwQsCbIUGwwJLA/out-0.webp" alt="Speedrunners" />
+      <!-- Armor / Light Boots → Shield icon -->
+      <svg class="placeholder-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M32 5 L8 17 L8 36 C8 50 18 58 32 62 C46 58 56 50 56 36 L56 17 Z" fill="#1a1008" stroke="#c8a050" stroke-width="2"/>
+        <path d="M32 13 L16 23 L16 37 C16 46 23 53 32 57 C41 53 48 46 48 37 L48 23 Z" fill="none" stroke="#8a6530" stroke-width="1.5"/>
+        <path d="M32 22 L32 50" stroke="#c8a050" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/>
+        <path d="M22 36 L42 36" stroke="#c8a050" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/>
+        <circle cx="32" cy="30" r="4" fill="#cc6020" opacity="0.6"/>
+      </svg>
       <span class="rarity-badge" style="background:#3a1a05;color:#cc6020;">Powerful</span>
     </div>
     <div class="item-body">
