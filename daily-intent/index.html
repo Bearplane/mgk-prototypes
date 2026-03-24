@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Daily Intent — MGK Prototype</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-deep: #0d0a06;
+      --bg-panel: #1a1008;
+      --bg-card: #231508;
+      --bg-card-hover: #2d1c0a;
+      --bg-card-selected: #2a1e08;
+      --border-gold: #8a6530;
+      --border-gold-bright: #c8a050;
+      --text-primary: #f0e8d0;
+      --text-gold: #c8a050;
+      --text-muted: #8a7050;
+      --text-green: #4aaa60;
+      --text-red: #cc4444;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg-deep);
+      color: var(--text-primary);
+      font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Layered background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 50% 0%, rgba(139,101,48,0.12) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 100%, rgba(60,30,8,0.3) 0%, transparent 50%),
+        linear-gradient(180deg, #0a0702 0%, #0d0a06 100%);
+      pointer-events: none;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        repeating-linear-gradient(
+          0deg,
+          rgba(139,101,48,0.012) 0px,
+          rgba(139,101,48,0.012) 1px,
+          transparent 1px,
+          transparent 40px
+        );
+      pointer-events: none;
+    }
+
+    /* Back link */
+    .back-link {
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      z-index: 100;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.8rem;
+      letter-spacing: 0.05em;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: rgba(13,10,6,0.8);
+      border: 1px solid var(--border-gold);
+      border-radius: 3px;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .back-link:hover { color: var(--text-gold); border-color: var(--border-gold-bright); }
+
+    /* ── SCREENS ─────────────────────────────────────────────────────────── */
+    .screen {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 640px;
+      display: none;
+    }
+    .screen.active {
+      display: block;
+      animation: screenFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    @keyframes screenFadeIn {
+      from { opacity: 0; transform: scale(0.97) translateY(12px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    /* ── SELECTION SCREEN ────────────────────────────────────────────────── */
+    #screen-select .card-shell {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-gold);
+      border-radius: 4px;
+      overflow: hidden;
+      box-shadow:
+        0 0 0 3px rgba(200,160,80,0.06),
+        0 0 60px rgba(200,160,80,0.1),
+        inset 0 1px 0 rgba(200,160,80,0.08),
+        0 20px 80px rgba(0,0,0,0.8);
+      position: relative;
+    }
+
+    .panel-accent-top {
+      height: 3px;
+      background: linear-gradient(to right, transparent, var(--border-gold-bright) 20%, var(--border-gold-bright) 80%, transparent);
+    }
+
+    .panel-corner {
+      position: absolute;
+      font-size: 1rem;
+      color: var(--border-gold-bright);
+      opacity: 0.65;
+      z-index: 5;
+      line-height: 1;
+    }
+    .panel-corner.tl { top: 6px; left: 10px; }
+    .panel-corner.tr { top: 6px; right: 10px; }
+    .panel-corner.bl { bottom: 6px; left: 10px; }
+    .panel-corner.br { bottom: 6px; right: 10px; }
+
+    .intent-header {
+      padding: 24px 28px 20px;
+      text-align: center;
+      border-bottom: 1px solid var(--border-gold);
+    }
+
+    .intent-title {
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: 1.6rem;
+      color: var(--text-gold);
+      text-shadow: 0 0 24px rgba(200,160,80,0.35);
+      letter-spacing: 0.04em;
+      margin-bottom: 6px;
+    }
+
+    .intent-subtitle {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .header-ornament {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 12px;
+    }
+
+    .header-ornament-line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--border-gold));
+    }
+    .header-ornament-line:last-child {
+      background: linear-gradient(to left, transparent, var(--border-gold));
+    }
+
+    .header-ornament-glyph {
+      font-size: 0.85rem;
+      color: var(--border-gold-bright);
+      opacity: 0.7;
+    }
+
+    /* Intent grid */
+    .intent-body {
+      padding: 20px;
+    }
+
+    .intent-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .intent-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border-gold);
+      border-radius: 3px;
+      padding: 18px 16px;
+      cursor: pointer;
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      transition: background 0.15s, border-color 0.15s, box-shadow 0.15s, transform 0.1s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .intent-btn::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(to right, transparent, rgba(200,160,80,0.2), transparent);
+    }
+
+    .intent-btn:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--border-gold-bright);
+      box-shadow: 0 0 20px rgba(200,160,80,0.12), inset 0 0 20px rgba(200,160,80,0.03);
+      transform: translateY(-1px);
+    }
+
+    .intent-btn.selected {
+      background: var(--bg-card-selected);
+      border-color: var(--border-gold-bright);
+      box-shadow:
+        0 0 0 1px rgba(200,160,80,0.3),
+        0 0 24px rgba(200,160,80,0.18),
+        inset 0 0 30px rgba(200,160,80,0.06);
+    }
+
+    .intent-btn.selected::before {
+      background: linear-gradient(to right, transparent, rgba(200,160,80,0.5), transparent);
+    }
+
+    .intent-icon {
+      font-size: 1.9rem;
+      line-height: 1;
+    }
+
+    .intent-name {
+      font-family: Georgia, serif;
+      font-size: 1.02rem;
+      color: var(--text-gold);
+      letter-spacing: 0.02em;
+      font-weight: normal;
+    }
+
+    .intent-btn.selected .intent-name {
+      color: #e8c870;
+    }
+
+    .intent-desc {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* Selected indicator */
+    .intent-check {
+      position: absolute;
+      top: 10px;
+      right: 12px;
+      font-size: 0.85rem;
+      color: var(--text-gold);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .intent-btn.selected .intent-check { opacity: 1; }
+
+    /* Skip button */
+    .skip-row {
+      text-align: center;
+    }
+
+    .skip-btn {
+      background: transparent;
+      border: 1px solid rgba(138,101,48,0.4);
+      color: var(--text-muted);
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      font-size: 0.82rem;
+      padding: 9px 24px;
+      cursor: pointer;
+      border-radius: 3px;
+      letter-spacing: 0.04em;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+    }
+
+    .skip-btn:hover {
+      background: rgba(138,101,48,0.08);
+      border-color: var(--border-gold);
+      color: var(--text-primary);
+    }
+
+    .skip-sub {
+      display: block;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+      opacity: 0.7;
+    }
+
+    /* ── CONFIRMATION SCREEN ─────────────────────────────────────────────── */
+    #screen-confirm .confirm-card {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-gold);
+      border-radius: 4px;
+      overflow: hidden;
+      box-shadow:
+        0 0 0 3px rgba(200,160,80,0.06),
+        0 0 60px rgba(200,160,80,0.12),
+        0 20px 80px rgba(0,0,0,0.8);
+      position: relative;
+      text-align: center;
+      padding: 48px 36px;
+    }
+
+    .confirm-icon { font-size: 3.5rem; margin-bottom: 16px; }
+
+    .confirm-label {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .confirm-intent-name {
+      font-family: Georgia, serif;
+      font-size: 1.7rem;
+      color: var(--text-gold);
+      text-shadow: 0 0 20px rgba(200,160,80,0.3);
+      margin-bottom: 6px;
+    }
+
+    .confirm-intent-desc {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      margin-bottom: 36px;
+    }
+
+    .confirm-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #7a5520, #a87a28);
+      border: 1px solid var(--border-gold-bright);
+      color: #f0e8d0;
+      font-family: Georgia, serif;
+      font-size: 1rem;
+      padding: 12px 32px;
+      cursor: pointer;
+      border-radius: 3px;
+      letter-spacing: 0.06em;
+      transition: filter 0.15s, box-shadow 0.15s, transform 0.1s;
+      box-shadow: 0 0 16px rgba(200,160,80,0.2);
+    }
+
+    .btn-primary:hover {
+      filter: brightness(1.15);
+      box-shadow: 0 0 24px rgba(200,160,80,0.35);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: var(--bg-card);
+      border: 1px solid var(--border-gold);
+      color: var(--text-muted);
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      font-size: 0.9rem;
+      padding: 12px 24px;
+      cursor: pointer;
+      border-radius: 3px;
+      letter-spacing: 0.04em;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+    }
+
+    .btn-secondary:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--border-gold-bright);
+      color: var(--text-primary);
+    }
+
+    /* ── DAY BEGUN SCREEN ────────────────────────────────────────────────── */
+    #screen-begun .begun-card {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-gold);
+      border-radius: 4px;
+      overflow: hidden;
+      box-shadow:
+        0 0 0 3px rgba(200,160,80,0.06),
+        0 0 60px rgba(200,160,80,0.14),
+        0 20px 80px rgba(0,0,0,0.8);
+      position: relative;
+      text-align: center;
+      padding: 56px 36px 48px;
+    }
+
+    .begun-glow {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 30%, rgba(200,160,80,0.07) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .begun-icon { font-size: 4rem; margin-bottom: 20px; position: relative; }
+
+    .begun-title {
+      font-family: Georgia, serif;
+      font-size: 2rem;
+      color: var(--text-gold);
+      letter-spacing: 0.06em;
+      text-shadow: 0 0 30px rgba(200,160,80,0.4);
+      margin-bottom: 10px;
+      position: relative;
+    }
+
+    .begun-sub {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      position: relative;
+    }
+
+    .begun-intent-label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      letter-spacing: 0.06em;
+      margin-top: 20px;
+      margin-bottom: 4px;
+      position: relative;
+    }
+
+    .begun-intent-value {
+      font-family: Georgia, serif;
+      font-size: 1.15rem;
+      color: var(--text-gold);
+      position: relative;
+    }
+
+    .begun-divider {
+      width: 200px;
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--border-gold), transparent);
+      margin: 24px auto;
+      position: relative;
+    }
+
+    .begun-reset {
+      position: relative;
+      background: transparent;
+      border: none;
+      color: rgba(138,101,48,0.5);
+      font-size: 0.75rem;
+      cursor: pointer;
+      letter-spacing: 0.05em;
+      margin-top: 24px;
+      padding: 4px 8px;
+      transition: color 0.2s;
+    }
+    .begun-reset:hover { color: var(--text-muted); }
+
+    /* Shimmer animation for begun icon */
+    @keyframes shimmer {
+      0%, 100% { filter: drop-shadow(0 0 8px rgba(200,160,80,0.4)); }
+      50% { filter: drop-shadow(0 0 20px rgba(200,160,80,0.8)); }
+    }
+    .begun-icon { animation: shimmer 3s ease-in-out infinite; }
+  </style>
+</head>
+<body>
+  <a href="../" class="back-link">← Back to Prototypes</a>
+
+  <!-- SCREEN 1: Intent Selection -->
+  <div id="screen-select" class="screen active">
+    <div class="card-shell">
+      <span class="panel-corner tl">✦</span>
+      <span class="panel-corner tr">✦</span>
+      <span class="panel-corner bl">✦</span>
+      <span class="panel-corner br">✦</span>
+
+      <div class="panel-accent-top"></div>
+
+      <div class="intent-header">
+        <div class="intent-title">What is your focus today?</div>
+        <div class="intent-subtitle">Day 43 — The Realm of Terafell</div>
+        <div class="header-ornament">
+          <div class="header-ornament-line"></div>
+          <span class="header-ornament-glyph">⚜</span>
+          <div class="header-ornament-line"></div>
+        </div>
+      </div>
+
+      <div class="intent-body">
+        <div class="intent-grid">
+          <button class="intent-btn" data-id="dungeon" onclick="selectIntent(this)">
+            <span class="intent-check">✦</span>
+            <span class="intent-icon">⚔️</span>
+            <span class="intent-name">Conquer a Dungeon</span>
+            <span class="intent-desc">Send your officers into the depths</span>
+          </button>
+
+          <button class="intent-btn" data-id="sales" onclick="selectIntent(this)">
+            <span class="intent-check">✦</span>
+            <span class="intent-icon">💰</span>
+            <span class="intent-name">Maximize Sales</span>
+            <span class="intent-desc">Stock the storefront and assist customers</span>
+          </button>
+
+          <button class="intent-btn" data-id="gather" onclick="selectIntent(this)">
+            <span class="intent-check">✦</span>
+            <span class="intent-icon">🌿</span>
+            <span class="intent-name">Gather Materials</span>
+            <span class="intent-desc">Send heroes to harvest nodes across the realm</span>
+          </button>
+
+          <button class="intent-btn" data-id="level" onclick="selectIntent(this)">
+            <span class="intent-check">✦</span>
+            <span class="intent-icon">🦸</span>
+            <span class="intent-name">Level Up Heroes</span>
+            <span class="intent-desc">Focus on dungeon runs and combat training</span>
+          </button>
+
+          <button class="intent-btn" data-id="explore" onclick="selectIntent(this)" style="grid-column:1/-1;max-width:300px;justify-self:center;width:100%;">
+            <span class="intent-check">✦</span>
+            <span class="intent-icon">🔍</span>
+            <span class="intent-name">Explore the World</span>
+            <span class="intent-desc">Discover new regions and gather intelligence</span>
+          </button>
+        </div>
+
+        <div class="skip-row">
+          <button class="skip-btn" onclick="skipIntent()">
+            Skip
+            <span class="skip-sub">Continue without setting an intent</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 2: Confirmation -->
+  <div id="screen-confirm" class="screen">
+    <div class="confirm-card">
+      <span class="panel-corner tl">✦</span>
+      <span class="panel-corner tr">✦</span>
+      <span class="panel-corner bl">✦</span>
+      <span class="panel-corner br">✦</span>
+      <div class="panel-accent-top" style="position:absolute;top:0;left:0;right:0;"></div>
+
+      <div class="confirm-icon" id="confirm-icon">⚔️</div>
+      <div class="confirm-label">Intent set for Day 43</div>
+      <div class="confirm-intent-name" id="confirm-name">Conquer a Dungeon</div>
+      <div class="confirm-intent-desc" id="confirm-desc">Send your officers into the depths</div>
+
+      <div class="confirm-actions">
+        <button class="btn-primary" onclick="beginDay()">⚔ Begin the Day</button>
+        <button class="btn-secondary" onclick="changeIntent()">↩ Change</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 3: Day Begun -->
+  <div id="screen-begun" class="screen">
+    <div class="begun-card">
+      <div class="begun-glow"></div>
+      <span class="panel-corner tl">✦</span>
+      <span class="panel-corner tr">✦</span>
+      <span class="panel-corner bl">✦</span>
+      <span class="panel-corner br">✦</span>
+      <div class="panel-accent-top" style="position:absolute;top:0;left:0;right:0;"></div>
+
+      <div class="begun-icon" id="begun-icon">⚔️</div>
+      <div class="begun-title">Day Has Begun</div>
+      <div class="begun-sub">Day 43 — The Realm of Terafell</div>
+
+      <div class="begun-divider"></div>
+
+      <div class="begun-intent-label">Today's Focus</div>
+      <div class="begun-intent-value" id="begun-intent-value">⚔️ Conquer a Dungeon</div>
+
+      <br/>
+      <button class="begun-reset" onclick="resetPrototype()">↺ Restart prototype</button>
+    </div>
+  </div>
+
+  <script>
+    const INTENTS = {
+      dungeon: { icon: '⚔️', name: 'Conquer a Dungeon', desc: 'Send your officers into the depths' },
+      sales:   { icon: '💰', name: 'Maximize Sales',    desc: 'Stock the storefront and assist customers' },
+      gather:  { icon: '🌿', name: 'Gather Materials',  desc: 'Send heroes to harvest nodes across the realm' },
+      level:   { icon: '🦸', name: 'Level Up Heroes',   desc: 'Focus on dungeon runs and combat training' },
+      explore: { icon: '🔍', name: 'Explore the World', desc: 'Discover new regions and gather intelligence' },
+    };
+
+    let selectedId = null;
+
+    function selectIntent(btn) {
+      // Toggle selection
+      const id = btn.dataset.id;
+
+      // Deselect all
+      document.querySelectorAll('.intent-btn').forEach(b => b.classList.remove('selected'));
+
+      if (selectedId === id) {
+        // Deselect (toggle off)
+        selectedId = null;
+        return;
+      }
+
+      btn.classList.add('selected');
+      selectedId = id;
+
+      // Brief delay then show confirmation
+      setTimeout(() => goToConfirm(id), 280);
+    }
+
+    function goToConfirm(id) {
+      const intent = INTENTS[id];
+      document.getElementById('confirm-icon').textContent = intent.icon;
+      document.getElementById('confirm-name').textContent = intent.name;
+      document.getElementById('confirm-desc').textContent = intent.desc;
+
+      showScreen('screen-confirm');
+    }
+
+    function skipIntent() {
+      // Set a "skip" intent and go to begun
+      document.getElementById('begun-icon').textContent = '🌅';
+      document.getElementById('begun-intent-value').textContent = 'No intent set — free day';
+      showScreen('screen-begun');
+    }
+
+    function changeIntent() {
+      selectedId = null;
+      document.querySelectorAll('.intent-btn').forEach(b => b.classList.remove('selected'));
+      showScreen('screen-select');
+    }
+
+    function beginDay() {
+      const id = selectedId;
+      const intent = id ? INTENTS[id] : null;
+
+      document.getElementById('begun-icon').textContent = intent ? intent.icon : '🌅';
+      document.getElementById('begun-intent-value').textContent =
+        intent ? `${intent.icon} ${intent.name}` : 'No intent set — free day';
+
+      showScreen('screen-begun');
+    }
+
+    function resetPrototype() {
+      selectedId = null;
+      document.querySelectorAll('.intent-btn').forEach(b => b.classList.remove('selected'));
+      showScreen('screen-select');
+    }
+
+    function showScreen(id) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+  </script>
+</body>
+</html>

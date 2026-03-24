@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MGK Prototypes — The Merchant's Guide to the Kingdom</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-deep: #0d0a06;
+      --bg-panel: #1a1008;
+      --bg-card: #231508;
+      --bg-card-hover: #2d1c0a;
+      --border-gold: #8a6530;
+      --border-gold-bright: #c8a050;
+      --text-primary: #f0e8d0;
+      --text-gold: #c8a050;
+      --text-muted: #8a7050;
+      --text-green: #4aaa60;
+      --text-red: #cc4444;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg-deep);
+      color: var(--text-primary);
+      font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Background texture */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 20% 20%, rgba(139,101,48,0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 80%, rgba(139,101,48,0.06) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .page-content {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 900px;
+      padding: 60px 24px 80px;
+    }
+
+    /* Header */
+    .site-header {
+      text-align: center;
+      margin-bottom: 56px;
+    }
+
+    .site-header .crown {
+      font-size: 2rem;
+      display: block;
+      margin-bottom: 8px;
+      opacity: 0.8;
+    }
+
+    .site-title {
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: clamp(2rem, 5vw, 3rem);
+      color: var(--text-gold);
+      letter-spacing: 0.05em;
+      text-shadow: 0 0 40px rgba(200,160,80,0.3), 0 2px 4px rgba(0,0,0,0.8);
+      line-height: 1.2;
+      margin-bottom: 12px;
+    }
+
+    .site-subtitle {
+      font-size: 1rem;
+      color: var(--text-muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-size: 0.85rem;
+    }
+
+    .header-rule {
+      margin: 24px auto;
+      width: 300px;
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--border-gold-bright), transparent);
+    }
+
+    .header-note {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      font-style: italic;
+      margin-top: 8px;
+    }
+
+    /* Prototype cards */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      margin-top: 40px;
+    }
+
+    .proto-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-gold);
+      border-radius: 4px;
+      padding: 28px;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+      box-shadow:
+        0 0 0 1px rgba(200,160,80,0.05),
+        inset 0 1px 0 rgba(200,160,80,0.07),
+        0 4px 16px rgba(0,0,0,0.5);
+    }
+
+    .proto-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(200,160,80,0.04) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    /* Corner flourishes */
+    .proto-card::after {
+      content: '◆';
+      position: absolute;
+      bottom: 10px;
+      right: 14px;
+      font-size: 0.5rem;
+      color: var(--border-gold);
+      opacity: 0.5;
+    }
+
+    .card-corner-tl {
+      position: absolute;
+      top: 8px;
+      left: 12px;
+      font-size: 0.5rem;
+      color: var(--border-gold);
+      opacity: 0.5;
+    }
+
+    .proto-card:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--border-gold-bright);
+      transform: translateY(-2px);
+      box-shadow:
+        0 0 0 1px rgba(200,160,80,0.15),
+        inset 0 1px 0 rgba(200,160,80,0.12),
+        0 8px 32px rgba(0,0,0,0.6),
+        0 0 20px rgba(200,160,80,0.08);
+    }
+
+    .card-icon {
+      font-size: 2rem;
+      line-height: 1;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .card-name {
+      font-family: Georgia, serif;
+      font-size: 1.25rem;
+      color: var(--text-gold);
+      font-weight: normal;
+      letter-spacing: 0.02em;
+    }
+
+    .status-badge {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 2px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .badge-ready {
+      background: rgba(74,170,96,0.15);
+      border: 1px solid rgba(74,170,96,0.4);
+      color: #4aaa60;
+    }
+
+    .badge-wip {
+      background: rgba(200,160,80,0.12);
+      border: 1px solid rgba(200,160,80,0.3);
+      color: var(--text-gold);
+    }
+
+    .card-desc {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    .card-cta {
+      margin-top: auto;
+      font-size: 0.8rem;
+      color: var(--text-gold);
+      letter-spacing: 0.05em;
+      opacity: 0.7;
+      transition: opacity 0.2s;
+    }
+
+    .proto-card:hover .card-cta {
+      opacity: 1;
+    }
+
+    /* Section label */
+    .section-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    /* Footer */
+    .site-footer {
+      margin-top: 64px;
+      text-align: center;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      opacity: 0.6;
+      letter-spacing: 0.05em;
+    }
+
+    /* Fade in */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .site-header { animation: fadeInUp 0.5s ease both; }
+    .card-grid { animation: fadeInUp 0.5s ease 0.15s both; }
+    .site-footer { animation: fadeInUp 0.5s ease 0.3s both; }
+  </style>
+</head>
+<body>
+  <div class="page-content">
+    <header class="site-header">
+      <span class="crown">👑</span>
+      <h1 class="site-title">MGK Prototypes</h1>
+      <div class="header-rule"></div>
+      <p class="site-subtitle">The Merchant's Guide to the Kingdom — UI/UX Prototypes</p>
+      <p class="header-note">These are interactive wireframes. Click through to explore the UX.</p>
+    </header>
+
+    <p class="section-label">Available Prototypes</p>
+    <div class="card-grid">
+
+      <a href="kingdom-herald/" class="proto-card">
+        <span class="card-corner-tl">◆</span>
+        <div class="card-icon">📜</div>
+        <div class="card-header">
+          <h2 class="card-name">Kingdom Herald</h2>
+          <span class="status-badge badge-ready">Ready for review</span>
+        </div>
+        <p class="card-desc">End-of-day summary panel showing gold earned, hero activity, combat results, trade stats, guild progress, and vault status. Navigate between days with full mock data.</p>
+        <span class="card-cta">Explore prototype →</span>
+      </a>
+
+      <a href="daily-intent/" class="proto-card">
+        <span class="card-corner-tl">◆</span>
+        <div class="card-icon">🎯</div>
+        <div class="card-header">
+          <h2 class="card-name">Daily Intent</h2>
+          <span class="status-badge badge-ready">Ready for review</span>
+        </div>
+        <p class="card-desc">Start-of-day focus selection screen. Players choose their primary intent for the day — dungeon runs, sales, gathering, training, or exploration — before the day begins.</p>
+        <span class="card-cta">Explore prototype →</span>
+      </a>
+
+    </div>
+
+    <footer class="site-footer">
+      <p>MGK · Internal Prototypes · ATMTA, Inc.</p>
+    </footer>
+  </div>
+</body>
+</html>

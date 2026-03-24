@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kingdom Herald — MGK Prototype</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-deep: #0d0a06;
+      --bg-panel: #1a1008;
+      --bg-card: #231508;
+      --bg-card-hover: #2d1c0a;
+      --border-gold: #8a6530;
+      --border-gold-bright: #c8a050;
+      --text-primary: #f0e8d0;
+      --text-gold: #c8a050;
+      --text-muted: #8a7050;
+      --text-green: #4aaa60;
+      --text-red: #cc4444;
+      --bar-vault: #c8a050;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg-deep);
+      color: var(--text-primary);
+      font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Simulated game world background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 30% 40%, rgba(60,40,15,0.7) 0%, transparent 55%),
+        radial-gradient(ellipse at 75% 60%, rgba(30,20,8,0.8) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 50%, rgba(20,12,4,0.9) 0%, transparent 70%),
+        linear-gradient(160deg, #12090300 0%, #0a0702 100%);
+      pointer-events: none;
+    }
+
+    /* Blurred background pattern to simulate game world */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        repeating-linear-gradient(
+          45deg,
+          rgba(139,101,48,0.015) 0px,
+          rgba(139,101,48,0.015) 1px,
+          transparent 1px,
+          transparent 30px
+        );
+      pointer-events: none;
+    }
+
+    /* Back link */
+    .back-link {
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      z-index: 100;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.8rem;
+      letter-spacing: 0.05em;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: rgba(13,10,6,0.8);
+      border: 1px solid var(--border-gold);
+      border-radius: 3px;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .back-link:hover { color: var(--text-gold); border-color: var(--border-gold-bright); }
+
+    /* Reopen button */
+    #reopen-btn {
+      position: relative;
+      z-index: 10;
+      display: none;
+      margin: 20px auto;
+      padding: 12px 28px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-gold-bright);
+      color: var(--text-gold);
+      font-family: Georgia, serif;
+      font-size: 1rem;
+      cursor: pointer;
+      letter-spacing: 0.06em;
+      border-radius: 3px;
+      transition: background 0.2s, box-shadow 0.2s;
+      box-shadow: 0 0 12px rgba(200,160,80,0.15);
+    }
+    #reopen-btn:hover {
+      background: var(--bg-card-hover);
+      box-shadow: 0 0 20px rgba(200,160,80,0.25);
+    }
+
+    /* Main modal panel */
+    #herald-panel {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 720px;
+      background: var(--bg-panel);
+      border: 1px solid var(--border-gold);
+      border-radius: 4px;
+      box-shadow:
+        0 0 0 3px rgba(200,160,80,0.08),
+        0 0 60px rgba(200,160,80,0.12),
+        inset 0 1px 0 rgba(200,160,80,0.1),
+        0 20px 80px rgba(0,0,0,0.8);
+      overflow: hidden;
+    }
+
+    /* Ornate corner accents */
+    .panel-corner {
+      position: absolute;
+      font-size: 1.1rem;
+      color: var(--border-gold-bright);
+      opacity: 0.7;
+      z-index: 5;
+      line-height: 1;
+    }
+    .panel-corner.tl { top: 6px; left: 10px; }
+    .panel-corner.tr { top: 6px; right: 10px; }
+    .panel-corner.bl { bottom: 6px; left: 10px; }
+    .panel-corner.br { bottom: 6px; right: 10px; }
+
+    /* Top accent line */
+    .panel-accent-top {
+      height: 3px;
+      background: linear-gradient(to right, transparent, var(--border-gold-bright) 20%, var(--border-gold-bright) 80%, transparent);
+    }
+
+    /* Header */
+    .herald-header {
+      padding: 20px 28px 16px;
+      text-align: center;
+      border-bottom: 1px solid var(--border-gold);
+      position: relative;
+    }
+
+    .herald-title {
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: 1.55rem;
+      color: var(--text-gold);
+      letter-spacing: 0.08em;
+      text-shadow: 0 0 24px rgba(200,160,80,0.4);
+      margin-bottom: 4px;
+    }
+
+    .herald-day {
+      font-size: 1rem;
+      color: var(--text-primary);
+      font-weight: 500;
+      margin-bottom: 3px;
+    }
+
+    .herald-epoch {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      letter-spacing: 0.06em;
+    }
+
+    .header-rule {
+      margin: 12px auto 0;
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--border-gold), transparent);
+    }
+
+    /* Content grid */
+    .herald-body {
+      padding: 16px 20px;
+    }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    /* Stat card */
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-gold);
+      border-radius: 3px;
+      padding: 14px 16px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: inset 0 1px 0 rgba(200,160,80,0.06);
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(to right, transparent, rgba(200,160,80,0.3), transparent);
+    }
+
+    .card-title {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .card-title-icon { font-size: 0.9rem; }
+
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 3px 0;
+      font-size: 0.82rem;
+      border-bottom: 1px solid rgba(138,101,48,0.12);
+    }
+
+    .stat-row:last-child { border-bottom: none; }
+
+    .stat-label { color: var(--text-muted); }
+
+    .stat-value {
+      color: var(--text-primary);
+      font-family: 'Courier New', monospace;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .stat-value.positive { color: var(--text-green); }
+    .stat-value.negative { color: var(--text-red); }
+    .stat-value.gold { color: var(--text-gold); }
+
+    .compare-arrow {
+      font-size: 0.7rem;
+      margin-left: 4px;
+    }
+    .compare-arrow.up { color: var(--text-green); }
+    .compare-arrow.down { color: var(--text-muted); }
+
+    /* Dungeon list */
+    .dungeon-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      max-height: 110px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .dungeon-list::-webkit-scrollbar { width: 4px; }
+    .dungeon-list::-webkit-scrollbar-track { background: rgba(138,101,48,0.1); }
+    .dungeon-list::-webkit-scrollbar-thumb { background: var(--border-gold); border-radius: 2px; }
+
+    .dungeon-entry {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 8px;
+      align-items: center;
+      padding: 5px 8px;
+      background: rgba(13,10,6,0.4);
+      border-left: 2px solid var(--border-gold);
+      border-radius: 0 2px 2px 0;
+      font-size: 0.78rem;
+    }
+
+    .dungeon-name { color: var(--text-primary); font-weight: 500; }
+    .dungeon-time { color: var(--text-muted); font-family: monospace; }
+    .dungeon-heroes { color: var(--text-gold); font-size: 0.72rem; }
+
+    /* Vault progress bar */
+    .vault-bar-container {
+      margin-top: 8px;
+    }
+
+    .vault-bar-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .vault-bar-track {
+      height: 14px;
+      background: rgba(13,10,6,0.6);
+      border: 1px solid var(--border-gold);
+      border-radius: 2px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .vault-bar-fill {
+      height: 100%;
+      background: linear-gradient(to right, #a87a28, var(--bar-vault), #e8c870);
+      border-radius: 2px;
+      position: relative;
+      transition: width 0.6s ease;
+    }
+
+    .vault-bar-fill::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 4px;
+      height: 100%;
+      background: rgba(255,255,200,0.4);
+      filter: blur(3px);
+    }
+
+    .vault-pct {
+      text-align: center;
+      font-family: monospace;
+      font-size: 0.8rem;
+      color: var(--text-gold);
+      margin-top: 5px;
+    }
+
+    /* Hero badge */
+    .trophy-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(200,160,80,0.1);
+      border: 1px solid rgba(200,160,80,0.3);
+      border-radius: 2px;
+      padding: 2px 6px;
+      font-size: 0.72rem;
+      color: var(--text-gold);
+    }
+
+    /* Footer nav */
+    .herald-footer {
+      padding: 14px 20px;
+      border-top: 1px solid var(--border-gold);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .nav-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border-gold);
+      color: var(--text-primary);
+      padding: 8px 16px;
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      font-size: 0.82rem;
+      cursor: pointer;
+      border-radius: 3px;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+    }
+
+    .nav-btn:hover:not(:disabled) {
+      background: var(--bg-card-hover);
+      border-color: var(--border-gold-bright);
+      color: var(--text-gold);
+    }
+
+    .nav-btn:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
+    .day-indicator {
+      font-family: Georgia, serif;
+      font-size: 0.88rem;
+      color: var(--text-gold);
+      text-align: center;
+      min-width: 80px;
+      letter-spacing: 0.04em;
+    }
+
+    .close-btn {
+      background: rgba(204,68,68,0.1);
+      border: 1px solid rgba(204,68,68,0.4);
+      color: #cc8888;
+    }
+
+    .close-btn:hover {
+      background: rgba(204,68,68,0.2) !important;
+      border-color: #cc4444 !important;
+      color: #ff9999 !important;
+    }
+
+    /* Fade animation */
+    @keyframes panelFadeIn {
+      from { opacity: 0; transform: scale(0.97) translateY(10px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    @keyframes contentFade {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    #herald-panel {
+      animation: panelFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    .herald-body.fading {
+      animation: contentFade 0.25s ease both;
+    }
+
+    /* Guild row */
+    .guild-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .rank-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      background: rgba(74,170,96,0.12);
+      border: 1px solid rgba(74,170,96,0.3);
+      border-radius: 2px;
+      padding: 2px 7px;
+      font-size: 0.75rem;
+      font-family: monospace;
+      color: var(--text-green);
+    }
+  </style>
+</head>
+<body>
+  <a href="../" class="back-link">← Back to Prototypes</a>
+
+  <button id="reopen-btn" onclick="reopenHerald()">📜 Reopen Herald</button>
+
+  <div id="herald-panel">
+    <span class="panel-corner tl">✦</span>
+    <span class="panel-corner tr">✦</span>
+    <span class="panel-corner bl">✦</span>
+    <span class="panel-corner br">✦</span>
+
+    <div class="panel-accent-top"></div>
+
+    <div class="herald-header">
+      <div class="herald-title" id="h-title">📜 THE KINGDOM HERALD 📜</div>
+      <div class="herald-day" id="h-day">Day 42 — The Realm of Terafell</div>
+      <div class="herald-epoch" id="h-epoch">Epoch 42 · Week 6 · Day 7/7</div>
+      <div class="header-rule"></div>
+    </div>
+
+    <div class="herald-body" id="herald-body">
+      <div class="content-grid" id="content-grid">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+
+    <div class="herald-footer">
+      <button class="nav-btn" id="btn-prev" onclick="changeDay(-1)">◀ Prev Day</button>
+      <span class="day-indicator" id="day-indicator">Day 1 of 3</span>
+      <button class="nav-btn" id="btn-next" onclick="changeDay(1)">Next Day ▶</button>
+      <button class="nav-btn close-btn" onclick="closeHerald()">✕ Close</button>
+    </div>
+  </div>
+
+  <script>
+    // ── Mock data for 3 days ──────────────────────────────────────────────
+    const DAYS = [
+      {
+        day: 40,
+        realm: 'The Realm of Terafell',
+        epoch: 42, week: 6, dayOfWeek: 5, totalDays: 7,
+        economy: {
+          earned: 2840, spent: 920, net: 1920,
+          bestEver: 6100, netBestEver: 4200,
+          aboveBest: false
+        },
+        heroes: {
+          levelUps: 'None',
+          deaths: 1,
+          streak: 3,
+          deathless: false
+        },
+        trade: {
+          sold: 8,
+          bestSale: { name: 'Thornweave Gloves', gold: 520 },
+          bestEver: 2100,
+          aboveBest: false
+        },
+        combat: [
+          { name: 'Goblin Warrens', time: '3:12', heroes: 'Maya, Rek' },
+          { name: 'Dark Marsh', time: '4:55', heroes: 'Thorne, Maya' },
+        ],
+        guild: { rankGain: 60, favors: 2 },
+        vault: { week: 6, day: 2, total: 7, pct: 28 }
+      },
+      {
+        day: 41,
+        realm: 'The Realm of Terafell',
+        epoch: 42, week: 6, dayOfWeek: 6, totalDays: 7,
+        economy: {
+          earned: 3600, spent: 800, net: 2800,
+          bestEver: 6100, netBestEver: 4200,
+          aboveBest: false
+        },
+        heroes: {
+          levelUps: 'Maya → Lv5',
+          deaths: 0,
+          streak: 4,
+          deathless: true
+        },
+        trade: {
+          sold: 10,
+          bestSale: { name: 'Ember Ring', gold: 710 },
+          bestEver: 2100,
+          aboveBest: false
+        },
+        combat: [
+          { name: 'Wolf Den', time: '2:48', heroes: 'Thorne, Rek' },
+          { name: 'Goblin Warrens', time: '3:01', heroes: 'Maya' },
+          { name: 'Stone Crypt', time: '5:20', heroes: 'Thorne, Maya, Rek' },
+        ],
+        guild: { rankGain: 90, favors: 3 },
+        vault: { week: 6, day: 3, total: 7, pct: 42 }
+      },
+      {
+        day: 42,
+        realm: 'The Realm of Terafell',
+        epoch: 42, week: 6, dayOfWeek: 7, totalDays: 7,
+        economy: {
+          earned: 4200, spent: 1100, net: 3100,
+          bestEver: 6100, netBestEver: 4200,
+          aboveBest: false
+        },
+        heroes: {
+          levelUps: 'Thorne → Lv7',
+          deaths: 0,
+          streak: 5,
+          deathless: true
+        },
+        trade: {
+          sold: 12,
+          bestSale: { name: 'Ironveil Cloak', gold: 840 },
+          bestEver: 2100,
+          aboveBest: false
+        },
+        combat: [
+          { name: 'Wolf Den', time: '2:34', heroes: 'Thorne, Maya' },
+          { name: 'Ember Caverns', time: '3:47', heroes: 'Rek, Thorne' },
+          { name: 'Stone Crypt', time: '4:15', heroes: 'Maya, Rek' },
+        ],
+        guild: { rankGain: 120, favors: 4 },
+        vault: { week: 6, day: 4, total: 7, pct: 57 }
+      }
+    ];
+
+    let currentDay = 2; // 0-indexed, start on day 3 (day 42)
+
+    function fmt(n) {
+      return n.toLocaleString();
+    }
+
+    function arrow(above) {
+      return above
+        ? '<span class="compare-arrow up">▲</span>'
+        : '<span class="compare-arrow down">▼</span>';
+    }
+
+    function renderDay(idx) {
+      const d = DAYS[idx];
+
+      // Update header
+      document.getElementById('h-day').textContent = `Day ${d.day} — ${d.realm}`;
+      document.getElementById('h-epoch').textContent =
+        `Epoch ${d.epoch} · Week ${d.week} · Day ${d.dayOfWeek}/${d.totalDays}`;
+      document.getElementById('day-indicator').textContent = `Day ${idx + 1} of ${DAYS.length}`;
+
+      // Nav buttons
+      document.getElementById('btn-prev').disabled = (idx === 0);
+      document.getElementById('btn-next').disabled = (idx === DAYS.length - 1);
+
+      // Build grid
+      const grid = document.getElementById('content-grid');
+      grid.innerHTML = `
+        <!-- LEFT COLUMN -->
+        <div style="display:flex;flex-direction:column;gap:12px;">
+
+          <!-- Gold & Economy -->
+          <div class="stat-card">
+            <div class="card-title"><span class="card-title-icon">💰</span> Gold &amp; Economy</div>
+            <div class="stat-row">
+              <span class="stat-label">Gold Earned</span>
+              <span class="stat-value gold">${fmt(d.economy.earned)}g</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Gold Spent</span>
+              <span class="stat-value">${fmt(d.economy.spent)}g</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Net</span>
+              <span class="stat-value positive">+${fmt(d.economy.net)}g</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Best Ever</span>
+              <span class="stat-value">${fmt(d.economy.bestEver)}g ${arrow(d.economy.aboveBest)}</span>
+            </div>
+          </div>
+
+          <!-- Heroes -->
+          <div class="stat-card">
+            <div class="card-title"><span class="card-title-icon">⚔️</span> Heroes</div>
+            <div class="stat-row">
+              <span class="stat-label">Level Ups</span>
+              <span class="stat-value">${d.heroes.levelUps}</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Deaths</span>
+              <span class="stat-value ${d.heroes.deaths === 0 ? 'positive' : 'negative'}">
+                ${d.heroes.deaths === 0 ? 'None 🏆' : d.heroes.deaths}
+              </span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Deathless Streak</span>
+              <span class="stat-value">${d.heroes.streak} days</span>
+            </div>
+            ${d.heroes.deathless ? `<div style="margin-top:8px;"><span class="trophy-badge">🏆 Deathless Day</span></div>` : ''}
+          </div>
+
+          <!-- Trade -->
+          <div class="stat-card">
+            <div class="card-title"><span class="card-title-icon">🛒</span> Trade</div>
+            <div class="stat-row">
+              <span class="stat-label">Items Sold</span>
+              <span class="stat-value">${d.trade.sold}</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Best Sale</span>
+              <span class="stat-value gold" style="font-size:0.76rem;text-align:right;max-width:140px;">
+                ${d.trade.bestSale.name}<br>
+                <span style="font-size:0.82rem;">${fmt(d.trade.bestSale.gold)}g</span>
+              </span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Best Ever</span>
+              <span class="stat-value">${fmt(d.trade.bestEver)}g ${arrow(d.trade.aboveBest)}</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- RIGHT COLUMN -->
+        <div style="display:flex;flex-direction:column;gap:12px;">
+
+          <!-- Combat -->
+          <div class="stat-card">
+            <div class="card-title"><span class="card-title-icon">🗡️</span> Combat — Dungeon Clears</div>
+            <div class="dungeon-list">
+              ${d.combat.map(c => `
+                <div class="dungeon-entry">
+                  <span class="dungeon-name">${c.name}</span>
+                  <span class="dungeon-time">${c.time}</span>
+                  <span class="dungeon-heroes">${c.heroes}</span>
+                </div>
+              `).join('')}
+            </div>
+            ${d.combat.length === 0 ? '<div style="color:var(--text-muted);font-size:0.8rem;padding:8px 0;">No clears today</div>' : ''}
+          </div>
+
+          <!-- Guild -->
+          <div class="stat-card">
+            <div class="card-title"><span class="card-title-icon">⚜️</span> Guild</div>
+            <div class="stat-row">
+              <span class="stat-label">Guild Rank</span>
+              <span class="stat-value positive">+${fmt(d.guild.rankGain)}</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Favors Completed</span>
+              <span class="stat-value">${d.guild.favors}</span>
+            </div>
+            <div class="guild-row">
+              <span class="rank-badge">▲ Rank climbing</span>
+            </div>
+          </div>
+
+          <!-- King's Vault -->
+          <div class="stat-card">
+            <div class="card-title"><span class="card-title-icon">👑</span> King's Vault</div>
+            <div class="vault-bar-container">
+              <div class="vault-bar-label">
+                <span>Week ${d.vault.week} · Day ${d.vault.day}/${d.vault.total}</span>
+                <span>${d.vault.pct}% filled</span>
+              </div>
+              <div class="vault-bar-track">
+                <div class="vault-bar-fill" style="width:${d.vault.pct}%;"></div>
+              </div>
+              <div class="vault-pct">${d.vault.pct}% of weekly quota</div>
+            </div>
+          </div>
+
+        </div>
+      `;
+    }
+
+    function changeDay(delta) {
+      const next = currentDay + delta;
+      if (next < 0 || next >= DAYS.length) return;
+
+      const body = document.getElementById('herald-body');
+      body.style.opacity = '0';
+      body.style.transition = 'opacity 0.18s ease';
+
+      setTimeout(() => {
+        currentDay = next;
+        renderDay(currentDay);
+        body.style.opacity = '1';
+      }, 180);
+    }
+
+    function closeHerald() {
+      const panel = document.getElementById('herald-panel');
+      const reopenBtn = document.getElementById('reopen-btn');
+
+      panel.style.transition = 'opacity 0.25s ease, transform 0.25s ease';
+      panel.style.opacity = '0';
+      panel.style.transform = 'scale(0.96)';
+
+      setTimeout(() => {
+        panel.style.display = 'none';
+        reopenBtn.style.display = 'block';
+      }, 250);
+    }
+
+    function reopenHerald() {
+      const panel = document.getElementById('herald-panel');
+      const reopenBtn = document.getElementById('reopen-btn');
+
+      reopenBtn.style.display = 'none';
+      panel.style.display = '';
+      panel.style.opacity = '0';
+      panel.style.transform = 'scale(0.96)';
+
+      requestAnimationFrame(() => {
+        panel.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+        panel.style.opacity = '1';
+        panel.style.transform = 'scale(1)';
+      });
+    }
+
+    // Initial render
+    renderDay(currentDay);
+  </script>
+</body>
+</html>
