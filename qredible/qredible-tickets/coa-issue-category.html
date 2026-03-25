@@ -84,17 +84,16 @@
     .breadcrumb { font-size: 11px; color: #90CAF9; margin-bottom: 4px; }
     .nav-back { color: #90CAF9; text-decoration: none; font-size: 12px; }
 
-    .main { padding: 24px 32px; display: grid; grid-template-columns: 1fr; gap: 0; max-width: 100%; }
-    .mockups-area { width: 100%; }
+    .main { padding: 24px 32px; display: grid; grid-template-columns: 1fr 420px; gap: 24px; max-width: 100%; align-items: start; }
+    .mockups-area { width: 100%; min-width: 0; }
     .spec-area {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 0;
       border: 1px solid var(--border);
       border-radius: var(--radius-card);
       overflow: hidden;
-      margin-top: 24px;
       box-shadow: var(--shadow-subtle);
+      position: sticky;
+      top: 16px;
+      background: var(--surface);
     }
 
     .card {
@@ -467,19 +466,23 @@
 
   </div>
 
-  <!-- Spec — horizontal strip -->
+  <!-- Spec panel — right column, sticky -->
   <div class="spec-area">
-    <div class="spec-section" style="background:var(--surface);">
+    <div style="background:var(--bg);border-bottom:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;">
+      <span style="font-size:13px;font-weight:600;color:var(--black);">Ticket Specification</span>
+      <span style="font-size:11px;color:var(--subtitle);">QP-XXXX</span>
+    </div>
+    <div class="spec-section">
       <div class="spec-label">Metadata</div>
       <div class="spec-row"><span class="spec-key">Initiative</span><span class="spec-val">Audit Improvement</span></div>
       <div class="spec-row"><span class="spec-key">Effort</span><span class="meta-pill pill-medium">Medium</span></div>
       <div class="spec-row"><span class="spec-key">Related</span><span class="spec-val" style="font-size:11px;font-weight:300;">QP-3528 (issue tooltip)</span></div>
     </div>
-    <div class="spec-section" style="background:var(--surface);">
+    <div class="spec-section">
       <div class="spec-label">Problem</div>
-      <p style="color:var(--subtitle);line-height:1.6;font-weight:300;">BPO team has no structured way to categorize invalid COAs. No distinction between "not a COA" vs "insufficient data" vs "suspicious." No distinction between system-detected flags and human-confirmed issues.</p>
+      <p style="color:var(--subtitle);line-height:1.6;font-weight:300;">BPO team has no structured way to categorize invalid COAs. No distinction between "not a COA at all" vs "insufficient data" vs "suspicious." No distinction between system-detected flags and human-confirmed issues.</p>
     </div>
-    <div class="spec-section" style="background:var(--surface);">
+    <div class="spec-section">
       <div class="spec-label">Issue Categories</div>
       <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px;">
         <span class="badge b-validation">Not a COA</span>
@@ -491,24 +494,24 @@
         <span class="badge b-validation">Unreadable</span>
       </div>
     </div>
-    <div class="spec-section" style="background:var(--surface);">
+    <div class="spec-section">
       <div class="spec-label">Business Rules</div>
-      <div class="br-item"><span class="br-num">BR-1</span><span style="font-weight:300;">7 Issue Category values above.</span></div>
-      <div class="br-item"><span class="br-num">BR-2</span><span style="font-weight:300;">System-flagged: "System Flagged" + Confirm/Dismiss. Human-confirmed: "Validation Issue" + category tooltip.</span></div>
-      <div class="br-item"><span class="br-num">BR-3</span><span style="font-weight:300;">Confirmed Issue Category → "Validation Issue" status, separate from Violative/Expired/Missing/Compliant.</span></div>
-      <div class="br-item"><span class="br-num">BR-4</span><span style="font-weight:300;">Selectable from three-dot "Flag Issue" and COA Details modal.</span></div>
-      <div class="br-item"><span class="br-num">BR-5</span><span style="font-weight:300;">Badge tooltip shows category, reviewer, timestamp.</span></div>
-      <div class="br-item"><span class="br-num">BR-6</span><span style="font-weight:300;">"Validation Issue" added to Compliance Issue filter.</span></div>
+      <div class="br-item"><span class="br-num">BR-1</span><span style="font-weight:300;">7 Issue Category values as listed above.</span></div>
+      <div class="br-item"><span class="br-num">BR-2</span><span style="font-weight:300;">System-flagged (auto): "System Flagged" badge + Confirm/Dismiss inline. Human-confirmed: "Validation Issue" badge + category tooltip.</span></div>
+      <div class="br-item"><span class="br-num">BR-3</span><span style="font-weight:300;">Confirmed Issue Category → new status "Validation Issue", separate from Violative/Expired/Missing/Compliant.</span></div>
+      <div class="br-item"><span class="br-num">BR-4</span><span style="font-weight:300;">Selectable from three-dot "Flag Issue" and from COA Details modal.</span></div>
+      <div class="br-item"><span class="br-num">BR-5</span><span style="font-weight:300;">Tooltip on Validation Issue badge shows category reason, reviewer, timestamp.</span></div>
+      <div class="br-item"><span class="br-num">BR-6</span><span style="font-weight:300;">"Validation Issue" added to Compliance Issue filter dropdown.</span></div>
     </div>
-    <div class="spec-section" style="background:var(--surface);">
+    <div class="spec-section">
       <div class="spec-label">Acceptance Criteria</div>
       <div class="ac-item"><span class="ac-check">☐</span><span style="font-weight:300;">Issue Category exists with all 7 values</span></div>
       <div class="ac-item"><span class="ac-check">☐</span><span style="font-weight:300;">"Validation Issue" COA status distinct from all others</span></div>
       <div class="ac-item"><span class="ac-check">☐</span><span style="font-weight:300;">BPO can flag from three-dot menu and COA Details modal</span></div>
       <div class="ac-item"><span class="ac-check">☐</span><span style="font-weight:300;">Badge tooltip shows category + reviewer + timestamp</span></div>
-      <div class="ac-item"><span class="ac-check">☐</span><span style="font-weight:300;">System-flagged shows "System Flagged" with Confirm/Dismiss</span></div>
+      <div class="ac-item"><span class="ac-check">☐</span><span style="font-weight:300;">System-flagged shows "System Flagged" badge with Confirm/Dismiss</span></div>
       <div class="ac-item"><span class="ac-check">☐</span><span style="font-weight:300;">"Validation Issue" filterable in Compliance Issue filter</span></div>
-      <div class="ac-item"><span class="ac-check">☐</span><span style="font-weight:300;">Validation Issue excluded from compliant counts</span></div>
+      <div class="ac-item"><span class="ac-check">☐</span><span style="font-weight:300;">Validation Issue COAs excluded from compliant counts</span></div>
     </div>
   </div>
 </div>

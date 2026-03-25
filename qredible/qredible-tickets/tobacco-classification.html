@@ -91,20 +91,19 @@
     .main {
       padding: 24px 32px;
       display: grid;
-      grid-template-columns: 1fr;
-      gap: 0;
+      grid-template-columns: 1fr 420px;
+      gap: 24px;
       max-width: 100%;
+      align-items: start;
     }
-    .mockups-area { width: 100%; }
+    .mockups-area { width: 100%; min-width: 0; }
     .spec-area {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 0;
       border: 1px solid var(--border);
       border-radius: var(--radius-card);
       overflow: hidden;
-      margin-top: 24px;
       box-shadow: var(--shadow-subtle);
+      position: sticky;
+      top: 16px;
     }
 
     /* ── Card (MuiCard: 6px radius, CardControl shadow) ─────────────────── */
@@ -561,43 +560,48 @@
 
   </div>
 
-  <!-- Spec panel — horizontal strip below mockups -->
-  <div class="spec-area">
-    <div class="spec-section" style="background:var(--surface);">
+  <!-- Spec panel — right column, sticky -->
+  <div class="spec-area" style="background:var(--surface);">
+    <div style="background:var(--bg);border-bottom:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;">
+      <span style="font-size:13px;font-weight:600;color:var(--black);">Ticket Specification</span>
+      <span style="font-size:11px;color:var(--subtitle);">QP-XXXX</span>
+    </div>
+    <div class="spec-section">
       <div class="spec-label">Metadata</div>
       <div class="spec-row"><span class="spec-key">Initiative</span><span class="spec-val">Product Classification Framework</span></div>
       <div class="spec-row"><span class="spec-key">Sprint</span><span class="spec-val">Sprint 1 — Westtown Unblock</span></div>
       <div class="spec-row"><span class="spec-key">Effort</span><span class="meta-pill pill-light">Light</span></div>
-      <div class="spec-row"><span class="spec-key">Blocks</span><span class="spec-val" style="font-size:11px;font-weight:300;">FDA ENDS ticket</span></div>
+      <div class="spec-row"><span class="spec-key">Blocks</span><span class="spec-val" style="font-size:11px;font-weight:300;">FDA ENDS ticket (depends on this)</span></div>
     </div>
-    <div class="spec-section" style="background:var(--surface);">
+    <div class="spec-section">
       <div class="spec-label">Problem</div>
-      <p style="color:var(--subtitle);line-height:1.6;font-weight:300;">No tobacco or vape product types exist in the classification system. Westtown is onboarding tobacco/vape clients. <strong style="font-weight:600;">Additive only</strong> — no existing records modified.</p>
+      <p style="color:var(--subtitle);line-height:1.6;font-weight:300;">No tobacco or vape product types exist in the classification system. Westtown is onboarding tobacco/vape clients. Without these classifications Q-ScanAI cannot identify them and no compliance rules apply.</p>
+      <p style="color:var(--subtitle);line-height:1.6;margin-top:8px;font-weight:300;"><strong style="font-weight:600;">Additive only</strong> — no existing records modified.</p>
     </div>
-    <div class="spec-section" style="background:var(--surface);">
+    <div class="spec-section">
       <div class="spec-label">New Classifications</div>
       <div style="display:flex;flex-direction:column;gap:0;">
-        <div style="display:flex;align-items:center;justify-content:space-between;font-size:11px;padding:5px 0;border-bottom:1px solid var(--border);font-weight:300;">Disposable Vape / ENDS Device<span class="badge b-never">Never</span></div>
-        <div style="display:flex;align-items:center;justify-content:space-between;font-size:11px;padding:5px 0;border-bottom:1px solid var(--border);font-weight:300;">Vape Cartridge<span class="badge b-never">Never</span></div>
-        <div style="display:flex;align-items:center;justify-content:space-between;font-size:11px;padding:5px 0;border-bottom:1px solid var(--border);font-weight:300;">E-Liquid / Vape Juice<span class="badge b-never">Never</span></div>
-        <div style="display:flex;align-items:center;justify-content:space-between;font-size:11px;padding:5px 0;border-bottom:1px solid var(--border);font-weight:300;">Cigalike / Pod Mod<span class="badge b-never">Never</span></div>
-        <div style="display:flex;align-items:center;justify-content:space-between;font-size:11px;padding:5px 0;font-weight:300;">Traditional Tobacco<span class="badge b-never">Never</span></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;font-size:11px;padding:6px 0;border-bottom:1px solid var(--border);font-weight:300;">Disposable Vape / ENDS Device<span class="badge b-never">Never</span></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;font-size:11px;padding:6px 0;border-bottom:1px solid var(--border);font-weight:300;">Vape Cartridge<span class="badge b-never">Never</span></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;font-size:11px;padding:6px 0;border-bottom:1px solid var(--border);font-weight:300;">E-Liquid / Vape Juice<span class="badge b-never">Never</span></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;font-size:11px;padding:6px 0;border-bottom:1px solid var(--border);font-weight:300;">Cigalike / Pod Mod<span class="badge b-never">Never</span></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;font-size:11px;padding:6px 0;font-weight:300;">Traditional Tobacco<span class="badge b-never">Never</span></div>
       </div>
     </div>
-    <div class="spec-section" style="background:var(--surface);">
+    <div class="spec-section">
       <div class="spec-label">Business Rules</div>
-      <div class="br-item"><span class="br-num">BR-1</span><span style="font-weight:300;">All new classifications under Finished Product. Zero existing records modified.</span></div>
-      <div class="br-item"><span class="br-num">BR-2</span><span style="font-weight:300;">COA Required = Never for all five.</span></div>
-      <div class="br-item"><span class="br-num">BR-3</span><span style="font-weight:300;">Auto-classification keywords wired per keyword table.</span></div>
-      <div class="br-item"><span class="br-num">BR-4</span><span style="font-weight:300;">≥70% confidence auto-classifies; below 70% → manual review queue.</span></div>
-      <div class="br-item"><span class="br-num">BR-5</span><span style="font-weight:300;">Vape/ENDS (not Traditional Tobacco) tagged for FDA ENDS check.</span></div>
+      <div class="br-item"><span class="br-num">BR-1</span><span style="font-weight:300;">All new classifications added under Finished Product. No existing records modified.</span></div>
+      <div class="br-item"><span class="br-num">BR-2</span><span style="font-weight:300;">COA Required = Never for all five new classifications.</span></div>
+      <div class="br-item"><span class="br-num">BR-3</span><span style="font-weight:300;">Auto-classification keywords wired per keyword table in spec.</span></div>
+      <div class="br-item"><span class="br-num">BR-4</span><span style="font-weight:300;">≥70% confidence auto-classifies; below 70% queues for manual review.</span></div>
+      <div class="br-item"><span class="br-num">BR-5</span><span style="font-weight:300;">Vape/ENDS products (not Traditional Tobacco) tagged for FDA ENDS check.</span></div>
     </div>
-    <div class="spec-section" style="background:var(--surface);">
+    <div class="spec-section">
       <div class="spec-label">Acceptance Criteria</div>
-      <div class="ac-item"><span class="ac-check">☐</span><span style="font-weight:300;">All 5 classifications exist with COA Required = Never</span></div>
-      <div class="ac-item"><span class="ac-check">☐</span><span style="font-weight:300;">"Elf Bar 600 Disposable Vape" auto-classifies ≥70%</span></div>
+      <div class="ac-item"><span class="ac-check">☐</span><span style="font-weight:300;">All 5 classifications exist under Finished Product with COA Required = Never</span></div>
+      <div class="ac-item"><span class="ac-check">☐</span><span style="font-weight:300;">"Elf Bar 600 Disposable Vape" auto-classifies at ≥70% confidence</span></div>
       <div class="ac-item"><span class="ac-check">☐</span><span style="font-weight:300;">No COA Required flag on tobacco/vape products</span></div>
-      <div class="ac-item"><span class="ac-check">☐</span><span style="font-weight:300;">New classifications in filter panel and Edit Product modal</span></div>
+      <div class="ac-item"><span class="ac-check">☐</span><span style="font-weight:300;">New classifications in Product Compliance filter and Edit Product modal</span></div>
       <div class="ac-item"><span class="ac-check">☐</span><span style="font-weight:300;">Vape/ENDS products tagged requires-fda-ends-check</span></div>
       <div class="ac-item"><span class="ac-check">☐</span><span style="font-weight:300;">Zero existing classifications modified</span></div>
     </div>
