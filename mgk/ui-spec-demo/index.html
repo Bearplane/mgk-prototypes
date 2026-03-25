@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UI Spec: UIPlayerPanel — MGK Implementation Spec</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-deep: #0a0a0f;
+      --bg-panel: #111118;
+      --bg-card: #1a1008;
+      --bg-inspector: #1e1e1e;
+      --bg-inspector-header: #252525;
+      --bg-inspector-section: #2a2a2a;
+      --bg-inspector-section-title: #333;
+      --border-gold: #8a6530;
+      --border-gold-bright: #c8a050;
+      --border-inspector: #3a3a3a;
+      --text-primary: #f0e8d0;
+      --text-gold: #c8a050;
+      --text-muted: #8a7050;
+      --text-code: #9cdcfe;
+      --text-green: #4aaa60;
+      --text-red: #f44747;
+      --text-dim: #666;
+      --insp-label: #9cdcfe;
+      --insp-val: #ce9178;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg-deep);
+      color: var(--text-primary);
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Toolbar ── */
+    .toolbar {
+      display: flex; align-items: center; gap: 12px;
+      padding: 0 16px; background: #111; border-bottom: 1px solid #333;
+      flex-shrink: 0; height: 44px;
+    }
+    .toolbar-title { font-size: 0.85rem; color: var(--text-gold); font-weight: 600; letter-spacing: 0.04em; }
+    .toolbar-scene { font-size: 0.75rem; color: var(--text-dim); font-family: 'JetBrains Mono', monospace; }
+    .toolbar-spacer { flex: 1; }
+    .toolbar-btn {
+      padding: 5px 12px; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.05em;
+      border-radius: 3px; cursor: pointer; border: 1px solid var(--border-gold);
+      background: transparent; color: var(--text-gold); transition: all 0.15s;
+    }
+    .toolbar-btn:hover { background: rgba(200,160,80,0.15); border-color: var(--border-gold-bright); }
+    .toolbar-btn.active { background: rgba(200,160,80,0.2); border-color: var(--border-gold-bright); }
+    .toolbar-note { font-size: 0.7rem; color: #555; font-style: italic; }
+
+    /* ── Main layout ── */
+    .main-layout { display: flex; flex: 1; overflow: hidden; }
+
+    /* ── Scene viewport ── */
+    .scene-viewport { flex: 1; overflow: hidden; position: relative; background: #09090f; }
+    .scene-scaler { position: absolute; top: 50%; left: 50%; transform-origin: top left; }
+    .scene-canvas {
+      width: 1920px; height: 1080px; position: relative; overflow: hidden;
+      background: #0d0d1a;
+      box-shadow: 0 0 0 1px rgba(200,160,80,0.2), 0 0 80px rgba(0,0,0,0.9);
+    }
+
+    /* ── UI Nodes ── */
+    .ui-node {
+      position: absolute; pointer-events: all; cursor: pointer;
+      border: 1px solid transparent; transition: border-color 0.1s;
+    }
+    .ui-node:hover > .node-label { opacity: 1; }
+    .ui-node:hover { border-color: rgba(200,160,80,0.85) !important; z-index: 9999 !important; }
+    .node-label {
+      position: absolute; top: -18px; left: 0;
+      font-size: 10px; font-family: 'JetBrains Mono', monospace;
+      background: rgba(200,160,80,0.92); color: #000;
+      padding: 1px 5px; border-radius: 2px;
+      white-space: nowrap; opacity: 0; pointer-events: none; z-index: 10000;
+      transition: opacity 0.15s;
+    }
+    .ui-node.selected { border-color: rgba(100,200,255,0.85) !important; box-shadow: inset 0 0 0 1px rgba(100,200,255,0.2); }
+    .ui-node.selected > .node-label { opacity: 1; background: rgba(100,200,255,0.92); }
+    .show-bounds .ui-node { border-color: rgba(200,160,80,0.25) !important; }
+    .ui-node .text-content {
+      position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+      font-family: Georgia, serif; pointer-events: none; overflow: hidden; padding: 4px;
+    }
+
+    /* ── Right panel ── */
+    .right-panel {
+      width: 350px; flex-shrink: 0; display: flex; flex-direction: column;
+      border-left: 1px solid #333; background: var(--bg-inspector); overflow: hidden;
+    }
+    .panel-tabs { display: flex; border-bottom: 1px solid #333; flex-shrink: 0; }
+    .panel-tab {
+      flex: 1; padding: 9px 4px; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.06em;
+      text-transform: uppercase; text-align: center; cursor: pointer; color: var(--text-dim);
+      border-bottom: 2px solid transparent; transition: color 0.15s;
+    }
+    .panel-tab.active { color: var(--text-gold); border-bottom-color: var(--text-gold); }
+    .panel-content { flex: 1; overflow-y: auto; overflow-x: hidden; }
+    .panel-content::-webkit-scrollbar { width: 6px; }
+    .panel-content::-webkit-scrollbar-track { background: #1a1a1a; }
+    .panel-content::-webkit-scrollbar-thumb { background: #444; border-radius: 3px; }
+    .tab-pane { display: none; }
+    .tab-pane.active { display: block; }
+
+    /* ── Inspector styles ── */
+    .insp-empty { padding: 32px 16px; text-align: center; color: var(--text-dim); font-size: 0.85rem; font-style: italic; }
+    .insp-header { padding: 12px 14px; background: var(--bg-inspector-header); border-bottom: 1px solid #333; }
+    .insp-go-name { font-size: 1rem; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; font-family: 'JetBrains Mono', monospace; }
+    .insp-meta { font-size: 0.72rem; color: var(--text-dim); display: flex; flex-wrap: wrap; gap: 4px 12px; }
+    .insp-meta-item { display: flex; gap: 4px; }
+    .insp-section { border-bottom: 1px solid #2a2a2a; }
+    .insp-section-title {
+      padding: 6px 14px; font-size: 0.75rem; font-weight: 700; color: var(--text-gold);
+      background: #2c2c2c; letter-spacing: 0.04em; display: flex; align-items: center; gap: 6px;
+    }
+    .insp-section-title::before { content: '▾'; font-size: 0.6rem; }
+    .insp-section-body { padding: 6px 14px 8px; }
+    .insp-row { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 8px; margin-bottom: 3px; font-size: 0.78rem; line-height: 1.5; }
+    .insp-label { color: var(--insp-label); font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; min-width: 64px; flex-shrink: 0; }
+    .insp-val { color: var(--insp-val); font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; }
+    .insp-path { font-size: 0.63rem; color: #777; word-break: break-all; max-width: 220px; }
+    .insp-muted { color: #666; }
+    .val-true  { color: #4aaa60 !important; }
+    .val-false { color: #f44747 !important; }
+    .color-swatch { display: inline-block; width: 10px; height: 10px; border-radius: 2px; border: 1px solid rgba(255,255,255,0.2); vertical-align: middle; margin-right: 3px; }
+    .script-name { color: #dcdcaa !important; font-weight: 600; }
+    .script-note { color: #777; font-size: 0.66rem; display: block; padding-left: 0; margin-top: 2px; }
+    .script-row { flex-direction: column; align-items: flex-start; }
+
+    /* ── Checklist ── */
+    .checklist-container { padding: 12px 14px; }
+    .checklist-title { font-size: 0.75rem; font-weight: 700; color: var(--text-gold); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #333; }
+    .checklist-item { display: flex; align-items: flex-start; gap: 8px; padding: 6px 0; font-size: 0.78rem; line-height: 1.4; cursor: pointer; border-bottom: 1px solid #252525; }
+    .checklist-item input[type="checkbox"] { flex-shrink: 0; margin-top: 2px; accent-color: var(--text-gold); }
+    .chk-icon { flex-shrink: 0; font-size: 0.8rem; }
+    .chk-label { color: #ccc; }
+    .chk-label strong { color: #dcdcaa; }
+    .chk-label em { color: #9cdcfe; font-style: normal; }
+    .checklist-item:has(input:checked) .chk-label { text-decoration: line-through; opacity: 0.45; }
+    .checklist-section { font-size: 0.68rem; font-weight: 700; color: #666; text-transform: uppercase; letter-spacing: 0.08em; padding: 10px 0 4px; }
+
+    /* ── Hierarchy ── */
+    .hierarchy-tree { padding: 6px 0; font-size: 0.77rem; font-family: 'JetBrains Mono', monospace; }
+    .hier-node { padding: 3px 8px; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: background 0.1s; white-space: nowrap; }
+    .hier-node:hover { background: rgba(200,160,80,0.08); }
+    .hier-node.selected { background: rgba(100,200,255,0.1); color: #9cdcfe; }
+    .hier-inactive { opacity: 0.4; }
+    .hier-name { color: #ccc; overflow: hidden; text-overflow: ellipsis; }
+    .hier-node.selected .hier-name { color: #9cdcfe; }
+    .hier-components { font-size: 0.6rem; color: #555; margin-left: auto; padding-left: 4px; white-space: nowrap; }
+
+    /* ── Status bar ── */
+    .status-bar { height: 24px; background: #007acc; display: flex; align-items: center; padding: 0 12px; gap: 16px; font-size: 0.7rem; color: white; flex-shrink: 0; }
+    .status-item { opacity: 0.9; }
+
+    /* ── Demo badge ── */
+    .demo-badge {
+      position: absolute; bottom: 12px; left: 12px; z-index: 100;
+      background: rgba(200,160,80,0.15); border: 1px solid var(--border-gold);
+      padding: 4px 10px; border-radius: 3px; font-size: 0.7rem; color: var(--text-gold);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    @media print {
+      .toolbar, .scene-viewport, .status-bar, .panel-tabs { display: none !important; }
+      .right-panel { width: 100%; border: none; }
+      .tab-pane { display: block !important; }
+      .main-layout { display: block; }
+      body { overflow: auto; height: auto; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Toolbar ─────────────────────────────────────────────────────────── -->
+<div class="toolbar">
+  <span class="toolbar-title">🔬 UI Spec</span>
+  <span class="toolbar-scene">UIPlayerPanel</span>
+  <span class="toolbar-note">⚠ Mock data — export ui-hierarchy.json from Unity to get real values</span>
+  <div class="toolbar-spacer"></div>
+  <button class="toolbar-btn" id="btn-bounds" onclick="toggleBounds()">Show All Bounds</button>
+  <button class="toolbar-btn" onclick="switchTab('checklist'); setTimeout(()=>window.print(),300)">🖨 Print Checklist</button>
+  <a href="../" style="font-size:0.75rem;color:var(--text-muted);text-decoration:none;padding:5px 10px;border:1px solid #333;border-radius:3px;">← Index</a>
+</div>
+
+<!-- ── Main ──────────────────────────────────────────────────────────────── -->
+<div class="main-layout">
+
+  <!-- Scene viewport -->
+  <div class="scene-viewport" id="viewport">
+    <div class="scene-scaler" id="scaler">
+      <div class="scene-canvas" id="scene-canvas">
+
+        <!-- UIPlayerPanel Root -->
+        <div class="ui-node" data-id="0" style="position:absolute;left:0;top:0;width:460px;height:1080px;background:rgba(13,10,6,0.97);border-right:1px solid #5a3f18;"
+            onclick="inspect(0)">
+          <div class="node-label">UIPlayerPanel</div>
+
+          <!-- Header bar -->
+          <div class="ui-node" data-id="1" style="position:absolute;left:0;top:0;width:460px;height:64px;background:rgba(26,16,8,0.98);border-bottom:1px solid #6a4a20;"
+              onclick="inspect(1)">
+            <div class="node-label">PlayerPanelHeader</div>
+            <div class="text-content" style="font-size:18px;color:#c8a050;font-family:Georgia,serif;justify-content:flex-start;padding-left:20px;">
+              The Merchant's Panel
+            </div>
+          </div>
+
+          <!-- Tab button cluster -->
+          <div class="ui-node" data-id="2" style="position:absolute;left:0;top:64px;width:460px;height:52px;background:rgba(20,12,4,0.95);"
+              onclick="inspect(2)">
+            <div class="node-label">PlayerPanelButtonCluster</div>
+
+            <!-- Quests Tab -->
+            <div class="ui-node" data-id="3" style="position:absolute;left:0;top:0;width:115px;height:52px;background:rgba(35,22,8,0.9);cursor:pointer;"
+                onclick="inspect(3)">
+              <div class="node-label">QuestTab</div>
+              <div class="text-content" style="font-size:13px;color:#c8a050;">Quests</div>
+            </div>
+
+            <!-- Professions Tab -->
+            <div class="ui-node" data-id="4" style="position:absolute;left:115px;top:0;width:115px;height:52px;background:rgba(20,12,4,0.8);"
+                onclick="inspect(4)">
+              <div class="node-label">ProfessionsTab</div>
+              <div class="text-content" style="font-size:13px;color:#8a7050;">Professions</div>
+            </div>
+
+            <!-- Tokens Tab -->
+            <div class="ui-node" data-id="5" style="position:absolute;left:230px;top:0;width:115px;height:52px;background:rgba(20,12,4,0.8);"
+                onclick="inspect(5)">
+              <div class="node-label">TokensTab</div>
+              <div class="text-content" style="font-size:13px;color:#8a7050;">Tokens</div>
+            </div>
+
+            <!-- Inventory Tab -->
+            <div class="ui-node" data-id="6" style="position:absolute;left:345px;top:0;width:115px;height:52px;background:rgba(20,12,4,0.8);"
+                onclick="inspect(6)">
+              <div class="node-label">InventoryTab</div>
+              <div class="text-content" style="font-size:13px;color:#8a7050;">Inventory</div>
+            </div>
+          </div>
+
+          <!-- Tab active indicator line -->
+          <div class="ui-node" data-id="7" style="position:absolute;left:0;top:116px;width:115px;height:3px;background:#c8a050;"
+              onclick="inspect(7)">
+            <div class="node-label">ActiveTabIndicator</div>
+          </div>
+
+          <!-- Scroll view / content area -->
+          <div class="ui-node" data-id="8" style="position:absolute;left:0;top:119px;width:460px;height:900px;overflow:hidden;"
+              onclick="inspect(8)">
+            <div class="node-label">PlayerPanelScrollView</div>
+
+            <!-- Viewport -->
+            <div class="ui-node" data-id="9" style="position:absolute;left:0;top:0;width:460px;height:900px;overflow:hidden;"
+                onclick="inspect(9)">
+              <div class="node-label">Viewport</div>
+
+              <!-- Content -->
+              <div class="ui-node" data-id="10" style="position:absolute;left:0;top:0;width:460px;height:auto;min-height:900px;"
+                  onclick="inspect(10)">
+                <div class="node-label">Content</div>
+
+                <!-- Active Quest section -->
+                <div class="ui-node" data-id="11" style="position:absolute;left:12px;top:16px;width:436px;height:180px;background:rgba(26,16,8,0.9);border:1px solid #5a3f18;border-radius:4px;"
+                    onclick="inspect(11)">
+                  <div class="node-label">ActiveQuestSection</div>
+
+                  <div class="ui-node" data-id="12" style="position:absolute;left:0;top:0;width:436px;height:36px;background:rgba(35,22,8,0.95);border-bottom:1px solid #4a3010;"
+                      onclick="inspect(12)">
+                    <div class="node-label">SectionHeader</div>
+                    <div class="text-content" style="font-size:11px;color:#8a7050;letter-spacing:0.08em;text-transform:uppercase;justify-content:flex-start;padding-left:12px;">
+                      Active Quests
+                    </div>
+                  </div>
+
+                  <div class="ui-node" data-id="13" style="position:absolute;left:12px;top:44px;width:412px;height:120px;"
+                      onclick="inspect(13)">
+                    <div class="node-label">QuestList</div>
+                    <!-- Quest item mock -->
+                    <div class="ui-node" data-id="14" style="position:absolute;left:0;top:0;width:412px;height:52px;background:rgba(35,22,8,0.6);border:1px solid #3a2808;"
+                        onclick="inspect(14)">
+                      <div class="node-label">QuestItem_0</div>
+                      <div class="text-content" style="font-size:12px;color:#c8a050;justify-content:flex-start;padding-left:12px;">
+                        Gather 20 Ironwood Logs
+                      </div>
+                    </div>
+                    <div class="ui-node" data-id="15" style="position:absolute;left:0;top:56px;width:412px;height:52px;background:rgba(35,22,8,0.4);border:1px solid #2a1a04;"
+                        onclick="inspect(15)">
+                      <div class="node-label">QuestItem_1</div>
+                      <div class="text-content" style="font-size:12px;color:#8a7050;justify-content:flex-start;padding-left:12px;">
+                        Sell 5 Iron Swords
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Hero Status section -->
+                <div class="ui-node" data-id="16" style="position:absolute;left:12px;top:208px;width:436px;height:200px;background:rgba(26,16,8,0.9);border:1px solid #5a3f18;border-radius:4px;"
+                    onclick="inspect(16)">
+                  <div class="node-label">HeroStatusSection</div>
+
+                  <div class="ui-node" data-id="17" style="position:absolute;left:0;top:0;width:436px;height:36px;background:rgba(35,22,8,0.95);border-bottom:1px solid #4a3010;"
+                      onclick="inspect(17)">
+                    <div class="node-label">SectionHeader</div>
+                    <div class="text-content" style="font-size:11px;color:#8a7050;letter-spacing:0.08em;text-transform:uppercase;justify-content:flex-start;padding-left:12px;">
+                      Hero Status
+                    </div>
+                  </div>
+
+                  <!-- Hero slot row -->
+                  <div class="ui-node" data-id="18" style="position:absolute;left:12px;top:44px;width:412px;height:140px;"
+                      onclick="inspect(18)">
+                    <div class="node-label">HeroSlotContainer</div>
+                    <!-- 3 hero slots -->
+                    <div class="ui-node" data-id="19" style="position:absolute;left:0;top:0;width:128px;height:128px;background:rgba(35,22,8,0.8);border:1px solid #5a3f18;"
+                        onclick="inspect(19)">
+                      <div class="node-label">HeroSlot_0</div>
+                      <div class="text-content" style="font-size:10px;color:#6a5030;flex-direction:column;gap:4px;">
+                        <span style="font-size:24px;">⚔</span>
+                        <span>Warrior Lv12</span>
+                      </div>
+                    </div>
+                    <div class="ui-node" data-id="20" style="position:absolute;left:142px;top:0;width:128px;height:128px;background:rgba(35,22,8,0.8);border:1px solid #5a3f18;"
+                        onclick="inspect(20)">
+                      <div class="node-label">HeroSlot_1</div>
+                      <div class="text-content" style="font-size:10px;color:#6a5030;flex-direction:column;gap:4px;">
+                        <span style="font-size:24px;">🏹</span>
+                        <span>Ranger Lv8</span>
+                      </div>
+                    </div>
+                    <div class="ui-node" data-id="21" style="position:absolute;left:284px;top:0;width:128px;height:128px;background:rgba(20,12,4,0.6);border:1px dashed #3a2808;"
+                        onclick="inspect(21)">
+                      <div class="node-label">HeroSlot_2</div>
+                      <div class="text-content" style="font-size:10px;color:#3a2808;">+ Hire Hero</div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Token summary -->
+                <div class="ui-node" data-id="22" style="position:absolute;left:12px;top:420px;width:436px;height:120px;background:rgba(26,16,8,0.9);border:1px solid #5a3f18;border-radius:4px;"
+                    onclick="inspect(22)">
+                  <div class="node-label">TokenSummarySection</div>
+                  <div class="ui-node" data-id="23" style="position:absolute;left:0;top:0;width:436px;height:36px;background:rgba(35,22,8,0.95);border-bottom:1px solid #4a3010;"
+                      onclick="inspect(23)">
+                    <div class="node-label">SectionHeader</div>
+                    <div class="text-content" style="font-size:11px;color:#8a7050;letter-spacing:0.08em;text-transform:uppercase;justify-content:flex-start;padding-left:12px;">Token Balance</div>
+                  </div>
+                  <div class="ui-node" data-id="24" style="position:absolute;left:12px;top:44px;width:412px;height:64px;"
+                      onclick="inspect(24)">
+                    <div class="node-label">TokenRow</div>
+                    <div style="display:flex;gap:24px;padding:8px 0;font-family:'JetBrains Mono',monospace;font-size:12px;">
+                      <span style="color:#c8a050">⚜ Gold: <strong>4,820</strong></span>
+                      <span style="color:#9090c0">💎 Gems: <strong>320</strong></span>
+                      <span style="color:#60a890">🌿 Essence: <strong>155</strong></span>
+                    </div>
+                  </div>
+                </div>
+
+              </div><!-- /Content -->
+            </div><!-- /Viewport -->
+          </div><!-- /ScrollView -->
+
+        </div><!-- /UIPlayerPanel Root -->
+
+      </div><!-- /scene-canvas -->
+      <div class="demo-badge">⚠ MOCK DATA — No ui-hierarchy.json</div>
+    </div><!-- /scaler -->
+  </div><!-- /viewport -->
+
+  <!-- Right panel -->
+  <div class="right-panel">
+    <div class="panel-tabs">
+      <div class="panel-tab active" id="tab-btn-inspector" onclick="switchTab('inspector')">Inspector</div>
+      <div class="panel-tab" id="tab-btn-hierarchy" onclick="switchTab('hierarchy')">Hierarchy</div>
+      <div class="panel-tab" id="tab-btn-checklist" onclick="switchTab('checklist')">Checklist</div>
+    </div>
+
+    <div class="panel-content">
+      <!-- Inspector -->
+      <div class="tab-pane active" id="tab-inspector">
+        <div id="inspector-content">
+          <div class="insp-empty">Click any element in the scene to inspect it.</div>
+        </div>
+      </div>
+
+      <!-- Hierarchy -->
+      <div class="tab-pane" id="tab-hierarchy">
+        <div class="hierarchy-tree" id="hierarchy-tree">
+          <!-- populated by JS -->
+        </div>
+      </div>
+
+      <!-- Checklist -->
+      <div class="tab-pane" id="tab-checklist">
+        <div class="checklist-container">
+          <div class="checklist-title">Implementation Checklist — UIPlayerPanel</div>
+
+          <div class="checklist-section">Setup</div>
+          <label class="checklist-item"><input type="checkbox"><span class="chk-icon">⚙</span><span class="chk-label">Create <strong>UIPlayerPanel</strong> scene and add Canvas (ScreenSpaceOverlay, sort order 10)</span></label>
+          <label class="checklist-item"><input type="checkbox"><span class="chk-icon">⚙</span><span class="chk-label">Add <strong>CanvasScaler</strong> — Reference Resolution 1920×1080, Match Width Or Height 0.5</span></label>
+          <label class="checklist-item"><input type="checkbox"><span class="chk-icon">⚙</span><span class="chk-label">Add <strong>GraphicRaycaster</strong> to Canvas root</span></label>
+
+          <div class="checklist-section">Root Panel</div>
+          <label class="checklist-item"><input type="checkbox"><span class="chk-icon">🔗</span><span class="chk-label">Add <strong>CanvasGroup</strong> to <em>UIPlayerPanel</em> root — used for show/hide fade</span></label>
+          <label class="checklist-item"><input type="checkbox"><span class="chk-icon">⚙</span><span class="chk-label">Wire <strong>PlayerPanelController</strong> SerializeFields: scrollView, contentRoot, tabButtons[], tabIndicator</span></label>
+          <label class="checklist-item"><input type="checkbox"><span class="chk-icon">🖼</span><span class="chk-label">Assign <strong>PanelBg_Dark</strong> sprite to root Image (Sliced, color #0d0a06)</span></label>
+
+          <div class="checklist-section">Tab Bar</div>
+          <label class="checklist-item"><input type="checkbox"><span class="chk-icon">⚙</span><span class="chk-label">Add <strong>HorizontalLayoutGroup</strong> to <em>PlayerPanelButtonCluster</em> — spacing 0, Control Width ✓ Height ✓</span></label>
+          <label class="checklist-item"><input type="checkbox"><span class="chk-icon">⚡</span><span class="chk-label">Hook <strong>Button.onClick</strong> on <em>QuestTab</em> → PlayerPanelController.OnTabClicked(0)</span></label>
+          <label class="checklist-item"><input type="checkbox"><span class="chk-icon">⚡</span><span class="chk-label">Hook <strong>Button.onClick</strong> on <em>ProfessionsTab</em> → PlayerPanelController.OnTabClicked(1)</span></label>
+          <label class="checklist-item"><input type="checkbox"><span class="chk-icon">⚡</span><span class="chk-label">Hook <strong>Button.onClick</strong> on <em>TokensTab</em> → PlayerPanelController.OnTabClicked(2)</span></label>
+          <label class="checklist-item"><input type="checkbox"><span class="chk-icon">⚡</span><span class="chk-label">Hook <strong>Button.onClick</strong> on <em>InventoryTab</em> → PlayerPanelController.OnTabClicked(3)</span></label>
+          <label class="checklist-item"><input type="checkbox"><span class="chk-icon">🔗</span><span class="chk-label">Wire <strong>ActiveTabIndicator</strong> RectTransform ref to PlayerPanelController for sliding animation</span></label>
+
+          <div class="checklist-section">Scroll View</div>
+          <label class="checklist-item"><input type="checkbox"><span class="chk-icon">🔗</span><span class="chk-label">Assign <strong>ScrollRect.content</strong> = Content RectTransform on <em>PlayerPanelScrollView</em></span></label>
+          <label class="checklist-item"><input type="checkbox"><span class="chk-icon">🔗</span><span class="chk-label">Assign <strong>ScrollRect.viewport</strong> = Viewport RectTransform</span></label>
+          <label class="checklist-item"><input type="checkbox"><span class="chk-icon">⚙</span><span class="chk-label">Add <strong>ContentSizeFitter</strong> to Content — VerticalFit: PreferredSize</span></label>
+          <label class="checklist-item"><input type="checkbox"><span class="chk-icon">⚙</span><span class="chk-label">Add <strong>VerticalLayoutGroup</strong> to Content — spacing 8, padding L:12 R:12 T:16 B:16</span></label>
+
+          <div class="checklist-section">Content Sections</div>
+          <label class="checklist-item"><input type="checkbox"><span class="chk-icon">⚙</span><span class="chk-label">Wire <strong>UIActiveQuestView</strong> controller SerializeFields on <em>ActiveQuestSection</em></span></label>
+          <label class="checklist-item"><input type="checkbox"><span class="chk-icon">⚙</span><span class="chk-label">Wire <strong>UIPlayerPanelHeroView</strong> SerializeFields: heroSlots[], hireCTA on <em>HeroStatusSection</em></span></label>
+          <label class="checklist-item"><input type="checkbox"><span class="chk-icon">⚙</span><span class="chk-label">Wire <strong>TokenView</strong> SerializeFields: goldText, gemText, essenceText on <em>TokenSummarySection</em></span></label>
+
+          <div class="checklist-section">Prefabs</div>
+          <label class="checklist-item"><input type="checkbox"><span class="chk-icon">📦</span><span class="chk-label">Create prefab: <strong>QuestItem</strong> → used in QuestList (instantiated at runtime)</span></label>
+          <label class="checklist-item"><input type="checkbox"><span class="chk-icon">📦</span><span class="chk-label">Create prefab: <strong>HeroSlot</strong> → reused in HeroSlotContainer</span></label>
+          <label class="checklist-item"><input type="checkbox"><span class="chk-icon">📦</span><span class="chk-label">Create prefab: <strong>TabButton</strong> → reused in PlayerPanelButtonCluster (x4)</span></label>
+        </div>
+      </div>
+    </div>
+  </div><!-- /right-panel -->
+
+</div><!-- /main-layout -->
+
+<!-- Status bar -->
+<div class="status-bar">
+  <span class="status-item" id="status-selected">No selection</span>
+  <span class="status-item">25 nodes (mock)</span>
+  <span class="status-item" style="margin-left:auto;opacity:0.6">Canvas: 1920×1080 · Export from Unity to get real data</span>
+</div>
+
+<script>
+// ── Node data ─────────────────────────────────────────────────────────────────
+const NODES = {
+  0: {
+    name: 'UIPlayerPanel',
+    active: true, tag: 'Untagged', prefab: null,
+    components: ['CanvasGroup', 'PlayerPanelController'],
+    rectTransform: { anchoredPosition: [0, 0], sizeDelta: [460, 1080], anchorMin: [0, 0], anchorMax: [0, 1], pivot: [0, 0.5], offsetMin: [0, 0], offsetMax: [460, 0] },
+    canvasGroup: { alpha: 1.0, interactable: true, blocksRaycasts: true },
+    scripts: ['PlayerPanelController'],
+  },
+  1: {
+    name: 'PlayerPanelHeader', active: true, tag: 'Untagged',
+    components: ['Image', 'TextMeshProUGUI'],
+    rectTransform: { anchoredPosition: [0, 0], sizeDelta: [460, 64], anchorMin: [0, 1], anchorMax: [1, 1], pivot: [0.5, 1], offsetMin: [0, -64], offsetMax: [0, 0] },
+    image: { spriteName: 'PanelHeader_Dark', color: [0.102, 0.063, 0.031, 0.98], imageType: 'Sliced', raycastTarget: false },
+    tmpText: { text: "The Merchant's Panel", fontSize: 20, fontStyle: 'Bold', color: [0.784, 0.627, 0.314, 1], alignment: 'MiddleLeft', autoSizeText: false },
+  },
+  2: {
+    name: 'PlayerPanelButtonCluster', active: true, tag: 'Untagged',
+    components: ['Image', 'HorizontalLayoutGroup'],
+    rectTransform: { anchoredPosition: [0, -64], sizeDelta: [460, 52], anchorMin: [0, 1], anchorMax: [1, 1], pivot: [0.5, 1], offsetMin: [0, -116], offsetMax: [0, -64] },
+    image: { spriteName: null, color: [0.078, 0.047, 0.016, 0.95], imageType: 'Simple', raycastTarget: false },
+    layoutGroup: { type: 'horizontal', spacing: 0, paddingTop: 0, paddingBottom: 0, paddingLeft: 0, paddingRight: 0, childAlignment: 'UpperLeft', controlChildWidth: true, controlChildHeight: true, childForceExpandWidth: true, childForceExpandHeight: false },
+  },
+  3: {
+    name: 'QuestTab', active: true, tag: 'Untagged',
+    components: ['Image', 'Button', 'TextMeshProUGUI'],
+    rectTransform: { anchoredPosition: [0, 0], sizeDelta: [115, 52], anchorMin: [0, 0], anchorMax: [0, 0], pivot: [0, 0] },
+    image: { spriteName: 'TabButton_Active', color: [0.137, 0.086, 0.031, 0.9], imageType: 'Sliced', raycastTarget: true },
+    button: { transitionType: 'ColorTint', normalColor: [1,1,1,1], highlightedColor: [0.96,0.96,0.96,1], pressedColor: [0.78,0.78,0.78,1], disabledColor: [0.78,0.78,0.78,0.5] },
+    tmpText: { text: 'Quests', fontSize: 14, fontStyle: 'SemiBold', color: [0.784, 0.627, 0.314, 1], alignment: 'Center', autoSizeText: false },
+  },
+  4: {
+    name: 'ProfessionsTab', active: true, tag: 'Untagged',
+    components: ['Image', 'Button', 'TextMeshProUGUI'],
+    rectTransform: { anchoredPosition: [115, 0], sizeDelta: [115, 52], anchorMin: [0, 0], anchorMax: [0, 0], pivot: [0, 0] },
+    image: { spriteName: 'TabButton_Inactive', color: [0.078, 0.047, 0.016, 0.8], imageType: 'Sliced', raycastTarget: true },
+    button: { transitionType: 'ColorTint', normalColor: [1,1,1,1], highlightedColor: [0.96,0.96,0.96,1], pressedColor: [0.78,0.78,0.78,1], disabledColor: [0.78,0.78,0.78,0.5] },
+    tmpText: { text: 'Professions', fontSize: 13, fontStyle: 'Normal', color: [0.541, 0.439, 0.314, 1], alignment: 'Center', autoSizeText: false },
+  },
+  5: {
+    name: 'TokensTab', active: true, tag: 'Untagged',
+    components: ['Image', 'Button', 'TextMeshProUGUI'],
+    rectTransform: { anchoredPosition: [230, 0], sizeDelta: [115, 52], anchorMin: [0, 0], anchorMax: [0, 0], pivot: [0, 0] },
+    image: { spriteName: 'TabButton_Inactive', color: [0.078, 0.047, 0.016, 0.8], imageType: 'Sliced', raycastTarget: true },
+    button: { transitionType: 'ColorTint', normalColor: [1,1,1,1], highlightedColor: [0.96,0.96,0.96,1], pressedColor: [0.78,0.78,0.78,1], disabledColor: [0.78,0.78,0.78,0.5] },
+    tmpText: { text: 'Tokens', fontSize: 14, fontStyle: 'Normal', color: [0.541, 0.439, 0.314, 1], alignment: 'Center', autoSizeText: false },
+  },
+  6: {
+    name: 'InventoryTab', active: true, tag: 'Untagged',
+    components: ['Image', 'Button', 'TextMeshProUGUI'],
+    rectTransform: { anchoredPosition: [345, 0], sizeDelta: [115, 52], anchorMin: [0, 0], anchorMax: [0, 0], pivot: [0, 0] },
+    image: { spriteName: 'TabButton_Inactive', color: [0.078, 0.047, 0.016, 0.8], imageType: 'Sliced', raycastTarget: true },
+    button: { transitionType: 'ColorTint', normalColor: [1,1,1,1], highlightedColor: [0.96,0.96,0.96,1], pressedColor: [0.78,0.78,0.78,1], disabledColor: [0.78,0.78,0.78,0.5] },
+    tmpText: { text: 'Inventory', fontSize: 13, fontStyle: 'Normal', color: [0.541, 0.439, 0.314, 1], alignment: 'Center', autoSizeText: false },
+  },
+  7: {
+    name: 'ActiveTabIndicator', active: true, tag: 'Untagged',
+    components: ['Image'],
+    rectTransform: { anchoredPosition: [0, 0], sizeDelta: [115, 3], anchorMin: [0, 0], anchorMax: [0, 0], pivot: [0, 1] },
+    image: { spriteName: null, color: [0.784, 0.627, 0.314, 1], imageType: 'Simple', raycastTarget: false },
+  },
+  8: {
+    name: 'PlayerPanelScrollView', active: true, tag: 'Untagged',
+    components: ['ScrollRect', 'Image'],
+    rectTransform: { anchoredPosition: [0, -119], sizeDelta: [460, 900], anchorMin: [0, 1], anchorMax: [1, 1], pivot: [0.5, 1], offsetMin: [0, -1019], offsetMax: [0, -119] },
+    scrollRect: { horizontal: false, vertical: true, movementType: 'Elastic', elasticity: 0.1, inertia: true },
+    image: { spriteName: null, color: [0, 0, 0, 0], imageType: 'Simple', raycastTarget: true },
+  },
+  9: { name: 'Viewport', active: true, components: ['Mask', 'Image'], rectTransform: { anchoredPosition: [0,0], sizeDelta: [460, 900], anchorMin: [0,0], anchorMax: [1,1], pivot: [0,1] } },
+  10: {
+    name: 'Content', active: true,
+    components: ['VerticalLayoutGroup', 'ContentSizeFitter'],
+    rectTransform: { anchoredPosition: [0, 0], sizeDelta: [460, 0], anchorMin: [0, 1], anchorMax: [1, 1], pivot: [0.5, 1] },
+    layoutGroup: { type: 'vertical', spacing: 8, paddingTop: 16, paddingBottom: 16, paddingLeft: 12, paddingRight: 12, childAlignment: 'UpperLeft', controlChildWidth: true, controlChildHeight: false, childForceExpandWidth: true, childForceExpandHeight: false },
+    contentSizeFitter: { horizontalFit: 'Unconstrained', verticalFit: 'PreferredSize' },
+  },
+  11: {
+    name: 'ActiveQuestSection', active: true, tag: 'Untagged',
+    components: ['Image', 'VerticalLayoutGroup', 'UIActiveQuestView'],
+    rectTransform: { anchoredPosition: [0, 0], sizeDelta: [436, 180], anchorMin: [0, 0], anchorMax: [1, 0], pivot: [0.5, 0] },
+    image: { spriteName: 'PanelSection_Bg', color: [0.102, 0.063, 0.031, 0.9], imageType: 'Sliced', raycastTarget: false },
+    layoutGroup: { type: 'vertical', spacing: 0, paddingTop: 0, paddingBottom: 0, paddingLeft: 0, paddingRight: 0, childAlignment: 'UpperLeft', controlChildWidth: true, controlChildHeight: false, childForceExpandWidth: true, childForceExpandHeight: false },
+    scripts: ['UIActiveQuestView'],
+  },
+  12: { name: 'SectionHeader', active: true, components: ['Image', 'TextMeshProUGUI'],
+    rectTransform: { anchoredPosition: [0,0], sizeDelta: [436, 36], anchorMin: [0,1], anchorMax: [1,1], pivot: [0.5,1] },
+    image: { spriteName: 'SectionHeader_Bg', color: [0.137, 0.086, 0.031, 0.95], imageType: 'Sliced', raycastTarget: false },
+    tmpText: { text: 'Active Quests', fontSize: 11, fontStyle: 'Normal', color: [0.541, 0.439, 0.314, 1], alignment: 'MiddleLeft', autoSizeText: false } },
+  13: { name: 'QuestList', active: true, components: ['VerticalLayoutGroup', 'ContentSizeFitter'],
+    rectTransform: { anchoredPosition: [12, -44], sizeDelta: [412, 120], anchorMin: [0,1], anchorMax: [1,1], pivot: [0.5,1] },
+    layoutGroup: { type: 'vertical', spacing: 4, paddingTop: 0, paddingBottom: 0, paddingLeft: 0, paddingRight: 0, childAlignment: 'UpperLeft', controlChildWidth: true, controlChildHeight: false, childForceExpandWidth: true, childForceExpandHeight: false } },
+  14: { name: 'QuestItem_0', active: true, components: ['Image', 'TextMeshProUGUI', 'Button', 'QuestItemView'],
+    rectTransform: { anchoredPosition: [0, 0], sizeDelta: [412, 52], anchorMin: [0,0], anchorMax: [1,0], pivot: [0.5, 0] },
+    button: { transitionType: 'ColorTint', normalColor: [1,1,1,1], highlightedColor: [0.9,0.9,0.9,1], pressedColor: [0.7,0.7,0.7,1], disabledColor: [0.5,0.5,0.5,0.5] },
+    scripts: ['QuestItemView'] },
+  15: { name: 'QuestItem_1', active: true, components: ['Image', 'TextMeshProUGUI', 'Button', 'QuestItemView'],
+    rectTransform: { anchoredPosition: [0, -56], sizeDelta: [412, 52], anchorMin: [0,0], anchorMax: [1,0], pivot: [0.5, 0] },
+    button: { transitionType: 'ColorTint', normalColor: [1,1,1,1], highlightedColor: [0.9,0.9,0.9,1], pressedColor: [0.7,0.7,0.7,1], disabledColor: [0.5,0.5,0.5,0.5] },
+    scripts: ['QuestItemView'] },
+  16: { name: 'HeroStatusSection', active: true, components: ['Image', 'VerticalLayoutGroup', 'UIPlayerPanelHeroView'],
+    rectTransform: { anchoredPosition: [0, -208], sizeDelta: [436, 200], anchorMin: [0,1], anchorMax: [1,1], pivot: [0.5,1] },
+    image: { spriteName: 'PanelSection_Bg', color: [0.102, 0.063, 0.031, 0.9], imageType: 'Sliced', raycastTarget: false },
+    scripts: ['UIPlayerPanelHeroView'] },
+  17: { name: 'SectionHeader', active: true, components: ['Image', 'TextMeshProUGUI'],
+    rectTransform: { anchoredPosition: [0,0], sizeDelta: [436, 36], anchorMin: [0,1], anchorMax: [1,1], pivot: [0.5,1] },
+    tmpText: { text: 'Hero Status', fontSize: 11, fontStyle: 'Normal', color: [0.541, 0.439, 0.314, 1], alignment: 'MiddleLeft', autoSizeText: false } },
+  18: { name: 'HeroSlotContainer', active: true, components: ['HorizontalLayoutGroup'],
+    rectTransform: { anchoredPosition: [12,-44], sizeDelta: [412, 140], anchorMin: [0,1], anchorMax: [1,1], pivot: [0.5,1] },
+    layoutGroup: { type: 'horizontal', spacing: 14, paddingTop: 0, paddingBottom: 0, paddingLeft: 0, paddingRight: 0, childAlignment: 'UpperLeft', controlChildWidth: false, controlChildHeight: false, childForceExpandWidth: false, childForceExpandHeight: false } },
+  19: { name: 'HeroSlot_0', active: true, components: ['Image', 'Button', 'HeroSlotView'],
+    rectTransform: { anchoredPosition: [0,0], sizeDelta: [128, 128], anchorMin: [0,0], anchorMax: [0,0], pivot: [0,0] },
+    scripts: ['HeroSlotView'] },
+  20: { name: 'HeroSlot_1', active: true, components: ['Image', 'Button', 'HeroSlotView'],
+    rectTransform: { anchoredPosition: [142,0], sizeDelta: [128, 128], anchorMin: [0,0], anchorMax: [0,0], pivot: [0,0] },
+    scripts: ['HeroSlotView'] },
+  21: { name: 'HeroSlot_2', active: true, components: ['Image', 'Button', 'HeroSlotView'],
+    rectTransform: { anchoredPosition: [284,0], sizeDelta: [128, 128], anchorMin: [0,0], anchorMax: [0,0], pivot: [0,0] },
+    scripts: ['HeroSlotView'] },
+  22: { name: 'TokenSummarySection', active: true, components: ['Image', 'VerticalLayoutGroup', 'TokenView'],
+    rectTransform: { anchoredPosition: [0,-420], sizeDelta: [436, 120], anchorMin: [0,1], anchorMax: [1,1], pivot: [0.5,1] },
+    image: { spriteName: 'PanelSection_Bg', color: [0.102, 0.063, 0.031, 0.9], imageType: 'Sliced', raycastTarget: false },
+    scripts: ['TokenView'] },
+  23: { name: 'SectionHeader', active: true, components: ['Image', 'TextMeshProUGUI'],
+    rectTransform: { anchoredPosition: [0,0], sizeDelta: [436, 36], anchorMin: [0,1], anchorMax: [1,1], pivot: [0.5,1] },
+    tmpText: { text: 'Token Balance', fontSize: 11, fontStyle: 'Normal', color: [0.541, 0.439, 0.314, 1], alignment: 'MiddleLeft', autoSizeText: false } },
+  24: { name: 'TokenRow', active: true, components: ['HorizontalLayoutGroup', 'TokenRowView'],
+    rectTransform: { anchoredPosition: [12,-44], sizeDelta: [412, 64], anchorMin: [0,1], anchorMax: [1,1], pivot: [0.5,1] },
+    scripts: ['TokenRowView'] },
+};
+
+// ── Hierarchy structure ────────────────────────────────────────────────────────
+const HIERARCHY = [
+  { id: 0, depth: 0, name: 'UIPlayerPanel', active: true, icon: '📋', children: [
+    { id: 1, depth: 1, name: 'PlayerPanelHeader', active: true, icon: '📝' },
+    { id: 2, depth: 1, name: 'PlayerPanelButtonCluster', active: true, icon: '📁', children: [
+      { id: 3, depth: 2, name: 'QuestTab', active: true, icon: '🔘' },
+      { id: 4, depth: 2, name: 'ProfessionsTab', active: true, icon: '🔘' },
+      { id: 5, depth: 2, name: 'TokensTab', active: true, icon: '🔘' },
+      { id: 6, depth: 2, name: 'InventoryTab', active: true, icon: '🔘' },
+    ]},
+    { id: 7, depth: 1, name: 'ActiveTabIndicator', active: true, icon: '▫' },
+    { id: 8, depth: 1, name: 'PlayerPanelScrollView', active: true, icon: '📜', children: [
+      { id: 9, depth: 2, name: 'Viewport', active: true, icon: '📁', children: [
+        { id: 10, depth: 3, name: 'Content', active: true, icon: '📁', children: [
+          { id: 11, depth: 4, name: 'ActiveQuestSection', active: true, icon: '📁', children: [
+            { id: 12, depth: 5, name: 'SectionHeader', active: true, icon: '📝' },
+            { id: 13, depth: 5, name: 'QuestList', active: true, icon: '📁', children: [
+              { id: 14, depth: 6, name: 'QuestItem_0', active: true, icon: '🔘' },
+              { id: 15, depth: 6, name: 'QuestItem_1', active: true, icon: '🔘' },
+            ]},
+          ]},
+          { id: 16, depth: 4, name: 'HeroStatusSection', active: true, icon: '📁', children: [
+            { id: 17, depth: 5, name: 'SectionHeader', active: true, icon: '📝' },
+            { id: 18, depth: 5, name: 'HeroSlotContainer', active: true, icon: '📁', children: [
+              { id: 19, depth: 6, name: 'HeroSlot_0', active: true, icon: '🔘' },
+              { id: 20, depth: 6, name: 'HeroSlot_1', active: true, icon: '🔘' },
+              { id: 21, depth: 6, name: 'HeroSlot_2', active: true, icon: '🔘' },
+            ]},
+          ]},
+          { id: 22, depth: 4, name: 'TokenSummarySection', active: true, icon: '📁', children: [
+            { id: 23, depth: 5, name: 'SectionHeader', active: true, icon: '📝' },
+            { id: 24, depth: 5, name: 'TokenRow', active: true, icon: '▫' },
+          ]},
+        ]},
+      ]},
+    ]},
+  ]},
+];
+
+// ── Utility functions ─────────────────────────────────────────────────────────
+function floatToHex(arr) {
+  if (!arr || arr.length < 3) return '#ffffff';
+  return '#' + [arr[0], arr[1], arr[2]].map(v => Math.round(v * 255).toString(16).padStart(2,'0')).join('');
+}
+function bool(v) { return v ? '✓' : '✗'; }
+function boolClass(v) { return v ? 'val-true' : 'val-false'; }
+
+function buildInspectorHTML(id) {
+  const n = NODES[id];
+  if (!n) return '<div class="insp-empty">No data</div>';
+
+  let html = `<div class="insp-header">
+    <div class="insp-go-name">${n.name}</div>
+    <div class="insp-meta">
+      <span class="insp-meta-item"><span class="insp-label" style="min-width:auto">Active</span>&nbsp;<span class="insp-val ${boolClass(n.active)}">${bool(n.active)}</span></span>
+      <span class="insp-meta-item"><span class="insp-label" style="min-width:auto">Tag</span>&nbsp;<span class="insp-val">${n.tag || 'Untagged'}</span></span>
+      <span class="insp-meta-item"><span class="insp-label" style="min-width:auto">Prefab</span>&nbsp;<span class="insp-val">${n.prefab || '—'}</span></span>
+    </div>
+  </div>`;
+
+  // Components badge row
+  if (n.components && n.components.length) {
+    html += `<div style="padding:6px 14px;background:#222;border-bottom:1px solid #2a2a2a;font-size:0.68rem;color:#666;font-family:'JetBrains Mono',monospace">
+      ${n.components.map(c => `<span style="margin-right:6px;color:#555">${c}</span>`).join('')}
+    </div>`;
+  }
+
+  // RectTransform
+  if (n.rectTransform) {
+    const rt = n.rectTransform;
+    html += section('RectTransform', `
+      <div class="insp-row">
+        <span class="insp-label">Pos X</span><span class="insp-val">${rt.anchoredPosition[0].toFixed(1)}</span>
+        <span class="insp-label">Pos Y</span><span class="insp-val">${rt.anchoredPosition[1].toFixed(1)}</span>
+      </div>
+      <div class="insp-row">
+        <span class="insp-label">Width</span><span class="insp-val">${rt.sizeDelta[0].toFixed(1)}</span>
+        <span class="insp-label">Height</span><span class="insp-val">${rt.sizeDelta[1].toFixed(1)}</span>
+      </div>
+      <div class="insp-row">
+        <span class="insp-label">Anchor Min</span><span class="insp-val">(${rt.anchorMin[0]}, ${rt.anchorMin[1]})</span>
+        <span class="insp-label">Max</span><span class="insp-val">(${rt.anchorMax[0]}, ${rt.anchorMax[1]})</span>
+      </div>
+      <div class="insp-row">
+        <span class="insp-label">Pivot</span><span class="insp-val">(${rt.pivot[0]}, ${rt.pivot[1]})</span>
+      </div>
+    `);
+  }
+
+  // Image
+  if (n.image) {
+    const im = n.image;
+    const hex = floatToHex(im.color);
+    const alpha = im.color ? im.color[3].toFixed(2) : '1.00';
+    html += section('Image', `
+      <div class="insp-row">
+        <span class="insp-label">Sprite</span><span class="insp-val">${im.spriteName || '(none)'}</span>
+      </div>
+      <div class="insp-row">
+        <span class="insp-label">Color</span>
+        <span class="insp-val"><span class="color-swatch" style="background:${hex}"></span>${hex} <span class="insp-muted">α ${alpha}</span></span>
+      </div>
+      <div class="insp-row">
+        <span class="insp-label">Type</span><span class="insp-val">${im.imageType}</span>
+        <span class="insp-label">Raycast</span><span class="insp-val ${boolClass(im.raycastTarget)}">${bool(im.raycastTarget)}</span>
+      </div>
+    `);
+  }
+
+  // LayoutGroup
+  if (n.layoutGroup) {
+    const lg = n.layoutGroup;
+    html += section((lg.type === 'vertical' ? 'Vertical' : 'Horizontal') + 'LayoutGroup', `
+      <div class="insp-row"><span class="insp-label">Spacing</span><span class="insp-val">${lg.spacing}</span></div>
+      <div class="insp-row"><span class="insp-label">Padding</span><span class="insp-val">T:${lg.paddingTop} B:${lg.paddingBottom} L:${lg.paddingLeft} R:${lg.paddingRight}</span></div>
+      <div class="insp-row"><span class="insp-label">Alignment</span><span class="insp-val">${lg.childAlignment}</span></div>
+      <div class="insp-row">
+        <span class="insp-label">Ctrl W</span><span class="insp-val ${boolClass(lg.controlChildWidth)}">${bool(lg.controlChildWidth)}</span>
+        <span class="insp-label">Ctrl H</span><span class="insp-val ${boolClass(lg.controlChildHeight)}">${bool(lg.controlChildHeight)}</span>
+      </div>
+      <div class="insp-row">
+        <span class="insp-label">Expand W</span><span class="insp-val ${boolClass(lg.childForceExpandWidth)}">${bool(lg.childForceExpandWidth)}</span>
+        <span class="insp-label">Expand H</span><span class="insp-val ${boolClass(lg.childForceExpandHeight)}">${bool(lg.childForceExpandHeight)}</span>
+      </div>
+    `);
+  }
+
+  // TMP
+  if (n.tmpText) {
+    const t = n.tmpText;
+    const hex = floatToHex(t.color);
+    html += section('TextMeshProUGUI', `
+      <div class="insp-row"><span class="insp-label">Text</span><span class="insp-val" style="font-style:italic;color:#ce9178">"${t.text}"</span></div>
+      <div class="insp-row">
+        <span class="insp-label">Font Size</span><span class="insp-val">${t.fontSize}</span>
+        <span class="insp-label">Style</span><span class="insp-val">${t.fontStyle}</span>
+      </div>
+      <div class="insp-row">
+        <span class="insp-label">Color</span>
+        <span class="insp-val"><span class="color-swatch" style="background:${hex}"></span>${hex}</span>
+      </div>
+      <div class="insp-row"><span class="insp-label">Alignment</span><span class="insp-val">${t.alignment}</span></div>
+      <div class="insp-row">
+        <span class="insp-label">Auto Size</span><span class="insp-val ${boolClass(t.autoSizeText)}">${bool(t.autoSizeText)}</span>
+      </div>
+    `);
+  }
+
+  // Button
+  if (n.button) {
+    const b = n.button;
+    html += section('Button', `
+      <div class="insp-row"><span class="insp-label">Transition</span><span class="insp-val">${b.transitionType}</span></div>
+      <div class="insp-row">
+        <span class="insp-label">Normal</span><span class="insp-val"><span class="color-swatch" style="background:${floatToHex(b.normalColor)}"></span>${floatToHex(b.normalColor)}</span>
+        <span class="insp-label">Hover</span><span class="insp-val"><span class="color-swatch" style="background:${floatToHex(b.highlightedColor)}"></span>${floatToHex(b.highlightedColor)}</span>
+      </div>
+      <div class="insp-row">
+        <span class="insp-label">Pressed</span><span class="insp-val"><span class="color-swatch" style="background:${floatToHex(b.pressedColor)}"></span>${floatToHex(b.pressedColor)}</span>
+        <span class="insp-label">Disabled</span><span class="insp-val"><span class="color-swatch" style="background:${floatToHex(b.disabledColor)}"></span>${floatToHex(b.disabledColor)}</span>
+      </div>
+    `);
+  }
+
+  // CanvasGroup
+  if (n.canvasGroup) {
+    const cg = n.canvasGroup;
+    html += section('CanvasGroup', `
+      <div class="insp-row"><span class="insp-label">Alpha</span><span class="insp-val">${cg.alpha.toFixed(2)}</span></div>
+      <div class="insp-row">
+        <span class="insp-label">Interactable</span><span class="insp-val ${boolClass(cg.interactable)}">${bool(cg.interactable)}</span>
+        <span class="insp-label">Blocks Raycasts</span><span class="insp-val ${boolClass(cg.blocksRaycasts)}">${bool(cg.blocksRaycasts)}</span>
+      </div>
+    `);
+  }
+
+  // ContentSizeFitter
+  if (n.contentSizeFitter) {
+    const csf = n.contentSizeFitter;
+    html += section('ContentSizeFitter', `
+      <div class="insp-row"><span class="insp-label">Horizontal</span><span class="insp-val">${csf.horizontalFit}</span></div>
+      <div class="insp-row"><span class="insp-label">Vertical</span><span class="insp-val">${csf.verticalFit}</span></div>
+    `);
+  }
+
+  // ScrollRect
+  if (n.scrollRect) {
+    const sr = n.scrollRect;
+    html += section('ScrollRect', `
+      <div class="insp-row">
+        <span class="insp-label">Horizontal</span><span class="insp-val ${boolClass(sr.horizontal)}">${bool(sr.horizontal)}</span>
+        <span class="insp-label">Vertical</span><span class="insp-val ${boolClass(sr.vertical)}">${bool(sr.vertical)}</span>
+      </div>
+      <div class="insp-row">
+        <span class="insp-label">Movement</span><span class="insp-val">${sr.movementType}</span>
+        <span class="insp-label">Elasticity</span><span class="insp-val">${sr.elasticity.toFixed(2)}</span>
+      </div>
+      <div class="insp-row"><span class="insp-label">Inertia</span><span class="insp-val ${boolClass(sr.inertia)}">${bool(sr.inertia)}</span></div>
+    `);
+  }
+
+  // MonoBehaviours
+  if (n.scripts && n.scripts.length) {
+    const rows = n.scripts.map(s => `
+      <div class="insp-row script-row">
+        <span class="insp-val script-name">⚙ ${s}</span>
+        <span class="script-note">Wire SerializeField refs in Inspector</span>
+      </div>`).join('');
+    html += section('MonoBehaviours', rows);
+  }
+
+  return html;
+}
+
+function section(title, body) {
+  return `<div class="insp-section">
+    <div class="insp-section-title">${title}</div>
+    <div class="insp-section-body">${body}</div>
+  </div>`;
+}
+
+// ── Node click ────────────────────────────────────────────────────────────────
+document.querySelectorAll('.ui-node').forEach(el => {
+  el.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const id = parseInt(el.dataset.id, 10);
+    selectNode(id, el);
+  });
+});
+
+function selectNode(id, el) {
+  document.querySelectorAll('.ui-node.selected').forEach(n => n.classList.remove('selected'));
+  document.querySelectorAll('.hier-node.selected').forEach(n => n.classList.remove('selected'));
+  if (el) el.classList.add('selected');
+  const hierEl = document.querySelector(`.hier-node[data-id="${id}"]`);
+  if (hierEl) { hierEl.classList.add('selected'); hierEl.scrollIntoView({ block: 'nearest' }); }
+  document.getElementById('inspector-content').innerHTML = buildInspectorHTML(id);
+  document.getElementById('status-selected').textContent = NODES[id] ? NODES[id].name : 'Unknown';
+  switchTab('inspector');
+}
+
+// ── Tab switching ─────────────────────────────────────────────────────────────
+function switchTab(name) {
+  ['inspector','hierarchy','checklist'].forEach(t => {
+    document.getElementById(`tab-btn-${t}`).classList.toggle('active', t === name);
+    document.getElementById(`tab-${t}`).classList.toggle('active', t === name);
+  });
+}
+
+// ── Bounds toggle ─────────────────────────────────────────────────────────────
+let boundsOn = false;
+function toggleBounds() {
+  boundsOn = !boundsOn;
+  document.getElementById('scene-canvas').classList.toggle('show-bounds', boundsOn);
+  document.getElementById('btn-bounds').classList.toggle('active', boundsOn);
+}
+
+// ── Scale scene ───────────────────────────────────────────────────────────────
+function scaleScene() {
+  const vp = document.getElementById('viewport');
+  const scaler = document.getElementById('scaler');
+  const vpW = vp.offsetWidth, vpH = vp.offsetHeight;
+  const scale = Math.min(vpW / 1920, vpH / 1080) * 0.95;
+  const ox = (vpW - 1920 * scale) / 2;
+  const oy = (vpH - 1080 * scale) / 2;
+  scaler.style.transform = `translate(${ox}px, ${oy}px) scale(${scale})`;
+}
+window.addEventListener('resize', scaleScene);
+scaleScene();
+
+// ── Render hierarchy ──────────────────────────────────────────────────────────
+function renderHierarchy(nodes, container) {
+  nodes.forEach(node => {
+    const el = document.createElement('div');
+    el.className = `hier-node ${node.active ? '' : 'hier-inactive'}`;
+    el.dataset.id = node.id;
+    el.innerHTML = `<span style="display:inline-block;width:${node.depth * 14}px"></span><span style="color:#666;width:12px;text-align:center;flex-shrink:0">${node.children ? '▾' : ' '}</span><span style="font-size:0.7rem;flex-shrink:0;margin-right:3px">${node.icon}</span><span class="hier-name">${node.name}</span>`;
+    el.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const sceneEl = document.querySelector(`.ui-node[data-id="${node.id}"]`);
+      selectNode(node.id, sceneEl);
+    });
+    container.appendChild(el);
+    if (node.children) renderHierarchy(node.children, container);
+  });
+}
+const hierContainer = document.getElementById('hierarchy-tree');
+renderHierarchy(HIERARCHY, hierContainer);
+</script>
+</body>
+</html>
