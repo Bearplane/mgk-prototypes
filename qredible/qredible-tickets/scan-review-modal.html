@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>QP-3250 — Scan Review Modal</title>
+  <style>
+    :root {
+      --font-ui: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --font-mono: 'IBM Plex Mono', monospace;
+      --blue: #3B82F6;
+      --blue-dark: #1E3A5F;
+      --green: #16A34A;
+      --green-scan: #4A7328;
+      --red: #B01E1E;
+      --yellow: #BB8F06;
+      --purple: #7C3AED;
+      --gray: #64748B;
+      --bg: #F8FAFC;
+      --surface: #FFFFFF;
+      --border: #E2E8F0;
+      --text: #0F172A;
+      --text-muted: #64748B;
+      --radius-card: 10px;
+      --radius-sm: 6px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-ui);
+      background: #1E293B;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 32px 16px;
+      gap: 48px;
+      color: var(--text);
+    }
+
+    h1.page-title {
+      color: #94A3B8;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      text-align: center;
+    }
+
+    .section-label {
+      color: #94A3B8;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    /* ── MOCKUP WRAPPER ── */
+    .mockup {
+      width: 100%;
+      max-width: 1280px;
+    }
+
+    /* ── MODAL SHELL ── */
+    .modal-backdrop {
+      background: rgba(15, 23, 42, 0.6);
+      border-radius: 12px;
+      padding: 24px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+    }
+
+    .modal {
+      background: var(--surface);
+      border-radius: var(--radius-card);
+      width: 100%;
+      max-width: 1200px;
+      overflow: hidden;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.25);
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── MODAL HEADER ── */
+    .modal-header {
+      background: var(--blue-dark);
+      padding: 20px 24px;
+      display: flex;
+      align-items: flex-start;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
+    .modal-title-group {
+      flex: 0 0 auto;
+      margin-right: auto;
+    }
+
+    .modal-title-group h2 {
+      color: #FFFFFF;
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .modal-title-group p {
+      color: #94A3B8;
+      font-size: 12px;
+      margin-top: 4px;
+      max-width: 360px;
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .header-field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .header-field label {
+      color: #94A3B8;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .fake-select {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: var(--radius-sm);
+      color: #FFFFFF;
+      font-family: var(--font-ui);
+      font-size: 13px;
+      padding: 6px 28px 6px 10px;
+      min-width: 180px;
+      position: relative;
+      cursor: pointer;
+      white-space: nowrap;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%2394A3B8' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      appearance: none;
+    }
+
+    .compare-badge {
+      background: rgba(59,130,246,0.2);
+      border: 1px solid rgba(59,130,246,0.4);
+      border-radius: var(--radius-sm);
+      color: #93C5FD;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 12px;
+      white-space: nowrap;
+    }
+
+    .btn-close-modal {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: var(--radius-sm);
+      color: #94A3B8;
+      font-size: 18px;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      margin-top: 20px;
+      flex-shrink: 0;
+    }
+
+    /* ── SUMMARY CARDS ── */
+    .summary-bar {
+      padding: 16px 24px;
+      background: #F1F5F9;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .summary-card {
+      flex: 1 1 120px;
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      cursor: pointer;
+      transition: border-color 0.15s;
+    }
+
+    .summary-card.active { border-color: var(--blue); }
+    .summary-card.active-unchanged { border-color: var(--gray); }
+    .summary-card.active-new { border-color: var(--green-scan); }
+    .summary-card.active-removed { border-color: var(--red); }
+    .summary-card.active-modified { border-color: var(--yellow); }
+    .summary-card.active-readded { border-color: var(--purple); }
+
+    .summary-card .card-count {
+      font-size: 22px;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .summary-card .card-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-top: 3px;
+    }
+
+    .sc-total .card-count { color: var(--text); }
+    .sc-unchanged .card-count { color: var(--gray); }
+    .sc-new .card-count { color: var(--green-scan); }
+    .sc-removed .card-count { color: var(--red); }
+    .sc-modified .card-count { color: var(--yellow); }
+    .sc-readded .card-count { color: var(--purple); }
+
+    /* ── TOOLBAR ── */
+    .modal-toolbar {
+      padding: 12px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .search-box {
+      flex: 1;
+      max-width: 320px;
+      position: relative;
+    }
+
+    .search-box input {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: var(--font-ui);
+      font-size: 13px;
+      padding: 7px 12px 7px 32px;
+      color: var(--text);
+      outline: none;
+    }
+
+    .search-box::before {
+      content: '🔍';
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 12px;
+      pointer-events: none;
+    }
+
+    .segmented {
+      display: flex;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      background: #F8FAFC;
+    }
+
+    .seg-btn {
+      padding: 6px 14px;
+      font-family: var(--font-ui);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      border-right: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    .seg-btn:last-child { border-right: none; }
+
+    .seg-btn.active {
+      background: var(--blue-dark);
+      color: white;
+    }
+
+    .seg-btn .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--red);
+      color: white;
+      font-size: 10px;
+      font-weight: 700;
+      border-radius: 10px;
+      min-width: 18px;
+      height: 16px;
+      padding: 0 4px;
+      margin-left: 5px;
+    }
+
+    .spacer { flex: 1; }
+
+    .bulk-bar {
+      background: #EFF6FF;
+      border: 1px solid #BFDBFE;
+      border-radius: var(--radius-sm);
+      padding: 6px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--blue);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-mark-reviewed {
+      background: var(--blue-dark);
+      color: white;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: var(--font-ui);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 5px 12px;
+      cursor: pointer;
+    }
+
+    /* ── TABLE ── */
+    .modal-body {
+      overflow: auto;
+      flex: 1;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    thead th {
+      background: var(--blue-dark);
+      color: white;
+      font-weight: 600;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 9px 12px;
+      text-align: left;
+      white-space: nowrap;
+      border-right: 1px solid rgba(255,255,255,0.08);
+    }
+
+    thead th:first-child { width: 36px; padding: 9px 12px; }
+
+    tbody tr {
+      border-bottom: 1px solid var(--border);
+      transition: background 0.1s;
+    }
+
+    tbody tr:hover { background: #F8FAFC; }
+
+    tbody tr.child-row { background: #F1F5F9; }
+    tbody tr.child-row:hover { background: #E8EFFE; }
+
+    td {
+      padding: 9px 12px;
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+
+    td.sku {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    td.product-name {
+      white-space: normal;
+      max-width: 220px;
+    }
+
+    td.product-name strong { font-weight: 600; color: var(--text); }
+    td.product-name span { color: var(--text-muted); font-size: 11px; display: block; }
+
+    td.price { font-family: var(--font-mono); font-size: 12px; }
+
+    /* change badges */
+    .badge-change {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      position: relative;
+    }
+
+    .badge-unchanged { background: #F1F5F9; color: var(--gray); }
+    .badge-new { background: #DCFCE7; color: var(--green-scan); }
+    .badge-removed { background: #FEE2E2; color: var(--red); }
+    .badge-modified { background: #FEF9C3; color: var(--yellow); }
+    .badge-readded { background: #EDE9FE; color: var(--purple); }
+
+    .reviewed-check {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background: var(--green);
+      color: white;
+      border-radius: 50%;
+      width: 14px;
+      height: 14px;
+      font-size: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+    }
+
+    /* status badges */
+    .badge-status {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .badge-compliant { background: #DCFCE7; color: #166534; }
+    .badge-violation { background: #FEE2E2; color: var(--red); }
+    .badge-pending-coa { background: #FEF9C3; color: #854D0E; }
+    .badge-no-coa { background: #F1F5F9; color: var(--text-muted); }
+    .badge-in-stock { background: #DBEAFE; color: #1E40AF; }
+    .badge-out-stock { background: #F1F5F9; color: var(--text-muted); }
+    .badge-unlisted { background: #FEF3C7; color: #92400E; }
+
+    .actions-btn {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 2px 7px;
+      font-size: 14px;
+    }
+
+    .indent { padding-left: 28px !important; }
+    .child-indicator {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-left: 2px solid #CBD5E1;
+      border-bottom: 2px solid #CBD5E1;
+      margin-right: 6px;
+      vertical-align: middle;
+      margin-bottom: 2px;
+    }
+
+    input[type=checkbox] { cursor: pointer; accent-color: var(--blue); }
+
+    /* ── FOOTER ── */
+    .modal-footer {
+      border-top: 1px solid var(--border);
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      background: #F8FAFC;
+    }
+
+    .footer-count {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .footer-count strong { color: var(--green); }
+
+    .footer-count .zero { color: var(--text-muted); }
+
+    .btn-cancel {
+      margin-left: auto;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: var(--font-ui);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      padding: 7px 18px;
+      cursor: pointer;
+    }
+
+    /* ── CONTEXT: button on main toolbar ── */
+    .toolbar-context {
+      background: white;
+      border-radius: var(--radius-card);
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 6px;
+      border: 1px solid var(--border);
+    }
+
+    .toolbar-context .tab-bar {
+      display: flex;
+      gap: 4px;
+    }
+
+    .tab-btn {
+      padding: 5px 14px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      border: 1px solid transparent;
+      cursor: pointer;
+      background: none;
+    }
+
+    .tab-btn.active {
+      background: var(--blue-dark);
+      color: white;
+    }
+
+    .divider-v {
+      width: 1px;
+      height: 24px;
+      background: var(--border);
+    }
+
+    .btn-scan-review {
+      background: var(--blue-dark);
+      color: white;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: var(--font-ui);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 6px 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-scan-review .notif-badge {
+      background: var(--red);
+      color: white;
+      border-radius: 10px;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 1px 6px;
+    }
+
+    .btn-filters {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: var(--font-ui);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text);
+      padding: 6px 12px;
+      cursor: pointer;
+    }
+
+    .annotation {
+      background: #FFFBEB;
+      border: 1px dashed #FCD34D;
+      border-radius: 6px;
+      padding: 10px 14px;
+      font-size: 12px;
+      color: #78350F;
+      margin-top: 8px;
+      line-height: 1.5;
+    }
+
+    .annotation strong { font-weight: 700; }
+  </style>
+</head>
+<body>
+
+<h1 class="page-title">QP-3250 — Scan Review Modal · Mockup</h1>
+
+<!-- CONTEXT: Button on toolbar -->
+<div class="mockup">
+  <p class="section-label">Context — Scan Review Button on Product Compliance Toolbar</p>
+  <div class="toolbar-context">
+    <div class="tab-bar">
+      <button class="tab-btn active">Product Compliance</button>
+      <button class="tab-btn">COA Management</button>
+      <button class="tab-btn">WeMonitor</button>
+    </div>
+    <div class="divider-v"></div>
+    <button class="btn-filters">⚙ Filters</button>
+    <div style="flex:1"></div>
+    <button class="btn-scan-review">
+      🔍 Scan Review
+      <span class="notif-badge">14</span>
+    </button>
+  </div>
+  <div class="annotation">
+    <strong>Scan Review button</strong> lives in the Product Compliance toolbar (right side). Badge shows pending (unreviewed) change count from most recent scan for current company. Clicking opens the full-screen overlay below.
+  </div>
+</div>
+
+<!-- FULL MODAL -->
+<div class="mockup">
+  <p class="section-label">Scan Review Modal — Pending Changes State</p>
+  <div class="modal-backdrop">
+    <div class="modal">
+
+      <!-- HEADER -->
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <h2>Scan Review</h2>
+          <p>Review scan results, track product and COA status changes, and acknowledge catalog updates.</p>
+        </div>
+        <div class="header-controls">
+          <div class="header-field">
+            <label>Company</label>
+            <select class="fake-select">
+              <option>Acme Cannabis Co. (acmecannabis.com)</option>
+            </select>
+          </div>
+          <div class="header-field">
+            <label>Base Scan</label>
+            <select class="fake-select">
+              <option>Mar 25, 2026 — 2:14 PM · 487 products · 3 new</option>
+            </select>
+          </div>
+          <div class="header-field">
+            <label>Comparing To</label>
+            <div class="compare-badge">Current Catalog</div>
+          </div>
+        </div>
+        <button class="btn-close-modal">✕</button>
+      </div>
+
+      <!-- SUMMARY CARDS -->
+      <div class="summary-bar">
+        <div class="summary-card sc-total active">
+          <div class="card-count">487</div>
+          <div class="card-label">Total</div>
+        </div>
+        <div class="summary-card sc-unchanged">
+          <div class="card-count">461</div>
+          <div class="card-label">Unchanged</div>
+        </div>
+        <div class="summary-card sc-new">
+          <div class="card-count">3</div>
+          <div class="card-label">New</div>
+        </div>
+        <div class="summary-card sc-removed">
+          <div class="card-count">8</div>
+          <div class="card-label">Removed</div>
+        </div>
+        <div class="summary-card sc-modified">
+          <div class="card-count">12</div>
+          <div class="card-label">Modified</div>
+        </div>
+        <div class="summary-card sc-readded">
+          <div class="card-count">3</div>
+          <div class="card-label">Re-added</div>
+        </div>
+      </div>
+
+      <!-- TOOLBAR -->
+      <div class="modal-toolbar">
+        <div class="search-box">
+          <input type="text" placeholder="Search by name, SKU, or classification…" value=""/>
+        </div>
+        <div class="segmented">
+          <button class="seg-btn">All</button>
+          <button class="seg-btn active">Pending <span class="badge">14</span></button>
+          <button class="seg-btn">Reviewed</button>
+        </div>
+        <div class="spacer"></div>
+        <div class="bulk-bar">
+          <span>3 selected</span>
+          <button class="btn-mark-reviewed">✓ Mark Reviewed</button>
+        </div>
+      </div>
+
+      <!-- TABLE -->
+      <div class="modal-body">
+        <table>
+          <thead>
+            <tr>
+              <th><input type="checkbox"/></th>
+              <th>SKU</th>
+              <th>Product</th>
+              <th>Price</th>
+              <th>Classification</th>
+              <th>Listing Status</th>
+              <th>COA Status</th>
+              <th>Change</th>
+              <th>Last Seen</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+
+            <!-- NEW -->
+            <tr>
+              <td><input type="checkbox" checked/></td>
+              <td class="sku">ACM-004821</td>
+              <td class="product-name"><strong>Blue Dream 1g Pre-Roll (5pk)</strong><span>Pre-roll · Blue Dream</span></td>
+              <td class="price">$28.00</td>
+              <td><span class="badge-status badge-compliant">Compliant</span></td>
+              <td><span class="badge-status badge-in-stock">In Stock</span></td>
+              <td><span class="badge-status badge-compliant">Valid COA</span></td>
+              <td>
+                <span class="badge-change badge-new">New</span>
+              </td>
+              <td>Mar 25, 2026</td>
+              <td><button class="actions-btn">⋯</button></td>
+            </tr>
+
+            <!-- REMOVED -->
+            <tr>
+              <td><input type="checkbox" checked/></td>
+              <td class="sku">ACM-002194</td>
+              <td class="product-name"><strong>Sour Diesel Vape Cart 500mg</strong><span>Vaporizer · Sour Diesel</span></td>
+              <td class="price">$44.99</td>
+              <td><span class="badge-status badge-violation">Violation</span></td>
+              <td><span class="badge-status badge-out-stock">—</span></td>
+              <td><span class="badge-status badge-no-coa">No COA</span></td>
+              <td>
+                <span class="badge-change badge-removed" title="Last seen: Mar 12, 2026">Removed</span>
+              </td>
+              <td style="color:var(--text-muted); font-size:11px;">Mar 12, 2026</td>
+              <td><button class="actions-btn">⋯</button></td>
+            </tr>
+
+            <!-- MODIFIED parent -->
+            <tr>
+              <td><input type="checkbox" checked/></td>
+              <td class="sku">ACM-003310</td>
+              <td class="product-name"><strong>OG Kush Flower 3.5g</strong><span>Flower · OG Kush</span></td>
+              <td class="price">$35.00</td>
+              <td><span class="badge-status badge-compliant">Compliant</span></td>
+              <td><span class="badge-status badge-in-stock">In Stock</span></td>
+              <td><span class="badge-status badge-compliant">Valid COA</span></td>
+              <td>
+                <span class="badge-change badge-modified">Modified</span>
+              </td>
+              <td>Mar 25, 2026</td>
+              <td><button class="actions-btn">⋯</button></td>
+            </tr>
+
+            <!-- MODIFIED child -->
+            <tr class="child-row">
+              <td></td>
+              <td class="sku indent"><span class="child-indicator"></span>ACM-003310-7G</td>
+              <td class="product-name indent"><strong>OG Kush Flower 7g</strong><span>Variant · 7g</span></td>
+              <td class="price">$62.00 <span style="color:var(--red);font-size:10px;">↑ was $58.00</span></td>
+              <td><span class="badge-status badge-compliant">Compliant</span></td>
+              <td><span class="badge-status badge-in-stock">In Stock</span></td>
+              <td><span class="badge-status badge-compliant">Valid COA</span></td>
+              <td>
+                <span class="badge-change badge-modified">Modified</span>
+              </td>
+              <td>Mar 25, 2026</td>
+              <td><button class="actions-btn">⋯</button></td>
+            </tr>
+
+            <!-- RE-ADDED with reviewed checkmark -->
+            <tr>
+              <td><input type="checkbox"/></td>
+              <td class="sku">ACM-001087</td>
+              <td class="product-name"><strong>Grape Ape Edible Gummies 10mg</strong><span>Edible · Grape Ape</span></td>
+              <td class="price">$18.00</td>
+              <td><span class="badge-status badge-pending-coa">Pending COA</span></td>
+              <td><span class="badge-status badge-in-stock">In Stock</span></td>
+              <td><span class="badge-status badge-pending-coa">Pending</span></td>
+              <td>
+                <span class="badge-change badge-readded" style="position:relative;">
+                  Re-added
+                  <span class="reviewed-check" title="Reviewed by Brian Fitzpatrick · Mar 25, 2026 3:11 PM">✓</span>
+                </span>
+              </td>
+              <td>Mar 25, 2026</td>
+              <td><button class="actions-btn">⋯</button></td>
+            </tr>
+
+            <!-- UNCHANGED rows (dimmed) -->
+            <tr style="opacity:0.55;">
+              <td></td>
+              <td class="sku">ACM-000221</td>
+              <td class="product-name"><strong>Wedding Cake Shatter 1g</strong><span>Concentrate · Wedding Cake</span></td>
+              <td class="price">$52.00</td>
+              <td><span class="badge-status badge-compliant">Compliant</span></td>
+              <td><span class="badge-status badge-in-stock">In Stock</span></td>
+              <td><span class="badge-status badge-compliant">Valid COA</span></td>
+              <td><span class="badge-change badge-unchanged">Unchanged</span></td>
+              <td>Mar 25, 2026</td>
+              <td><button class="actions-btn">⋯</button></td>
+            </tr>
+
+            <tr style="opacity:0.55;">
+              <td></td>
+              <td class="sku">ACM-000118</td>
+              <td class="product-name"><strong>Northern Lights Tincture 30ml</strong><span>Tincture · Northern Lights</span></td>
+              <td class="price">$39.99</td>
+              <td><span class="badge-status badge-compliant">Compliant</span></td>
+              <td><span class="badge-status badge-in-stock">In Stock</span></td>
+              <td><span class="badge-status badge-compliant">Valid COA</span></td>
+              <td><span class="badge-change badge-unchanged">Unchanged</span></td>
+              <td>Mar 14, 2026</td>
+              <td><button class="actions-btn">⋯</button></td>
+            </tr>
+
+            <!-- REMOVED reviewed -->
+            <tr>
+              <td></td>
+              <td class="sku">ACM-002501</td>
+              <td class="product-name"><strong>Trainwreck Wax 1g</strong><span>Concentrate · Trainwreck</span></td>
+              <td class="price">$48.00</td>
+              <td><span class="badge-status badge-violation">Violation</span></td>
+              <td><span class="badge-status badge-out-stock">—</span></td>
+              <td><span class="badge-status badge-violation">Expired COA</span></td>
+              <td>
+                <span class="badge-change badge-removed" style="position:relative;">
+                  Removed
+                  <span class="reviewed-check" title="Reviewed by Arades Floyd · Mar 25, 2026 2:55 PM">✓</span>
+                </span>
+              </td>
+              <td style="color:var(--text-muted); font-size:11px;">Mar 14, 2026</td>
+              <td><button class="actions-btn">⋯</button></td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+
+      <!-- FOOTER -->
+      <div class="modal-footer">
+        <div class="footer-count">
+          <strong>2 of 26 changes reviewed</strong> &nbsp;·&nbsp; 24 pending
+        </div>
+        <button class="btn-cancel">Close</button>
+      </div>
+
+    </div>
+  </div>
+  <div class="annotation">
+    <strong>Pending filter active</strong> — showing only unreviewed changes. Unchanged products are de-emphasized (opacity 0.55) in All view; hidden in Pending view. Reviewed badge: green ✓ on corner of change badge with tooltip on hover. Bulk action bar appears when rows are checked. Footer shows running reviewed count.
+  </div>
+</div>
+
+<!-- STATE 2: Reviewed filter view -->
+<div class="mockup">
+  <p class="section-label">State — "Reviewed" Filter Active</p>
+  <div class="modal-backdrop">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <h2>Scan Review</h2>
+          <p>Review scan results, track product and COA status changes, and acknowledge catalog updates.</p>
+        </div>
+        <div class="header-controls">
+          <div class="header-field">
+            <label>Company</label>
+            <select class="fake-select"><option>Acme Cannabis Co. (acmecannabis.com)</option></select>
+          </div>
+          <div class="header-field">
+            <label>Base Scan</label>
+            <select class="fake-select"><option>Mar 25, 2026 — 2:14 PM · 487 products · 3 new</option></select>
+          </div>
+          <div class="header-field">
+            <label>Comparing To</label>
+            <div class="compare-badge">Current Catalog</div>
+          </div>
+        </div>
+        <button class="btn-close-modal">✕</button>
+      </div>
+      <div class="summary-bar">
+        <div class="summary-card sc-total">
+          <div class="card-count">487</div>
+          <div class="card-label">Total</div>
+        </div>
+        <div class="summary-card sc-unchanged">
+          <div class="card-count">461</div>
+          <div class="card-label">Unchanged</div>
+        </div>
+        <div class="summary-card sc-new">
+          <div class="card-count">3</div>
+          <div class="card-label">New</div>
+        </div>
+        <div class="summary-card sc-removed active-removed">
+          <div class="card-count">8</div>
+          <div class="card-label">Removed</div>
+        </div>
+        <div class="summary-card sc-modified">
+          <div class="card-count">12</div>
+          <div class="card-label">Modified</div>
+        </div>
+        <div class="summary-card sc-readded">
+          <div class="card-count">3</div>
+          <div class="card-label">Re-added</div>
+        </div>
+      </div>
+      <div class="modal-toolbar">
+        <div class="search-box">
+          <input type="text" placeholder="Search by name, SKU, or classification…"/>
+        </div>
+        <div class="segmented">
+          <button class="seg-btn">All</button>
+          <button class="seg-btn">Pending <span class="badge">14</span></button>
+          <button class="seg-btn active">Reviewed</button>
+        </div>
+        <div class="spacer"></div>
+      </div>
+      <div class="modal-body">
+        <table>
+          <thead>
+            <tr>
+              <th><input type="checkbox"/></th>
+              <th>SKU</th>
+              <th>Product</th>
+              <th>Price</th>
+              <th>Classification</th>
+              <th>Listing Status</th>
+              <th>COA Status</th>
+              <th>Change</th>
+              <th>Last Seen</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td></td>
+              <td class="sku">ACM-001087</td>
+              <td class="product-name"><strong>Grape Ape Edible Gummies 10mg</strong><span>Edible · Grape Ape</span></td>
+              <td class="price">$18.00</td>
+              <td><span class="badge-status badge-pending-coa">Pending COA</span></td>
+              <td><span class="badge-status badge-in-stock">In Stock</span></td>
+              <td><span class="badge-status badge-pending-coa">Pending</span></td>
+              <td>
+                <span class="badge-change badge-readded" style="position:relative;">
+                  Re-added
+                  <span class="reviewed-check">✓</span>
+                </span>
+              </td>
+              <td>Mar 25, 2026</td>
+              <td><button class="actions-btn">⋯</button></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td class="sku">ACM-002501</td>
+              <td class="product-name"><strong>Trainwreck Wax 1g</strong><span>Concentrate · Trainwreck</span></td>
+              <td class="price">$48.00</td>
+              <td><span class="badge-status badge-violation">Violation</span></td>
+              <td><span class="badge-status badge-out-stock">—</span></td>
+              <td><span class="badge-status badge-violation">Expired COA</span></td>
+              <td>
+                <span class="badge-change badge-removed" style="position:relative;">
+                  Removed
+                  <span class="reviewed-check">✓</span>
+                </span>
+              </td>
+              <td style="color:var(--text-muted); font-size:11px;">Mar 14, 2026</td>
+              <td><button class="actions-btn">⋯</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <div class="footer-count">
+          <strong>2 of 26 changes reviewed</strong> &nbsp;·&nbsp; 24 pending
+        </div>
+        <button class="btn-cancel">Close</button>
+      </div>
+    </div>
+  </div>
+  <div class="annotation">
+    <strong>Reviewed filter + Removed card active</strong> — shows only products that have been reviewed with a Removed change type. Unchanged products included in the Reviewed view (not shown here since Removed card is also active).
+  </div>
+</div>
+
+<!-- STATE 3: All changes reviewed (complete state) -->
+<div class="mockup">
+  <p class="section-label">State — All Changes Reviewed (Complete)</p>
+  <div class="modal-backdrop">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <h2>Scan Review</h2>
+          <p>Review scan results, track product and COA status changes, and acknowledge catalog updates.</p>
+        </div>
+        <div class="header-controls">
+          <div class="header-field">
+            <label>Company</label>
+            <select class="fake-select"><option>Acme Cannabis Co. (acmecannabis.com)</option></select>
+          </div>
+          <div class="header-field">
+            <label>Base Scan</label>
+            <select class="fake-select"><option>Mar 25, 2026 — 2:14 PM · 487 products · 3 new</option></select>
+          </div>
+          <div class="header-field">
+            <label>Comparing To</label>
+            <div class="compare-badge">Current Catalog</div>
+          </div>
+        </div>
+        <button class="btn-close-modal">✕</button>
+      </div>
+      <div class="summary-bar">
+        <div class="summary-card sc-total active">
+          <div class="card-count">487</div>
+          <div class="card-label">Total</div>
+        </div>
+        <div class="summary-card sc-unchanged">
+          <div class="card-count">461</div>
+          <div class="card-label">Unchanged</div>
+        </div>
+        <div class="summary-card sc-new">
+          <div class="card-count">3</div>
+          <div class="card-label">New</div>
+        </div>
+        <div class="summary-card sc-removed">
+          <div class="card-count">8</div>
+          <div class="card-label">Removed</div>
+        </div>
+        <div class="summary-card sc-modified">
+          <div class="card-count">12</div>
+          <div class="card-label">Modified</div>
+        </div>
+        <div class="summary-card sc-readded">
+          <div class="card-count">3</div>
+          <div class="card-label">Re-added</div>
+        </div>
+      </div>
+      <div class="modal-toolbar">
+        <div class="search-box">
+          <input type="text" placeholder="Search by name, SKU, or classification…"/>
+        </div>
+        <div class="segmented">
+          <button class="seg-btn active">All</button>
+          <button class="seg-btn">Pending</button>
+          <button class="seg-btn">Reviewed</button>
+        </div>
+        <div class="spacer"></div>
+        <div style="background:#DCFCE7;border:1px solid #86EFAC;border-radius:6px;padding:6px 14px;font-size:12px;font-weight:700;color:#166534;display:flex;align-items:center;gap:6px;">
+          ✓ All 26 changes reviewed
+        </div>
+      </div>
+      <div class="modal-body">
+        <table>
+          <thead>
+            <tr>
+              <th><input type="checkbox"/></th>
+              <th>SKU</th>
+              <th>Product</th>
+              <th>Price</th>
+              <th>Classification</th>
+              <th>Listing Status</th>
+              <th>COA Status</th>
+              <th>Change</th>
+              <th>Last Seen</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td></td>
+              <td class="sku">ACM-004821</td>
+              <td class="product-name"><strong>Blue Dream 1g Pre-Roll (5pk)</strong><span>Pre-roll · Blue Dream</span></td>
+              <td class="price">$28.00</td>
+              <td><span class="badge-status badge-compliant">Compliant</span></td>
+              <td><span class="badge-status badge-in-stock">In Stock</span></td>
+              <td><span class="badge-status badge-compliant">Valid COA</span></td>
+              <td><span class="badge-change badge-new" style="position:relative;">New<span class="reviewed-check">✓</span></span></td>
+              <td>Mar 25, 2026</td>
+              <td><button class="actions-btn">⋯</button></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td class="sku">ACM-002194</td>
+              <td class="product-name"><strong>Sour Diesel Vape Cart 500mg</strong><span>Vaporizer · Sour Diesel</span></td>
+              <td class="price">$44.99</td>
+              <td><span class="badge-status badge-violation">Violation</span></td>
+              <td><span class="badge-status badge-out-stock">—</span></td>
+              <td><span class="badge-status badge-no-coa">No COA</span></td>
+              <td><span class="badge-change badge-removed" style="position:relative;">Removed<span class="reviewed-check">✓</span></span></td>
+              <td style="color:var(--text-muted);font-size:11px;">Mar 12, 2026</td>
+              <td><button class="actions-btn">⋯</button></td>
+            </tr>
+            <tr style="opacity:0.5;">
+              <td></td>
+              <td class="sku">ACM-000221</td>
+              <td class="product-name"><strong>Wedding Cake Shatter 1g</strong><span>Concentrate</span></td>
+              <td class="price">$52.00</td>
+              <td><span class="badge-status badge-compliant">Compliant</span></td>
+              <td><span class="badge-status badge-in-stock">In Stock</span></td>
+              <td><span class="badge-status badge-compliant">Valid COA</span></td>
+              <td><span class="badge-change badge-unchanged">Unchanged</span></td>
+              <td>Mar 25, 2026</td>
+              <td><button class="actions-btn">⋯</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <div class="footer-count">
+          <strong style="color:var(--green);">✓ 26 of 26 changes reviewed</strong>
+        </div>
+        <button class="btn-cancel">Close</button>
+      </div>
+    </div>
+  </div>
+  <div class="annotation">
+    <strong>All-reviewed state</strong> — Pending badge disappears from toolbar button and toggle. Green "All 26 changes reviewed" confirmation in toolbar. Footer shows full completion. Unchanged rows remain dimmed.
+  </div>
+</div>
+
+</body>
+</html>
