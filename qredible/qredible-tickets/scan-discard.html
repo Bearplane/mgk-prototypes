@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Scan Discard / Zero-Product Guard — Qredible Mockup</title>
+  <style>
+    @font-face { font-family: 'Uber Move'; src: local('Uber Move'), local('UberMove'); font-weight: 300 700; }
+    :root {
+      --font-ui: 'Uber Move', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --black: #1A202E; --subtitle: #657496; --grey: #A7B2C7; --grey-light: #EBEDF2;
+      --border: #EBEDF2; --border-dark: #b1b9ca; --bg: #F8FBFD; --surface: #FFFFFF;
+      --header-bg: #1E3A5F; --sidebar-bg: #233044;
+      --action-blue: #2563eb; --link: #376fd0;
+      --status-success-bg: rgba(0,213,129,.15); --status-validated: #2E7D32;
+      --status-warn-bg: rgba(237,108,2,.15); --status-pending: #ED6C02;
+      --status-error-bg: rgba(255,64,74,.15); --status-missing: #D32F2F;
+      --status-info-bg: rgba(80,168,255,.15);
+      --radius-card: 6px; --radius-chip: 6px; --radius-btn: 5px;
+      --shadow-card: 10px 10px 30px rgb(0 0 0 / 0.1);
+      --shadow-subtle: 0px 1px 2px 0px rgba(0,0,0,0.05);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--black); font-family: var(--font-ui); font-size: 13px; font-weight: 400; line-height: 1.5; }
+
+    /* ── Page chrome ─────────────────────────────────────────────────────── */
+    .page-header { background: var(--header-bg); color: white; padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; }
+    .page-header h1 { font-size: 15px; font-weight: 600; }
+    .page-header .sub { font-size: 11px; color: #90CAF9; margin-top: 2px; font-weight: 300; }
+    .nav-back { color: #90CAF9; text-decoration: none; font-size: 11px; font-weight: 300; }
+    .breadcrumb { font-size: 11px; color: #90CAF9; margin-bottom: 4px; }
+
+    .main { padding: 24px 32px; display: grid; grid-template-columns: 1fr 420px; gap: 24px; max-width: 100%; align-items: start; }
+    .mockups-area { min-width: 0; }
+
+    /* ── Q-Monitor chrome replica ─────────────────────────────────────────── */
+    .qmonitor-frame { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card); overflow: hidden; margin-bottom: 20px; box-shadow: var(--shadow-subtle); }
+
+    /* Tab bar */
+    .tab-bar { display: flex; border-bottom: 1px solid var(--border-dark); background: #E0E0E0; }
+    .tab { padding: 0 20px; height: 46px; display: flex; align-items: center; font-size: 13px; font-weight: 500; color: var(--subtitle); cursor: pointer; border-right: 1px solid var(--border-dark); }
+    .tab.active { background: var(--surface); font-weight: 600; color: var(--black); border-bottom: none; margin-bottom: -1px; border-left: 1px solid var(--border-dark); border-top: 1px solid var(--border-dark); }
+    .tab:first-child.active { border-left: none; }
+
+    /* Page title */
+    .page-title { padding: 16px 20px 8px; }
+    .page-title h2 { font-size: 20px; font-weight: 600; color: var(--black); }
+    .page-title p { font-size: 12px; color: var(--subtitle); font-weight: 300; margin-top: 3px; }
+
+    /* Toolbar */
+    .toolbar { display: flex; align-items: center; gap: 8px; padding: 10px 20px; flex-wrap: wrap; }
+    .search { flex: 1; min-width: 200px; }
+    .search input { width: 100%; height: 34px; padding: 0 10px 0 32px; border: 1px solid var(--border-dark); border-radius: var(--radius-chip); font-size: 12px; font-family: var(--font-ui); font-weight: 300; background: var(--surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23A7B2C7' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E") no-repeat 10px center; }
+    .btn { height: 32px; padding: 0 12px; border-radius: var(--radius-btn); font-size: 12px; font-weight: 600; font-family: var(--font-ui); cursor: pointer; border: none; white-space: nowrap; }
+    .btn-blue  { background: var(--action-blue); color: white; }
+    .btn-dark  { background: #374151; color: white; }
+    .btn-scan  { background: var(--action-blue); color: white; position: relative; }
+
+    /* Scan strip */
+    .scan-strip { display: flex; align-items: center; justify-content: space-between; padding: 7px 20px; border-bottom: 1px solid var(--border); font-size: 12px; font-weight: 300; color: var(--subtitle); background: var(--bg); }
+    .scan-strip-left { display: flex; align-items: center; gap: 12px; }
+    .scan-strip-right { display: flex; align-items: center; gap: 16px; }
+    .scan-meta { font-weight: 400; color: var(--black); }
+    .scan-meta strong { font-weight: 600; }
+    .btn-discard { height: 26px; padding: 0 10px; border-radius: var(--radius-chip); font-size: 11px; font-weight: 600; font-family: var(--font-ui); cursor: pointer; background: rgba(255,64,74,.1); border: 1px solid rgba(255,64,74,.3); color: var(--status-missing); }
+
+    /* Table */
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    thead tr { background: #EEF2FF; }
+    th { color: var(--black); text-align: left; padding: 8px 10px; font-size: 11px; font-weight: 600; border-bottom: 1px solid var(--border-dark); white-space: nowrap; }
+    td { padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: middle; font-weight: 300; }
+    tbody tr:hover td { background: var(--bg); }
+    .child-row td { background: #FAFBFC; padding-left: 24px; }
+
+    /* Badges */
+    .badge { display: inline-flex; align-items: center; gap: 3px; padding: 2px 8px; border-radius: var(--radius-chip); font-size: 11px; font-weight: 600; white-space: nowrap; }
+    .b-validated { background: var(--status-success-bg); color: var(--status-validated); }
+    .b-missing    { background: var(--status-error-bg); color: var(--status-missing); }
+    .b-approved   { background: #059669; color: white; }
+    .b-violative  { background: var(--status-missing); color: white; }
+    .b-instock    { background: var(--status-success-bg); color: var(--status-validated); }
+    .b-new        { background: rgba(37,99,235,.12); color: var(--action-blue); border: 1px solid rgba(37,99,235,.3); }
+    .b-removed    { background: rgba(255,64,74,.12); color: var(--status-missing); border: 1px solid rgba(255,64,74,.3); }
+    .b-unchanged  { background: var(--grey-light); color: var(--subtitle); }
+    .company-link { color: var(--link); font-weight: 400; font-size: 11px; text-decoration: none; }
+    .pending { color: var(--action-blue); font-size: 11px; font-weight: 400; }
+
+    /* Failed scan overlay state */
+    .scan-failed-banner { padding: 10px 20px; background: rgba(237,108,2,.08); border-bottom: 1px solid rgba(237,108,2,.25); display: flex; align-items: center; gap: 10px; }
+    .scan-failed-icon { font-size: 16px; flex-shrink: 0; }
+    .scan-failed-title { font-size: 12px; font-weight: 600; color: #92400E; }
+    .scan-failed-sub { font-size: 11px; color: var(--status-pending); font-weight: 300; margin-top: 1px; }
+    .btn-retry { height: 26px; padding: 0 10px; border-radius: var(--radius-chip); font-size: 11px; font-weight: 600; font-family: var(--font-ui); cursor: pointer; background: var(--action-blue); border: none; color: white; }
+
+    /* Discard modal */
+    .modal-overlay { background: rgba(26,32,46,.5); padding: 20px; display: flex; align-items: center; justify-content: center; border-radius: var(--radius-card); margin-bottom: 20px; }
+    .modal { background: var(--surface); border-radius: var(--radius-card); box-shadow: var(--shadow-card); padding: 24px; width: 420px; }
+    .modal-icon { width: 44px; height: 44px; border-radius: 50%; background: rgba(255,64,74,.12); display: flex; align-items: center; justify-content: center; font-size: 20px; margin-bottom: 14px; }
+    .modal h4 { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+    .modal p { font-size: 13px; font-weight: 300; color: var(--subtitle); line-height: 1.6; margin-bottom: 10px; }
+    .modal-detail { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-chip); padding: 10px 14px; font-size: 12px; margin-bottom: 16px; }
+    .modal-detail div { display: flex; justify-content: space-between; margin-bottom: 4px; font-weight: 300; }
+    .modal-detail div:last-child { margin-bottom: 0; }
+    .modal-detail .label { color: var(--subtitle); }
+    .modal-detail .val { font-weight: 600; }
+    .modal-actions { display: flex; gap: 8px; justify-content: flex-end; }
+    .btn-cancel { height: 32px; padding: 0 16px; border-radius: var(--radius-btn); font-size: 12px; font-weight: 600; font-family: var(--font-ui); cursor: pointer; background: var(--surface); border: 1px solid var(--border-dark); color: var(--black); }
+    .btn-discard-confirm { height: 32px; padding: 0 16px; border-radius: var(--radius-btn); font-size: 12px; font-weight: 600; font-family: var(--font-ui); cursor: pointer; background: var(--status-missing); color: white; border: none; }
+
+    /* Spec panel */
+    .spec-area { border: 1px solid var(--border); border-radius: var(--radius-card); overflow: hidden; box-shadow: var(--shadow-subtle); position: sticky; top: 16px; background: var(--surface); }
+    .spec-header { background: var(--bg); border-bottom: 1px solid var(--border); padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; }
+    .spec-header span { font-size: 13px; font-weight: 600; }
+    .spec-section { padding: 12px 16px; border-bottom: 1px solid var(--border); }
+    .spec-section:last-child { border-bottom: none; }
+    .spec-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .4px; color: var(--subtitle); margin-bottom: 8px; }
+    .spec-row { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 12px; }
+    .spec-key { color: var(--subtitle); font-weight: 300; }
+    .spec-val { font-weight: 600; font-size: 12px; }
+    .br-item { display: flex; gap: 8px; margin-bottom: 8px; line-height: 1.5; }
+    .br-num { font-size: 10px; font-weight: 600; color: var(--link); background: var(--status-info-bg); padding: 1px 5px; border-radius: 4px; white-space: nowrap; flex-shrink: 0; margin-top: 2px; }
+    .ac-item { display: flex; gap: 8px; margin-bottom: 6px; font-weight: 300; font-size: 12px; }
+    .ac-check { color: var(--grey); font-size: 13px; flex-shrink: 0; }
+    .meta-pill { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 20px; font-size: 10px; font-weight: 700; }
+    .pill-high { background: rgba(255,64,74,.12); color: var(--status-missing); }
+    .pill-p1 { background: var(--status-info-bg); color: var(--action-blue); }
+    .pill-p2 { background: var(--status-warn-bg); color: var(--status-pending); }
+
+    .mockup-label { font-size: 11px; font-weight: 600; color: var(--subtitle); text-transform: uppercase; letter-spacing: .4px; margin-bottom: 8px; }
+  </style>
+</head>
+<body>
+
+<div class="page-header">
+  <div>
+    <div class="breadcrumb"><a href="../" class="nav-back">← Qredible Prototypes</a> / Audit Improvement Initiative</div>
+    <h1>Product Scan — Discard Failed or Partial Scan Results</h1>
+    <div class="sub">Q-Monitor / Product Compliance / Scan Operations · QP-3545</div>
+  </div>
+  <div style="display:flex;gap:8px;align-items:center;">
+    <span class="meta-pill pill-p1">Phase 1 — Add to QP-3501</span>
+    <span class="meta-pill pill-p2">Phase 2 — Hotfix</span>
+    <span class="meta-pill pill-high">High</span>
+  </div>
+</div>
+
+<div class="main">
+<div class="mockups-area">
+
+  <!-- MOCKUP A: Normal scan strip with Discard action -->
+  <div class="mockup-label">Mockup A — Normal scan strip · Last Scan metadata + Discard action visible to admins</div>
+  <div class="qmonitor-frame">
+    <div class="tab-bar">
+      <div class="tab">Findings</div>
+      <div class="tab active">Product Compliance</div>
+      <div class="tab">We Monitor</div>
+      <div class="tab">Monitoring Us</div>
+      <div class="tab">Documents</div>
+      <div class="tab">COAs</div>
+    </div>
+    <div class="page-title">
+      <h2>Product Compliance</h2>
+      <p>Manage your product catalog and associated compliance documentation in a unified workspace.</p>
+    </div>
+    <div class="toolbar">
+      <div class="search"><input type="text" placeholder="Search products by definition, classification or SKU..."/></div>
+      <button class="btn btn-blue">Filters</button>
+      <button class="btn btn-blue">Add Product</button>
+      <button class="btn btn-blue">Import Products</button>
+      <button class="btn btn-scan">Scan for Products</button>
+      <button class="btn btn-dark">Report an Issue</button>
+      <button class="btn btn-blue">Export</button>
+    </div>
+    <!-- Scan strip — normal state with discard option -->
+    <div class="scan-strip">
+      <div class="scan-strip-left">
+        <span>638 Products</span>
+        <span style="color:var(--border-dark);">|</span>
+        <span style="color:var(--action-blue);cursor:pointer;">⊞ Expand All</span>
+        <span style="color:var(--action-blue);cursor:pointer;">⊟ Collapse All</span>
+      </div>
+      <div class="scan-strip-right">
+        <span class="scan-meta">Last Scan: <strong>03/25/2026 02:14 PM EST</strong></span>
+        <span class="scan-meta"><strong>8 products</strong> (8 new)</span>
+        <span class="scan-meta"><strong>12 COAs</strong> found</span>
+        <button class="btn-discard">⟳ Discard Scan</button>
+        <span style="color:var(--border-dark);">|</span>
+        <span style="color:var(--subtitle);font-size:11px;">Rows per page:</span>
+        <select style="height:24px;border:1px solid var(--border-dark);border-radius:4px;font-size:11px;font-family:var(--font-ui);"><option>25</option></select>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:28px;"><input type="checkbox"/></th>
+            <th style="width:32px;"></th>
+            <th>SKU</th>
+            <th>Product Definition</th>
+            <th>Price</th>
+            <th>Classification</th>
+            <th>Scan Change</th>
+            <th>COA Status</th>
+            <th>Listing Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><input type="checkbox"/></td>
+            <td style="font-size:10px;color:var(--grey);">🖼</td>
+            <td style="font-size:11px;color:var(--subtitle);">164800-VAP-46-P3</td>
+            <td style="font-weight:300;">Green Roads CBD Puff Vape – 1200mg – Blue Razz</td>
+            <td style="font-weight:300;font-size:11px;">$29.99/unit</td>
+            <td style="font-weight:300;font-size:11px;">Vape</td>
+            <td><span class="badge b-unchanged">Unchanged</span></td>
+            <td><span class="badge b-validated">COA Validated</span></td>
+            <td><span class="badge b-instock">In Stock</span></td>
+          </tr>
+          <tr style="background:rgba(37,99,235,.03);">
+            <td><input type="checkbox"/></td>
+            <td style="font-size:10px;color:var(--grey);">🖼</td>
+            <td style="font-size:11px;color:var(--subtitle);">WTN-NEW-001</td>
+            <td style="font-weight:300;">Road Trip Microdose Mushroom Gummies 10ct</td>
+            <td style="font-weight:300;font-size:11px;">$39.99/unit</td>
+            <td style="font-weight:300;font-size:11px;">Mushroom Products</td>
+            <td><span class="badge b-new">New</span></td>
+            <td><span class="badge b-missing">Missing</span></td>
+            <td><span class="badge b-instock">In Stock</span></td>
+          </tr>
+          <tr>
+            <td><input type="checkbox"/></td>
+            <td style="font-size:10px;color:var(--grey);">🖼</td>
+            <td style="font-size:11px;color:var(--subtitle);">42804-PRE-5</td>
+            <td style="font-weight:300;">1 Gram THCA DEPZ Pre-rolls – Watermelon Z</td>
+            <td style="font-weight:300;font-size:11px;">$14.99/unit</td>
+            <td style="font-weight:300;font-size:11px;">Pre-Rolls</td>
+            <td><span class="badge b-unchanged">Unchanged</span></td>
+            <td><span class="badge b-missing">Missing</span></td>
+            <td><span class="badge b-instock">In Stock</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- MOCKUP B: Zero-product guard -->
+  <div class="mockup-label">Mockup B — Zero-product guard · Scan returned 0 products — no changes committed</div>
+  <div class="qmonitor-frame">
+    <div class="scan-strip">
+      <div class="scan-strip-left">
+        <span>638 Products</span>
+      </div>
+      <div class="scan-strip-right">
+        <span class="scan-meta">Last Scan: <strong>03/25/2026 03:47 PM EST</strong></span>
+        <span style="color:var(--status-missing);font-weight:600;font-size:12px;">0 products returned</span>
+        <span class="scan-meta">No changes committed</span>
+      </div>
+    </div>
+    <div class="scan-failed-banner">
+      <span class="scan-failed-icon">⚠️</span>
+      <div style="flex:1;">
+        <div class="scan-failed-title">Scan returned 0 products — no changes committed</div>
+        <div class="scan-failed-sub">The product scan for Tweedle Farms completed but returned no products. This may indicate a temporary site issue or bot detection by Zyte. Your product catalog has not been modified.</div>
+      </div>
+      <div style="display:flex;gap:8px;flex-shrink:0;">
+        <button class="btn-retry">Re-trigger Scan</button>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:28px;"><input type="checkbox"/></th>
+            <th style="width:32px;"></th>
+            <th>SKU</th>
+            <th>Product Definition</th>
+            <th>Scan Change</th>
+            <th>COA Status</th>
+            <th>Listing Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><input type="checkbox"/></td>
+            <td style="font-size:10px;color:var(--grey);">🖼</td>
+            <td style="font-size:11px;color:var(--subtitle);">164800-VAP-46-P3</td>
+            <td style="font-weight:300;">Green Roads CBD Puff Vape – 1200mg</td>
+            <td><span class="badge b-unchanged">Unchanged</span></td>
+            <td><span class="badge b-validated">COA Validated</span></td>
+            <td><span class="badge b-instock">In Stock</span></td>
+          </tr>
+          <tr>
+            <td><input type="checkbox"/></td>
+            <td style="font-size:10px;color:var(--grey);">🖼</td>
+            <td style="font-size:11px;color:var(--subtitle);">42804-PRE-5</td>
+            <td style="font-weight:300;">1 Gram THCA DEPZ Pre-rolls – Watermelon Z</td>
+            <td><span class="badge b-unchanged">Unchanged</span></td>
+            <td><span class="badge b-missing">Missing</span></td>
+            <td><span class="badge b-instock">In Stock</span></td>
+          </tr>
+          <tr>
+            <td><input type="checkbox"/></td>
+            <td style="font-size:10px;color:var(--grey);">🖼</td>
+            <td style="font-size:11px;color:var(--subtitle);">WTN-CBD-002</td>
+            <td style="font-weight:300;">Full Spectrum CBD Oil 1000mg</td>
+            <td><span class="badge b-unchanged">Unchanged</span></td>
+            <td><span class="badge b-validated">COA Validated</span></td>
+            <td><span class="badge b-instock">In Stock</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- MOCKUP C: Discard confirmation modal -->
+  <div class="mockup-label">Mockup C — Discard Scan confirmation modal</div>
+  <div class="modal-overlay">
+    <div class="modal">
+      <div class="modal-icon">🗑️</div>
+      <h4>Discard This Scan?</h4>
+      <p>This will roll back all scan change statuses (New, Removed, Modified, Re-added) applied by this scan. Products will return to their status from the previous scan. COAs and products ingested during this scan will not be removed.</p>
+      <div class="modal-detail">
+        <div><span class="label">Company</span><span class="val">Tweedle Farms (Westtown)</span></div>
+        <div><span class="label">Scan date</span><span class="val">03/25/2026 02:14 PM EST</span></div>
+        <div><span class="label">Products affected</span><span class="val">378 (marked Removed)</span></div>
+        <div><span class="label">New products ingested</span><span class="val">8 — will remain in catalog</span></div>
+        <div><span class="label">COAs ingested</span><span class="val">12 — will remain in system</span></div>
+      </div>
+      <p style="font-size:11px;color:var(--status-missing);">This action cannot be undone.</p>
+      <div class="modal-actions" style="margin-top:14px;">
+        <button class="btn-cancel">Cancel</button>
+        <button class="btn-discard-confirm">Discard Scan</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Spec panel -->
+<div class="spec-area">
+  <div class="spec-header">
+    <span>Ticket Specification</span>
+    <span style="font-size:11px;color:var(--subtitle);">QP-3545</span>
+  </div>
+  <div class="spec-section">
+    <div class="spec-label">Metadata</div>
+    <div class="spec-row"><span class="spec-key">Initiative</span><span class="spec-val">Audit Improvement</span></div>
+    <div class="spec-row"><span class="spec-key">Priority</span><span class="meta-pill pill-high">High</span></div>
+    <div class="spec-row"><span class="spec-key">Phase 1</span><span class="meta-pill pill-p1">Add to QP-3501</span></div>
+    <div class="spec-row"><span class="spec-key">Phase 2</span><span class="meta-pill pill-p2">Hotfix after diff ships</span></div>
+  </div>
+  <div class="spec-section">
+    <div class="spec-label">Problem</div>
+    <p style="color:var(--subtitle);line-height:1.6;font-weight:300;font-size:12px;">When Zyte returns 0 products or a partial list, the system marks existing products as Removed — contaminating the audit trail with false removals. No safeguard exists to distinguish a failed scan from a legitimately empty catalog.</p>
+  </div>
+  <div class="spec-section">
+    <div class="spec-label">Phase 1 — Zero Guard (BR-1–3)</div>
+    <div class="br-item"><span class="br-num">BR-1</span><span style="font-weight:300;font-size:12px;">If scan returns 0 products, do not update catalog or scan change column.</span></div>
+    <div class="br-item"><span class="br-num">BR-2</span><span style="font-weight:300;font-size:12px;">Surface warning banner: "Scan returned 0 products — no changes committed." with Re-trigger option.</span></div>
+    <div class="br-item"><span class="br-num">BR-3</span><span style="font-weight:300;font-size:12px;">Record scan in history as Failed — No Products Returned, distinct from a successful scan.</span></div>
+  </div>
+  <div class="spec-section">
+    <div class="spec-label">Phase 2 — Discard Action (BR-4–8)</div>
+    <div class="br-item"><span class="br-num">BR-4</span><span style="font-weight:300;font-size:12px;">Admin-only "Discard Scan" button visible in the scan strip next to Last Scan metadata.</span></div>
+    <div class="br-item"><span class="br-num">BR-5</span><span style="font-weight:300;font-size:12px;">Confirmation modal shows scan date, products affected, and what will/won't be rolled back before executing.</span></div>
+    <div class="br-item"><span class="br-num">BR-6</span><span style="font-weight:300;font-size:12px;">Discard rolls back scan change column for affected products to pre-scan state. Does not remove ingested COAs or products.</span></div>
+    <div class="br-item"><span class="br-num">BR-7</span><span style="font-weight:300;font-size:12px;">Discarded scan record is removed from scan history.</span></div>
+    <div class="br-item"><span class="br-num">BR-8</span><span style="font-weight:300;font-size:12px;">Discard action logged in audit trail with user and timestamp.</span></div>
+  </div>
+  <div class="spec-section">
+    <div class="spec-label">Acceptance Criteria</div>
+    <div class="ac-item"><span class="ac-check">☐</span><span>0-product scan triggers warning banner, no catalog changes</span></div>
+    <div class="ac-item"><span class="ac-check">☐</span><span>Failed scan recorded as Failed — No Products Returned</span></div>
+    <div class="ac-item"><span class="ac-check">☐</span><span>Discard Scan button visible in scan strip for admins</span></div>
+    <div class="ac-item"><span class="ac-check">☐</span><span>Confirmation modal shows correct scan metadata before executing</span></div>
+    <div class="ac-item"><span class="ac-check">☐</span><span>After discard: products return to pre-scan change status</span></div>
+    <div class="ac-item"><span class="ac-check">☐</span><span>Ingested COAs and products not removed by discard</span></div>
+    <div class="ac-item"><span class="ac-check">☐</span><span>Discard logged in audit trail</span></div>
+  </div>
+</div>
+</div>
+
+</body>
+</html>
