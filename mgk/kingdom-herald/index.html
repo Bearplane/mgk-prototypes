@@ -3,768 +3,2296 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Kingdom Herald — MGK Prototype</title>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <title>UIKingdomHerald — Unity Implementation Spec</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <style>
+    /* ── DESIGN TOKENS (from UI_STYLE_GUIDE.md + ui-hierarchy.json extraction) ── */
     :root {
-      --bg-deep: #0d0a06;
-      --bg-panel: #1a1008;
-      --bg-card: #231508;
-      --bg-card-hover: #2d1c0a;
-      --border-gold: #8a6530;
-      --border-gold-bright: #c8a050;
-      --text-primary: #f0e8d0;
-      --text-gold: #c8a050;
-      --text-muted: #8a7050;
-      --text-green: #4aaa60;
-      --text-red: #cc4444;
-      --bar-vault: #c8a050;
+      --bg-deep:          #0d0a06;   /* scene background */
+      --bg-panel:         #1a1008;   /* PanelRoot background (Image color) */
+      --bg-card:          #231508;   /* Section card background */
+      --bg-card-raised:   #2d1c0e;   /* List row hover */
+      --bg-card-active:   #3d2510;   /* Selected row */
+      --border-gold:      #c8a050;   /* Primary gold border */
+      --border-muted:     #8a6530;   /* Secondary / muted border */
+      --text-cream:       #f0e8d0;   /* Body text */
+      --text-gold:        #e4c870;   /* Headers */
+      --text-subgold:     #c8a870;   /* Secondary labels */
+      --text-muted:       #8a7050;   /* Muted / disabled */
+      --text-green:       #22C55E;   /* Positive values */
+      --text-red:         #EF4444;   /* Negative values */
+      --btn-bg:           #1a2020;   /* CircleButton color from hierarchy: [0.102,0.125,0.125,1] */
+      --btn-border:       #e3ca99;   /* CircleButtonBorder color: [0.89,0.79,0.60,1] */
+      --bar-fill:         #c8a050;   /* Vault progress bar fill */
+      --inspector-bg:     #0f1117;
+      --inspector-border: #2a2f3d;
+      --inspector-header: #1a1f2e;
+      --inspector-label:  #8b95b0;
+      --inspector-value:  #e8eaf0;
+      --inspector-key:    #79b8ff;
+      --inspector-comp:   #f97583;
+      --inspector-warn:   #ffab70;
+      --inspector-check:  #6bcb77;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       background: var(--bg-deep);
-      color: var(--text-primary);
-      font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
+      color: var(--text-cream);
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      font-size: 13px;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
+    }
+
+    /* ── TOP BAR ── */
+    .top-bar {
+      background: #0a0806;
+      border-bottom: 1px solid var(--border-muted);
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-shrink: 0;
+    }
+    .top-bar h1 {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-gold);
+      letter-spacing: 0.05em;
+    }
+    .top-bar .badge {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 3px;
+      border: 1px solid;
+    }
+    .badge-real { border-color: var(--text-green); color: var(--text-green); background: rgba(34,197,94,0.08); }
+    .badge-spec { border-color: var(--inspector-warn); color: var(--inspector-warn); background: rgba(255,171,112,0.08); }
+    .badge-est  { border-color: var(--text-subgold); color: var(--text-subgold); background: rgba(200,168,112,0.08); }
+    .top-bar .legend { margin-left: auto; display: flex; gap: 12px; font-size: 10px; color: var(--text-muted); align-items: center; }
+
+    /* ── MAIN LAYOUT: 3 columns ── */
+    .main {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 420px 1fr 360px;
+      grid-template-rows: 1fr;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    /* ── LEFT COLUMN: GAME PREVIEW ── */
+    .preview-col {
+      border-right: 1px solid var(--border-muted);
+      background: #0d0a06;
+      overflow-y: auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+    .preview-col-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      width: 100%;
+    }
+
+    /* ── GAME PANEL (scaled ~58% of 720px = 420px) ── */
+    .game-panel {
+      width: 390px;
+      background: var(--bg-panel);
+      border: 2px solid var(--border-gold);
+      border-radius: 4px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      cursor: default;
+      box-shadow: 0 0 32px rgba(200,160,80,0.15), inset 0 0 0 1px rgba(200,160,80,0.05);
+    }
+
+    /* Corner flourishes */
+    .game-panel::before, .game-panel::after {
+      content: '✦';
+      position: absolute;
+      font-size: 10px;
+      color: var(--border-gold);
+      line-height: 1;
+    }
+    .game-panel::before { top: 4px; left: 4px; }
+    .game-panel::after  { top: 4px; right: 4px; }
+
+    /* Header section */
+    .panel-header {
+      padding: 14px 20px 8px;
+      text-align: center;
+      border-bottom: 1px solid var(--border-muted);
+    }
+    .panel-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-gold);
+      letter-spacing: 0.06em;
+    }
+    .panel-subtitle {
+      font-size: 11px;
+      color: var(--text-subgold);
+      margin-top: 3px;
+    }
+    .header-divider {
+      height: 1px;
+      background: var(--border-gold);
+      margin: 8px 0 0;
+      opacity: 0.6;
+    }
+
+    /* Content area — 2 columns */
+    .panel-content {
+      display: flex;
+      flex: 1;
+      padding: 6px 10px;
+      gap: 6px;
+      min-height: 0;
+    }
+    .panel-column {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    /* Section cards */
+    .section-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-muted);
+      border-radius: 4px;
+      padding: 8px 10px;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+      position: relative;
+    }
+    .section-card:hover { border-color: var(--border-gold); background: var(--bg-card-raised); }
+    .section-card.selected { border-color: var(--border-gold); background: var(--bg-card-active); box-shadow: 0 0 0 1px var(--border-gold); }
+
+    .section-title {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text-gold);
+      letter-spacing: 0.05em;
+      margin-bottom: 5px;
+      text-transform: uppercase;
+    }
+    .section-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 10px;
+      padding: 1px 0;
+    }
+    .section-row .label { color: var(--text-subgold); }
+    .section-row .value { color: var(--text-cream); font-family: 'IBM Plex Mono', monospace; }
+    .section-row .best  { color: var(--text-muted); font-size: 9px; }
+    .arrow-up   { color: var(--text-green); }
+    .arrow-down { color: var(--text-muted); }
+
+    /* Dungeon scroll */
+    .dungeon-scroll {
+      max-height: 52px;
+      overflow-y: auto;
+      margin-top: 3px;
+    }
+    .dungeon-cell {
+      font-size: 9px;
+      font-family: 'IBM Plex Mono', monospace;
+      color: var(--text-cream);
+      padding: 1px 0;
+      border-bottom: 1px solid rgba(138,101,48,0.2);
+    }
+    .dungeon-cell::before { content: '•'; color: var(--border-gold); margin-right: 4px; }
+
+    /* Progress bar */
+    .vault-bar-wrap { margin-top: 5px; }
+    .vault-bar-track {
+      height: 8px;
+      background: var(--bg-panel);
+      border-radius: 4px;
+      border: 1px solid var(--border-muted);
+      overflow: hidden;
+      margin-top: 3px;
+    }
+    .vault-bar-fill {
+      height: 100%;
+      width: 57%;
+      background: var(--bar-fill);
+      border-radius: 4px;
+    }
+
+    /* Footer nav */
+    .panel-footer {
+      border-top: 1px solid var(--border-muted);
+      padding: 6px 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .nav-btn {
+      background: var(--btn-bg);
+      border: 1px solid var(--btn-border);
+      color: var(--btn-border);
+      font-size: 9px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 3px;
+      cursor: pointer;
+      letter-spacing: 0.04em;
+      transition: background 0.1s;
+      white-space: nowrap;
+    }
+    .nav-btn:hover { background: #253030; }
+    .nav-btn:disabled, .nav-btn.disabled { opacity: 0.4; cursor: not-allowed; }
+    .page-indicator {
+      flex: 1;
+      text-align: center;
+      font-size: 10px;
+      color: var(--text-subgold);
+      font-family: 'IBM Plex Mono', monospace;
+    }
+    .close-btn {
+      width: 20px; height: 20px;
+      background: var(--btn-bg);
+      border: 1px solid var(--btn-border);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      font-size: 9px;
+      color: var(--btn-border);
+    }
+
+    /* Clickable node indicators in preview */
+    .node-tag {
+      position: absolute;
+      top: 2px; right: 2px;
+      font-size: 7px;
+      font-family: 'IBM Plex Mono', monospace;
+      color: var(--border-gold);
+      opacity: 0;
+      pointer-events: none;
+    }
+    .section-card:hover .node-tag { opacity: 1; }
+
+    /* ── CENTER COLUMN: HIERARCHY TREE ── */
+    .hierarchy-col {
+      border-right: 1px solid var(--inspector-border);
+      background: #0c0e14;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+    .hierarchy-header {
+      background: var(--inspector-header);
+      border-bottom: 1px solid var(--inspector-border);
+      padding: 8px 12px;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--inspector-label);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      flex-shrink: 0;
+    }
+    .tree { padding: 8px 0; flex: 1; overflow-y: auto; }
+    .tree-node {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 8px;
+      cursor: pointer;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      color: #c9d1d9;
+      transition: background 0.1s;
+      white-space: nowrap;
+      border-left: 2px solid transparent;
+    }
+    .tree-node:hover { background: rgba(79,100,149,0.15); }
+    .tree-node.selected { background: rgba(56,139,253,0.15); border-left-color: #58a6ff; color: #e6edf3; }
+    .tree-node .indent { display: inline-block; width: 14px; flex-shrink: 0; }
+    .tree-node .icon { font-size: 10px; flex-shrink: 0; opacity: 0.7; }
+    .tree-node .name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+    .tree-node .components { font-size: 9px; color: #6e7681; margin-left: 4px; flex-shrink: 0; }
+    .tree-node.scene-root { color: var(--inspector-warn); font-weight: 700; font-size: 12px; background: rgba(255,171,112,0.05); }
+    .tree-node.canvas-node { color: #79b8ff; }
+    .tree-node.script-node { border-left-color: rgba(249,117,131,0.4); }
+
+    /* ── RIGHT COLUMN: INSPECTOR ── */
+    .inspector-col {
+      background: var(--inspector-bg);
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+    .inspector-header {
+      background: var(--inspector-header);
+      border-bottom: 1px solid var(--inspector-border);
+      padding: 8px 12px;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--inspector-label);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      flex-shrink: 0;
+    }
+    .inspector-empty {
+      flex: 1;
+      display: flex;
       align-items: center;
       justify-content: center;
-      padding: 20px;
-      position: relative;
-      overflow-x: hidden;
+      color: var(--inspector-label);
+      font-size: 12px;
+      font-style: italic;
     }
-
-    /* Simulated game world background */
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background:
-        radial-gradient(ellipse at 30% 40%, rgba(60,40,15,0.7) 0%, transparent 55%),
-        radial-gradient(ellipse at 75% 60%, rgba(30,20,8,0.8) 0%, transparent 50%),
-        radial-gradient(ellipse at 50% 50%, rgba(20,12,4,0.9) 0%, transparent 70%),
-        linear-gradient(160deg, #12090300 0%, #0a0702 100%);
-      pointer-events: none;
+    .inspector-content { flex: 1; overflow-y: auto; }
+    .inspector-go-header {
+      padding: 10px 12px 6px;
+      border-bottom: 1px solid var(--inspector-border);
     }
-
-    /* Blurred background pattern to simulate game world */
-    body::after {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image:
-        repeating-linear-gradient(
-          45deg,
-          rgba(139,101,48,0.015) 0px,
-          rgba(139,101,48,0.015) 1px,
-          transparent 1px,
-          transparent 30px
-        );
-      pointer-events: none;
+    .go-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--inspector-value);
+      font-family: 'IBM Plex Mono', monospace;
     }
+    .go-meta {
+      display: flex;
+      gap: 12px;
+      margin-top: 4px;
+    }
+    .go-meta-item {
+      font-size: 10px;
+      color: var(--inspector-label);
+    }
+    .go-meta-item span { color: var(--inspector-value); }
+    .go-active { color: var(--inspector-check) !important; }
 
-    /* Back link */
-    .back-link {
-      position: fixed;
-      top: 16px;
-      left: 16px;
-      z-index: 100;
-      color: var(--text-muted);
-      text-decoration: none;
-      font-size: 0.8rem;
+    .component-block {
+      border-bottom: 1px solid var(--inspector-border);
+    }
+    .comp-header {
+      padding: 6px 12px;
+      background: rgba(30,40,60,0.4);
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--inspector-comp);
       letter-spacing: 0.05em;
       display: flex;
       align-items: center;
       gap: 6px;
-      padding: 6px 12px;
-      background: rgba(13,10,6,0.8);
-      border: 1px solid var(--border-gold);
-      border-radius: 3px;
-      transition: color 0.2s, border-color 0.2s;
-    }
-    .back-link:hover { color: var(--text-gold); border-color: var(--border-gold-bright); }
-
-    /* Reopen button */
-    #reopen-btn {
-      position: relative;
-      z-index: 10;
-      display: none;
-      margin: 20px auto;
-      padding: 12px 28px;
-      background: var(--bg-card);
-      border: 1px solid var(--border-gold-bright);
-      color: var(--text-gold);
-      font-family: Georgia, serif;
-      font-size: 1rem;
       cursor: pointer;
-      letter-spacing: 0.06em;
-      border-radius: 3px;
-      transition: background 0.2s, box-shadow 0.2s;
-      box-shadow: 0 0 12px rgba(200,160,80,0.15);
+      user-select: none;
     }
-    #reopen-btn:hover {
-      background: var(--bg-card-hover);
-      box-shadow: 0 0 20px rgba(200,160,80,0.25);
-    }
+    .comp-header:hover { background: rgba(40,55,85,0.4); }
+    .comp-header .comp-icon { font-size: 11px; }
+    .comp-header .comp-warning { color: var(--inspector-warn); font-size: 9px; margin-left: auto; }
 
-    /* Main modal panel */
-    #herald-panel {
-      position: relative;
-      z-index: 10;
-      width: 100%;
-      max-width: 720px;
-      background: var(--bg-panel);
-      border: 1px solid var(--border-gold);
-      border-radius: 4px;
-      box-shadow:
-        0 0 0 3px rgba(200,160,80,0.08),
-        0 0 60px rgba(200,160,80,0.12),
-        inset 0 1px 0 rgba(200,160,80,0.1),
-        0 20px 80px rgba(0,0,0,0.8);
-      overflow: hidden;
+    .comp-body {
+      padding: 6px 12px 10px;
     }
-
-    /* Ornate corner accents */
-    .panel-corner {
-      position: absolute;
-      font-size: 1.1rem;
-      color: var(--border-gold-bright);
-      opacity: 0.7;
-      z-index: 5;
-      line-height: 1;
-    }
-    .panel-corner.tl { top: 6px; left: 10px; }
-    .panel-corner.tr { top: 6px; right: 10px; }
-    .panel-corner.bl { bottom: 6px; left: 10px; }
-    .panel-corner.br { bottom: 6px; right: 10px; }
-
-    /* Top accent line */
-    .panel-accent-top {
-      height: 3px;
-      background: linear-gradient(to right, transparent, var(--border-gold-bright) 20%, var(--border-gold-bright) 80%, transparent);
-    }
-
-    /* Header */
-    .herald-header {
-      padding: 20px 28px 16px;
-      text-align: center;
-      border-bottom: 1px solid var(--border-gold);
-      position: relative;
-    }
-
-    .herald-title {
-      font-family: Georgia, 'Times New Roman', serif;
-      font-size: 1.55rem;
-      color: var(--text-gold);
-      letter-spacing: 0.08em;
-      text-shadow: 0 0 24px rgba(200,160,80,0.4);
-      margin-bottom: 4px;
-    }
-
-    .herald-day {
-      font-size: 1rem;
-      color: var(--text-primary);
-      font-weight: 500;
-      margin-bottom: 3px;
-    }
-
-    .herald-epoch {
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      letter-spacing: 0.06em;
-    }
-
-    .header-rule {
-      margin: 12px auto 0;
-      height: 1px;
-      background: linear-gradient(to right, transparent, var(--border-gold), transparent);
-    }
-
-    /* Content grid */
-    .herald-body {
-      padding: 16px 20px;
-    }
-
-    .content-grid {
+    .prop-row {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
+      grid-template-columns: 130px 1fr;
+      gap: 4px;
+      padding: 2px 0;
+      font-size: 11px;
+      align-items: baseline;
     }
-
-    /* Stat card */
-    .stat-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-gold);
-      border-radius: 3px;
-      padding: 14px 16px;
-      position: relative;
+    .prop-key {
+      color: var(--inspector-label);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      white-space: nowrap;
       overflow: hidden;
-      box-shadow: inset 0 1px 0 rgba(200,160,80,0.06);
+      text-overflow: ellipsis;
     }
-
-    .stat-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 2px;
-      background: linear-gradient(to right, transparent, rgba(200,160,80,0.3), transparent);
+    .prop-val {
+      color: var(--inspector-value);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      word-break: break-all;
     }
-
-    .card-title {
-      font-size: 0.7rem;
-      color: var(--text-muted);
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      margin-bottom: 10px;
-      display: flex;
+    .prop-val.real { color: var(--inspector-check); }
+    .prop-val.est  { color: var(--inspector-warn); }
+    .prop-val.path { color: #79b8ff; font-size: 9px; word-break: break-all; }
+    .prop-val.vec2 { color: #b392f0; }
+    .prop-val.color-swatch {
+      display: inline-flex;
       align-items: center;
       gap: 6px;
     }
+    .swatch {
+      display: inline-block;
+      width: 10px; height: 10px;
+      border-radius: 2px;
+      border: 1px solid rgba(255,255,255,0.2);
+      flex-shrink: 0;
+    }
+    .bool-true  { color: var(--inspector-check); }
+    .bool-false { color: #f97583; }
 
-    .card-title-icon { font-size: 0.9rem; }
+    .sf-block {
+      background: rgba(255,171,112,0.05);
+      border: 1px solid rgba(255,171,112,0.2);
+      border-radius: 4px;
+      padding: 6px 8px;
+      margin: 4px 0;
+    }
+    .sf-title { font-size: 9px; color: var(--inspector-warn); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
+    .sf-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 4px;
+      font-size: 10px;
+      font-family: 'IBM Plex Mono', monospace;
+      color: var(--inspector-value);
+      padding: 1px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .sf-row:last-child { border-bottom: none; }
+    .sf-field { color: var(--inspector-warn); }
+    .sf-target { color: #79b8ff; }
+    .sf-line { color: var(--text-muted); font-size: 9px; }
 
-    .stat-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 3px 0;
-      font-size: 0.82rem;
-      border-bottom: 1px solid rgba(138,101,48,0.12);
+    .section-divider {
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--inspector-label);
+      padding: 8px 12px 2px;
+      border-bottom: 1px solid var(--inspector-border);
     }
 
-    .stat-row:last-child { border-bottom: none; }
-
-    .stat-label { color: var(--text-muted); }
-
-    .stat-value {
-      color: var(--text-primary);
-      font-family: 'Courier New', monospace;
-      font-size: 0.85rem;
-      font-weight: 600;
-    }
-
-    .stat-value.positive { color: var(--text-green); }
-    .stat-value.negative { color: var(--text-red); }
-    .stat-value.gold { color: var(--text-gold); }
-
-    .compare-arrow {
-      font-size: 0.7rem;
-      margin-left: 4px;
-    }
-    .compare-arrow.up { color: var(--text-green); }
-    .compare-arrow.down { color: var(--text-muted); }
-
-    /* Dungeon list */
-    .dungeon-list {
+    /* ── BOTTOM PANEL: IMPLEMENTATION CHECKLIST ── */
+    .checklist-panel {
+      height: 280px;
+      border-top: 2px solid var(--border-muted);
       display: flex;
       flex-direction: column;
-      gap: 6px;
-      max-height: 110px;
-      overflow-y: auto;
-      padding-right: 4px;
+      background: #080b0f;
+      flex-shrink: 0;
     }
-
-    .dungeon-list::-webkit-scrollbar { width: 4px; }
-    .dungeon-list::-webkit-scrollbar-track { background: rgba(138,101,48,0.1); }
-    .dungeon-list::-webkit-scrollbar-thumb { background: var(--border-gold); border-radius: 2px; }
-
-    .dungeon-entry {
-      display: grid;
-      grid-template-columns: 1fr auto auto;
-      gap: 8px;
-      align-items: center;
-      padding: 5px 8px;
-      background: rgba(13,10,6,0.4);
-      border-left: 2px solid var(--border-gold);
-      border-radius: 0 2px 2px 0;
-      font-size: 0.78rem;
-    }
-
-    .dungeon-name { color: var(--text-primary); font-weight: 500; }
-    .dungeon-time { color: var(--text-muted); font-family: monospace; }
-    .dungeon-heroes { color: var(--text-gold); font-size: 0.72rem; }
-
-    /* Vault progress bar */
-    .vault-bar-container {
-      margin-top: 8px;
-    }
-
-    .vault-bar-label {
+    .checklist-header {
+      background: var(--inspector-header);
+      border-bottom: 1px solid var(--inspector-border);
+      padding: 8px 16px;
       display: flex;
-      justify-content: space-between;
-      font-size: 0.75rem;
-      color: var(--text-muted);
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+    .checklist-header h2 {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-gold);
+      letter-spacing: 0.05em;
+    }
+    .checklist-header .subtitle { font-size: 10px; color: var(--text-muted); margin-left: auto; }
+    .checklist-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px 0;
+      display: flex;
+      gap: 0;
+    }
+    .checklist-col {
+      flex: 1;
+      padding: 0 16px;
+      border-right: 1px solid var(--inspector-border);
+    }
+    .checklist-col:last-child { border-right: none; }
+    .checklist-col-title {
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--inspector-label);
       margin-bottom: 6px;
     }
-
-    .vault-bar-track {
-      height: 14px;
-      background: rgba(13,10,6,0.6);
-      border: 1px solid var(--border-gold);
-      border-radius: 2px;
-      overflow: hidden;
-      position: relative;
-    }
-
-    .vault-bar-fill {
-      height: 100%;
-      background: linear-gradient(to right, #a87a28, var(--bar-vault), #e8c870);
-      border-radius: 2px;
-      position: relative;
-      transition: width 0.6s ease;
-    }
-
-    .vault-bar-fill::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      right: 0;
-      width: 4px;
-      height: 100%;
-      background: rgba(255,255,200,0.4);
-      filter: blur(3px);
-    }
-
-    .vault-pct {
-      text-align: center;
-      font-family: monospace;
-      font-size: 0.8rem;
-      color: var(--text-gold);
-      margin-top: 5px;
-    }
-
-    /* Hero badge */
-    .trophy-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      background: rgba(200,160,80,0.1);
-      border: 1px solid rgba(200,160,80,0.3);
-      border-radius: 2px;
-      padding: 2px 6px;
-      font-size: 0.72rem;
-      color: var(--text-gold);
-    }
-
-    /* Footer nav */
-    .herald-footer {
-      padding: 14px 20px;
-      border-top: 1px solid var(--border-gold);
+    .check-item {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
+      gap: 8px;
+      padding: 3px 0;
+      font-size: 10px;
+      line-height: 1.4;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .check-num {
+      color: var(--inspector-label);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px;
+      flex-shrink: 0;
+      width: 18px;
+      text-align: right;
+      padding-top: 1px;
+    }
+    .check-text { color: var(--text-cream); flex: 1; }
+    .check-text .mono { font-family: 'IBM Plex Mono', monospace; color: var(--inspector-key); font-size: 9px; }
+    .check-text .val  { font-family: 'IBM Plex Mono', monospace; color: var(--inspector-warn); font-size: 9px; }
+    .check-text .path { font-family: 'IBM Plex Mono', monospace; color: #79b8ff; font-size: 9px; }
+    .check-item.section-break .check-text { font-weight: 700; color: var(--text-gold); }
+    .check-item.section-break { margin-top: 4px; }
+
+    /* Scrollbars */
+    ::-webkit-scrollbar { width: 4px; height: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #3a3a3a; border-radius: 2px; }
+    ::-webkit-scrollbar-thumb:hover { background: #555; }
+
+    /* Color swatches inline */
+    .color-pill {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-family: 'IBM Plex Mono', monospace; font-size: 10px;
     }
 
-    .nav-btn {
-      background: var(--bg-card);
-      border: 1px solid var(--border-gold);
-      color: var(--text-primary);
-      padding: 8px 16px;
-      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
-      font-size: 0.82rem;
-      cursor: pointer;
-      border-radius: 3px;
-      transition: background 0.15s, border-color 0.15s, color 0.15s;
-      letter-spacing: 0.04em;
-      white-space: nowrap;
-    }
-
-    .nav-btn:hover:not(:disabled) {
-      background: var(--bg-card-hover);
-      border-color: var(--border-gold-bright);
-      color: var(--text-gold);
-    }
-
-    .nav-btn:disabled {
-      opacity: 0.35;
-      cursor: not-allowed;
-    }
-
-    .day-indicator {
-      font-family: Georgia, serif;
-      font-size: 0.88rem;
-      color: var(--text-gold);
-      text-align: center;
-      min-width: 80px;
-      letter-spacing: 0.04em;
-    }
-
-    .close-btn {
-      background: rgba(204,68,68,0.1);
-      border: 1px solid rgba(204,68,68,0.4);
-      color: #cc8888;
-    }
-
-    .close-btn:hover {
-      background: rgba(204,68,68,0.2) !important;
-      border-color: #cc4444 !important;
-      color: #ff9999 !important;
-    }
-
-    /* Fade animation */
-    @keyframes panelFadeIn {
-      from { opacity: 0; transform: scale(0.97) translateY(10px); }
-      to { opacity: 1; transform: scale(1) translateY(0); }
-    }
-
-    @keyframes contentFade {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
-    #herald-panel {
-      animation: panelFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
-    }
-
-    .herald-body.fading {
-      animation: contentFade 0.25s ease both;
-    }
-
-    /* Guild row */
-    .guild-row {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      margin-top: 4px;
-    }
-
-    .rank-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 3px;
-      background: rgba(74,170,96,0.12);
-      border: 1px solid rgba(74,170,96,0.3);
-      border-radius: 2px;
-      padding: 2px 7px;
-      font-size: 0.75rem;
-      font-family: monospace;
-      color: var(--text-green);
-    }
+    /* Source badge inline */
+    .src-real  { font-size: 8px; background: rgba(34,197,94,0.12); color: var(--text-green); border-radius: 2px; padding: 1px 4px; margin-left: 4px; }
+    .src-spec  { font-size: 8px; background: rgba(255,171,112,0.12); color: var(--inspector-warn); border-radius: 2px; padding: 1px 4px; margin-left: 4px; }
+    .src-est   { font-size: 8px; background: rgba(200,168,112,0.10); color: var(--text-subgold); border-radius: 2px; padding: 1px 4px; margin-left: 4px; }
   </style>
 </head>
 <body>
-  <a href="../" class="back-link">← Back to Prototypes</a>
 
-  <button id="reopen-btn" onclick="reopenHerald()">📜 Reopen Herald</button>
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- TOP BAR                                                                 -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<div class="top-bar">
+  <h1>📜 UIKingdomHerald — Unity Implementation Spec</h1>
+  <span class="badge badge-real">✓ REAL</span><span style="font-size:10px;color:var(--text-muted)">= extracted from ui-hierarchy.json</span>
+  <span class="badge badge-spec">◈ SPEC</span><span style="font-size:10px;color:var(--text-muted)">= from KINGDOM_HERALD_PANEL.md</span>
+  <span class="badge badge-est">~ EST</span><span style="font-size:10px;color:var(--text-muted)">= estimated from pattern/style guide</span>
+  <div class="legend">
+    Click any node in the hierarchy or section in the preview to see its Inspector values
+  </div>
+</div>
 
-  <div id="herald-panel">
-    <span class="panel-corner tl">✦</span>
-    <span class="panel-corner tr">✦</span>
-    <span class="panel-corner bl">✦</span>
-    <span class="panel-corner br">✦</span>
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- MAIN 3-COLUMN LAYOUT                                                    -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<div class="main">
 
-    <div class="panel-accent-top"></div>
+  <!-- ── LEFT: GAME PREVIEW ── -->
+  <div class="preview-col">
+    <div class="preview-col-label">↓ Game Preview — click sections to inspect</div>
 
-    <div class="herald-header">
-      <div class="herald-title" id="h-title">📜 THE KINGDOM HERALD 📜</div>
-      <div class="herald-day" id="h-day">Day 42 — The Realm of Terafell</div>
-      <div class="herald-epoch" id="h-epoch">Epoch 42 · Week 6 · Day 7/7</div>
-      <div class="header-rule"></div>
+    <div class="game-panel">
+
+      <!-- HEADER SECTION -->
+      <div class="panel-header section-card" id="preview-header" onclick="selectNode('n-headerSection')" style="cursor:pointer; border:none; border-radius:0; background:transparent; padding:12px 20px 6px;">
+        <div class="panel-title">📜 THE KINGDOM HERALD 📜</div>
+        <div class="panel-subtitle">Day 42 — The Kingdom Herald</div>
+        <div class="panel-subtitle" style="font-size:10px; margin-top:2px;">Epoch 42 · Week 6 · Day 7/7</div>
+        <div class="header-divider"></div>
+        <div class="node-tag">HeaderSection</div>
+      </div>
+
+      <!-- CONTENT AREA -->
+      <div class="panel-content">
+
+        <!-- LEFT COLUMN -->
+        <div class="panel-column">
+
+          <!-- GOLD SECTION -->
+          <div class="section-card" id="preview-gold" onclick="selectNode('n-goldSection')">
+            <div class="node-tag">GoldSection</div>
+            <div class="section-title">💰 Gold &amp; Economy</div>
+            <div class="section-row">
+              <span class="label">Gold Earned:</span>
+              <span class="value">4,200</span>
+            </div>
+            <div class="section-row">
+              <span class="label">Gold Spent:</span>
+              <span class="value">1,100</span>
+            </div>
+            <div class="section-row">
+              <span class="best">Best Ever: 6,100 <span class="arrow-down">▼</span></span>
+            </div>
+          </div>
+
+          <!-- HEROES SECTION -->
+          <div class="section-card" id="preview-heroes" onclick="selectNode('n-heroesSection')">
+            <div class="node-tag">HeroesSection</div>
+            <div class="section-title">🦸 Heroes</div>
+            <div class="section-row">
+              <span class="label">Level Ups:</span>
+              <span class="value" style="font-size:9px;">Thorne (Lv7)</span>
+            </div>
+            <div class="section-row">
+              <span class="label">Hero Deaths:</span>
+              <span class="value">None 🏆</span>
+            </div>
+            <div class="section-row">
+              <span class="label">Rapport:</span>
+              <span class="value" style="font-size:9px;">Maya (+2)</span>
+            </div>
+            <div class="section-row">
+              <span class="label">Deathless:</span>
+              <span class="value">5 days</span>
+            </div>
+          </div>
+
+          <!-- TRADE SECTION -->
+          <div class="section-card" id="preview-trade" onclick="selectNode('n-tradeSection')">
+            <div class="node-tag">TradeSection</div>
+            <div class="section-title">🛒 Trade</div>
+            <div class="section-row">
+              <span class="label">Items Sold:</span>
+              <span class="value">12</span>
+            </div>
+            <div class="section-row">
+              <span class="label">Best Sale:</span>
+              <span class="value" style="font-size:9px;">Ironveil (840g)</span>
+            </div>
+            <div class="section-row">
+              <span class="best">Best Ever: 2,100g <span class="arrow-down">▼</span></span>
+            </div>
+          </div>
+
+        </div><!-- /left column -->
+
+        <!-- RIGHT COLUMN -->
+        <div class="panel-column">
+
+          <!-- COMBAT SECTION -->
+          <div class="section-card" id="preview-combat" onclick="selectNode('n-combatSection')" style="flex:1.4;">
+            <div class="node-tag">CombatSection</div>
+            <div class="section-title">⚔️ Combat</div>
+            <div class="section-row">
+              <span class="label">Dungeons:</span>
+              <span class="value">3</span>
+            </div>
+            <div class="section-row">
+              <span class="best">Best Ever: 5 <span class="arrow-down">▼</span></span>
+            </div>
+            <div class="dungeon-scroll">
+              <div class="dungeon-cell">Wolf Den  2:34  [Thorne]</div>
+              <div class="dungeon-cell">Darkhold  4:12  [Maya]</div>
+              <div class="dungeon-cell">Crypt  3:45  [Thorne, Runa]</div>
+            </div>
+          </div>
+
+          <!-- GUILD SECTION -->
+          <div class="section-card" id="preview-guild" onclick="selectNode('n-guildSection')">
+            <div class="node-tag">GuildSection</div>
+            <div class="section-title">🏛️ Guild</div>
+            <div class="section-row">
+              <span class="label">Rank Progress:</span>
+              <span class="value">+120</span>
+            </div>
+            <div class="section-row">
+              <span class="label">Favors Done:</span>
+              <span class="value">4</span>
+            </div>
+          </div>
+
+          <!-- VAULT SECTION -->
+          <div class="section-card" id="preview-vault" onclick="selectNode('n-vaultSection')">
+            <div class="node-tag">VaultSection</div>
+            <div class="section-title">👑 King's Vault</div>
+            <div class="section-row">
+              <span class="label">Week 6 · Day 4/7</span>
+            </div>
+            <div class="vault-bar-wrap">
+              <div class="vault-bar-track">
+                <div class="vault-bar-fill"></div>
+              </div>
+            </div>
+            <div class="section-row" style="margin-top:2px;">
+              <span class="best">57% complete</span>
+            </div>
+          </div>
+
+        </div><!-- /right column -->
+      </div><!-- /panel-content -->
+
+      <!-- FOOTER NAV -->
+      <div class="panel-footer">
+        <button class="nav-btn" onclick="selectNode('n-prevBtn')">◀ PREV DAY</button>
+        <div class="page-indicator" onclick="selectNode('n-pageText')" style="cursor:pointer;">Day 1 of 30</div>
+        <button class="nav-btn disabled" onclick="selectNode('n-nextBtn')">NEXT DAY ▶</button>
+        <div class="close-btn" onclick="selectNode('n-closeBtn')">✕</div>
+      </div>
+
+    </div><!-- /game-panel -->
+
+    <!-- SCALE NOTE -->
+    <div style="font-size:9px; color:var(--text-muted); text-align:center; line-height:1.5;">
+      Preview scaled ~54% · Full panel: <strong style="color:var(--text-subgold)">720 × 640px</strong> · Canvas: 1920×1080
     </div>
 
-    <div class="herald-body" id="herald-body">
-      <div class="content-grid" id="content-grid">
-        <!-- Populated by JS -->
+    <!-- SERIALIZED FIELDS QUICK REF -->
+    <div style="width:100%; background:var(--bg-card); border:1px solid var(--border-muted); border-radius:4px; padding:10px; font-size:10px;">
+      <div style="font-weight:700; color:var(--text-gold); margin-bottom:6px; letter-spacing:0.05em;">📋 KingdomHeraldPanel.cs SerializeField Map</div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:2px 12px; font-family:'IBM Plex Mono',monospace; font-size:9px;">
+        <div style="color:var(--inspector-warn)">_dayTitleText</div><div style="color:#79b8ff">→ HeaderSection/DayTitleText</div>
+        <div style="color:var(--inspector-warn)">_dateSubtitleText</div><div style="color:#79b8ff">→ HeaderSection/DateSubtitleText</div>
+        <div style="color:var(--inspector-warn)">_goldEarnedText</div><div style="color:#79b8ff">→ GoldSection/.../ValueText</div>
+        <div style="color:var(--inspector-warn)">_goldSpentText</div><div style="color:#79b8ff">→ GoldSection/.../ValueText</div>
+        <div style="color:var(--inspector-warn)">_goldBestCompareText</div><div style="color:#79b8ff">→ GoldSection/.../BestText</div>
+        <div style="color:var(--inspector-warn)">_dungeonsText</div><div style="color:#79b8ff">→ CombatSection/DungeonsText</div>
+        <div style="color:var(--inspector-warn)">_dungeonsBestText</div><div style="color:#79b8ff">→ CombatSection/BestText</div>
+        <div style="color:var(--inspector-warn)">_dungeonListParent</div><div style="color:#79b8ff">→ ScrollView/Viewport/Content</div>
+        <div style="color:var(--inspector-warn)">_dungeonCellPrefab</div><div style="color:#79b8ff">→ Prefabs/UI/KHDungeonCell</div>
+        <div style="color:var(--inspector-warn)">_levelUpsText</div><div style="color:#79b8ff">→ HeroesSection/LevelUpsText</div>
+        <div style="color:var(--inspector-warn)">_heroDeathsText</div><div style="color:#79b8ff">→ HeroesSection/DeathsText</div>
+        <div style="color:var(--inspector-warn)">_rapportMilestonesText</div><div style="color:#79b8ff">→ HeroesSection/RapportText</div>
+        <div style="color:var(--inspector-warn)">_deathlessStreakText</div><div style="color:#79b8ff">→ HeroesSection/StreakText</div>
+        <div style="color:var(--inspector-warn)">_itemsSoldText</div><div style="color:#79b8ff">→ TradeSection/ItemsSoldText</div>
+        <div style="color:var(--inspector-warn)">_bestItemSoldText</div><div style="color:#79b8ff">→ TradeSection/BestSaleText</div>
+        <div style="color:var(--inspector-warn)">_itemsBestCompareText</div><div style="color:#79b8ff">→ TradeSection/BestEverText</div>
+        <div style="color:var(--inspector-warn)">_guildRankProgressText</div><div style="color:#79b8ff">→ GuildSection/RankText</div>
+        <div style="color:var(--inspector-warn)">_favorsCompletedText</div><div style="color:#79b8ff">→ GuildSection/FavorsText</div>
+        <div style="color:var(--inspector-warn)">_weeklyProgressSlider</div><div style="color:#79b8ff">→ VaultSection/VaultProgressBar</div>
+        <div style="color:var(--inspector-warn)">_weeklyProgressText</div><div style="color:#79b8ff">→ VaultSection/ProgressLabel</div>
+        <div style="color:var(--inspector-warn)">_previousDayButton</div><div style="color:#79b8ff">→ FooterSection/PreviousDayButton</div>
+        <div style="color:var(--inspector-warn)">_nextDayButton</div><div style="color:#79b8ff">→ FooterSection/NextDayButton</div>
+        <div style="color:var(--inspector-warn)">_closeButton</div><div style="color:#79b8ff">→ FooterSection/CloseButton</div>
+        <div style="color:var(--inspector-warn)">_pageIndicatorText</div><div style="color:#79b8ff">→ FooterSection/PageIndicatorText</div>
       </div>
     </div>
 
-    <div class="herald-footer">
-      <button class="nav-btn" id="btn-prev" onclick="changeDay(-1)">◀ Prev Day</button>
-      <span class="day-indicator" id="day-indicator">Day 1 of 3</span>
-      <button class="nav-btn" id="btn-next" onclick="changeDay(1)">Next Day ▶</button>
-      <button class="nav-btn close-btn" onclick="closeHerald()">✕ Close</button>
+  </div><!-- /preview-col -->
+
+
+  <!-- ── CENTER: HIERARCHY TREE ── -->
+  <div class="hierarchy-col">
+    <div class="hierarchy-header">Hierarchy — UIKingdomHerald</div>
+    <div class="tree" id="hierarchyTree">
+
+      <div class="tree-node scene-root" onclick="selectNode('n-scene')">
+        <span class="icon">🎬</span>
+        <span class="name">UIKingdomHerald</span>
+        <span class="components">Scene</span>
+      </div>
+
+      <div class="tree-node canvas-node" id="tn-canvas" onclick="selectNode('n-canvas')">
+        <span class="indent"></span>
+        <span class="icon">⬛</span>
+        <span class="name">Canvas</span>
+        <span class="components">Canvas · CanvasScaler · GR</span>
+      </div>
+
+      <div class="tree-node" id="tn-panelRoot" onclick="selectNode('n-panelRoot')">
+        <span class="indent"></span><span class="indent"></span>
+        <span class="icon">🖼</span>
+        <span class="name">PanelRoot</span>
+        <span class="components">Image · CG · KingdomHeraldPanel</span>
+      </div>
+
+      <!-- HEADER SECTION -->
+      <div class="tree-node" id="tn-headerSection" onclick="selectNode('n-headerSection')">
+        <span class="indent"></span><span class="indent"></span><span class="indent"></span>
+        <span class="icon">📑</span>
+        <span class="name">HeaderSection</span>
+        <span class="components">VLG</span>
+      </div>
+      <div class="tree-node" id="tn-dayTitle" onclick="selectNode('n-dayTitle')">
+        <span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span>
+        <span class="icon">T</span>
+        <span class="name">DayTitleText</span>
+        <span class="components">TMP · _dayTitleText</span>
+      </div>
+      <div class="tree-node" id="tn-dateSubtitle" onclick="selectNode('n-dateSubtitle')">
+        <span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span>
+        <span class="icon">T</span>
+        <span class="name">DateSubtitleText</span>
+        <span class="components">TMP · _dateSubtitleText</span>
+      </div>
+      <div class="tree-node" id="tn-headerDivider" onclick="selectNode('n-headerDivider')">
+        <span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span>
+        <span class="icon">—</span>
+        <span class="name">HeaderDivider</span>
+        <span class="components">Image · LE</span>
+      </div>
+
+      <!-- CONTENT AREA -->
+      <div class="tree-node" id="tn-contentArea" onclick="selectNode('n-contentArea')">
+        <span class="indent"></span><span class="indent"></span><span class="indent"></span>
+        <span class="icon">⊞</span>
+        <span class="name">ContentArea</span>
+        <span class="components">HLG</span>
+      </div>
+
+      <!-- LEFT COLUMN -->
+      <div class="tree-node" id="tn-leftCol" onclick="selectNode('n-leftCol')">
+        <span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span>
+        <span class="icon">⬜</span>
+        <span class="name">LeftColumn</span>
+        <span class="components">VLG · LE</span>
+      </div>
+
+      <!-- GOLD SECTION -->
+      <div class="tree-node" id="tn-goldSection" onclick="selectNode('n-goldSection')">
+        <span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span>
+        <span class="icon">🖼</span>
+        <span class="name">GoldSection</span>
+        <span class="components">Image · VLG · LE</span>
+      </div>
+      <div class="tree-node" id="tn-goldHeader" onclick="selectNode('n-goldHeader')">
+        <span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span>
+        <span class="icon">T</span><span class="name">SectionHeader</span><span class="components">TMP</span>
+      </div>
+      <div class="tree-node" id="tn-goldEarned" onclick="selectNode('n-goldEarned')">
+        <span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span>
+        <span class="icon">⟷</span><span class="name">GoldEarnedRow</span><span class="components">HLG</span>
+      </div>
+      <div class="tree-node" id="tn-goldSpent" onclick="selectNode('n-goldSpent')">
+        <span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span>
+        <span class="icon">⟷</span><span class="name">GoldSpentRow</span><span class="components">HLG</span>
+      </div>
+      <div class="tree-node" id="tn-goldBest" onclick="selectNode('n-goldBest')">
+        <span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span>
+        <span class="icon">⟷</span><span class="name">BestEverRow</span><span class="components">HLG</span>
+      </div>
+
+      <!-- HEROES SECTION -->
+      <div class="tree-node" id="tn-heroesSection" onclick="selectNode('n-heroesSection')">
+        <span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span>
+        <span class="icon">🖼</span>
+        <span class="name">HeroesSection</span>
+        <span class="components">Image · VLG · LE</span>
+      </div>
+      <div class="tree-node" id="tn-levelUps" onclick="selectNode('n-levelUps')">
+        <span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span>
+        <span class="icon">T</span><span class="name">LevelUpsText</span><span class="components">TMP · _levelUpsText</span>
+      </div>
+      <div class="tree-node" id="tn-heroDeaths" onclick="selectNode('n-heroDeaths')">
+        <span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span>
+        <span class="icon">T</span><span class="name">HeroDeathsText</span><span class="components">TMP · _heroDeathsText</span>
+      </div>
+      <div class="tree-node" id="tn-rapport" onclick="selectNode('n-rapport')">
+        <span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span>
+        <span class="icon">T</span><span class="name">RapportMilestonesText</span><span class="components">TMP · _rapportMilestonesText</span>
+      </div>
+      <div class="tree-node" id="tn-streak" onclick="selectNode('n-streak')">
+        <span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span>
+        <span class="icon">T</span><span class="name">DeathlessStreakText</span><span class="components">TMP · _deathlessStreakText</span>
+      </div>
+
+      <!-- TRADE SECTION -->
+      <div class="tree-node" id="tn-tradeSection" onclick="selectNode('n-tradeSection')">
+        <span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span>
+        <span class="icon">🖼</span>
+        <span class="name">TradeSection</span>
+        <span class="components">Image · VLG · LE</span>
+      </div>
+      <div class="tree-node" id="tn-itemsSold" onclick="selectNode('n-itemsSold')">
+        <span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span>
+        <span class="icon">T</span><span class="name">ItemsSoldText</span><span class="components">TMP · _itemsSoldText</span>
+      </div>
+      <div class="tree-node" id="tn-bestSale" onclick="selectNode('n-bestSale')">
+        <span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span>
+        <span class="icon">T</span><span class="name">BestItemSoldText</span><span class="components">TMP · _bestItemSoldText</span>
+      </div>
+      <div class="tree-node" id="tn-tradeBest" onclick="selectNode('n-tradeBest')">
+        <span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span>
+        <span class="icon">T</span><span class="name">ItemsBestCompareText</span><span class="components">TMP · _itemsBestCompareText</span>
+      </div>
+
+      <!-- RIGHT COLUMN -->
+      <div class="tree-node" id="tn-rightCol" onclick="selectNode('n-rightCol')">
+        <span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span>
+        <span class="icon">⬜</span>
+        <span class="name">RightColumn</span>
+        <span class="components">VLG · LE</span>
+      </div>
+
+      <!-- COMBAT SECTION -->
+      <div class="tree-node" id="tn-combatSection" onclick="selectNode('n-combatSection')">
+        <span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span>
+        <span class="icon">🖼</span>
+        <span class="name">CombatSection</span>
+        <span class="components">Image · VLG · LE</span>
+      </div>
+      <div class="tree-node" id="tn-dungeonsText" onclick="selectNode('n-dungeonsText')">
+        <span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span>
+        <span class="icon">T</span><span class="name">DungeonsText</span><span class="components">TMP · _dungeonsText</span>
+      </div>
+      <div class="tree-node" id="tn-dungeonBest" onclick="selectNode('n-dungeonBest')">
+        <span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span>
+        <span class="icon">T</span><span class="name">DungeonsBestText</span><span class="components">TMP · _dungeonsBestText</span>
+      </div>
+      <div class="tree-node" id="tn-dungeonScroll" onclick="selectNode('n-dungeonScroll')">
+        <span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span>
+        <span class="icon">📜</span><span class="name">DungeonScrollView</span><span class="components">ScrollRect · Image · Mask</span>
+      </div>
+      <div class="tree-node" id="tn-viewport" onclick="selectNode('n-viewport')">
+        <span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span>
+        <span class="icon">⬜</span><span class="name">Viewport</span><span class="components">Mask · Image</span>
+      </div>
+      <div class="tree-node" id="tn-content" onclick="selectNode('n-content')">
+        <span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span>
+        <span class="icon">⬜</span><span class="name">Content</span><span class="components">VLG · CSF · _dungeonListParent</span>
+      </div>
+      <div class="tree-node" style="color:#6e7681;" id="tn-cellPrefab" onclick="selectNode('n-cellPrefab')">
+        <span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span>
+        <span class="icon">📦</span><span class="name">[KHDungeonCell × N]</span><span class="components">Prefab · _dungeonCellPrefab</span>
+      </div>
+
+      <!-- GUILD SECTION -->
+      <div class="tree-node" id="tn-guildSection" onclick="selectNode('n-guildSection')">
+        <span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span>
+        <span class="icon">🖼</span>
+        <span class="name">GuildSection</span>
+        <span class="components">Image · VLG · LE</span>
+      </div>
+      <div class="tree-node" id="tn-guildRank" onclick="selectNode('n-guildRank')">
+        <span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span>
+        <span class="icon">T</span><span class="name">GuildRankProgressText</span><span class="components">TMP · _guildRankProgressText</span>
+      </div>
+      <div class="tree-node" id="tn-favors" onclick="selectNode('n-favors')">
+        <span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span>
+        <span class="icon">T</span><span class="name">FavorsCompletedText</span><span class="components">TMP · _favorsCompletedText</span>
+      </div>
+
+      <!-- VAULT SECTION -->
+      <div class="tree-node" id="tn-vaultSection" onclick="selectNode('n-vaultSection')">
+        <span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span>
+        <span class="icon">🖼</span>
+        <span class="name">VaultSection</span>
+        <span class="components">Image · VLG · LE</span>
+      </div>
+      <div class="tree-node" id="tn-vaultLabel" onclick="selectNode('n-vaultLabel')">
+        <span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span>
+        <span class="icon">T</span><span class="name">ProgressLabel</span><span class="components">TMP · _weeklyProgressText</span>
+      </div>
+      <div class="tree-node" id="tn-vaultSlider" onclick="selectNode('n-vaultSlider')">
+        <span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span>
+        <span class="icon">⬛</span><span class="name">VaultProgressBar</span><span class="components">Slider · _weeklyProgressSlider</span>
+      </div>
+
+      <!-- FOOTER -->
+      <div class="tree-node" id="tn-footer" onclick="selectNode('n-footer')">
+        <span class="indent"></span><span class="indent"></span><span class="indent"></span>
+        <span class="icon">⊟</span>
+        <span class="name">FooterSection</span>
+        <span class="components">HLG</span>
+      </div>
+      <div class="tree-node" id="tn-prevBtn" onclick="selectNode('n-prevBtn')">
+        <span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span>
+        <span class="icon">◀</span><span class="name">PreviousDayButton</span><span class="components">Button · Image · _previousDayButton</span>
+      </div>
+      <div class="tree-node" id="tn-pageText" onclick="selectNode('n-pageText')">
+        <span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span>
+        <span class="icon">T</span><span class="name">PageIndicatorText</span><span class="components">TMP · _pageIndicatorText</span>
+      </div>
+      <div class="tree-node" id="tn-nextBtn" onclick="selectNode('n-nextBtn')">
+        <span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span>
+        <span class="icon">▶</span><span class="name">NextDayButton</span><span class="components">Button · Image · _nextDayButton</span>
+      </div>
+      <div class="tree-node" id="tn-closeBtn" onclick="selectNode('n-closeBtn')">
+        <span class="indent"></span><span class="indent"></span><span class="indent"></span><span class="indent"></span>
+        <span class="icon">✕</span><span class="name">CloseButton</span><span class="components">Button · Image · _closeButton</span>
+      </div>
+
+    </div><!-- /tree -->
+  </div><!-- /hierarchy-col -->
+
+
+  <!-- ── RIGHT: INSPECTOR ── -->
+  <div class="inspector-col">
+    <div class="inspector-header">Inspector</div>
+    <div id="inspectorPane">
+      <div class="inspector-empty">← Select a node to inspect</div>
     </div>
   </div>
 
-  <script>
-    // ── Mock data for 3 days ──────────────────────────────────────────────
-    const DAYS = [
+</div><!-- /main -->
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- BOTTOM: IMPLEMENTATION CHECKLIST                                        -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<div class="checklist-panel">
+  <div class="checklist-header">
+    <h2>📋 Implementation Checklist — UIKingdomHerald</h2>
+    <span class="subtitle">Follow in order · <span class="mono" style="font-family:'IBM Plex Mono',monospace;color:var(--text-subgold);">KingdomHeraldPanel.cs</span> must be on PanelRoot · Wire all [SerializeField] refs</span>
+  </div>
+  <div class="checklist-body">
+
+    <!-- COL 1: Scene Setup -->
+    <div class="checklist-col">
+      <div class="checklist-col-title">① Scene &amp; Canvas Setup</div>
+
+      <div class="check-item section-break"><div class="check-num">1</div><div class="check-text">Create new Unity scene → save as <span class="mono">UIKingdomHerald.unity</span> in <span class="path">Assets/Scenes/UI/KingdomHerald/</span></div></div>
+      <div class="check-item"><div class="check-num">2</div><div class="check-text">Add scene to <strong>Build Settings</strong> (required for <span class="mono">Game.UI.LoadUIScene()</span> to work)</div></div>
+      <div class="check-item"><div class="check-num">3</div><div class="check-text">Create <span class="mono">Canvas</span> GameObject → add components: <span class="mono">Canvas</span>, <span class="mono">CanvasScaler</span>, <span class="mono">GraphicRaycaster</span></div></div>
+      <div class="check-item"><div class="check-num">4</div><div class="check-text">Canvas settings: <span class="val">Render Mode = Screen Space Overlay</span>, <span class="val">Sort Order = 0</span></div></div>
+      <div class="check-item"><div class="check-num">5</div><div class="check-text">CanvasScaler: <span class="val">UI Scale Mode = Scale With Screen Size</span>, <span class="val">Reference Resolution = 1920×1080</span>, <span class="val">Match = 0.5</span></div></div>
+
+      <div class="check-item section-break"><div class="check-num">6</div><div class="check-text">Create child <span class="mono">PanelRoot</span> under Canvas</div></div>
+      <div class="check-item"><div class="check-num">7</div><div class="check-text">PanelRoot RectTransform: <span class="val">Anchor = Center (0.5,0.5/0.5,0.5)</span>, <span class="val">Pivot (0.5,0.5)</span>, <span class="val">Pos (0,0)</span>, <span class="val">Size 720×640</span></div></div>
+      <div class="check-item"><div class="check-num">8</div><div class="check-text">Add <span class="mono">Image</span> to PanelRoot: Sprite = <span class="path">Sheet (Assets/Resources/UI2/Sheet.png)</span>, Color <span class="val">#1a1008</span>, Type = <span class="val">Sliced</span></div></div>
+      <div class="check-item"><div class="check-num">9</div><div class="check-text">Add <span class="mono">CanvasGroup</span> to PanelRoot: <span class="val">Alpha = 0</span> (panel starts hidden), <span class="val">Interactable = true</span>, <span class="val">Blocks Raycasts = true</span></div></div>
+      <div class="check-item"><div class="check-num">10</div><div class="check-text">Add <span class="mono">KingdomHeraldPanel.cs</span> script to PanelRoot</div></div>
+
+      <div class="check-item section-break"><div class="check-num">11</div><div class="check-text">Create <span class="mono">HeaderSection</span> under PanelRoot</div></div>
+      <div class="check-item"><div class="check-num">12</div><div class="check-text">HeaderSection RT: <span class="val">Anchor stretch-top (0,1 / 1,1)</span>, <span class="val">Pivot (0.5,1)</span>, <span class="val">Pos (0,0)</span>, <span class="val">Height = 80</span></div></div>
+      <div class="check-item"><div class="check-num">13</div><div class="check-text">Add <span class="mono">VerticalLayoutGroup</span>: <span class="val">Spacing=4</span>, Padding <span class="val">T:16 B:8 L:24 R:24</span>, <span class="val">Child Alignment=MiddleCenter</span>, <span class="val">Control Child Width=✓</span></div></div>
+      <div class="check-item"><div class="check-num">14</div><div class="check-text">Create <span class="mono">DayTitleText</span> (TMP): text <span class="val">"Day 42 — The Kingdom Herald"</span>, <span class="val">font size=22</span>, <span class="val">Bold</span>, color <span class="val">#e4c870</span>, align=Center</div></div>
+      <div class="check-item"><div class="check-num">15</div><div class="check-text">Create <span class="mono">DateSubtitleText</span> (TMP): text <span class="val">"Epoch 42 · Week 6 · Day 7/7"</span>, <span class="val">size=14</span>, color <span class="val">#c8a870</span></div></div>
+      <div class="check-item"><div class="check-num">16</div><div class="check-text">Create <span class="mono">HeaderDivider</span> (Image): Anchor stretch-horizontal, color <span class="val">#c8a050</span>, no sprite. Add LayoutElement: <span class="val">Min Height=2, Preferred Height=2</span></div></div>
+    </div>
+
+    <!-- COL 2: Content Layout -->
+    <div class="checklist-col">
+      <div class="checklist-col-title">② Content Area &amp; Section Cards</div>
+
+      <div class="check-item section-break"><div class="check-num">17</div><div class="check-text">Create <span class="mono">ContentArea</span> under PanelRoot</div></div>
+      <div class="check-item"><div class="check-num">18</div><div class="check-text">ContentArea RT: <span class="val">Anchor stretch-all (0,0/1,1)</span>, <span class="val">Offset Min (0, 48)</span> (above footer), <span class="val">Offset Max (0, -80)</span> (below header)</div></div>
+      <div class="check-item"><div class="check-num">19</div><div class="check-text">Add <span class="mono">HorizontalLayoutGroup</span>: <span class="val">Spacing=8</span>, Pad <span class="val">T:8 B:8 L:16 R:16</span>, <span class="val">Child Force Expand Width=✓</span>, <span class="val">Control Child Height=✓</span></div></div>
+      <div class="check-item"><div class="check-num">20</div><div class="check-text">Create <span class="mono">LeftColumn</span>: VLG <span class="val">Spacing=8</span>, Pad=0, <span class="val">Control Child Width=✓</span>. LayoutElement: <span class="val">Flexible Width=1</span></div></div>
+      <div class="check-item"><div class="check-num">21</div><div class="check-text">Create <span class="mono">RightColumn</span>: same as LeftColumn. LayoutElement: <span class="val">Flexible Width=1</span></div></div>
+
+      <div class="check-item section-break"><div class="check-num">22</div><div class="check-text">In LeftColumn: create <span class="mono">GoldSection</span> card. Image: Sprite=<span class="path">Sheet</span>, color <span class="val">#231508</span>, Sliced. VLG: <span class="val">Spacing=4, Pad T:12 B:12 L:12 R:12</span>. LayoutElement: <span class="val">Preferred Height=130</span></div></div>
+      <div class="check-item"><div class="check-num">23</div><div class="check-text">GoldSection children: <span class="mono">SectionHeader</span> TMP (<span class="val">"💰 GOLD &amp; ECONOMY"</span>, 12px Bold, #e4c870) + 3× HLG rows with Label+Value TMP pairs</div></div>
+      <div class="check-item"><div class="check-num">24</div><div class="check-text">GoldEarnedRow HLG: <span class="val">Label TMP "Gold Earned:" color #c8a870</span> + <span class="val">ValueText TMP (GoldEarned) color #f0e8d0</span> → wire <span class="mono">_goldEarnedText</span></div></div>
+      <div class="check-item"><div class="check-num">25</div><div class="check-text">GoldSpentRow: same pattern → wire <span class="mono">_goldSpentText</span></div></div>
+      <div class="check-item"><div class="check-num">26</div><div class="check-text">BestEverRow: TMP <span class="val">size=11, color #8a7050</span> → wire <span class="mono">_goldBestCompareText</span></div></div>
+      <div class="check-item"><div class="check-num">27</div><div class="check-text">Create <span class="mono">HeroesSection</span> card (same shell). LayoutElement <span class="val">Preferred Height=145</span>. Add 4 TMP children (no row containers needed — single-line each)</div></div>
+      <div class="check-item"><div class="check-num">28</div><div class="check-text">Wire HeroesSection TMPs: <span class="mono">_levelUpsText, _heroDeathsText, _rapportMilestonesText, _deathlessStreakText</span></div></div>
+      <div class="check-item"><div class="check-num">29</div><div class="check-text">Create <span class="mono">TradeSection</span> card. LayoutElement <span class="val">Preferred Height=110</span>. Wire <span class="mono">_itemsSoldText, _bestItemSoldText, _itemsBestCompareText</span></div></div>
+
+      <div class="check-item section-break"><div class="check-num">30</div><div class="check-text">In RightColumn: create <span class="mono">CombatSection</span>. LayoutElement <span class="val">Flexible Height=1</span> (expands to fill available space)</div></div>
+      <div class="check-item"><div class="check-num">31</div><div class="check-text">CombatSection: add <span class="mono">DungeonsText</span> TMP → <span class="mono">_dungeonsText</span>, then <span class="mono">DungeonsBestText</span> TMP → <span class="mono">_dungeonsBestText</span></div></div>
+      <div class="check-item"><div class="check-num">32</div><div class="check-text">Create <span class="mono">DungeonScrollView</span> (use UI → ScrollView from menu): set to vertical only, <span class="val">Movement Type = Clamped</span>, <span class="val">Inertia = true</span>, Elasticity 0.1</div></div>
+      <div class="check-item"><div class="check-num">33</div><div class="check-text">ScrollView → Viewport → <span class="mono">Content</span>: add VLG (<span class="val">Spacing=4, Control Width=✓</span>) + ContentSizeFitter (<span class="val">Vertical Fit = Preferred Size</span>). Wire Content Transform → <span class="mono">_dungeonListParent</span></div></div>
+      <div class="check-item"><div class="check-num">34</div><div class="check-text">Create <span class="mono">GuildSection</span> card. LayoutElement <span class="val">Preferred Height=90</span>. Wire <span class="mono">_guildRankProgressText, _favorsCompletedText</span></div></div>
+      <div class="check-item"><div class="check-num">35</div><div class="check-text">Create <span class="mono">VaultSection</span> card. LayoutElement <span class="val">Preferred Height=90</span>. Add <span class="mono">ProgressLabel</span> TMP → <span class="mono">_weeklyProgressText</span></div></div>
+      <div class="check-item"><div class="check-num">36</div><div class="check-text">In VaultSection: add <span class="mono">VaultProgressBar</span> (Slider). RT height=<span class="val">12</span>. Set <span class="val">interactable=false</span>, <span class="val">min=0, max=1</span>. Wire → <span class="mono">_weeklyProgressSlider</span></div></div>
+      <div class="check-item"><div class="check-num">37</div><div class="check-text">Style VaultProgressBar: Fill Image color <span class="val">#c8a050</span>, Background Image color <span class="val">#1a1008</span>, border radius via sprite slicing</div></div>
+    </div>
+
+    <!-- COL 3: Prefabs, Footer, Testing -->
+    <div class="checklist-col">
+      <div class="checklist-col-title">③ Footer, Prefab &amp; Testing</div>
+
+      <div class="check-item section-break"><div class="check-num">38</div><div class="check-text">Create <span class="mono">FooterSection</span> under PanelRoot. RT: <span class="val">Anchor stretch-bottom (0,0/1,0)</span>, <span class="val">Pivot (0.5,0)</span>, <span class="val">Height=48</span></div></div>
+      <div class="check-item"><div class="check-num">39</div><div class="check-text">FooterSection HLG: <span class="val">Spacing=8</span>, Pad <span class="val">T:8 B:8 L:16 R:16</span>, <span class="val">Child Alignment=MiddleCenter</span></div></div>
+      <div class="check-item"><div class="check-num">40</div><div class="check-text">Create <span class="mono">PreviousDayButton</span>: Image Sprite=<span class="path">Sheet</span> color <span class="val">#1a2020</span> (from hierarchy: [0.102,0.125,0.125]). Button ColorTint: normal <span class="val">[1,1,1,1]</span>, highlighted <span class="val">[0.96,0.96,0.96,1]</span>, pressed <span class="val">[0.78,0.78,0.78,1]</span></div></div>
+      <div class="check-item"><div class="check-num">41</div><div class="check-text">PreviousDayButton: add child TMP text <span class="val">"◀ PREV DAY"</span>, size=11, color <span class="val">#e3ca99</span> (CircleButtonBorder color from hierarchy). Wire → <span class="mono">_previousDayButton</span></div></div>
+      <div class="check-item"><div class="check-num">42</div><div class="check-text">Create <span class="mono">PageIndicatorText</span> TMP: <span class="val">"Day 1 of 30"</span>, size=12, color <span class="val">#c8a870</span>, align Center. Add LayoutElement: <span class="val">Flexible Width=1</span>. Wire → <span class="mono">_pageIndicatorText</span></div></div>
+      <div class="check-item"><div class="check-num">43</div><div class="check-text">Create <span class="mono">NextDayButton</span>: same as PreviousDayButton but text <span class="val">"NEXT DAY ▶"</span>. Wire → <span class="mono">_nextDayButton</span></div></div>
+      <div class="check-item"><div class="check-num">44</div><div class="check-text">Create <span class="mono">CloseButton</span>: Image Sprite=<span class="path">CircleButton (Assets/Resources/UI2/CircleButton.png)</span>, color <span class="val">#1a2020</span>. Size <span class="val">28×28</span>. Wire → <span class="mono">_closeButton</span></div></div>
+      <div class="check-item"><div class="check-num">45</div><div class="check-text">CloseButton: add child Image Sprite=<span class="path">CircleButtonBorder (Assets/Resources/UI2/CircleButtonBorder.png)</span> full-stretch, color <span class="val">#e3ca99</span>. Add another child Image Sprite=<span class="path">X (Assets/Resources/UI2/X.png)</span>, size <span class="val">10×10</span>, center anchor, color <span class="val">#e3ca99</span></div></div>
+
+      <div class="check-item section-break"><div class="check-num">46</div><div class="check-text">Create <span class="mono">KingdomHeraldDungeonCell</span> prefab: root GameObject + TMP child <span class="mono">InfoText</span> (size=11, color #f0e8d0, IBM Plex Mono). Wire TMP → <span class="mono">_infoText</span> field on script</div></div>
+      <div class="check-item"><div class="check-num">47</div><div class="check-text">Save prefab to <span class="path">Assets/Resources/Prefabs/UI/KingdomHeraldDungeonCell.prefab</span>. Wire prefab reference → <span class="mono">_dungeonCellPrefab</span> on KingdomHeraldPanel</div></div>
+
+      <div class="check-item section-break"><div class="check-num">48</div><div class="check-text">Verify <span class="mono">DailyReportManager</span> exists as singleton in WorldMap or UIWindow scene. Add it if missing</div></div>
+      <div class="check-item"><div class="check-num">49</div><div class="check-text">Add optional open animation: in <span class="mono">OnEnable()</span>, <span class="val">LeanTween.alphaCanvas(GetComponent&lt;CanvasGroup&gt;(), 1f, 0.25f).setEaseOutQuart().setIgnoreTimeScale(true)</span></div></div>
+      <div class="check-item"><div class="check-num">50</div><div class="check-text">Add optional close animation: in <span class="mono">Close()</span>, <span class="val">LeanTween.alphaCanvas(..., 0f, 0.25f)</span> with callback → <span class="val">ClosePanel()</span></div></div>
+
+      <div class="check-item section-break"><div class="check-num">51</div><div class="check-text">Test: call <span class="mono">KingdomHeraldPanel.ShowPanel()</span> in Play mode → verify scene loads additively</div></div>
+      <div class="check-item"><div class="check-num">52</div><div class="check-text">Test: header shows correct day/epoch/week format. Verify <span class="val">"Day {N} — The Kingdom Herald"</span> title</div></div>
+      <div class="check-item"><div class="check-num">53</div><div class="check-text">Test: all 6 section cards populate with data from DailyReportManager. No null refs in console</div></div>
+      <div class="check-item"><div class="check-num">54</div><div class="check-text">Test: Prev/Next buttons page through history. Verify button disable states at history boundaries</div></div>
+      <div class="check-item"><div class="check-num">55</div><div class="check-text">Test: empty state (fresh save with no reports) → shows <span class="val">"No history yet — complete your first day!"</span> with nav buttons hidden</div></div>
+      <div class="check-item"><div class="check-num">56</div><div class="check-text">Test: epoch end fires while panel is open → <span class="val">RefreshToToday()</span> auto-updates content</div></div>
+      <div class="check-item"><div class="check-num">57</div><div class="check-text">Test: VaultProgressBar fills correctly (<span class="val">weekProgress 0.0→1.0</span>). Text shows <span class="val">"Week N · Day D/7"</span></div></div>
+      <div class="check-item"><div class="check-num">58</div><div class="check-text">Test: dungeon scroll list populates N cells. Scroll works. ClearParentOfType removes old cells on refresh</div></div>
+      <div class="check-item"><div class="check-num">59</div><div class="check-text">Test: Close button unloads scene (<span class="mono">Game.UI.UnloadUIScene("UIKingdomHerald")</span>)</div></div>
+      <div class="check-item"><div class="check-num">60</div><div class="check-text">Test: PlaytestCapture screenshot taken on open. Confirm <span class="val">"KingdomHeraldPanel_Open"</span> appears in capture log</div></div>
+    </div>
+
+  </div><!-- /checklist-body -->
+</div><!-- /checklist-panel -->
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- INSPECTOR DATA + INTERACTION SCRIPT                                     -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<script>
+// ── INSPECTOR NODE DATA ──────────────────────────────────────────────────
+// Each node ID maps to its full Unity inspector representation.
+// Values tagged: [REAL] = from ui-hierarchy.json, [SPEC] = from KINGDOM_HERALD_PANEL.md, [EST] = estimated
+
+const nodes = {
+
+  'n-scene': {
+    name: 'UIKingdomHerald',
+    prefab: '—',
+    active: true,
+    treeId: null,
+    components: [
       {
-        day: 40,
-        realm: 'The Realm of Terafell',
-        epoch: 42, week: 6, dayOfWeek: 5, totalDays: 7,
-        economy: {
-          earned: 2840, spent: 920, net: 1920,
-          bestEver: 6100, netBestEver: 4200,
-          aboveBest: false
-        },
-        heroes: {
-          levelUps: 'None',
-          deaths: 1,
-          streak: 3,
-          deathless: false
-        },
-        trade: {
-          sold: 8,
-          bestSale: { name: 'Thornweave Gloves', gold: 520 },
-          bestEver: 2100,
-          aboveBest: false
-        },
-        combat: [
-          { name: 'Goblin Warrens', time: '3:12', heroes: 'Maya, Rek' },
-          { name: 'Dark Marsh', time: '4:55', heroes: 'Thorne, Maya' },
-        ],
-        guild: { rankGain: 60, favors: 2 },
-        vault: { week: 6, day: 2, total: 7, pct: 28 }
-      },
-      {
-        day: 41,
-        realm: 'The Realm of Terafell',
-        epoch: 42, week: 6, dayOfWeek: 6, totalDays: 7,
-        economy: {
-          earned: 3600, spent: 800, net: 2800,
-          bestEver: 6100, netBestEver: 4200,
-          aboveBest: false
-        },
-        heroes: {
-          levelUps: 'Maya → Lv5',
-          deaths: 0,
-          streak: 4,
-          deathless: true
-        },
-        trade: {
-          sold: 10,
-          bestSale: { name: 'Ember Ring', gold: 710 },
-          bestEver: 2100,
-          aboveBest: false
-        },
-        combat: [
-          { name: 'Wolf Den', time: '2:48', heroes: 'Thorne, Rek' },
-          { name: 'Goblin Warrens', time: '3:01', heroes: 'Maya' },
-          { name: 'Stone Crypt', time: '5:20', heroes: 'Thorne, Maya, Rek' },
-        ],
-        guild: { rankGain: 90, favors: 3 },
-        vault: { week: 6, day: 3, total: 7, pct: 42 }
-      },
-      {
-        day: 42,
-        realm: 'The Realm of Terafell',
-        epoch: 42, week: 6, dayOfWeek: 7, totalDays: 7,
-        economy: {
-          earned: 4200, spent: 1100, net: 3100,
-          bestEver: 6100, netBestEver: 4200,
-          aboveBest: false
-        },
-        heroes: {
-          levelUps: 'Thorne → Lv7',
-          deaths: 0,
-          streak: 5,
-          deathless: true
-        },
-        trade: {
-          sold: 12,
-          bestSale: { name: 'Ironveil Cloak', gold: 840 },
-          bestEver: 2100,
-          aboveBest: false
-        },
-        combat: [
-          { name: 'Wolf Den', time: '2:34', heroes: 'Thorne, Maya' },
-          { name: 'Ember Caverns', time: '3:47', heroes: 'Rek, Thorne' },
-          { name: 'Stone Crypt', time: '4:15', heroes: 'Maya, Rek' },
-        ],
-        guild: { rankGain: 120, favors: 4 },
-        vault: { week: 6, day: 4, total: 7, pct: 57 }
+        name: 'Scene',
+        icon: '🎬',
+        props: [
+          { k: 'Scene Name',       v: 'UIKingdomHerald',                      src: 'spec' },
+          { k: 'Scene Path',       v: 'Assets/Scenes/UI/KingdomHerald/UIKingdomHerald.unity', cls: 'path', src: 'spec' },
+          { k: 'Build Index',      v: '(add to Build Settings)',              src: 'spec' },
+          { k: 'Load Mode',        v: 'Additive (via Game.UI.LoadUIScene)',   src: 'spec' },
+        ]
       }
-    ];
+    ],
+    notes: null
+  },
 
-    let currentDay = 2; // 0-indexed, start on day 3 (day 42)
+  'n-canvas': {
+    name: 'Canvas',
+    prefab: '—',
+    active: true,
+    treeId: 'tn-canvas',
+    components: [
+      {
+        name: 'RectTransform',
+        icon: '⊕',
+        props: [
+          { k: 'Anchored Pos',  v: '(960, 540)',    cls: 'vec2', src: 'real' },
+          { k: 'Size Delta',    v: '(1920, 1080)',  cls: 'vec2', src: 'real' },
+          { k: 'Anchor Min',   v: '(0, 0)',         cls: 'vec2', src: 'real' },
+          { k: 'Anchor Max',   v: '(0, 0)',         cls: 'vec2', src: 'real' },
+          { k: 'Pivot',        v: '(0.5, 0.5)',     cls: 'vec2', src: 'real' },
+        ]
+      },
+      {
+        name: 'Canvas',
+        icon: '⬛',
+        props: [
+          { k: 'Render Mode',       v: 'Screen Space Overlay', src: 'est'  },
+          { k: 'Sort Order',        v: '0',                    src: 'spec' },
+          { k: 'Override Sorting',  v: 'false',  cls: 'bool-false', src: 'real' },
+          { k: 'Pixel Perfect',     v: 'false',  cls: 'bool-false', src: 'est'  },
+        ]
+      },
+      {
+        name: 'CanvasScaler',
+        icon: '⚖',
+        props: [
+          { k: 'UI Scale Mode',       v: 'Scale With Screen Size', src: 'est' },
+          { k: 'Reference Res',       v: '1920 × 1080',            src: 'real' },
+          { k: 'Screen Match Mode',   v: 'Match Width or Height',  src: 'est' },
+          { k: 'Match',               v: '0.5',                    src: 'est' },
+          { k: 'Reference Pixels/Unit', v: '100',                  src: 'est' },
+        ]
+      },
+      {
+        name: 'GraphicRaycaster',
+        icon: '🎯',
+        props: [
+          { k: 'Ignore Reversed Graphics', v: 'true', cls: 'bool-true', src: 'est' },
+          { k: 'Blocking Objects',          v: 'None', src: 'est' },
+        ]
+      }
+    ],
+    notes: null
+  },
 
-    function fmt(n) {
-      return n.toLocaleString();
+  'n-panelRoot': {
+    name: 'PanelRoot',
+    prefab: '—',
+    active: true,
+    treeId: 'tn-panelRoot',
+    components: [
+      {
+        name: 'RectTransform',
+        icon: '⊕',
+        props: [
+          { k: 'Anchored Pos',   v: '(0, 0)',           cls: 'vec2', src: 'spec' },
+          { k: 'Size Delta',     v: '(720, 640)',        cls: 'vec2', src: 'spec' },
+          { k: 'Anchor Min',     v: '(0.5, 0.5)',        cls: 'vec2', src: 'spec' },
+          { k: 'Anchor Max',     v: '(0.5, 0.5)',        cls: 'vec2', src: 'spec' },
+          { k: 'Pivot',          v: '(0.5, 0.5)',        cls: 'vec2', src: 'spec' },
+        ]
+      },
+      {
+        name: 'Image',
+        icon: '🖼',
+        props: [
+          { k: 'Sprite',         v: 'Sheet',                                          src: 'real' },
+          { k: 'Sprite Path',    v: 'Assets/Resources/UI2/Sheet.png',  cls: 'path',  src: 'real' },
+          { k: 'Color',          v: '#1a1008  Alpha: 1.0',  cls: 'color-swatch',     src: 'spec', hex: '#1a1008' },
+          { k: 'Image Type',     v: 'Sliced',                                         src: 'spec' },
+          { k: 'Raycast Target', v: 'true',  cls: 'bool-true',                        src: 'est'  },
+        ]
+      },
+      {
+        name: 'CanvasGroup',
+        icon: '👁',
+        props: [
+          { k: 'Alpha',             v: '0  (fades to 1 on open)',   src: 'real' },
+          { k: 'Interactable',      v: 'true',   cls: 'bool-true',  src: 'real' },
+          { k: 'Blocks Raycasts',   v: 'true',   cls: 'bool-true',  src: 'real' },
+          { k: 'Ignore Parent Groups', v: 'false', cls: 'bool-false', src: 'est' },
+        ]
+      },
+      {
+        name: 'KingdomHeraldPanel',
+        icon: '📜',
+        warning: 'WIRE ALL SerializeField REFS',
+        sf: [
+          { field: '_dayTitleText',          target: 'HeaderSection/DayTitleText',           line: 'L42' },
+          { field: '_dateSubtitleText',       target: 'HeaderSection/DateSubtitleText',        line: 'L43' },
+          { field: '_goldEarnedText',         target: 'GoldSection/.../ValueText',             line: 'L47' },
+          { field: '_goldSpentText',          target: 'GoldSection/.../ValueText',             line: 'L48' },
+          { field: '_goldBestCompareText',    target: 'GoldSection/.../BestEverText',          line: 'L49' },
+          { field: '_dungeonsText',           target: 'CombatSection/DungeonsText',            line: 'L53' },
+          { field: '_dungeonsBestText',       target: 'CombatSection/BestText',               line: 'L54' },
+          { field: '_dungeonListParent',      target: 'ScrollView/Viewport/Content',           line: 'L55' },
+          { field: '_dungeonCellPrefab',      target: 'Prefabs/UI/KHDungeonCell (prefab)',     line: 'L56' },
+          { field: '_levelUpsText',           target: 'HeroesSection/LevelUpsText',            line: 'L60' },
+          { field: '_heroDeathsText',         target: 'HeroesSection/HeroDeathsText',          line: 'L61' },
+          { field: '_rapportMilestonesText',  target: 'HeroesSection/RapportText',             line: 'L62' },
+          { field: '_deathlessStreakText',    target: 'HeroesSection/DeathlessStreakText',      line: 'L63' },
+          { field: '_itemsSoldText',          target: 'TradeSection/ItemsSoldText',             line: 'L67' },
+          { field: '_bestItemSoldText',       target: 'TradeSection/BestItemSoldText',          line: 'L68' },
+          { field: '_itemsBestCompareText',   target: 'TradeSection/BestCompareText',           line: 'L69' },
+          { field: '_guildRankProgressText',  target: 'GuildSection/RankProgressText',          line: 'L73' },
+          { field: '_favorsCompletedText',    target: 'GuildSection/FavorsCompletedText',       line: 'L74' },
+          { field: '_weeklyProgressSlider',   target: 'VaultSection/VaultProgressBar',          line: 'L78' },
+          { field: '_weeklyProgressText',     target: 'VaultSection/ProgressLabel',             line: 'L79' },
+          { field: '_previousDayButton',      target: 'FooterSection/PreviousDayButton',        line: 'L83' },
+          { field: '_nextDayButton',          target: 'FooterSection/NextDayButton',            line: 'L84' },
+          { field: '_closeButton',            target: 'FooterSection/CloseButton',              line: 'L85' },
+          { field: '_pageIndicatorText',      target: 'FooterSection/PageIndicatorText',        line: 'L86' },
+        ]
+      }
+    ],
+    notes: 'KingdomHeraldPanel.cs has 24 [SerializeField] references. All must be wired in the Inspector before the panel will populate.'
+  },
+
+  'n-headerSection': {
+    name: 'HeaderSection',
+    prefab: '—',
+    active: true,
+    treeId: 'tn-headerSection',
+    components: [
+      {
+        name: 'RectTransform',
+        icon: '⊕',
+        props: [
+          { k: 'Anchored Pos',   v: '(0, 0)',         cls: 'vec2', src: 'spec' },
+          { k: 'Size Delta',     v: '(0, 80)',         cls: 'vec2', src: 'spec' },
+          { k: 'Anchor Min',     v: '(0, 1)',          cls: 'vec2', src: 'spec' },
+          { k: 'Anchor Max',     v: '(1, 1)',          cls: 'vec2', src: 'spec' },
+          { k: 'Pivot',          v: '(0.5, 1)',        cls: 'vec2', src: 'spec' },
+          { k: 'Offset Min',     v: '(0, -80)',        cls: 'vec2', src: 'spec' },
+          { k: 'Offset Max',     v: '(0, 0)',          cls: 'vec2', src: 'spec' },
+        ]
+      },
+      {
+        name: 'VerticalLayoutGroup',
+        icon: '⊕',
+        props: [
+          { k: 'Spacing',              v: '4',             src: 'spec' },
+          { k: 'Padding Top',          v: '16',            src: 'spec' },
+          { k: 'Padding Bottom',       v: '8',             src: 'spec' },
+          { k: 'Padding Left',         v: '24',            src: 'spec' },
+          { k: 'Padding Right',        v: '24',            src: 'spec' },
+          { k: 'Child Alignment',      v: 'MiddleCenter',  src: 'spec' },
+          { k: 'Control Child Width',  v: 'true',  cls: 'bool-true', src: 'spec' },
+          { k: 'Control Child Height', v: 'false', cls: 'bool-false', src: 'spec' },
+          { k: 'Child Force Expand W', v: 'true',  cls: 'bool-true', src: 'spec' },
+          { k: 'Child Force Expand H', v: 'false', cls: 'bool-false', src: 'spec' },
+        ]
+      }
+    ],
+    notes: 'Header stretches across full PanelRoot width, anchored to top. Fixed height 80px to accommodate 2-line header + divider.'
+  },
+
+  'n-dayTitle': {
+    name: 'DayTitleText',
+    prefab: '—',
+    active: true,
+    treeId: 'tn-dayTitle',
+    components: [
+      {
+        name: 'RectTransform',
+        icon: '⊕',
+        props: [
+          { k: 'Note', v: 'Driven by VerticalLayoutGroup — do not set manually', src: 'est' },
+          { k: 'Preferred Height', v: '30 (auto from font size)', src: 'est' },
+        ]
+      },
+      {
+        name: 'TextMeshProUGUI',
+        icon: 'T',
+        props: [
+          { k: 'Text',           v: '"Day 42 — The Kingdom Herald"',  src: 'spec' },
+          { k: 'Font Size',      v: '22',                             src: 'spec' },
+          { k: 'Font Style',     v: 'Bold',                           src: 'spec' },
+          { k: 'Color',          v: '#e4c870  Alpha: 1.0', cls: 'color-swatch', src: 'spec', hex: '#e4c870' },
+          { k: 'Alignment',      v: 'Center',                         src: 'spec' },
+          { k: 'Auto Size',      v: 'false', cls: 'bool-false',       src: 'est'  },
+          { k: 'Raycast Target', v: 'false', cls: 'bool-false',       src: 'est'  },
+        ]
+      }
+    ],
+    notes: '_dayTitleText field on KingdomHeraldPanel. Updated by PopulateHeader() with "Day {N} — The Kingdom Herald" or "Day {N} — Herald Archive" for history.'
+  },
+
+  'n-dateSubtitle': {
+    name: 'DateSubtitleText',
+    prefab: '—',
+    active: true,
+    treeId: 'tn-dateSubtitle',
+    components: [
+      { name: 'RectTransform', icon: '⊕', props: [{ k: 'Note', v: 'Driven by VerticalLayoutGroup', src: 'est' }] },
+      {
+        name: 'TextMeshProUGUI',
+        icon: 'T',
+        props: [
+          { k: 'Text',        v: '"Epoch 42 · Week 6 · Day 7/7"',  src: 'spec' },
+          { k: 'Font Size',   v: '14',                              src: 'spec' },
+          { k: 'Font Style',  v: 'Normal',                          src: 'spec' },
+          { k: 'Color',       v: '#c8a870  Alpha: 1.0', cls: 'color-swatch', src: 'spec', hex: '#c8a870' },
+          { k: 'Alignment',   v: 'Center',                          src: 'spec' },
+        ]
+      }
+    ],
+    notes: '_dateSubtitleText. Format: "Epoch {date} · Week {weekNumber} · Day {dayOfWeek}/7" — computed in PopulateHeader().'
+  },
+
+  'n-headerDivider': {
+    name: 'HeaderDivider',
+    prefab: '—',
+    active: true,
+    treeId: 'tn-headerDivider',
+    components: [
+      {
+        name: 'RectTransform',
+        icon: '⊕',
+        props: [
+          { k: 'Note',       v: 'Driven by VLG — height controlled by LayoutElement', src: 'spec' },
+        ]
+      },
+      {
+        name: 'Image',
+        icon: '🖼',
+        props: [
+          { k: 'Sprite',         v: 'none (solid fill)',                           src: 'spec' },
+          { k: 'Color',          v: '#c8a050  Alpha: 0.6', cls: 'color-swatch',   src: 'spec', hex: '#c8a050' },
+          { k: 'Image Type',     v: 'Simple',                                      src: 'spec' },
+          { k: 'Raycast Target', v: 'false', cls: 'bool-false',                    src: 'spec' },
+        ]
+      },
+      {
+        name: 'LayoutElement',
+        icon: '📐',
+        props: [
+          { k: 'Min Height',       v: '2',  src: 'spec' },
+          { k: 'Preferred Height', v: '2',  src: 'spec' },
+          { k: 'Flexible Width',   v: '1',  src: 'spec' },
+        ]
+      }
+    ],
+    notes: 'Thin gold rule below header text. LayoutElement forces it to exactly 2px height within the VLG.'
+  },
+
+  'n-contentArea': {
+    name: 'ContentArea',
+    prefab: '—',
+    active: true,
+    treeId: 'tn-contentArea',
+    components: [
+      {
+        name: 'RectTransform',
+        icon: '⊕',
+        props: [
+          { k: 'Anchor Min',   v: '(0, 0)',         cls: 'vec2', src: 'spec' },
+          { k: 'Anchor Max',   v: '(1, 1)',          cls: 'vec2', src: 'spec' },
+          { k: 'Pivot',        v: '(0.5, 0.5)',      cls: 'vec2', src: 'spec' },
+          { k: 'Offset Min',   v: '(0, 48)',         cls: 'vec2', src: 'spec', note: 'above footer' },
+          { k: 'Offset Max',   v: '(0, -80)',        cls: 'vec2', src: 'spec', note: 'below header' },
+        ]
+      },
+      {
+        name: 'HorizontalLayoutGroup',
+        icon: '⟷',
+        props: [
+          { k: 'Spacing',              v: '8',            src: 'spec' },
+          { k: 'Padding Top',          v: '8',            src: 'spec' },
+          { k: 'Padding Bottom',       v: '8',            src: 'spec' },
+          { k: 'Padding Left',         v: '16',           src: 'spec' },
+          { k: 'Padding Right',        v: '16',           src: 'spec' },
+          { k: 'Child Alignment',      v: 'UpperLeft',    src: 'spec' },
+          { k: 'Control Child Width',  v: 'false', cls: 'bool-false', src: 'spec' },
+          { k: 'Control Child Height', v: 'true',  cls: 'bool-true',  src: 'spec' },
+          { k: 'Child Force Expand W', v: 'true',  cls: 'bool-true',  src: 'spec' },
+          { k: 'Child Force Expand H', v: 'true',  cls: 'bool-true',  src: 'spec' },
+        ]
+      }
+    ],
+    notes: 'Stretches to fill PanelRoot between header (80px top) and footer (48px bottom). Contains LeftColumn and RightColumn.'
+  },
+
+  'n-leftCol': {
+    name: 'LeftColumn',
+    prefab: '—',
+    active: true,
+    treeId: 'tn-leftCol',
+    components: [
+      { name: 'RectTransform', icon: '⊕', props: [{ k: 'Note', v: 'Driven by parent HLG. Width set by Flexible Width=1', src: 'spec' }] },
+      {
+        name: 'VerticalLayoutGroup',
+        icon: '⊕',
+        props: [
+          { k: 'Spacing',              v: '8',           src: 'spec' },
+          { k: 'Padding',              v: 'all 0',       src: 'spec' },
+          { k: 'Child Alignment',      v: 'UpperLeft',   src: 'spec' },
+          { k: 'Control Child Width',  v: 'true',  cls: 'bool-true',  src: 'spec' },
+          { k: 'Control Child Height', v: 'false', cls: 'bool-false', src: 'spec' },
+          { k: 'Child Force Expand H', v: 'false', cls: 'bool-false', src: 'spec' },
+        ]
+      },
+      {
+        name: 'LayoutElement',
+        icon: '📐',
+        props: [
+          { k: 'Flexible Width', v: '1', src: 'spec' },
+        ]
+      }
+    ],
+    notes: 'Contains GoldSection, HeroesSection, TradeSection. Each section uses Preferred Height so column fills top-down.'
+  },
+
+  'n-goldSection': {
+    name: 'GoldSection',
+    prefab: '—',
+    active: true,
+    treeId: 'tn-goldSection',
+    components: [
+      { name: 'RectTransform', icon: '⊕', props: [{ k: 'Note', v: 'Driven by parent VLG', src: 'spec' }] },
+      {
+        name: 'Image',
+        icon: '🖼',
+        props: [
+          { k: 'Sprite',         v: 'Sheet',                                            src: 'real' },
+          { k: 'Sprite Path',    v: 'Assets/Resources/UI2/Sheet.png', cls: 'path',    src: 'real' },
+          { k: 'Color',          v: '#231508  Alpha: 1.0', cls: 'color-swatch',        src: 'spec', hex: '#231508' },
+          { k: 'Image Type',     v: 'Sliced',                                           src: 'spec' },
+          { k: 'Raycast Target', v: 'true', cls: 'bool-true',                           src: 'est'  },
+        ]
+      },
+      {
+        name: 'VerticalLayoutGroup',
+        icon: '⊕',
+        props: [
+          { k: 'Spacing',              v: '4',           src: 'spec' },
+          { k: 'Padding Top',          v: '12',          src: 'spec' },
+          { k: 'Padding Bottom',       v: '12',          src: 'spec' },
+          { k: 'Padding Left',         v: '12',          src: 'spec' },
+          { k: 'Padding Right',        v: '12',          src: 'spec' },
+          { k: 'Child Alignment',      v: 'UpperLeft',   src: 'spec' },
+          { k: 'Control Child Width',  v: 'true',  cls: 'bool-true',  src: 'spec' },
+          { k: 'Control Child Height', v: 'false', cls: 'bool-false', src: 'spec' },
+        ]
+      },
+      {
+        name: 'LayoutElement',
+        icon: '📐',
+        props: [
+          { k: 'Preferred Height', v: '130', src: 'spec' },
+          { k: 'Flexible Height',  v: '0',   src: 'spec' },
+        ]
+      }
+    ],
+    notes: 'Card panel with dark brown bg and subtle gold border (apply via border sprite or outline component). Contains header + 3 data rows.'
+  },
+
+
+  'n-heroesSection': {
+    name: 'HeroesSection',
+    prefab: '—',
+    active: true,
+    treeId: 'tn-heroesSection',
+    components: [
+      { name: 'RectTransform', icon: '⊕', props: [{ k: 'Note', v: 'Driven by parent VLG', src: 'spec' }] },
+      {
+        name: 'Image',
+        icon: '🖼',
+        props: [
+          { k: 'Sprite',       v: 'Sheet', src: 'real' },
+          { k: 'Sprite Path',  v: 'Assets/Resources/UI2/Sheet.png', cls: 'path', src: 'real' },
+          { k: 'Color',        v: '#231508  Alpha: 1.0', cls: 'color-swatch', src: 'spec', hex: '#231508' },
+          { k: 'Image Type',   v: 'Sliced', src: 'spec' },
+        ]
+      },
+      {
+        name: 'VerticalLayoutGroup',
+        icon: '⊕',
+        props: [
+          { k: 'Spacing',              v: '4',          src: 'spec' },
+          { k: 'Padding T/B/L/R',      v: '12 / 12 / 12 / 12', src: 'spec' },
+          { k: 'Control Child Width',  v: 'true', cls: 'bool-true', src: 'spec' },
+        ]
+      },
+      {
+        name: 'LayoutElement',
+        icon: '📐',
+        props: [
+          { k: 'Preferred Height', v: '145', src: 'spec' },
+        ]
+      }
+    ],
+    notes: 'Wire: _levelUpsText, _heroDeathsText, _rapportMilestonesText, _deathlessStreakText. Add a SectionHeader TMP "🦸 HEROES" at top (12px Bold #e4c870). Each data field is its own TMP at 12px #f0e8d0.'
+  },
+
+  'n-tradeSection': {
+    name: 'TradeSection',
+    prefab: '—',
+    active: true,
+    treeId: 'tn-tradeSection',
+    components: [
+      { name: 'RectTransform', icon: '⊕', props: [{ k: 'Note', v: 'Driven by parent VLG', src: 'spec' }] },
+      {
+        name: 'Image',
+        icon: '🖼',
+        props: [
+          { k: 'Sprite',       v: 'Sheet', src: 'real' },
+          { k: 'Color',        v: '#231508  Alpha: 1.0', cls: 'color-swatch', src: 'spec', hex: '#231508' },
+          { k: 'Image Type',   v: 'Sliced', src: 'spec' },
+        ]
+      },
+      {
+        name: 'VerticalLayoutGroup',
+        icon: '⊕',
+        props: [
+          { k: 'Spacing',              v: '4',  src: 'spec' },
+          { k: 'Padding T/B/L/R',      v: '12 / 12 / 12 / 12', src: 'spec' },
+          { k: 'Control Child Width',  v: 'true', cls: 'bool-true', src: 'spec' },
+        ]
+      },
+      {
+        name: 'LayoutElement',
+        icon: '📐',
+        props: [
+          { k: 'Preferred Height', v: '110', src: 'spec' },
+        ]
+      }
+    ],
+    notes: 'Wire: _itemsSoldText, _bestItemSoldText, _itemsBestCompareText. SectionHeader TMP "🛒 TRADE" at top.'
+  },
+
+  'n-rightCol': {
+    name: 'RightColumn',
+    prefab: '—',
+    active: true,
+    treeId: 'tn-rightCol',
+    components: [
+      { name: 'RectTransform', icon: '⊕', props: [{ k: 'Note', v: 'Driven by parent HLG', src: 'spec' }] },
+      {
+        name: 'VerticalLayoutGroup',
+        icon: '⊕',
+        props: [
+          { k: 'Spacing',              v: '8',          src: 'spec' },
+          { k: 'Padding',              v: 'all 0',      src: 'spec' },
+          { k: 'Child Alignment',      v: 'UpperLeft',  src: 'spec' },
+          { k: 'Control Child Width',  v: 'true',  cls: 'bool-true',  src: 'spec' },
+          { k: 'Control Child Height', v: 'false', cls: 'bool-false', src: 'spec' },
+        ]
+      },
+      { name: 'LayoutElement', icon: '📐', props: [{ k: 'Flexible Width', v: '1', src: 'spec' }] }
+    ],
+    notes: 'Contains CombatSection (flex height), GuildSection, VaultSection.'
+  },
+
+  'n-combatSection': {
+    name: 'CombatSection',
+    prefab: '—',
+    active: true,
+    treeId: 'tn-combatSection',
+    components: [
+      { name: 'RectTransform', icon: '⊕', props: [{ k: 'Note', v: 'Driven by parent VLG. Flexible Height=1 makes it expand', src: 'spec' }] },
+      {
+        name: 'Image',
+        icon: '🖼',
+        props: [
+          { k: 'Sprite',       v: 'Sheet', src: 'real' },
+          { k: 'Color',        v: '#231508  Alpha: 1.0', cls: 'color-swatch', src: 'spec', hex: '#231508' },
+          { k: 'Image Type',   v: 'Sliced', src: 'spec' },
+        ]
+      },
+      {
+        name: 'VerticalLayoutGroup',
+        icon: '⊕',
+        props: [
+          { k: 'Spacing',              v: '4',  src: 'spec' },
+          { k: 'Padding T/B/L/R',      v: '12 / 8 / 12 / 12', src: 'spec' },
+          { k: 'Control Child Width',  v: 'true', cls: 'bool-true', src: 'spec' },
+        ]
+      },
+      {
+        name: 'LayoutElement',
+        icon: '📐',
+        props: [
+          { k: 'Flexible Height', v: '1',   src: 'spec' },
+          { k: 'Min Height',      v: '120', src: 'spec' },
+        ]
+      }
+    ],
+    notes: 'Expands to fill available right column space. Contains DungeonsText, DungeonsBestText, then DungeonScrollView. Wire _dungeonsText and _dungeonsBestText.'
+  },
+
+  'n-dungeonScroll': {
+    name: 'DungeonScrollView',
+    prefab: '—',
+    active: true,
+    treeId: 'tn-dungeonScroll',
+    components: [
+      {
+        name: 'RectTransform',
+        icon: '⊕',
+        props: [
+          { k: 'Note',     v: 'Driven by parent VLG. Add LayoutElement: Flexible Height=1', src: 'spec' },
+          { k: 'Min Height', v: '60', src: 'spec' },
+        ]
+      },
+      {
+        name: 'ScrollRect',
+        icon: '📜',
+        props: [
+          { k: 'Horizontal',     v: 'false', cls: 'bool-false', src: 'real' },
+          { k: 'Vertical',       v: 'true',  cls: 'bool-true',  src: 'real' },
+          { k: 'Movement Type',  v: 'Clamped',                  src: 'est'  },
+          { k: 'Inertia',        v: 'true',  cls: 'bool-true',  src: 'real' },
+          { k: 'Elasticity',     v: '0.1',                      src: 'est'  },
+          { k: 'Scroll Sensitivity', v: '10',                   src: 'est'  },
+        ]
+      },
+      {
+        name: 'Image',
+        icon: '🖼',
+        props: [
+          { k: 'Color', v: '#1a1008  Alpha: 0.5', cls: 'color-swatch', src: 'est', hex: '#1a1008' },
+        ]
+      },
+      {
+        name: 'Mask',
+        icon: '🎭',
+        props: [
+          { k: 'Show Mask Graphic', v: 'false', cls: 'bool-false', src: 'est' },
+        ]
+      }
+    ],
+    notes: 'Wire ScrollRect.content to the Content child Transform (= _dungeonListParent). Max ~3-4 visible dungeon cells before scroll activates.'
+  },
+
+  'n-viewport': {
+    name: 'Viewport',
+    prefab: '—',
+    active: true,
+    treeId: 'tn-viewport',
+    components: [
+      {
+        name: 'RectTransform',
+        icon: '⊕',
+        props: [
+          { k: 'Anchor Min',   v: '(0, 0)',    cls: 'vec2', src: 'est' },
+          { k: 'Anchor Max',   v: '(1, 1)',    cls: 'vec2', src: 'est' },
+          { k: 'Pivot',        v: '(0, 1)',    cls: 'vec2', src: 'est' },
+          { k: 'Offset Min',   v: '(0, 0)',    cls: 'vec2', src: 'est' },
+          { k: 'Offset Max',   v: '(-4, 0)',   cls: 'vec2', src: 'est', note: 'slight inset for scrollbar' },
+        ]
+      },
+      { name: 'Mask', icon: '🎭', props: [{ k: 'Show Mask Graphic', v: 'false', cls: 'bool-false', src: 'est' }] },
+      { name: 'Image', icon: '🖼', props: [{ k: 'Color', v: '#00000000  (transparent)', src: 'est' }] },
+    ],
+    notes: 'Standard Unity ScrollView Viewport. Created automatically via UI → Scroll View in editor.'
+  },
+
+  'n-content': {
+    name: 'Content',
+    prefab: '—',
+    active: true,
+    treeId: 'tn-content',
+    components: [
+      {
+        name: 'RectTransform',
+        icon: '⊕',
+        props: [
+          { k: 'Anchor Min',   v: '(0, 1)',    cls: 'vec2', src: 'est' },
+          { k: 'Anchor Max',   v: '(1, 1)',    cls: 'vec2', src: 'est' },
+          { k: 'Pivot',        v: '(0.5, 1)',  cls: 'vec2', src: 'est' },
+          { k: 'Anchored Pos', v: '(0, 0)',    cls: 'vec2', src: 'est' },
+          { k: 'Size Delta',   v: '(0, 0)',    cls: 'vec2', src: 'est', note: 'CSF controls height' },
+        ]
+      },
+      {
+        name: 'VerticalLayoutGroup',
+        icon: '⊕',
+        props: [
+          { k: 'Spacing',              v: '4',          src: 'spec' },
+          { k: 'Padding T/B/L/R',      v: '2 / 2 / 0 / 0', src: 'est' },
+          { k: 'Control Child Width',  v: 'true',  cls: 'bool-true',  src: 'spec' },
+          { k: 'Control Child Height', v: 'false', cls: 'bool-false', src: 'spec' },
+        ]
+      },
+      {
+        name: 'ContentSizeFitter',
+        icon: '📐',
+        props: [
+          { k: 'Horizontal Fit', v: 'Unconstrained', src: 'est' },
+          { k: 'Vertical Fit',   v: 'Preferred Size', src: 'spec' },
+        ]
+      }
+    ],
+    notes: 'THIS is _dungeonListParent. Wire Content Transform to KingdomHeraldPanel._dungeonListParent. ContentSizeFitter lets it grow as cells are added.'
+  },
+
+  'n-cellPrefab': {
+    name: 'KingdomHeraldDungeonCell',
+    prefab: 'Assets/Resources/Prefabs/UI/KingdomHeraldDungeonCell.prefab',
+    active: true,
+    treeId: 'tn-cellPrefab',
+    components: [
+      {
+        name: 'RectTransform',
+        icon: '⊕',
+        props: [
+          { k: 'Anchor Min',   v: '(0, 1)',    cls: 'vec2', src: 'est' },
+          { k: 'Anchor Max',   v: '(1, 1)',    cls: 'vec2', src: 'est' },
+          { k: 'Size Delta',   v: '(0, 20)',   cls: 'vec2', src: 'est' },
+          { k: 'Pivot',        v: '(0.5, 1)',  cls: 'vec2', src: 'est' },
+        ]
+      },
+      {
+        name: 'KingdomHeraldDungeonCell',
+        icon: '📦',
+        warning: 'Create this script (defined at bottom of KingdomHeraldPanel.cs)',
+        props: [
+          { k: 'Script',  v: 'KingdomHeraldDungeonCell', src: 'real' },
+          { k: '_infoText', v: '→ wire child TMP "InfoText"', src: 'spec' },
+        ]
+      },
+      {
+        name: 'TextMeshProUGUI (child: InfoText)',
+        icon: 'T',
+        props: [
+          { k: 'Font Size',  v: '11',        src: 'spec' },
+          { k: 'Color',      v: '#f0e8d0  Alpha: 1.0', cls: 'color-swatch', src: 'spec', hex: '#f0e8d0' },
+          { k: 'Font',       v: 'IBM Plex Mono (if available) or Plus Jakarta Sans', src: 'spec' },
+          { k: 'Alignment',  v: 'Left',      src: 'spec' },
+          { k: 'Sample',     v: '"Wolf Den  2:34  [Thorne, Maya]"', src: 'spec' },
+        ]
+      }
+    ],
+    notes: 'KingdomHeraldDungeonCell class is defined at the bottom of KingdomHeraldPanel.cs. Wire _dungeonCellPrefab on KingdomHeraldPanel to this prefab asset.'
+  },
+
+  'n-guildSection': {
+    name: 'GuildSection',
+    prefab: '—',
+    active: true,
+    treeId: 'tn-guildSection',
+    components: [
+      { name: 'RectTransform', icon: '⊕', props: [{ k: 'Note', v: 'Driven by parent VLG', src: 'spec' }] },
+      {
+        name: 'Image',
+        icon: '🖼',
+        props: [
+          { k: 'Sprite',     v: 'Sheet', src: 'real' },
+          { k: 'Color',      v: '#231508  Alpha: 1.0', cls: 'color-swatch', src: 'spec', hex: '#231508' },
+          { k: 'Image Type', v: 'Sliced', src: 'spec' },
+        ]
+      },
+      {
+        name: 'VerticalLayoutGroup',
+        icon: '⊕',
+        props: [
+          { k: 'Spacing',             v: '4', src: 'spec' },
+          { k: 'Padding T/B/L/R',     v: '12 / 12 / 12 / 12', src: 'spec' },
+          { k: 'Control Child Width', v: 'true', cls: 'bool-true', src: 'spec' },
+        ]
+      },
+      { name: 'LayoutElement', icon: '📐', props: [{ k: 'Preferred Height', v: '90', src: 'spec' }] }
+    ],
+    notes: 'Wire: _guildRankProgressText, _favorsCompletedText. Both are plain TMP 12px #f0e8d0.'
+  },
+
+  'n-vaultSection': {
+    name: 'VaultSection',
+    prefab: '—',
+    active: true,
+    treeId: 'tn-vaultSection',
+    components: [
+      { name: 'RectTransform', icon: '⊕', props: [{ k: 'Note', v: 'Driven by parent VLG', src: 'spec' }] },
+      {
+        name: 'Image',
+        icon: '🖼',
+        props: [
+          { k: 'Sprite',     v: 'Sheet', src: 'real' },
+          { k: 'Color',      v: '#231508  Alpha: 1.0', cls: 'color-swatch', src: 'spec', hex: '#231508' },
+          { k: 'Image Type', v: 'Sliced', src: 'spec' },
+        ]
+      },
+      {
+        name: 'VerticalLayoutGroup',
+        icon: '⊕',
+        props: [
+          { k: 'Spacing',             v: '6',  src: 'spec' },
+          { k: 'Padding T/B/L/R',     v: '12 / 12 / 12 / 12', src: 'spec' },
+          { k: 'Control Child Width', v: 'true', cls: 'bool-true', src: 'spec' },
+        ]
+      },
+      { name: 'LayoutElement', icon: '📐', props: [{ k: 'Preferred Height', v: '90', src: 'spec' }] }
+    ],
+    notes: 'Wire: _weeklyProgressText (TMP), _weeklyProgressSlider (Slider). Slider is display-only: interactable=false.'
+  },
+
+  'n-vaultLabel': {
+    name: 'ProgressLabel',
+    prefab: '—',
+    active: true,
+    treeId: 'tn-vaultLabel',
+    components: [
+      { name: 'RectTransform', icon: '⊕', props: [{ k: 'Note', v: 'Driven by VaultSection VLG', src: 'spec' }] },
+      {
+        name: 'TextMeshProUGUI',
+        icon: 'T',
+        props: [
+          { k: 'Text',       v: '"Week 6 · Day 4/7"', src: 'spec' },
+          { k: 'Font Size',  v: '12',                  src: 'spec' },
+          { k: 'Color',      v: '#c8a870  Alpha: 1.0', cls: 'color-swatch', src: 'spec', hex: '#c8a870' },
+          { k: 'Alignment',  v: 'Center',              src: 'spec' },
+        ]
+      }
+    ],
+    notes: 'Wire → _weeklyProgressText. Updated by PopulateVaultProgress() with "Week {weekNumber} · Day {dayOfWeek}/7".'
+  },
+
+  'n-vaultSlider': {
+    name: 'VaultProgressBar',
+    prefab: '—',
+    active: true,
+    treeId: 'tn-vaultSlider',
+    components: [
+      {
+        name: 'RectTransform',
+        icon: '⊕',
+        props: [
+          { k: 'Note',         v: 'Driven by VaultSection VLG', src: 'spec' },
+          { k: 'Preferred H',  v: '12px via LayoutElement', src: 'spec' },
+        ]
+      },
+      {
+        name: 'Slider',
+        icon: '⬛',
+        props: [
+          { k: 'Min Value',     v: '0',           src: 'spec' },
+          { k: 'Max Value',     v: '1',           src: 'spec' },
+          { k: 'Value',         v: 'weekProgress (0.0→1.0)', src: 'spec' },
+          { k: 'Whole Numbers', v: 'false', cls: 'bool-false', src: 'spec' },
+          { k: 'Interactable',  v: 'false', cls: 'bool-false', src: 'spec' },
+          { k: 'Direction',     v: 'Left To Right', src: 'spec' },
+        ]
+      },
+      {
+        name: 'Slider — Background Image',
+        icon: '🖼',
+        props: [
+          { k: 'Color',      v: '#1a1008  Alpha: 1.0', cls: 'color-swatch', src: 'spec', hex: '#1a1008' },
+          { k: 'Border R',   v: '4px (pill shape via sprite)', src: 'spec' },
+        ]
+      },
+      {
+        name: 'Slider — Fill Image',
+        icon: '🖼',
+        props: [
+          { k: 'Color',      v: '#c8a050  Alpha: 1.0', cls: 'color-swatch', src: 'spec', hex: '#c8a050' },
+          { k: 'Border R',   v: '4px (pill shape via sprite)', src: 'spec' },
+        ]
+      }
+    ],
+    notes: 'Wire → _weeklyProgressSlider. Set Slider.value = Game.Kingdom.kingdomEpoch.weekProgress each refresh. No Handle child needed (display-only).'
+  },
+
+  'n-footer': {
+    name: 'FooterSection',
+    prefab: '—',
+    active: true,
+    treeId: 'tn-footer',
+    components: [
+      {
+        name: 'RectTransform',
+        icon: '⊕',
+        props: [
+          { k: 'Anchored Pos', v: '(0, 0)',    cls: 'vec2', src: 'spec' },
+          { k: 'Size Delta',   v: '(0, 48)',   cls: 'vec2', src: 'spec' },
+          { k: 'Anchor Min',   v: '(0, 0)',    cls: 'vec2', src: 'spec' },
+          { k: 'Anchor Max',   v: '(1, 0)',    cls: 'vec2', src: 'spec' },
+          { k: 'Pivot',        v: '(0.5, 0)',  cls: 'vec2', src: 'spec' },
+          { k: 'Offset Min',   v: '(0, 0)',    cls: 'vec2', src: 'spec' },
+          { k: 'Offset Max',   v: '(0, 48)',   cls: 'vec2', src: 'spec' },
+        ]
+      },
+      {
+        name: 'HorizontalLayoutGroup',
+        icon: '⟷',
+        props: [
+          { k: 'Spacing',              v: '8',            src: 'spec' },
+          { k: 'Padding Top',          v: '8',            src: 'spec' },
+          { k: 'Padding Bottom',       v: '8',            src: 'spec' },
+          { k: 'Padding Left',         v: '16',           src: 'spec' },
+          { k: 'Padding Right',        v: '16',           src: 'spec' },
+          { k: 'Child Alignment',      v: 'MiddleCenter', src: 'spec' },
+          { k: 'Control Child Width',  v: 'false', cls: 'bool-false', src: 'spec' },
+          { k: 'Control Child Height', v: 'true',  cls: 'bool-true',  src: 'spec' },
+        ]
+      }
+    ],
+    notes: 'Anchored to bottom of PanelRoot. Contains nav buttons. Also add a horizontal Image divider ABOVE this (1px, gold, anchored to same position offset by +1).'
+  },
+
+  'n-prevBtn': {
+    name: 'PreviousDayButton',
+    prefab: 'Assets/Resources/Prefabs/UI/CloseButton.prefab (adapted)',
+    active: true,
+    treeId: 'tn-prevBtn',
+    components: [
+      {
+        name: 'RectTransform',
+        icon: '⊕',
+        props: [
+          { k: 'Note',         v: 'Driven by FooterSection HLG', src: 'spec' },
+          { k: 'Preferred W',  v: '100  (via LayoutElement)',   src: 'est'  },
+          { k: 'Preferred H',  v: '32   (via LayoutElement)',   src: 'est'  },
+        ]
+      },
+      {
+        name: 'Image',
+        icon: '🖼',
+        props: [
+          { k: 'Sprite',       v: 'Sheet',            src: 'real' },
+          { k: 'Color',        v: '#1a2020  Alpha: 1.0', cls: 'color-swatch', src: 'real', hex: '#1a2020', note: 'CircleButton color from hierarchy [0.102,0.125,0.125]' },
+          { k: 'Image Type',   v: 'Sliced',           src: 'est'  },
+        ]
+      },
+      {
+        name: 'Button',
+        icon: '🔘',
+        props: [
+          { k: 'Transition',       v: 'ColorTint',                       src: 'real' },
+          { k: 'Normal Color',     v: '#ffffff  [1,1,1,1]',              src: 'real' },
+          { k: 'Highlighted',      v: '#f5f5f5  [0.96,0.96,0.96,1]',    src: 'real' },
+          { k: 'Pressed Color',    v: '#c8c8c8  [0.78,0.78,0.78,1]',    src: 'real' },
+          { k: 'Disabled Color',   v: '#c8c8c8 alpha=50%  [0.78,0.78,0.78,0.50]', src: 'real' },
+          { k: 'Color Mult',       v: '1',                               src: 'est'  },
+          { k: 'Fade Duration',    v: '0.1',                             src: 'est'  },
+        ]
+      },
+      {
+        name: 'Child: ButtonText (TMP)',
+        icon: 'T',
+        props: [
+          { k: 'Text',       v: '"◀ PREV DAY"',       src: 'spec' },
+          { k: 'Font Size',  v: '11',                  src: 'spec' },
+          { k: 'Color',      v: '#e3ca99  Alpha: 1.0', cls: 'color-swatch', src: 'real', hex: '#e3ca99', note: 'CircleButtonBorder color [0.89,0.79,0.60]' },
+          { k: 'Alignment',  v: 'Center',              src: 'spec' },
+        ]
+      }
+    ],
+    notes: 'Wire → _previousDayButton. interactable=false when at oldest history entry (KingdomHeraldPanel.UpdateNavigationButtons sets this).'
+  },
+
+  'n-pageText': {
+    name: 'PageIndicatorText',
+    prefab: '—',
+    active: true,
+    treeId: 'tn-pageText',
+    components: [
+      { name: 'RectTransform', icon: '⊕', props: [{ k: 'Note', v: 'Driven by HLG. LayoutElement Flexible Width=1 for centering', src: 'spec' }] },
+      {
+        name: 'TextMeshProUGUI',
+        icon: 'T',
+        props: [
+          { k: 'Text',       v: '"Day 1 of 30"',  src: 'spec' },
+          { k: 'Font Size',  v: '12',              src: 'spec' },
+          { k: 'Color',      v: '#c8a870  Alpha: 1.0', cls: 'color-swatch', src: 'spec', hex: '#c8a870' },
+          { k: 'Alignment',  v: 'Center',          src: 'spec' },
+        ]
+      },
+      { name: 'LayoutElement', icon: '📐', props: [{ k: 'Flexible Width', v: '1', src: 'spec' }] }
+    ],
+    notes: 'Wire → _pageIndicatorText. Format: "Day {_currentPageIndex + 1} of {_history.Count}".'
+  },
+
+  'n-nextBtn': {
+    name: 'NextDayButton',
+    prefab: '—',
+    active: true,
+    treeId: 'tn-nextBtn',
+    components: [
+      { name: 'RectTransform', icon: '⊕', props: [{ k: 'Preferred W', v: '100 (LayoutElement)', src: 'est' }] },
+      {
+        name: 'Image + Button',
+        icon: '🔘',
+        props: [
+          { k: 'Setup',          v: 'Identical to PreviousDayButton', src: 'spec' },
+          { k: 'Button Text',    v: '"NEXT DAY ▶"',    src: 'spec' },
+          { k: 'Normal Color',   v: '[1,1,1,1]',        src: 'real' },
+          { k: 'Highlighted',    v: '[0.96,0.96,0.96,1]', src: 'real' },
+          { k: 'Pressed',        v: '[0.78,0.78,0.78,1]', src: 'real' },
+          { k: 'Disabled',       v: '[0.78,0.78,0.78,0.50]', src: 'real' },
+        ]
+      }
+    ],
+    notes: 'Wire → _nextDayButton. interactable=false when _currentPageIndex==0 (already on today\'s report).'
+  },
+
+  'n-closeBtn': {
+    name: 'CloseButton',
+    prefab: 'Assets/Resources/Prefabs/UI/CloseButton.prefab',
+    active: true,
+    treeId: 'tn-closeBtn',
+    components: [
+      {
+        name: 'RectTransform',
+        icon: '⊕',
+        props: [
+          { k: 'Size Delta', v: '(28, 28)',    cls: 'vec2', src: 'real', note: 'from CloseButton prefab: 27.57×27.57' },
+          { k: 'Pivot',      v: '(1, 1)',      cls: 'vec2', src: 'real' },
+        ]
+      },
+      {
+        name: 'Image',
+        icon: '🖼',
+        props: [
+          { k: 'Sprite',     v: 'CircleButton',                                              src: 'real' },
+          { k: 'Sprite Path', v: 'Assets/Resources/UI2/CircleButton.png', cls: 'path',      src: 'real' },
+          { k: 'Color',      v: '#1a2020  Alpha: 1.0', cls: 'color-swatch', src: 'real', hex: '#1a2020' },
+          { k: 'Image Type', v: 'Simple',                                                    src: 'real' },
+        ]
+      },
+      {
+        name: 'Button',
+        icon: '🔘',
+        props: [
+          { k: 'Transition',     v: 'ColorTint',              src: 'real' },
+          { k: 'Normal Color',   v: '[1,1,1,1]',              src: 'real' },
+          { k: 'Highlighted',    v: '[0.96,0.96,0.96,1]',    src: 'real' },
+          { k: 'Pressed Color',  v: '[0.78,0.78,0.78,1]',    src: 'real' },
+          { k: 'Disabled Color', v: '[0.78,0.78,0.78,0.50]', src: 'real' },
+        ]
+      },
+      {
+        name: 'Child: Image (CircleButtonBorder)',
+        icon: '🖼',
+        props: [
+          { k: 'Sprite',      v: 'CircleButtonBorder',                                       src: 'real' },
+          { k: 'Sprite Path', v: 'Assets/Resources/UI2/CircleButtonBorder.png', cls: 'path', src: 'real' },
+          { k: 'Color',       v: '#e3ca99  Alpha: 1.0', cls: 'color-swatch', src: 'real', hex: '#e3ca99', note: '[0.89,0.79,0.60,1]' },
+          { k: 'Anchor',      v: 'full stretch (0,0/1,1), sizeDelta (0,0)', src: 'real' },
+        ]
+      },
+      {
+        name: 'Child: Image (X icon)',
+        icon: '✕',
+        props: [
+          { k: 'Sprite',      v: 'X',                                            src: 'real' },
+          { k: 'Sprite Path', v: 'Assets/Resources/UI2/X.png', cls: 'path',     src: 'real' },
+          { k: 'Color',       v: '#e3ca99  Alpha: 1.0', cls: 'color-swatch', src: 'real', hex: '#e3ca99' },
+          { k: 'Size Delta',  v: '(10, 10)',              cls: 'vec2', src: 'real' },
+          { k: 'Anchor',      v: 'center (0.5,0.5/0.5,0.5)', src: 'real' },
+          { k: 'Anchored Pos', v: '(0, 0)', cls: 'vec2', src: 'real' },
+        ]
+      }
+    ],
+    notes: 'Use the existing CloseButton.prefab from Assets/Resources/Prefabs/UI/. Wire → _closeButton. onClick calls KingdomHeraldPanel.Close() → ClosePanel() → Game.UI.UnloadUIScene().'
+  },
+
+  // Generic label nodes
+  'n-goldHeader': {
+    name: 'SectionHeader (GoldSection)',
+    prefab: '—', active: true, treeId: 'tn-goldHeader',
+    components: [{
+      name: 'TextMeshProUGUI', icon: 'T',
+      props: [
+        { k: 'Text',       v: '"💰 GOLD & ECONOMY"', src: 'spec' },
+        { k: 'Font Size',  v: '12', src: 'spec' },
+        { k: 'Font Style', v: 'Bold', src: 'spec' },
+        { k: 'Color',      v: '#e4c870', cls: 'color-swatch', src: 'spec', hex: '#e4c870' },
+        { k: 'Alignment',  v: 'Left', src: 'spec' },
+      ]
+    }],
+    notes: 'Not wired to any SerializeField — static header label. Apply LayoutElement Preferred Height=18 to control row size.'
+  },
+  'n-goldEarned':  { name: 'GoldEarnedRow', prefab: '—', active: true, treeId: 'tn-goldEarned',
+    components: [{
+      name: 'HorizontalLayoutGroup + 2× TMP', icon: '⟷',
+      props: [
+        { k: 'Spacing', v: '0', src: 'spec' },
+        { k: 'Left TMP', v: '"Gold Earned:"  12px  #c8a870', src: 'spec' },
+        { k: 'Right TMP', v: 'goldEarned value  12px  #f0e8d0  → _goldEarnedText', src: 'spec' },
+        { k: 'Right Alignment', v: 'Right (use Flexible Width=1)', src: 'spec' },
+      ]
+    }],
+    notes: 'Wire right TMP → _goldEarnedText. Value set to "Gold Earned: 4,200" by PopulateGold().'
+  },
+  'n-goldSpent': { name: 'GoldSpentRow', prefab: '—', active: true, treeId: 'tn-goldSpent',
+    components: [{
+      name: 'HorizontalLayoutGroup + 2× TMP', icon: '⟷',
+      props: [
+        { k: 'Left TMP', v: '"Gold Spent:"  12px  #c8a870', src: 'spec' },
+        { k: 'Right TMP', v: 'goldSpent value → _goldSpentText', src: 'spec' },
+      ]
+    }],
+    notes: 'Wire right TMP → _goldSpentText.'
+  },
+  'n-goldBest': { name: 'BestEverRow', prefab: '—', active: true, treeId: 'tn-goldBest',
+    components: [{
+      name: 'TextMeshProUGUI (full width)', icon: 'T',
+      props: [
+        { k: 'Font Size',  v: '11', src: 'spec' },
+        { k: 'Color',      v: '#8a7050', cls: 'color-swatch', src: 'spec', hex: '#8a7050' },
+        { k: 'Text',       v: '"Best: 6,100 ▼"', src: 'spec' },
+      ]
+    }],
+    notes: 'Wire → _goldBestCompareText. ▲ = green (#22C55E rich text tag), ▼ = muted. Uses Unity rich text: <color=#22C55E>▲</color>.'
+  },
+  'n-levelUps':  { name: 'LevelUpsText', prefab: '—', active: true, treeId: 'tn-levelUps',
+    components: [{ name: 'TextMeshProUGUI', icon: 'T', props: [{ k: 'Font Size', v: '12', src: 'spec' }, { k: 'Color', v: '#f0e8d0', cls: 'color-swatch', src: 'spec', hex: '#f0e8d0' }, { k: 'Wire', v: '_levelUpsText', src: 'spec' }] }],
+    notes: 'Populated by PopulateHeroes(). Format: "Level Ups: Thorne (Lv7), Maya (Lv5)" or "Level Ups: None"'
+  },
+  'n-heroDeaths':  { name: 'HeroDeathsText', prefab: '—', active: true, treeId: 'tn-heroDeaths',
+    components: [{ name: 'TextMeshProUGUI', icon: 'T', props: [{ k: 'Font Size', v: '12', src: 'spec' }, { k: 'Color', v: '#f0e8d0', cls: 'color-swatch', src: 'spec', hex: '#f0e8d0' }, { k: 'Wire', v: '_heroDeathsText', src: 'spec' }] }],
+    notes: 'Format: "Hero Deaths: None 🏆" or "Hero Deaths: Thorne, Maya". No formatting changes on death names — just plain text.'
+  },
+  'n-rapport':  { name: 'RapportMilestonesText', prefab: '—', active: true, treeId: 'tn-rapport',
+    components: [{ name: 'TextMeshProUGUI', icon: 'T', props: [{ k: 'Font Size', v: '12', src: 'spec' }, { k: 'Wire', v: '_rapportMilestonesText', src: 'spec' }] }],
+    notes: 'Format: "Rapport Milestones: Maya (+2), Thorne (+1)" or "Rapport Milestones: None"'
+  },
+  'n-streak':  { name: 'DeathlessStreakText', prefab: '—', active: true, treeId: 'tn-streak',
+    components: [{ name: 'TextMeshProUGUI', icon: 'T', props: [{ k: 'Font Size', v: '12', src: 'spec' }, { k: 'Color', v: '#f0e8d0', cls: 'color-swatch', src: 'spec', hex: '#f0e8d0' }, { k: 'Wire', v: '_deathlessStreakText', src: 'spec' }] }],
+    notes: 'Uses AllTimeBests.currentDeathlessStreak. "Deathless Streak: 5 days" or "Deathless Streak: Broken"'
+  },
+  'n-itemsSold': { name: 'ItemsSoldText', prefab: '—', active: true, treeId: 'tn-itemsSold',
+    components: [{ name: 'TextMeshProUGUI', icon: 'T', props: [{ k: 'Wire', v: '_itemsSoldText', src: 'spec' }, { k: 'Format', v: '"Items Sold: {report.itemsSold}"', src: 'spec' }] }], notes: null
+  },
+  'n-bestSale': { name: 'BestItemSoldText', prefab: '—', active: true, treeId: 'tn-bestSale',
+    components: [{ name: 'TextMeshProUGUI', icon: 'T', props: [{ k: 'Wire', v: '_bestItemSoldText', src: 'spec' }, { k: 'Format', v: '"Best Sale: {itemName} ({salePrice:N0}g)" or "Best Sale: —"', src: 'spec' }] }], notes: null
+  },
+  'n-tradeBest': { name: 'ItemsBestCompareText', prefab: '—', active: true, treeId: 'tn-tradeBest',
+    components: [{ name: 'TextMeshProUGUI', icon: 'T', props: [{ k: 'Font Size', v: '11  color #8a7050', src: 'spec' }, { k: 'Wire', v: '_itemsBestCompareText', src: 'spec' }, { k: 'Format', v: '"Best Ever: {bestItemSalePrice:N0}g ▲/▼"', src: 'spec' }] }], notes: null
+  },
+  'n-dungeonsText': { name: 'DungeonsText', prefab: '—', active: true, treeId: 'tn-dungeonsText',
+    components: [{ name: 'TextMeshProUGUI', icon: 'T', props: [{ k: 'Wire', v: '_dungeonsText', src: 'spec' }, { k: 'Format', v: '"Dungeons Cleared: {count}"', src: 'spec' }] }], notes: null
+  },
+  'n-dungeonBest': { name: 'DungeonsBestText', prefab: '—', active: true, treeId: 'tn-dungeonBest',
+    components: [{ name: 'TextMeshProUGUI', icon: 'T', props: [{ k: 'Font Size', v: '11  color #8a7050', src: 'spec' }, { k: 'Wire', v: '_dungeonsBestText', src: 'spec' }, { k: 'Format', v: '"Best: {bestDungeonsInDay} ▲/▼"', src: 'spec' }] }], notes: null
+  },
+  'n-guildRank': { name: 'GuildRankProgressText', prefab: '—', active: true, treeId: 'tn-guildRank',
+    components: [{ name: 'TextMeshProUGUI', icon: 'T', props: [{ k: 'Wire', v: '_guildRankProgressText', src: 'spec' }, { k: 'Format', v: '"Guild Rank Progress: +120" or "-40"', src: 'spec' }] }], notes: null
+  },
+  'n-favors': { name: 'FavorsCompletedText', prefab: '—', active: true, treeId: 'tn-favors',
+    components: [{ name: 'TextMeshProUGUI', icon: 'T', props: [{ k: 'Wire', v: '_favorsCompletedText', src: 'spec' }, { k: 'Format', v: '"Favors Completed: {report.favorsCompleted}"', src: 'spec' }] }], notes: null
+  },
+};
+
+// ── RENDER INSPECTOR ────────────────────────────────────────────────────────
+function renderColor(hex) {
+  return `<span class="swatch" style="background:${hex}"></span>`;
+}
+
+function renderProps(props) {
+  return props.map(p => {
+    let valHtml;
+    const srcBadge = p.src === 'real' ? '<span class="src-real">REAL</span>' :
+                     p.src === 'spec' ? '<span class="src-spec">SPEC</span>' :
+                                        '<span class="src-est">EST</span>';
+    if (p.cls === 'color-swatch' && p.hex) {
+      valHtml = `<span class="prop-val color-swatch">${renderColor(p.hex)} ${p.v}${srcBadge}</span>`;
+    } else if (p.cls) {
+      valHtml = `<span class="prop-val ${p.cls}">${p.v}${srcBadge}</span>`;
+    } else {
+      const cls = p.src === 'real' ? 'real' : p.src === 'spec' ? '' : 'est';
+      valHtml = `<span class="prop-val ${cls}">${p.v}${srcBadge}</span>`;
     }
+    const noteHtml = p.note ? `<span style="font-size:9px;color:#6e7681;margin-left:4px;">// ${p.note}</span>` : '';
+    return `<div class="prop-row"><span class="prop-key">${p.k}</span>${valHtml}${noteHtml}</div>`;
+  }).join('');
+}
 
-    function arrow(above) {
-      return above
-        ? '<span class="compare-arrow up">▲</span>'
-        : '<span class="compare-arrow down">▼</span>';
+function renderSerializeFields(sfList) {
+  const rows = sfList.map(sf =>
+    `<div class="sf-row"><span class="sf-field">${sf.field}</span><span class="sf-target">${sf.target}</span><span class="sf-line">${sf.line}</span></div>`
+  ).join('');
+  return `<div class="sf-block"><div class="sf-title">⚠ SerializeField Wiring Required</div>${rows}</div>`;
+}
+
+function renderComponent(comp) {
+  const warnHtml = comp.warning ? `<span class="comp-warning">⚠ ${comp.warning}</span>` : '';
+  const bodyHtml = comp.sf
+    ? renderSerializeFields(comp.sf)
+    : renderProps(comp.props || []);
+  return `
+    <div class="component-block">
+      <div class="comp-header"><span class="comp-icon">${comp.icon || '⚙'}</span> ▼ ${comp.name}${warnHtml}</div>
+      <div class="comp-body">${bodyHtml}</div>
+    </div>`;
+}
+
+function selectNode(nodeId) {
+  const data = nodes[nodeId];
+  if (!data) return;
+
+  // Update tree selection
+  document.querySelectorAll('.tree-node').forEach(el => el.classList.remove('selected'));
+  if (data.treeId) {
+    const el = document.getElementById(data.treeId);
+    if (el) {
+      el.classList.add('selected');
+      el.scrollIntoView({ block: 'nearest' });
     }
+  }
 
-    function renderDay(idx) {
-      const d = DAYS[idx];
+  // Update preview selection
+  document.querySelectorAll('.section-card').forEach(el => el.classList.remove('selected'));
+  const previewMap = {
+    'n-headerSection': 'preview-header',
+    'n-goldSection': 'preview-gold',
+    'n-heroesSection': 'preview-heroes',
+    'n-tradeSection': 'preview-trade',
+    'n-combatSection': 'preview-combat',
+    'n-guildSection': 'preview-guild',
+    'n-vaultSection': 'preview-vault',
+  };
+  if (previewMap[nodeId]) {
+    const el = document.getElementById(previewMap[nodeId]);
+    if (el) el.classList.add('selected');
+  }
 
-      // Update header
-      document.getElementById('h-day').textContent = `Day ${d.day} — ${d.realm}`;
-      document.getElementById('h-epoch').textContent =
-        `Epoch ${d.epoch} · Week ${d.week} · Day ${d.dayOfWeek}/${d.totalDays}`;
-      document.getElementById('day-indicator').textContent = `Day ${idx + 1} of ${DAYS.length}`;
+  // Render inspector
+  const goHeader = `
+    <div class="inspector-go-header">
+      <div class="go-name">${data.name}</div>
+      <div class="go-meta">
+        <div class="go-meta-item">Prefab: <span>${data.prefab || '—'}</span></div>
+        <div class="go-meta-item">Active: <span class="${data.active ? 'go-active' : ''}">${data.active ? '✓' : '✗'}</span></div>
+      </div>
+    </div>`;
 
-      // Nav buttons
-      document.getElementById('btn-prev').disabled = (idx === 0);
-      document.getElementById('btn-next').disabled = (idx === DAYS.length - 1);
+  const compsHtml = (data.components || []).map(renderComponent).join('');
 
-      // Build grid
-      const grid = document.getElementById('content-grid');
-      grid.innerHTML = `
-        <!-- LEFT COLUMN -->
-        <div style="display:flex;flex-direction:column;gap:12px;">
+  const notesHtml = data.notes
+    ? `<div style="padding:8px 12px 12px;font-size:10px;color:#8b95b0;border-top:1px solid #1e2a40;line-height:1.5;"><strong style="color:#c8a870;">Note:</strong> ${data.notes}</div>`
+    : '';
 
-          <!-- Gold & Economy -->
-          <div class="stat-card">
-            <div class="card-title"><span class="card-title-icon">💰</span> Gold &amp; Economy</div>
-            <div class="stat-row">
-              <span class="stat-label">Gold Earned</span>
-              <span class="stat-value gold">${fmt(d.economy.earned)}g</span>
-            </div>
-            <div class="stat-row">
-              <span class="stat-label">Gold Spent</span>
-              <span class="stat-value">${fmt(d.economy.spent)}g</span>
-            </div>
-            <div class="stat-row">
-              <span class="stat-label">Net</span>
-              <span class="stat-value positive">+${fmt(d.economy.net)}g</span>
-            </div>
-            <div class="stat-row">
-              <span class="stat-label">Best Ever</span>
-              <span class="stat-value">${fmt(d.economy.bestEver)}g ${arrow(d.economy.aboveBest)}</span>
-            </div>
-          </div>
+  document.getElementById('inspectorPane').innerHTML = `
+    <div class="inspector-content">
+      ${goHeader}
+      ${compsHtml}
+      ${notesHtml}
+    </div>`;
+}
 
-          <!-- Heroes -->
-          <div class="stat-card">
-            <div class="card-title"><span class="card-title-icon">⚔️</span> Heroes</div>
-            <div class="stat-row">
-              <span class="stat-label">Level Ups</span>
-              <span class="stat-value">${d.heroes.levelUps}</span>
-            </div>
-            <div class="stat-row">
-              <span class="stat-label">Deaths</span>
-              <span class="stat-value ${d.heroes.deaths === 0 ? 'positive' : 'negative'}">
-                ${d.heroes.deaths === 0 ? 'None 🏆' : d.heroes.deaths}
-              </span>
-            </div>
-            <div class="stat-row">
-              <span class="stat-label">Deathless Streak</span>
-              <span class="stat-value">${d.heroes.streak} days</span>
-            </div>
-            ${d.heroes.deathless ? `<div style="margin-top:8px;"><span class="trophy-badge">🏆 Deathless Day</span></div>` : ''}
-          </div>
-
-          <!-- Trade -->
-          <div class="stat-card">
-            <div class="card-title"><span class="card-title-icon">🛒</span> Trade</div>
-            <div class="stat-row">
-              <span class="stat-label">Items Sold</span>
-              <span class="stat-value">${d.trade.sold}</span>
-            </div>
-            <div class="stat-row">
-              <span class="stat-label">Best Sale</span>
-              <span class="stat-value gold" style="font-size:0.76rem;text-align:right;max-width:140px;">
-                ${d.trade.bestSale.name}<br>
-                <span style="font-size:0.82rem;">${fmt(d.trade.bestSale.gold)}g</span>
-              </span>
-            </div>
-            <div class="stat-row">
-              <span class="stat-label">Best Ever</span>
-              <span class="stat-value">${fmt(d.trade.bestEver)}g ${arrow(d.trade.aboveBest)}</span>
-            </div>
-          </div>
-
-        </div>
-
-        <!-- RIGHT COLUMN -->
-        <div style="display:flex;flex-direction:column;gap:12px;">
-
-          <!-- Combat -->
-          <div class="stat-card">
-            <div class="card-title"><span class="card-title-icon">🗡️</span> Combat — Dungeon Clears</div>
-            <div class="dungeon-list">
-              ${d.combat.map(c => `
-                <div class="dungeon-entry">
-                  <span class="dungeon-name">${c.name}</span>
-                  <span class="dungeon-time">${c.time}</span>
-                  <span class="dungeon-heroes">${c.heroes}</span>
-                </div>
-              `).join('')}
-            </div>
-            ${d.combat.length === 0 ? '<div style="color:var(--text-muted);font-size:0.8rem;padding:8px 0;">No clears today</div>' : ''}
-          </div>
-
-          <!-- Guild -->
-          <div class="stat-card">
-            <div class="card-title"><span class="card-title-icon">⚜️</span> Guild</div>
-            <div class="stat-row">
-              <span class="stat-label">Guild Rank</span>
-              <span class="stat-value positive">+${fmt(d.guild.rankGain)}</span>
-            </div>
-            <div class="stat-row">
-              <span class="stat-label">Favors Completed</span>
-              <span class="stat-value">${d.guild.favors}</span>
-            </div>
-            <div class="guild-row">
-              <span class="rank-badge">▲ Rank climbing</span>
-            </div>
-          </div>
-
-          <!-- King's Vault -->
-          <div class="stat-card">
-            <div class="card-title"><span class="card-title-icon">👑</span> King's Vault</div>
-            <div class="vault-bar-container">
-              <div class="vault-bar-label">
-                <span>Week ${d.vault.week} · Day ${d.vault.day}/${d.vault.total}</span>
-                <span>${d.vault.pct}% filled</span>
-              </div>
-              <div class="vault-bar-track">
-                <div class="vault-bar-fill" style="width:${d.vault.pct}%;"></div>
-              </div>
-              <div class="vault-pct">${d.vault.pct}% of weekly quota</div>
-            </div>
-          </div>
-
-        </div>
-      `;
-    }
-
-    function changeDay(delta) {
-      const next = currentDay + delta;
-      if (next < 0 || next >= DAYS.length) return;
-
-      const body = document.getElementById('herald-body');
-      body.style.opacity = '0';
-      body.style.transition = 'opacity 0.18s ease';
-
-      setTimeout(() => {
-        currentDay = next;
-        renderDay(currentDay);
-        body.style.opacity = '1';
-      }, 180);
-    }
-
-    function closeHerald() {
-      const panel = document.getElementById('herald-panel');
-      const reopenBtn = document.getElementById('reopen-btn');
-
-      panel.style.transition = 'opacity 0.25s ease, transform 0.25s ease';
-      panel.style.opacity = '0';
-      panel.style.transform = 'scale(0.96)';
-
-      setTimeout(() => {
-        panel.style.display = 'none';
-        reopenBtn.style.display = 'block';
-      }, 250);
-    }
-
-    function reopenHerald() {
-      const panel = document.getElementById('herald-panel');
-      const reopenBtn = document.getElementById('reopen-btn');
-
-      reopenBtn.style.display = 'none';
-      panel.style.display = '';
-      panel.style.opacity = '0';
-      panel.style.transform = 'scale(0.96)';
-
-      requestAnimationFrame(() => {
-        panel.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
-        panel.style.opacity = '1';
-        panel.style.transform = 'scale(1)';
-      });
-    }
-
-    // Initial render
-    renderDay(currentDay);
-  </script>
+// Auto-select canvas on load
+window.addEventListener('DOMContentLoaded', () => {
+  selectNode('n-panelRoot');
+});
+</script>
 </body>
 </html>
