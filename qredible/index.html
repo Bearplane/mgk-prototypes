@@ -5,193 +5,310 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Qredible Prototypes</title>
   <style>
-    @font-face { font-family: 'Uber Move'; src: local('Uber Move'), local('UberMove'); font-weight: 300 700; }
     :root {
-      --font-ui: 'Uber Move', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      --black: #1A202E; --subtitle: #657496; --grey-light: #EBEDF2; --border: #EBEDF2;
-      --bg: #F8FBFD; --surface: #FFFFFF; --header-bg: #1E3A5F;
-      --action-blue: #2563eb; --link: #376fd0;
-      --status-success-bg: rgba(0,213,129,.15); --status-validated: #2E7D32;
-      --status-warn-bg: rgba(237,108,2,.15); --status-pending: #ED6C02;
-      --status-info-bg: rgba(80,168,255,.15); --status-missing: #D32F2F;
-      --radius-card: 6px; --radius-btn: 5px;
-      --shadow-subtle: 0px 1px 2px 0px rgba(0,0,0,0.05);
-      --shadow-hover: 0 4px 16px rgba(0,0,0,0.1);
+      --font-ui: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --blue-dark: #1E3A5F;
+      --blue: #3B82F6;
+      --green: #16A34A;
+      --red: #DC2626;
+      --yellow: #D97706;
+      --gray: #64748B;
+      --text: #0F172A;
+      --text-muted: #64748B;
+      --border: #E2E8F0;
+      --bg: #F8FAFC;
+      --surface: #FFFFFF;
+      --radius-card: 10px;
+      --radius-sm: 6px;
     }
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background: var(--bg); color: var(--black); font-family: var(--font-ui); font-size: 13px; font-weight: 400; line-height: 1.5; min-height: 100vh; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-ui);
+      font-size: 13px;
+      line-height: 1.5;
+      min-height: 100vh;
+    }
 
+    /* ── HEADER ── */
     .page-header {
-      background: var(--header-bg);
-      color: white;
-      padding: 20px 40px;
+      background: var(--blue-dark);
+      padding: 18px 40px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      gap: 14px;
     }
-    .header-left { display: flex; align-items: center; gap: 14px; }
     .header-logo {
-      width: 34px; height: 34px;
-      background: var(--action-blue);
-      border-radius: var(--radius-card);
+      width: 36px; height: 36px;
+      background: var(--blue);
+      border-radius: 8px;
       display: flex; align-items: center; justify-content: center;
-      font-size: 16px; font-weight: 700; color: white; flex-shrink: 0;
+      font-size: 18px; font-weight: 800; color: white; flex-shrink: 0;
     }
-    .header-title h1 { font-size: 16px; font-weight: 600; }
-    .header-title .sub { font-size: 11px; color: #90CAF9; margin-top: 2px; font-weight: 300; }
-    .header-back a { font-size: 11px; color: #90CAF9; text-decoration: none; font-weight: 300; }
-    .header-back a:hover { color: white; }
+    .header-title h1 { font-size: 16px; font-weight: 700; color: white; }
+    .header-title p  { font-size: 11px; color: #93C5FD; margin-top: 2px; font-weight: 400; }
 
-    .page-body { max-width: 960px; margin: 0 auto; padding: 40px 24px 80px; }
+    /* ── LAYOUT ── */
+    .page-body {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+    }
 
-    .section-label {
-      font-size: 10px;
+    /* ── SEARCH ── */
+    .search-bar {
+      width: 100%;
+      max-width: 420px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 9px 12px 9px 34px;
+      font-family: var(--font-ui);
+      font-size: 13px;
+      color: var(--text);
+      background: white url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E") no-repeat 10px center;
+      outline: none;
+      margin-bottom: 32px;
+    }
+    .search-bar:focus { border-color: var(--blue); box-shadow: 0 0 0 2px rgba(59,130,246,.15); }
+
+    /* ── SECTION HEADER ── */
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      margin-bottom: 14px;
+      margin-top: 40px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--border);
+    }
+    .section-header:first-of-type { margin-top: 0; }
+    .section-title {
+      font-size: 12px;
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: .5px;
-      color: var(--subtitle);
-      margin-bottom: 14px;
-      margin-top: 32px;
+      letter-spacing: .07em;
+      color: var(--text);
     }
-    .section-label:first-child { margin-top: 0; }
+    .section-date {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+    .section-count {
+      margin-left: auto;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
 
-    .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
+    /* ── CARDS ── */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 14px;
+    }
 
     .proto-card {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius-card);
-      padding: 18px 20px;
+      padding: 18px 20px 16px;
       text-decoration: none;
-      color: var(--black);
+      color: var(--text);
       display: flex;
       flex-direction: column;
-      gap: 10px;
-      box-shadow: var(--shadow-subtle);
+      gap: 8px;
       transition: box-shadow .15s, border-color .15s, transform .12s;
+      cursor: pointer;
     }
     .proto-card:hover {
-      border-color: #b1b9ca;
-      box-shadow: var(--shadow-hover);
+      border-color: #94A3B8;
+      box-shadow: 0 4px 16px rgba(0,0,0,.08);
       transform: translateY(-2px);
     }
 
+    .card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
     .card-icon {
-      width: 36px; height: 36px;
-      background: var(--status-info-bg);
-      border-radius: var(--radius-card);
+      width: 36px; height: 36px; flex-shrink: 0;
+      border-radius: 8px;
       display: flex; align-items: center; justify-content: center;
-      font-size: 18px; flex-shrink: 0;
+      font-size: 18px;
+      background: #F1F5F9;
     }
-    .card-name { font-size: 13px; font-weight: 600; line-height: 1.3; }
-    .card-desc { font-size: 12px; color: var(--subtitle); font-weight: 300; line-height: 1.6; flex: 1; }
+    .card-ticket {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text-muted);
+      font-family: 'IBM Plex Mono', monospace;
+      background: #F1F5F9;
+      padding: 2px 6px;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+    .card-name { font-size: 13px; font-weight: 700; line-height: 1.35; }
+    .card-desc { font-size: 12px; color: var(--text-muted); line-height: 1.6; flex: 1; }
+    .card-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 6px; }
+    .card-date { font-size: 10px; color: var(--text-muted); }
+    .card-cta { font-size: 11px; font-weight: 700; color: var(--blue); }
+    .proto-card:hover .card-cta { text-decoration: underline; }
 
-    .card-pills { display: flex; gap: 6px; flex-wrap: wrap; margin-top: auto; padding-top: 4px; }
+    .card-pills { display: flex; gap: 6px; flex-wrap: wrap; }
     .pill {
       display: inline-flex; align-items: center;
-      padding: 2px 8px;
-      border-radius: var(--radius-card);
+      padding: 2px 7px; border-radius: 4px;
       font-size: 10px; font-weight: 700;
     }
-    .pill-ready   { background: var(--status-success-bg); color: var(--status-validated); }
-    .pill-review  { background: var(--status-info-bg); color: var(--action-blue); }
-    .pill-critical { background: rgba(211,47,47,.12); color: var(--status-missing); }
+    .pill-green  { background: #DCFCE7; color: #166534; }
+    .pill-blue   { background: #DBEAFE; color: #1E40AF; }
+    .pill-red    { background: #FEE2E2; color: #991B1B; }
+    .pill-yellow { background: #FEF9C3; color: #854D0E; }
+    .pill-gray   { background: #F1F5F9; color: var(--gray); }
 
-    .card-cta { font-size: 11px; font-weight: 600; color: var(--link); margin-top: 2px; }
-    .proto-card:hover .card-cta { color: var(--action-blue); }
+    /* ── FOOTER ── */
+    footer {
+      margin-top: 60px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
 
-    footer { margin-top: 60px; padding-top: 20px; border-top: 1px solid var(--border); text-align: center; font-size: 11px; color: var(--subtitle); font-weight: 300; }
+    @keyframes fadeInUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+    .page-body { animation: fadeInUp .3s ease both; }
 
-    @keyframes fadeInUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
-    .page-body { animation: fadeInUp .35s ease both; }
+    /* Search filter hide */
+    .proto-card.hidden { display: none; }
   </style>
 </head>
 <body>
 
 <header class="page-header">
-  <div class="header-left">
-    <div class="header-logo">Q</div>
-    <div class="header-title">
-      <h1>Qredible Prototypes</h1>
-      <div class="sub">UI/UX Mockups &amp; Design References · Product Classification Framework + Audit Improvement</div>
-    </div>
+  <div class="header-logo">Q</div>
+  <div class="header-title">
+    <h1>Qredible Prototypes</h1>
+    <p>UI mockups &amp; design references — internal use only</p>
   </div>
-  <div class="header-back"><a href="../">← All Prototypes</a></div>
 </header>
 
 <div class="page-body">
 
-  <div class="section-label">Audit Improvement Initiative</div>
-  <div class="card-grid">
+  <input class="search-bar" type="text" placeholder="Search mockups by name, ticket, or topic…" id="search" oninput="filterCards(this.value)"/>
 
-    <a href="qredible-tickets/coa-issue-category.html" class="proto-card">
-      <div class="card-icon">🏷️</div>
-      <div class="card-name">COA Issue Category &amp; Validation Status</div>
-      <p class="card-desc">BPO review workflow — structured issue categorization, system-flag vs human-confirmed distinction, Validation Issue status rollup.</p>
-      <div class="card-pills"><span class="pill pill-ready">Medium · Mockup ready</span></div>
-      <span class="card-cta">View mockup →</span>
-    </a>
-
+  <!-- ══════════════════════════════
+       MARCH 26, 2026
+  ══════════════════════════════ -->
+  <div class="section-header">
+    <span class="section-title">Product Scan Operations</span>
+    <span class="section-date">Mar 25–26, 2026</span>
+    <span class="section-count">3 mockups</span>
   </div>
-
-  <div class="section-label">Product Classification Framework — Sprint 1 · Westtown Unblock</div>
   <div class="card-grid">
 
-    <a href="qredible-tickets/tobacco-classification.html" class="proto-card">
-      <div class="card-icon">🌿</div>
-      <div class="card-name">Tobacco/Vape Classifications + Product Compliance Status</div>
-      <p class="card-desc">New classification tree (5 tobacco/vape types), keyword config, COA = Never, FDA ENDS check flag. Includes Product Compliance Status column design and hover tooltip.</p>
-      <div class="card-pills">
-        <span class="pill pill-ready">Light · Mockup ready</span>
-        <span class="pill pill-critical">FLEX Critical</span>
+    <a href="qredible-tickets/coa-assignment-level.html" class="proto-card" data-keywords="coa assignment level individual child inherited bundle not required product builder qp-3544">
+      <div class="card-top">
+        <div class="card-icon">🧬</div>
+        <span class="card-ticket">QP-3544</span>
       </div>
-      <span class="card-cta">View mockup →</span>
+      <div class="card-name">COA Assignment Level</div>
+      <p class="card-desc">Introduces Individual, Child, Inherited, Bundle, and Not Required assignment levels. Controls how COA compliance is evaluated for parent/variant/bundle product relationships. Dashed badge = inherited status.</p>
+      <div class="card-pills">
+        <span class="pill pill-blue">Product Builder</span>
+        <span class="pill pill-green">Mockup ready</span>
+      </div>
+      <div class="card-footer">
+        <span class="card-date">Mar 26, 2026</span>
+        <span class="card-cta">View mockup →</span>
+      </div>
+    </a>
+
+    <a href="qredible-tickets/scan-discard.html" class="proto-card" data-keywords="scan discard zero product guard failed partial scan qp-3545">
+      <div class="card-top">
+        <div class="card-icon">🗑️</div>
+        <span class="card-ticket">QP-3545</span>
+      </div>
+      <div class="card-name">Scan Discard / Zero-Product Guard</div>
+      <p class="card-desc">Zero-product guard prevents false removals when Zyte returns empty results. Scan discard allows admins to roll back a completed scan's change statuses without removing ingested COAs or products.</p>
+      <div class="card-pills">
+        <span class="pill pill-yellow">Scan Operations</span>
+        <span class="pill pill-green">Mockup ready</span>
+      </div>
+      <div class="card-footer">
+        <span class="card-date">Mar 25, 2026</span>
+        <span class="card-cta">View mockup →</span>
+      </div>
+    </a>
+
+    <a href="qredible-tickets/scan-review-modal.html" class="proto-card" data-keywords="scan review modal change tracking review status pending reviewed new removed modified re-added qp-3250">
+      <div class="card-top">
+        <div class="card-icon">🔍</div>
+        <span class="card-ticket">QP-3250</span>
+      </div>
+      <div class="card-name">Scan Review Modal</div>
+      <p class="card-desc">Full-screen overlay for reviewing scan changes. Summary cards, per-product change badges (New/Removed/Modified/Re-added), inline and bulk Mark Reviewed workflow with audit trail.</p>
+      <div class="card-pills">
+        <span class="pill pill-blue">Product Compliance</span>
+        <span class="pill pill-green">Mockup ready</span>
+      </div>
+      <div class="card-footer">
+        <span class="card-date">Mar 25, 2026</span>
+        <span class="card-cta">View mockup →</span>
+      </div>
     </a>
 
   </div>
 
-  <div class="section-label">No Mockup Required — Spec Only</div>
-  <div class="card-grid">
-
-    <div class="proto-card" style="opacity:.6;cursor:default;">
-      <div class="card-icon" style="background:var(--grey-light);">📋</div>
-      <div class="card-name">Bulk Unassign / Assign COAs from COAs Tab</div>
-      <p class="card-desc">Behavior-only ticket. No visual mockup needed — standard bulk action pattern.</p>
-      <div class="card-pills"><span class="pill" style="background:var(--grey-light);color:var(--subtitle);">Light · No mockup</span></div>
-    </div>
-
-    <div class="proto-card" style="opacity:.6;cursor:default;">
-      <div class="card-icon" style="background:var(--grey-light);">🏛️</div>
-      <div class="card-name">FDA ENDS Authorization List &amp; Compliance Check</div>
-      <p class="card-desc">Data/backend ticket. Visual output covered by Tobacco/Vape mockup (Product Compliance Status column).</p>
-      <div class="card-pills"><span class="pill" style="background:var(--grey-light);color:var(--subtitle);">Medium · No mockup</span></div>
-    </div>
-
-    <div class="proto-card" style="opacity:.6;cursor:default;">
-      <div class="card-icon" style="background:var(--grey-light);">🗂️</div>
-      <div class="card-name">Product Classification L2 Restructure</div>
-      <p class="card-desc">Data migration ticket. No UI mockup needed — filter panel and edit modal changes are straightforward structural updates.</p>
-      <div class="card-pills"><span class="pill" style="background:var(--grey-light);color:var(--subtitle);">Heavy · No mockup</span></div>
-    </div>
-
+  <!-- ══════════════════════════════
+       MARCH 25, 2026
+  ══════════════════════════════ -->
+  <div class="section-header">
+    <span class="section-title">Product Classification Framework</span>
+    <span class="section-date">Mar 25, 2026</span>
+    <span class="section-count">1 mockup</span>
   </div>
-
-  <div class="section-label">Already Covered in Jira</div>
   <div class="card-grid">
 
-    <div class="proto-card" style="opacity:.5;cursor:default;">
-      <div class="card-icon" style="background:var(--grey-light);">⚠️</div>
-      <div class="card-name">COA Inactive State</div>
-      <p class="card-desc">Exists as QP-3526 — already in Jira and in QP4 sprint. No prototype needed.</p>
-      <div class="card-pills"><span class="pill" style="background:var(--grey-light);color:var(--subtitle);">QP-3526 · In sprint</span></div>
-    </div>
+    <a href="qredible-tickets/tobacco-classification.html" class="proto-card" data-keywords="tobacco vape classification product compliance status fda ends check flex critical qp-3467">
+      <div class="card-top">
+        <div class="card-icon">🌿</div>
+        <span class="card-ticket">QP-3467</span>
+      </div>
+      <div class="card-name">Tobacco/Vape Classifications + Product Compliance Status</div>
+      <p class="card-desc">New classification tree for tobacco/vape product types, keyword config, COA = Never flag, FDA ENDS check flag. Includes Product Compliance Status column design and hover tooltip.</p>
+      <div class="card-pills">
+        <span class="pill pill-red">FLEX Critical</span>
+        <span class="pill pill-green">Mockup ready</span>
+      </div>
+      <div class="card-footer">
+        <span class="card-date">Mar 25, 2026</span>
+        <span class="card-cta">View mockup →</span>
+      </div>
+    </a>
 
   </div>
 
   <footer>
-    <p>Qredible · Internal Prototypes · Bearplane, LLC</p>
+    <p>Qredible · Internal Prototypes · jfloyd-qredible.netlify.app</p>
   </footer>
 
 </div>
+
+<script>
+  function filterCards(query) {
+    const q = query.toLowerCase().trim();
+    document.querySelectorAll('.proto-card').forEach(card => {
+      const text = (card.textContent + ' ' + (card.dataset.keywords || '')).toLowerCase();
+      card.classList.toggle('hidden', q.length > 0 && !text.includes(q));
+    });
+    // Hide/show section headers if all cards in section are hidden
+    document.querySelectorAll('.section-header').forEach(header => {
+      let next = header.nextElementSibling;
+      if (!next || !next.classList.contains('card-grid')) return;
+      const visible = [...next.querySelectorAll('.proto-card')].some(c => !c.classList.contains('hidden'));
+      header.style.display = visible || q.length === 0 ? '' : 'none';
+      next.style.display = visible || q.length === 0 ? '' : 'none';
+    });
+  }
+</script>
 </body>
 </html>
