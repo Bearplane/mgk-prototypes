@@ -77,27 +77,51 @@
     .badge-est  { border-color: var(--text-subgold); color: var(--text-subgold); background: rgba(200,168,112,0.08); }
     .top-bar .legend { margin-left: auto; display: flex; gap: 12px; font-size: 10px; color: var(--text-muted); align-items: center; }
 
-    /* ── MAIN LAYOUT: 3 columns ── */
+    /* ── MAIN LAYOUT: prototype front and center ── */
     .main {
       flex: 1;
-      display: grid;
-      grid-template-columns: 440px 1fr 380px;
-      grid-template-rows: 1fr;
+      display: flex;
+      flex-direction: row;
       min-height: 0;
       overflow: hidden;
     }
 
-    /* ── LEFT COLUMN: GAME PREVIEW ── */
+    /* Right side wraps hierarchy + inspector stacked */
+    .dev-panel {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      border-left: 1px solid var(--inspector-border);
+      width: 360px;
+      min-width: 200px;
+      max-width: 700px;
+      flex-shrink: 0;
+    }
+
+    /* ── DRAG DIVIDER ── */
+    .drag-divider {
+      width: 5px;
+      cursor: col-resize;
+      background: var(--inspector-border);
+      flex-shrink: 0;
+      transition: background 0.15s;
+      position: relative;
+      z-index: 10;
+    }
+    .drag-divider:hover, .drag-divider.dragging { background: #58a6ff; }
+
+    /* ── GAME PREVIEW: primary, centered ── */
     .preview-col {
-      border-right: 1px solid var(--inspector-border);
+      flex: 1;
+      min-width: 0;
       background: var(--bg-deep);
-      background-image: radial-gradient(ellipse at 50% 50%, rgba(60,40,100,0.35) 0%, transparent 70%);
+      background-image: radial-gradient(ellipse at 50% 40%, rgba(60,40,100,0.45) 0%, transparent 65%);
       overflow-y: auto;
-      padding: 16px;
+      padding: 32px 40px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 12px;
+      gap: 20px;
     }
     .preview-col-label {
       font-size: 10px;
@@ -105,6 +129,7 @@
       letter-spacing: 0.1em;
       color: #6a5888;
       width: 100%;
+      max-width: 760px;
     }
 
     /* Day selector */
@@ -130,7 +155,7 @@
 
     /* ── GAME PANEL (parchment) ── */
     .game-panel {
-      width: 405px;
+      width: 720px;
       background: linear-gradient(160deg, #e8d4a8 0%, #d4c090 100%);
       border: 2px solid var(--border-gold);
       border-radius: 4px;
@@ -467,13 +492,16 @@
     }
     .section-card:hover .node-tag { opacity: 0.8; }
 
-    /* ── CENTER COLUMN: HIERARCHY TREE ── */
+    /* ── HIERARCHY TREE (inside dev-panel) ── */
     .hierarchy-col {
-      border-right: 1px solid var(--inspector-border);
       background: #0c0e14;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
+      height: 38%;
+      min-height: 120px;
+      flex-shrink: 0;
+      border-bottom: 1px solid var(--inspector-border);
     }
     .hierarchy-header {
       background: var(--inspector-header);
@@ -516,6 +544,8 @@
       overflow-y: auto;
       display: flex;
       flex-direction: column;
+      flex: 1;
+      min-height: 0;
     }
     .inspector-header {
       background: var(--inspector-header);
@@ -734,7 +764,7 @@
         <div class="panel-column">
 
           <!-- GOLD & ECONOMY -->
-          <div class="section-card selected" onclick="selectCard(this,'sc-gold')">
+          <div class="section-card selected" onclick="selectCard(this,'sc-gold')" data-section="sc-gold">
             <span class="node-tag">GoldEconomy</span>
             <div class="section-title">⚜ Gold & Economy</div>
             <div class="section-row">
@@ -756,7 +786,7 @@
           </div>
 
           <!-- ITEMS SOLD -->
-          <div class="section-card" onclick="selectCard(this,'sc-items')">
+          <div class="section-card" onclick="selectCard(this,'sc-items')" data-section="sc-items">
             <span class="node-tag">ItemsSold</span>
             <div class="section-title">🏪 Storefront Sales</div>
             <div class="section-row">
@@ -776,7 +806,7 @@
           </div>
 
           <!-- DUNGEONS CLEARED -->
-          <div class="section-card" onclick="selectCard(this,'sc-dungeons')">
+          <div class="section-card" onclick="selectCard(this,'sc-dungeons')" data-section="sc-dungeons">
             <span class="node-tag">DungeonsCleared</span>
             <div class="section-title">⚔ Dungeons Cleared</div>
             <div class="section-row">
@@ -800,7 +830,7 @@
           </div>
 
           <!-- HEROES LEVELED -->
-          <div class="section-card" onclick="selectCard(this,'sc-herolevels')">
+          <div class="section-card" onclick="selectCard(this,'sc-herolevels')" data-section="sc-herolevels">
             <span class="node-tag">HeroesLeveledUp</span>
             <div class="section-title">⭐ Heroes Leveled Up</div>
             <div class="section-row">
@@ -820,7 +850,7 @@
           </div>
 
           <!-- HERO DEATHS -->
-          <div class="section-card empty" onclick="selectCard(this,'sc-deaths')">
+          <div class="section-card empty" onclick="selectCard(this,'sc-deaths')" data-section="sc-deaths">
             <span class="node-tag">HeroDeaths</span>
             <div class="section-title">💀 Hero Deaths</div>
             <div class="section-row">
@@ -836,7 +866,7 @@
         <div class="panel-column">
 
           <!-- FAVORS -->
-          <div class="section-card" onclick="selectCard(this,'sc-favors')">
+          <div class="section-card" onclick="selectCard(this,'sc-favors')" data-section="sc-favors">
             <span class="node-tag">FavorsCompleted</span>
             <div class="section-title">📋 Favors Completed</div>
             <div class="section-row">
@@ -850,7 +880,7 @@
           </div>
 
           <!-- GATHERING / MATERIALS -->
-          <div class="section-card" onclick="selectCard(this,'sc-materials')">
+          <div class="section-card" onclick="selectCard(this,'sc-materials')" data-section="sc-materials">
             <span class="node-tag">MaterialsGathered</span>
             <div class="section-title">⛏ Materials Gathered</div>
             <div class="section-row">
@@ -866,7 +896,7 @@
           </div>
 
           <!-- RAPPORT MILESTONES -->
-          <div class="section-card" onclick="selectCard(this,'sc-rapport')">
+          <div class="section-card" onclick="selectCard(this,'sc-rapport')" data-section="sc-rapport">
             <span class="node-tag">RapportMilestones</span>
             <div class="section-title">🤝 Rapport Milestones</div>
             <div class="section-row">
@@ -880,7 +910,7 @@
           </div>
 
           <!-- GUILD RANK PROGRESS -->
-          <div class="section-card" onclick="selectCard(this,'sc-guild')">
+          <div class="section-card" onclick="selectCard(this,'sc-guild')" data-section="sc-guild">
             <span class="node-tag">GuildRankProgress</span>
             <div class="section-title">🏰 Guild Progress</div>
             <div class="section-row">
@@ -897,7 +927,7 @@
           </div>
 
           <!-- ALL-TIME BESTS -->
-          <div class="section-card" onclick="selectCard(this,'sc-bests')">
+          <div class="section-card" onclick="selectCard(this,'sc-bests')" data-section="sc-bests">
             <span class="node-tag">AllTimeBests</span>
             <div class="section-title">🏆 All-Time Records</div>
             <div class="section-row">
@@ -919,7 +949,7 @@
           </div>
 
           <!-- KING'S VAULT -->
-          <div class="vault-section" onclick="selectCard(this,'sc-vault')">
+          <div class="vault-section" onclick="selectCard(this,'sc-vault')" data-section="sc-vault">
             <div class="vault-title">👑 King's Vault Progress</div>
             <div class="vault-token-row">
               <span class="vault-token-label">Tokens Available</span>
@@ -1173,7 +1203,13 @@
 
   </div><!-- /preview-col -->
 
-  <!-- ═══════════════════════════════ CENTER: HIERARCHY ═══════════════════════════════ -->
+  <!-- ── DRAG DIVIDER ── -->
+  <div class="drag-divider" id="drag-divider"></div>
+
+  <!-- ── DEV PANEL (hierarchy + inspector stacked) ── -->
+  <div class="dev-panel" id="dev-panel">
+
+  <!-- ═══════════════════════════════ HIERARCHY ═══════════════════════════════ -->
   <div class="hierarchy-col">
     <div class="hierarchy-header">☰ Hierarchy — KingdomHeraldPanel</div>
     <div class="tree">
@@ -1195,26 +1231,26 @@
       <!-- Left Column -->
       <div class="tree-node"><span class="indent" style="width:56px"></span><span class="icon">📦</span><span class="name">ColumnLeft</span><span class="components">VerticalLayoutGroup</span></div>
 
-      <div class="tree-node script-node selected"><span class="indent" style="width:70px"></span><span class="icon">💰</span><span class="name">GoldEconomyCard</span><span class="components">KingdomHeraldCard</span></div>
+      <div class="tree-node script-node selected" data-section="sc-gold" onclick="selectFromTree(this,'sc-gold')"><span class="indent" style="width:70px"></span><span class="icon">💰</span><span class="name">GoldEconomyCard</span><span class="components">KingdomHeraldCard</span></div>
       <div class="tree-node"><span class="indent" style="width:84px"></span><span class="icon">T</span><span class="name">GoldEarnedRow</span></div>
       <div class="tree-node"><span class="indent" style="width:84px"></span><span class="icon">T</span><span class="name">GoldSpentRow</span></div>
       <div class="tree-node"><span class="indent" style="width:84px"></span><span class="icon">T</span><span class="name">NetGoldRow</span></div>
       <div class="tree-node"><span class="indent" style="width:84px"></span><span class="icon">T</span><span class="name">SevenDayAvgRow</span><span class="components"><span style="color:#ffab70">computed from history</span></span></div>
 
-      <div class="tree-node script-node"><span class="indent" style="width:70px"></span><span class="icon">🏪</span><span class="name">ItemsSoldCard</span><span class="components">KingdomHeraldCard</span></div>
+      <div class="tree-node script-node" data-section="sc-items" onclick="selectFromTree(this,'sc-items')"><span class="indent" style="width:70px"></span><span class="icon">🏪</span><span class="name">ItemsSoldCard</span><span class="components">KingdomHeraldCard</span></div>
       <div class="tree-node"><span class="indent" style="width:84px"></span><span class="icon">T</span><span class="name">ItemCountRow</span></div>
       <div class="tree-node"><span class="indent" style="width:84px"></span><span class="icon">T</span><span class="name">BestItemRow</span><span class="components"><span style="color:#ffab70">BestItemSoldEntry</span></span></div>
       <div class="tree-node"><span class="indent" style="width:84px"></span><span class="icon">📋</span><span class="name">SaleSubList</span><span class="components">ScrollRect — top 3 by price</span></div>
 
-      <div class="tree-node script-node"><span class="indent" style="width:70px"></span><span class="icon">⚔</span><span class="name">DungeonsClearedCard</span><span class="components">KingdomHeraldCard</span></div>
+      <div class="tree-node script-node" data-section="sc-dungeons" onclick="selectFromTree(this,'sc-dungeons')"><span class="indent" style="width:70px"></span><span class="icon">⚔</span><span class="name">DungeonsClearedCard</span><span class="components">KingdomHeraldCard</span></div>
       <div class="tree-node"><span class="indent" style="width:84px"></span><span class="icon">T</span><span class="name">DungeonCountRow</span></div>
       <div class="tree-node"><span class="indent" style="width:84px"></span><span class="icon">📋</span><span class="name">DungeonScrollList</span><span class="components">ScrollRect — all, max 3 shown</span></div>
 
-      <div class="tree-node script-node"><span class="indent" style="width:70px"></span><span class="icon">⭐</span><span class="name">HeroLevelCard</span><span class="components">KingdomHeraldCard</span></div>
+      <div class="tree-node script-node" data-section="sc-herolevels" onclick="selectFromTree(this,'sc-herolevels')"><span class="indent" style="width:70px"></span><span class="icon">⭐</span><span class="name">HeroLevelCard</span><span class="components">KingdomHeraldCard</span></div>
       <div class="tree-node"><span class="indent" style="width:84px"></span><span class="icon">T</span><span class="name">LevelCountRow</span></div>
       <div class="tree-node"><span class="indent" style="width:84px"></span><span class="icon">📋</span><span class="name">HeroLevelSubList</span><span class="components">ScrollRect — show ≤5, "+N more"</span></div>
 
-      <div class="tree-node script-node"><span class="indent" style="width:70px"></span><span class="icon">💀</span><span class="name">HeroDeathCard</span><span class="components">KingdomHeraldCard</span></div>
+      <div class="tree-node script-node" data-section="sc-deaths" onclick="selectFromTree(this,'sc-deaths')"><span class="indent" style="width:70px"></span><span class="icon">💀</span><span class="name">HeroDeathCard</span><span class="components">KingdomHeraldCard</span></div>
       <div class="tree-node"><span class="indent" style="width:84px"></span><span class="icon">T</span><span class="name">DeathCountRow</span></div>
       <div class="tree-node"><span class="indent" style="width:84px"></span><span class="icon">📋</span><span class="name">DeathSubList</span><span class="components">all deaths shown (cap 5)</span></div>
       <div class="tree-node script-node"><span class="indent" style="width:84px"></span><span class="icon">🛡</span><span class="name">DeathlessStreakBanner</span><span class="components">AllTimeBests.currentDeathlessStreak</span></div>
@@ -1222,26 +1258,26 @@
       <!-- Right Column -->
       <div class="tree-node"><span class="indent" style="width:56px"></span><span class="icon">📦</span><span class="name">ColumnRight</span><span class="components">VerticalLayoutGroup</span></div>
 
-      <div class="tree-node script-node"><span class="indent" style="width:70px"></span><span class="icon">📋</span><span class="name">FavorsCard</span><span class="components">KingdomHeraldCard</span></div>
+      <div class="tree-node script-node" data-section="sc-favors" onclick="selectFromTree(this,'sc-favors')"><span class="indent" style="width:70px"></span><span class="icon">📋</span><span class="name">FavorsCard</span><span class="components">KingdomHeraldCard</span></div>
       <div class="tree-node"><span class="indent" style="width:84px"></span><span class="icon">T</span><span class="name">FavorCountRow</span><span class="components"><span style="color:#ffab70">DailyReport.favorsCompleted</span></span></div>
 
-      <div class="tree-node script-node"><span class="indent" style="width:70px"></span><span class="icon">⛏</span><span class="name">MaterialsCard</span><span class="components">KingdomHeraldCard</span></div>
+      <div class="tree-node script-node" data-section="sc-materials" onclick="selectFromTree(this,'sc-materials')"><span class="indent" style="width:70px"></span><span class="icon">⛏</span><span class="name">MaterialsCard</span><span class="components">KingdomHeraldCard</span></div>
       <div class="tree-node"><span class="indent" style="width:84px"></span><span class="icon">📋</span><span class="name">MaterialsGrid</span><span class="components">2-col grid — materialsGathered list</span></div>
 
-      <div class="tree-node script-node"><span class="indent" style="width:70px"></span><span class="icon">🤝</span><span class="name">RapportCard</span><span class="components">KingdomHeraldCard</span></div>
+      <div class="tree-node script-node" data-section="sc-rapport" onclick="selectFromTree(this,'sc-rapport')"><span class="indent" style="width:70px"></span><span class="icon">🤝</span><span class="name">RapportCard</span><span class="components">KingdomHeraldCard</span></div>
       <div class="tree-node"><span class="indent" style="width:84px"></span><span class="icon">T</span><span class="name">RapportCountRow</span></div>
       <div class="tree-node"><span class="indent" style="width:84px"></span><span class="icon">🏅</span><span class="name">MilestoneList</span><span class="components">rapportMilestones — show all (rare)</span></div>
 
-      <div class="tree-node script-node"><span class="indent" style="width:70px"></span><span class="icon">🏰</span><span class="name">GuildProgressCard</span><span class="components">KingdomHeraldCard</span></div>
+      <div class="tree-node script-node" data-section="sc-guild" onclick="selectFromTree(this,'sc-guild')"><span class="indent" style="width:70px"></span><span class="icon">🏰</span><span class="name">GuildProgressCard</span><span class="components">KingdomHeraldCard</span></div>
       <div class="tree-node"><span class="indent" style="width:84px"></span><span class="icon">█</span><span class="name">RankProgressBar</span><span class="components">guildRankProgress + running total</span></div>
 
-      <div class="tree-node script-node"><span class="indent" style="width:70px"></span><span class="icon">🏆</span><span class="name">AllTimeBestsCard</span><span class="components">KingdomHeraldCard</span></div>
+      <div class="tree-node script-node" data-section="sc-bests" onclick="selectFromTree(this,'sc-bests')"><span class="indent" style="width:70px"></span><span class="icon">🏆</span><span class="name">AllTimeBestsCard</span><span class="components">KingdomHeraldCard</span></div>
       <div class="tree-node"><span class="indent" style="width:84px"></span><span class="icon">T</span><span class="name">BestGoldRow</span></div>
       <div class="tree-node"><span class="indent" style="width:84px"></span><span class="icon">T</span><span class="name">BestDungeonsRow</span></div>
       <div class="tree-node"><span class="indent" style="width:84px"></span><span class="icon">T</span><span class="name">BestSaleRow</span></div>
       <div class="tree-node"><span class="indent" style="width:84px"></span><span class="icon">T</span><span class="name">LongestStreakRow</span></div>
 
-      <div class="tree-node script-node"><span class="indent" style="width:70px"></span><span class="icon">👑</span><span class="name">VaultProgressCard</span><span class="components">KingdomHeraldVaultCard</span></div>
+      <div class="tree-node script-node" data-section="sc-vault" onclick="selectFromTree(this,'sc-vault')"><span class="indent" style="width:70px"></span><span class="icon">👑</span><span class="name">VaultProgressCard</span><span class="components">KingdomHeraldVaultCard</span></div>
       <div class="tree-node"><span class="indent" style="width:84px"></span><span class="icon">T</span><span class="name">TokenCountRow</span><span class="components">VaultManager.VaultTokens</span></div>
       <div class="tree-node"><span class="indent" style="width:84px"></span><span class="icon">📦</span><span class="name">CatsGrid</span><span class="components">5 GoalCategory progress bars</span></div>
       <div class="tree-node"><span class="indent" style="width:98px"></span><span class="icon">█</span><span class="name">CombatantBar</span><span class="components">GoalCategory.Combatant tier/5</span></div>
@@ -1464,6 +1500,8 @@
     </div>
   </div><!-- /inspector-col -->
 
+  </div><!-- /dev-panel -->
+
 </div><!-- /main -->
 
 <!-- ═══════════════════════════════ BOTTOM: CHECKLIST ═══════════════════════════════ -->
@@ -1571,13 +1609,72 @@
     dayBtns.forEach((b, i) => b.classList.toggle('active', i === idx));
   }
 
-  // Card selection
+  // ── Cross-highlight: card click → highlight tree node ──
   function selectCard(el, sectionId) {
-    // De-select all in same panel
+    // De-select all cards in current visible panel
     const panel = el.closest('.game-panel');
     if (panel) panel.querySelectorAll('.section-card, .vault-section').forEach(c => c.classList.remove('selected'));
     el.classList.add('selected');
+
+    // Mirror selection in hierarchy tree
+    document.querySelectorAll('.tree-node').forEach(n => n.classList.remove('selected'));
+    const treeNode = document.querySelector(`.tree-node[data-section="${sectionId}"]`);
+    if (treeNode) {
+      treeNode.classList.add('selected');
+      treeNode.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    }
   }
+
+  // ── Cross-highlight: tree node click → highlight card in active panel ──
+  function selectFromTree(treeEl, sectionId) {
+    // Highlight the tree node
+    document.querySelectorAll('.tree-node').forEach(n => n.classList.remove('selected'));
+    treeEl.classList.add('selected');
+
+    // Find the currently visible game-panel
+    const visiblePanel = document.querySelector('.game-panel[style*="flex"]') ||
+                         document.getElementById('panel-day43');
+    if (visiblePanel) {
+      visiblePanel.querySelectorAll('.section-card, .vault-section').forEach(c => c.classList.remove('selected'));
+      const card = visiblePanel.querySelector(`[data-section="${sectionId}"]`);
+      if (card) {
+        card.classList.add('selected');
+        card.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      }
+    }
+  }
+
+  // ── Drag-to-resize dev panel ──
+  (function() {
+    const divider = document.getElementById('drag-divider');
+    const devPanel = document.getElementById('dev-panel');
+    let dragging = false, startX = 0, startW = 0;
+
+    divider.addEventListener('mousedown', e => {
+      dragging = true;
+      startX = e.clientX;
+      startW = devPanel.offsetWidth;
+      divider.classList.add('dragging');
+      document.body.style.cursor = 'col-resize';
+      document.body.style.userSelect = 'none';
+      e.preventDefault();
+    });
+
+    document.addEventListener('mousemove', e => {
+      if (!dragging) return;
+      const delta = startX - e.clientX; // dragging left = making panel wider
+      const newW = Math.min(700, Math.max(200, startW + delta));
+      devPanel.style.width = newW + 'px';
+    });
+
+    document.addEventListener('mouseup', () => {
+      if (!dragging) return;
+      dragging = false;
+      divider.classList.remove('dragging');
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+    });
+  })();
 
   // Init
   showDay(1);
