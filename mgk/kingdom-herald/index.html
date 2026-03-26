@@ -90,8 +90,9 @@
        MAIN LAYOUT
     ════════════════════════════════════════════ */
     .main {
-      display: block;
-      height: 100%;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
       overflow: hidden;
     }
 
@@ -681,10 +682,10 @@
     }
     /* ── CONTENT ROW: horizontal layout container ── */
     .content-row {
+      flex: 1;
+      min-height: 0;
       display: flex;
       flex-direction: row;
-      height: 100%;
-      width: 100%;
       overflow: hidden;
     }
     .preview-side {
