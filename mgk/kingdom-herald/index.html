@@ -43,10 +43,10 @@
       color: var(--tan);
       font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
       font-size: 13px;
+      display: grid;
+      grid-template-rows: auto auto 1fr;
       height: 100vh;
       overflow: hidden;
-      display: flex;
-      flex-direction: column;
     }
 
     /* ════════════════════════════════════════════
@@ -90,23 +90,20 @@
        MAIN LAYOUT
     ════════════════════════════════════════════ */
     .main {
-      flex: 1 1 0;
-      min-height: 0;
-      height: 0; /* force flex child height to come from parent, not content */
       display: flex;
       flex-direction: row;
       overflow: hidden;
+      min-height: 0;
     }
 
     /* ════════════════════════════════════════════
        GAME PREVIEW COLUMN
     ════════════════════════════════════════════ */
     .preview-col {
-      /* flex child of .main — takes remaining horizontal space */
       flex: 1;
       min-width: 0;
-      min-height: 0; /* CRITICAL: allows flex to constrain height */
-      overflow-y: auto; /* only .preview-col itself scrolls, not the page */
+      min-height: 0;
+      overflow-y: auto;
       background: var(--preview-bg);
       background-image:
         radial-gradient(ellipse at 50% 65%, rgba(70,42,8,0.30) 0%, transparent 68%),
@@ -116,9 +113,6 @@
       flex-direction: column;
       align-items: center;
       gap: 14px;
-      /* height must come from .main, not from content */
-      height: 100%;
-      box-sizing: border-box;
     }
     .preview-col-label {
       font-size: 9px;
