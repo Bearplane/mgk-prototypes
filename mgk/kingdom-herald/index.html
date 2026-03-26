@@ -103,20 +103,24 @@
     .preview-col {
       flex: 1;
       min-width: 0;
-      min-height: 0;
       background: var(--preview-bg);
       background-image:
         radial-gradient(ellipse at 50% 65%, rgba(70,42,8,0.30) 0%, transparent 68%),
         radial-gradient(ellipse at 50% 0%, rgba(40,25,5,0.4) 0%, transparent 55%);
-      overflow: hidden;
-      padding: 12px 20px 12px;
+      overflow-y: auto;
+      padding: 24px 32px 32px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 8px;
+      gap: 14px;
     }
     .preview-col-label {
-      display: none;
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: rgba(227,202,152,0.2);
+      width: 100%;
+      max-width: 680px;
     }
 
     /* ════════════════════════════════════════════
@@ -126,9 +130,7 @@
       display: flex;
       gap: 8px;
       width: 100%;
-      max-width: 680px;
       justify-content: center;
-      flex-shrink: 0;
     }
     .day-btn {
       position: relative;
@@ -162,13 +164,11 @@
     .game-panel {
       width: 680px;
       max-width: 100%;
-      /* Fill available height in preview-col, don't scroll */
-      flex: 1;
-      min-height: 0;
       position: relative;
       display: flex;
       flex-direction: column;
       cursor: default;
+      flex-shrink: 0;
       /* Dark panel background with gold ornamental border */
       background-color: #0f0c05;
       border: 2px solid rgba(227,202,152,0.55);
@@ -183,9 +183,8 @@
        PANEL HEADER
     ════════════════════════════════════════════ */
     .panel-header {
-      padding: 10px 24px 4px;
+      padding: 20px 28px 8px;
       text-align: center;
-      flex-shrink: 0;
     }
     .panel-title {
       font-size: 18px;
@@ -238,9 +237,8 @@
        INTENT BANNER
     ════════════════════════════════════════════ */
     .intent-banner {
-      margin: 3px 16px 0;
-      padding: 4px 10px;
-      flex-shrink: 0;
+      margin: 6px 20px 0;
+      padding: 6px 14px;
       border-radius: 3px;
       font-size: 10px;
       text-align: center;
@@ -263,20 +261,17 @@
     ════════════════════════════════════════════ */
     .panel-content {
       display: flex;
-      flex: 1;
-      min-height: 0;
-      padding: 6px 14px 6px;
-      gap: 6px;
-      overflow: hidden; /* No scroll — cards auto-compress */
+      padding: 8px 16px 10px;
+      gap: 8px;
+      overflow-y: auto;
+      max-height: 520px;
     }
     .panel-column {
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 6px;
       flex: 1;
       min-width: 0;
-      min-height: 0;
-      overflow: hidden;
     }
 
     /* ════════════════════════════════════════════
@@ -285,10 +280,8 @@
     .section-card {
       position: relative;
       cursor: pointer;
-      padding: 5px 8px;
+      padding: 8px 10px;
       border-radius: 4px;
-      min-height: 0;
-      flex-shrink: 1;
       /* BackgroundColor.png — dark rounded rect with warm amber glow bottom-right */
       background-color: #130e05;
       background-image: url('../assets/ui2/BackgroundColor.png');
@@ -306,14 +299,14 @@
 
     /* ── Section title with sprite icon ── */
     .section-title {
-      font-size: 9px;
+      font-size: 10px;
       font-weight: 700;
       color: var(--tan);
-      letter-spacing: 0.06em;
+      letter-spacing: 0.07em;
       text-transform: uppercase;
       text-align: center;
-      padding-bottom: 3px;
-      margin-bottom: 3px;
+      padding-bottom: 5px;
+      margin-bottom: 5px;
       border-bottom: 1px solid rgba(227,202,152,0.15);
       display: flex;
       align-items: center;
@@ -353,7 +346,7 @@
       display: flex;
       justify-content: space-between;
       align-items: baseline;
-      padding: 1px 0;
+      padding: 1.5px 0;
       position: relative;
       z-index: 1;
     }
