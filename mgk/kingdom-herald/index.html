@@ -99,8 +99,12 @@
        GAME PREVIEW COLUMN
     ════════════════════════════════════════════ */
     .preview-col {
-      /* preview-col is now just an alias — styling handled by .preview-side */
-      display: contents;
+      /* preview-col is a transparent wrapper inside preview-side */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
     }
     .preview-col-label {
       font-size: 9px;
@@ -690,15 +694,13 @@
       max-width: 50vw;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      gap: 10px;
-      padding: 14px 16px;
       overflow-y: auto;
       background: var(--preview-bg);
       background-image:
         radial-gradient(ellipse at 50% 65%, rgba(70,42,8,0.30) 0%, transparent 68%),
         radial-gradient(ellipse at 50% 0%, rgba(40,25,5,0.4) 0%, transparent 55%);
       box-sizing: border-box;
+      padding: 14px 16px;
     }
 
     /* ── Hierarchy ── */
