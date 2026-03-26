@@ -163,10 +163,12 @@
     ════════════════════════════════════════════ */
     .game-panel {
       width: 680px;
+      max-width: 100%;
       position: relative;
       display: flex;
       flex-direction: column;
       cursor: default;
+      flex-shrink: 0;
       /* Dark panel background with gold ornamental border */
       background-color: #0f0c05;
       border: 2px solid rgba(227,202,152,0.55);
@@ -259,11 +261,10 @@
     ════════════════════════════════════════════ */
     .panel-content {
       display: flex;
-      flex: 1;
       padding: 8px 16px 10px;
       gap: 8px;
-      min-height: 0;
       overflow-y: auto;
+      max-height: 520px;
     }
     .panel-column {
       display: flex;
@@ -902,6 +903,25 @@
     .check-text .path { font-family: ui-monospace, Menlo, Consolas, monospace; color: #79b8ff; font-size: 9px; }
     .check-item.section-break .check-text { font-weight: 700; color: var(--text-gold); }
     .check-item.section-break { margin-top: 6px; }
+
+    /* ── King's Vault full-width bottom option ── */
+    .vault-full-row {
+      padding: 0 16px 10px;
+    }
+    .vault-full-row .vault-section {
+      /* Full-width vault spanning below both columns */
+    }
+    /* Make panel columns equal height */
+    .panel-column {
+      align-self: stretch;
+    }
+    /* Vault at bottom of right column fills remaining space */
+    .panel-column:last-child .vault-section {
+      flex: 1;
+    }
+    .panel-column:last-child {
+      justify-content: space-between;
+    }
   </style>
 </head>
 <body>
@@ -1332,30 +1352,35 @@
 
       <div class="panel-content">
         <div class="panel-column">
-          <div class="section-card">
+          <div class="section-card" onclick="selectCard(this,'sc-gold')" data-section="sc-gold">
+            <span class="node-tag">GoldEconomyCard</span>
             <div class="section-title"><span class="sec-icon i-coin"></span> Gold &amp; Economy</div>
             <div class="section-row"><span class="label">Earned</span><span class="value gold">+2,100g</span></div>
             <div class="section-row"><span class="label">Spent</span><span class="value down">-890g</span></div>
             <div class="section-row"><span class="label">Net</span><span class="value">+1,210g</span></div>
           </div>
-          <div class="section-card empty">
+          <div class="section-card empty" onclick="selectCard(this,'sc-items')" data-section="sc-items">
+            <span class="node-tag">ItemsSoldCard</span>
             <div class="section-title"><span class="sec-icon i-merchant"></span> Storefront Sales</div>
             <div class="section-row"><span class="label">Items Sold</span><span class="value">4</span></div>
             <div class="section-row"><span class="label">Best Sale</span><span class="value gold">Runic Shield — 620g</span></div>
           </div>
-          <div class="section-card">
+          <div class="section-card" onclick="selectCard(this,'sc-dungeons')" data-section="sc-dungeons">
+            <span class="node-tag">DungeonsClearedCard</span>
             <div class="section-title"><span class="sec-icon i-sword"></span> Dungeons Cleared</div>
             <div class="section-row"><span class="label">Cleared Today</span><span class="value">1</span></div>
             <div class="sub-list">
               <div class="sub-item"><span class="sub-name">Ashcroft Ruins</span><span class="sub-val">Aldric, Vex</span></div>
             </div>
           </div>
-          <div class="section-card empty">
+          <div class="section-card empty" onclick="selectCard(this,'sc-herolevels')" data-section="sc-herolevels">
+            <span class="node-tag">HeroLevelCard</span>
             <div class="section-title"><span class="sec-icon i-star"></span> Heroes Leveled Up</div>
             <div class="section-row"><span class="label">Level-Ups Today</span><span class="value">0</span></div>
             <div class="more-indicator">— none today —</div>
           </div>
-          <div class="section-card">
+          <div class="section-card" onclick="selectCard(this,'sc-deaths')" data-section="sc-deaths">
+            <span class="node-tag">HeroDeathCard</span>
             <div class="section-title"><span class="sec-icon i-heart"></span> Hero Deaths</div>
             <div class="section-row"><span class="label">Deaths Today</span><span class="value down">1</span></div>
             <div class="sub-list">
