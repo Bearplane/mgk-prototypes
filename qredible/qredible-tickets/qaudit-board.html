@@ -244,7 +244,7 @@
     .doc-mfg { background: #FEF3C7; color: #92400E; }
     .doc-cultivator { background: #DCFCE7; color: #166534; }
     .exp-date { font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); }
-    .exp-expired { color: #DC2626; font-weight: 600; }
+    
     .exp-soon { color: #D97706; font-weight: 600; }
     .days-chip {
       display: inline-flex; align-items: center;
@@ -290,7 +290,7 @@
 
   <div style="text-align:center;padding-top:8px;">
     <h1 class="page-title">Q-Audit · License Validation Board</h1>
-    <p class="page-subtitle">QP-3548 — Text search, state filter, days-in-queue filter, expiration status filter, export</p>
+    <p class="page-subtitle">QP-3548 — Text search, state filter, days-in-queue filter, date added range, export</p>
   </div>
 
   <!-- ══════════════════════════════════════════════
@@ -377,12 +377,8 @@
               <option>31–90 days</option>
               <option>90+ days</option>
             </select>
-            <select class="filter-select">
-              <option>Expiration: All</option>
-              <option>Expired</option>
-              <option>Expiring Soon</option>
-              <option>Valid</option>
-            </select>
+            <input type="date" class="filter-select" style="padding:6px 10px;font-family:var(--font-ui);font-size:12px;color:var(--text);border:1px solid var(--border);border-radius:6px;background:white;" placeholder="Date Added From" title="Date Added: From"/>
+            <input type="date" class="filter-select" style="padding:6px 10px;font-family:var(--font-ui);font-size:12px;color:var(--text);border:1px solid var(--border);border-radius:6px;background:white;" placeholder="Date Added To" title="Date Added: To"/>
 
             <div class="toolbar-right">
               <button class="btn-export">
@@ -398,7 +394,7 @@
             • <strong>Search input</strong> (leftmost) — full-text search across company name, address, and document ID<br/>
             • <strong>State filter</strong> — filter by license state (CA, CO, NV, OR, WA…)<br/>
             • <strong>Days in Queue</strong> — 0–30 / 31–90 / 90+ buckets<br/>
-            • <strong>Expiration Status</strong> — Expired / Expiring Soon / Valid<br/>
+            • <strong>Date Added range</strong> — From / To date pickers to filter tasks by when they entered the queue<br/>
             • <strong>Export button</strong> — red/coral, exports current filtered board to CSV
           </div>
 
@@ -420,7 +416,7 @@
                 </div>
                 <div class="card-meta">
                   <span class="doc-badge doc-retail">Retail License</span>
-                  <span class="exp-date exp-expired">Exp: 2025-11-15 ⚠ EXPIRED</span>
+                  
                 </div>
                 <div class="card-meta">
                   <span class="days-chip alert">⏱ 94 days in queue</span>
@@ -435,7 +431,7 @@
                 </div>
                 <div class="card-meta">
                   <span class="doc-badge doc-distributor">Distributor License</span>
-                  <span class="exp-date exp-expired">Exp: 2026-01-03 ⚠ EXPIRED</span>
+                  
                 </div>
                 <div class="card-meta">
                   <span class="days-chip alert">⏱ 72 days in queue</span>
@@ -450,7 +446,7 @@
                 </div>
                 <div class="card-meta">
                   <span class="doc-badge doc-mfg">Manufacturer License</span>
-                  <span class="exp-date exp-expired">Exp: 2025-12-31 ⚠ EXPIRED</span>
+                  
                 </div>
                 <div class="card-meta">
                   <span class="days-chip alert">⏱ 55 days in queue</span>
@@ -473,7 +469,7 @@
                 </div>
                 <div class="card-meta">
                   <span class="doc-badge doc-retail">Retail License</span>
-                  <span class="exp-date exp-soon">Exp: 2026-04-10 ⚠ Expiring Soon</span>
+                  
                 </div>
                 <div class="card-meta">
                   <span class="days-chip warn">⏱ 38 days in queue</span>
@@ -488,7 +484,7 @@
                 </div>
                 <div class="card-meta">
                   <span class="doc-badge doc-cultivator">Cultivator License</span>
-                  <span class="exp-date">Exp: 2026-09-15</span>
+                  
                 </div>
                 <div class="card-meta">
                   <span class="days-chip">⏱ 12 days in queue</span>
@@ -503,7 +499,7 @@
                 </div>
                 <div class="card-meta">
                   <span class="doc-badge doc-distributor">Distributor License</span>
-                  <span class="exp-date exp-soon">Exp: 2026-04-28 ⚠ Expiring Soon</span>
+                  
                 </div>
                 <div class="card-meta">
                   <span class="days-chip warn">⏱ 45 days in queue</span>
@@ -518,7 +514,7 @@
                 </div>
                 <div class="card-meta">
                   <span class="doc-badge doc-cultivator">Cultivator License</span>
-                  <span class="exp-date">Exp: 2027-01-20</span>
+                  
                 </div>
                 <div class="card-meta">
                   <span class="days-chip">⏱ 5 days in queue</span>
@@ -541,7 +537,7 @@
                 </div>
                 <div class="card-meta">
                   <span class="doc-badge doc-retail">Retail License</span>
-                  <span class="exp-date">Exp: 2027-06-01</span>
+                  
                 </div>
                 <div class="card-meta">
                   <span class="days-chip">⏱ 3 days in queue</span>
@@ -556,7 +552,7 @@
                 </div>
                 <div class="card-meta">
                   <span class="doc-badge doc-mfg">Manufacturer License</span>
-                  <span class="exp-date">Exp: 2026-11-30</span>
+                  
                 </div>
                 <div class="card-meta">
                   <span class="days-chip">⏱ 7 days in queue</span>
@@ -571,7 +567,7 @@
                 </div>
                 <div class="card-meta">
                   <span class="doc-badge doc-retail">Retail License</span>
-                  <span class="exp-date">Exp: 2027-03-15</span>
+                  
                 </div>
                 <div class="card-meta">
                   <span class="days-chip">⏱ 9 days in queue</span>
@@ -586,10 +582,10 @@
   </div>
 
   <!-- ══════════════════════════════════════════════
-       STATE 2 — FILTERED: "california" search + Expiring Soon + 31–90 days
+       STATE 2 — FILTERED: "california" search + 31–90 days in queue
   ═══════════════════════════════════════════════ -->
   <div>
-    <p class="section-label">State 2 — Search Active: "california" + Expiring Soon + 31–90 Days</p>
+    <p class="section-label">State 2 — Search Active: "california" + 31–90 Days in Queue</p>
 
     <div class="app-frame">
       <!-- Top nav -->
@@ -653,8 +649,7 @@
               <option>31–90 days</option>
             </select>
             <select class="filter-select active">
-              <option>Expiring Soon</option>
-            </select>
+              </select>
 
             <div class="toolbar-right">
               <span style="font-size:11px;color:#1D4ED8;font-weight:600;">3 filters active <span class="filter-count-badge">3</span></span>
@@ -672,14 +667,14 @@
             <strong>Filters active:</strong>
             <span class="filter-chip">Search: "california" ✕</span>
             <span class="filter-chip">31–90 days ✕</span>
-            <span class="filter-chip">Expiring Soon ✕</span>
+            
             <span style="margin-left: 4px; color: var(--text-muted);">— showing 2 of 10 cards</span>
             <span style="margin-left:auto;color:#3B82F6;cursor:pointer;font-weight:600;">Clear All</span>
           </div>
 
           <!-- Annotation -->
           <div class="annotation">
-            <strong>Filtered State:</strong> Search "california" matches on address field; "31–90 days" and "Expiring Soon" further narrow results.
+            <strong>Filtered State:</strong> Search "california" matches on address field; "31–90 days" further narrows results.
             Non-matching cards are <strong>dimmed</strong> (opacity 35%) rather than hidden — preserves board layout and column structure while clearly indicating filtered state.
             Filter chips in the banner allow individual removal. "Clear All" resets all filters at once.
             Export button exports only the 2 matching cards.
@@ -694,7 +689,7 @@
                 <span>Reject</span>
                 <span class="col-count" style="background:#FECACA;color:#991B1B;">0</span>
               </div>
-              <!-- All reject cards are dimmed (expired, not expiring-soon; or not CA) -->
+              <!-- All reject cards are dimmed (not in CA or not in 31-90 day range) -->
               <div class="kanban-card dimmed">
                 <div class="card-top">
                   <div>
@@ -704,7 +699,7 @@
                 </div>
                 <div class="card-meta">
                   <span class="doc-badge doc-retail">Retail License</span>
-                  <span class="exp-date exp-expired">Exp: 2025-11-15 ⚠ EXPIRED</span>
+                  
                 </div>
                 <div class="card-meta">
                   <span class="days-chip alert">⏱ 94 days in queue</span>
@@ -719,7 +714,7 @@
                 </div>
                 <div class="card-meta">
                   <span class="doc-badge doc-distributor">Distributor License</span>
-                  <span class="exp-date exp-expired">Exp: 2026-01-03 ⚠ EXPIRED</span>
+                  
                 </div>
                 <div class="card-meta">
                   <span class="days-chip alert">⏱ 72 days in queue</span>
@@ -734,7 +729,7 @@
                 </div>
                 <div class="card-meta">
                   <span class="doc-badge doc-mfg">Manufacturer License</span>
-                  <span class="exp-date exp-expired">Exp: 2025-12-31 ⚠ EXPIRED</span>
+                  
                 </div>
                 <div class="card-meta">
                   <span class="days-chip alert">⏱ 55 days in queue</span>
@@ -749,7 +744,7 @@
                 <span>To Do</span>
                 <span class="col-count" style="background:#CBD5E1;">2</span>
               </div>
-              <!-- Green Leaf Dispensary — matches: CA address, 38 days (31-90), Expiring Soon -->
+              <!-- Green Leaf Dispensary — matches: CA address, 38 days in queue (31-90 range) -->
               <div class="kanban-card highlighted">
                 <div class="card-top">
                   <div>
@@ -759,13 +754,13 @@
                 </div>
                 <div class="card-meta">
                   <span class="doc-badge doc-retail">Retail License</span>
-                  <span class="exp-date exp-soon">Exp: 2026-04-10 ⚠ Expiring Soon</span>
+                  
                 </div>
                 <div class="card-meta">
                   <span class="days-chip warn">⏱ 38 days in queue</span>
                 </div>
               </div>
-              <!-- NorCal Botanicals — matches: CA address, 45 days (31-90), Expiring Soon -->
+              <!-- NorCal Botanicals — matches: CA address, 45 days in queue (31-90 range) -->
               <div class="kanban-card highlighted">
                 <div class="card-top">
                   <div>
@@ -775,7 +770,7 @@
                 </div>
                 <div class="card-meta">
                   <span class="doc-badge doc-distributor">Distributor License</span>
-                  <span class="exp-date exp-soon">Exp: 2026-04-28 ⚠ Expiring Soon</span>
+                  
                 </div>
                 <div class="card-meta">
                   <span class="days-chip warn">⏱ 45 days in queue</span>
@@ -791,7 +786,7 @@
                 </div>
                 <div class="card-meta">
                   <span class="doc-badge doc-cultivator">Cultivator License</span>
-                  <span class="exp-date">Exp: 2026-09-15</span>
+                  
                 </div>
                 <div class="card-meta">
                   <span class="days-chip">⏱ 12 days in queue</span>
@@ -806,7 +801,7 @@
                 </div>
                 <div class="card-meta">
                   <span class="doc-badge doc-cultivator">Cultivator License</span>
-                  <span class="exp-date">Exp: 2027-01-20</span>
+                  
                 </div>
                 <div class="card-meta">
                   <span class="days-chip">⏱ 5 days in queue</span>
@@ -820,7 +815,7 @@
                 <span>Accept</span>
                 <span class="col-count" style="background:#86EFAC;">0</span>
               </div>
-              <!-- All accept cards dimmed — none match CA + expiring soon + 31-90 days -->
+              <!-- All accept cards dimmed — none match CA + 31-90 day range -->
               <div class="kanban-card dimmed">
                 <div class="card-top">
                   <div>
@@ -830,7 +825,7 @@
                 </div>
                 <div class="card-meta">
                   <span class="doc-badge doc-retail">Retail License</span>
-                  <span class="exp-date">Exp: 2027-06-01</span>
+                  
                 </div>
                 <div class="card-meta">
                   <span class="days-chip">⏱ 3 days in queue</span>
@@ -845,7 +840,7 @@
                 </div>
                 <div class="card-meta">
                   <span class="doc-badge doc-mfg">Manufacturer License</span>
-                  <span class="exp-date">Exp: 2026-11-30</span>
+                  
                 </div>
                 <div class="card-meta">
                   <span class="days-chip">⏱ 7 days in queue</span>
@@ -860,7 +855,7 @@
                 </div>
                 <div class="card-meta">
                   <span class="doc-badge doc-retail">Retail License</span>
-                  <span class="exp-date">Exp: 2027-03-15</span>
+                  
                 </div>
                 <div class="card-meta">
                   <span class="days-chip">⏱ 9 days in queue</span>
@@ -879,7 +874,7 @@
       1. <strong>Text search input</strong> (leftmost) — searches company name, address, document ID in real-time; highlighted blue border when active<br/>
       2. <strong>State filter dropdown</strong> — filter by license issuing state (CA, CO, NV, OR, WA, etc.)<br/>
       3. <strong>Days in Queue filter</strong> — bucket selector: 0–30 / 31–90 / 90+<br/>
-      4. <strong>Expiration Status filter</strong> — Expired / Expiring Soon / Valid<br/>
+      4. <strong>Date Added range</strong> — From / To date pickers to filter tasks by when they were added to the queue<br/>
       5. <strong>Filter chips in banner</strong> — each active filter shows as removable chip; individual ✕ or "Clear All"<br/>
       6. <strong>Dimming behavior</strong> — non-matching cards dim to 35% opacity rather than disappearing; preserves column layout<br/>
       7. <strong>Column counts update</strong> — count badge reflects only matching cards in filtered state<br/>
