@@ -921,12 +921,6 @@
         </div>
       </div>
 
-      <!-- Info bar showing Audit Ready view active -->
-      <div style="padding:8px 16px;background:#EFF6FF;border-bottom:2px solid #BFDBFE;font-size:12px;color:#1E3A5F;display:flex;align-items:center;gap:8px;">
-        <span style="font-weight:700;color:#1E40AF;">📋 Audit Ready view active</span>
-        <span>— showing products matching: State: Active, Requires COA: Yes, In Stock, Missing/Violative/Rejected COA</span>
-      </div>
-
       <!-- Abbreviated table rows just to give context -->
       <table class="products-table">
         <thead>
@@ -970,7 +964,7 @@
     </div>
 
     <div class="annotation">
-      <strong>Custom Views (QP-3527) replace the Audit View toggle.</strong> Users pick from system views (<em>Audit Ready</em> ships built-in) or create their own saved filter presets. The entire combination applies as a single badge — not individual filter pills. "All Products" resets to the unfiltered state. User-created views in the "My Views" section show edit and delete controls on hover.
+      <strong>Custom Views (QP-3527) replace the Audit View toggle.</strong> Users pick from system views (<em>Audit Ready</em> ships built-in) or create their own saved filter presets. When a custom view is applied, it appears as a single badge in the filter chip row — no separate bar or banner. Multiple individual filter chips are replaced by one named view badge. "All Products" resets to the unfiltered state. User-created views in the "My Views" section show edit and delete controls on hover.
     </div>
   </div>
 
@@ -998,12 +992,6 @@
           </div>
           <button class="btn btn-secondary btn-sm">⬆ Export</button>
         </div>
-      </div>
-
-      <!-- Custom view active notice -->
-      <div style="padding:8px 16px;background:#EFF6FF;border-bottom:2px solid #BFDBFE;font-size:12px;color:#1E3A5F;display:flex;align-items:center;gap:8px;">
-        <span style="font-weight:700;color:#1E40AF;">📋 Audit Ready view active</span>
-        <span>— showing products matching: State: Active, Requires COA: Yes, In Stock, Missing/Violative/Rejected COA</span>
       </div>
 
       <!-- Table -->
@@ -1088,7 +1076,7 @@
 
     <div class="two-col">
       <div class="annotation">
-        <strong>Custom Views button (QP-3527):</strong> Replaces the [All Data] / [Audit ●] segmented control. Clicking <strong>Views ▼</strong> opens the Custom Views selector (see Section 3). When a view is active, a single badge <code>📋 Audit Ready 7 ×</code> appears inline — the count shows how many filters the view applies. Clicking ✕ on the badge clears the view back to All Products.
+        <strong>Custom Views button (QP-3527):</strong> Replaces the [All Data] / [Audit ●] segmented control. Clicking <strong>Views ▼</strong> opens the Custom Views selector (see Section 3). An active custom view appears as a single badge in the filter area — the same visual treatment as a filter chip. No separate bar or banner. The badge shows the view name, filter count, and × to clear.
       </div>
       <div class="annotation">
         <strong>Status Change with Audit Ready view:</strong> Product A's status changes from Violative (no view) to COA Validated (Audit Ready view). The <em>"Was Violative in All Data view"</em> annotation text helps orient reviewers. The Active COAs column also reflects only non-inactive counts.
