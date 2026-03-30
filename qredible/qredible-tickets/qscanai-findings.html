@@ -768,6 +768,63 @@
       font-weight: 700;
     }
 
+    /* ── LARGE MODAL TREATMENT ── */
+    .modal-large {
+      position: relative;
+      width: 95vw;
+      max-width: 1400px;
+      height: 92vh;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 24px 80px rgba(0,0,0,.4);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .modal-large-overlay {
+      background: rgba(15,23,42,.6);
+      border-radius: 16px;
+      padding: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 700px;
+    }
+    .modal-sticky-header {
+      background: #1E3A5F;
+      padding: 0 20px;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+      color: white;
+    }
+    .modal-sticky-scan-bar {
+      padding: 0 20px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      border-bottom: 1px solid #E2E8F0;
+      background: white;
+      flex-shrink: 0;
+      font-size: 12px;
+    }
+    .modal-sticky-toolbar {
+      padding: 8px 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid #E2E8F0;
+      background: #F8FAFC;
+      flex-shrink: 0;
+    }
+    .modal-findings-scroll {
+      flex: 1;
+      overflow-y: auto;
+    }
+
     /* ── WIREFRAME ANNO LAYOUT ── */
     .wireframe-container {
       display: flex;
@@ -1067,6 +1124,199 @@
       </div>
     </div>
   </div><!-- /section 1 -->
+
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SECTION 1.5: LARGE MODAL TREATMENT                     -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="section-block">
+    <div class="section-header">
+      <span class="section-badge">Section 1.5</span>
+      <span class="section-title">Large Modal Treatment + Sticky Navigation Zones</span>
+    </div>
+    <div class="section-desc">
+      The modal expands to ~95% of screen width and height, giving analysts maximum findings density
+      without leaving the context of their current workflow. All four sticky bars remain visible while
+      scrolling through the findings list.
+    </div>
+
+    <div class="mockup-card" style="padding:0;overflow:hidden;">
+      <div class="mockup-card-header">Full-Screen Modal Treatment — Near-Fullscreen at 95vw × 92vh</div>
+      <div class="mockup-body" style="padding:16px 16px 20px;">
+
+        <!-- Large modal overlay container -->
+        <div class="modal-large-overlay">
+          <div class="modal-large">
+
+            <!-- ① Modal Header Bar (sticky, dark navy) -->
+            <div class="modal-sticky-header">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <div style="width:28px;height:28px;background:#3B82F6;border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:white;flex-shrink:0;">Q</div>
+                <span style="font-size:14px;font-weight:700;letter-spacing:.01em;">Q-ScanAI Findings</span>
+              </div>
+              <div style="margin-left:auto;display:flex;align-items:center;gap:8px;">
+                <div style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);border-radius:6px;padding:5px 12px;font-size:12px;font-weight:600;color:white;cursor:pointer;display:flex;align-items:center;gap:6px;">
+                  🏢 Westtown Payments <span style="color:rgba(255,255,255,.6);font-size:10px;">▼</span>
+                </div>
+                <span style="color:rgba(255,255,255,.4);cursor:pointer;font-size:18px;padding:4px;" title="Expand to fullscreen">⤢</span>
+                <span style="color:rgba(255,255,255,.4);cursor:pointer;font-size:18px;padding:4px;" title="Close">✕</span>
+              </div>
+            </div>
+
+            <!-- ② Scan + Summary Bar (sticky) -->
+            <div class="modal-sticky-scan-bar">
+              <button style="background:none;border:1px solid #E2E8F0;border-radius:4px;padding:2px 8px;font-size:11px;cursor:pointer;color:#475569;">←</button>
+              <span style="font-weight:700;color:#0F172A;font-size:12px;">Scan #27</span>
+              <span style="color:#CBD5E1;">·</span>
+              <span style="color:#475569;">Mar 2, 2026</span>
+              <span style="color:#CBD5E1;">·</span>
+              <span style="color:#475569;">20 findings</span>
+              <button style="background:none;border:1px solid #E2E8F0;border-radius:4px;padding:2px 8px;font-size:11px;cursor:pointer;color:#475569;">→</button>
+              <button style="background:none;border:1px solid #E2E8F0;border-radius:4px;padding:3px 10px;font-size:11px;cursor:pointer;color:#475569;">Show all scans ▼</button>
+              <span style="color:#CBD5E1;margin:0 4px;">|</span>
+              <span style="color:#DC2626;font-weight:600;">🔴 3 High</span>
+              <span style="color:#CBD5E1;">·</span>
+              <span style="color:#D97706;font-weight:600;">🟡 5 Med</span>
+              <span style="color:#CBD5E1;">·</span>
+              <span style="color:#16A34A;font-weight:600;">🟢 3 Low</span>
+              <span style="color:#CBD5E1;">·</span>
+              <span style="color:#475569;font-weight:600;">✓ 7 Compliant</span>
+              <span style="color:#CBD5E1;">·</span>
+              <span style="color:#D97706;font-weight:600;">⚠ 3 New</span>
+            </div>
+
+            <!-- ③ Compliance Summary Drawer (collapsed) -->
+            <div style="padding:0 20px;height:38px;display:flex;align-items:center;gap:8px;border-bottom:1px solid #E2E8F0;background:#FFFBEB;flex-shrink:0;font-size:12px;">
+              <span>📋</span>
+              <span style="font-weight:700;color:#92400E;">Compliance Scan Summary</span>
+              <span style="color:#78350F;">— 8 violations · 125 items checked</span>
+              <button style="margin-left:auto;background:none;border:1px solid #D97706;border-radius:4px;padding:2px 10px;font-size:11px;color:#92400E;cursor:pointer;font-weight:600;">▼ Show details</button>
+            </div>
+
+            <!-- ④ Findings Toolbar (sticky) -->
+            <div class="modal-sticky-toolbar">
+              <span style="font-size:11px;color:#64748B;font-weight:600;">Sort:</span>
+              <button style="background:white;border:1px solid #E2E8F0;border-radius:4px;padding:4px 10px;font-size:11px;cursor:pointer;color:#1E3A5F;font-weight:600;">Priority ▼</button>
+              <span style="font-size:11px;color:#64748B;font-weight:600;margin-left:4px;">Type:</span>
+              <button style="background:white;border:1px solid #E2E8F0;border-radius:4px;padding:4px 10px;font-size:11px;cursor:pointer;color:#475569;">3 selected ▼</button>
+              <span style="font-size:11px;color:#64748B;font-weight:600;margin-left:4px;">Status:</span>
+              <button style="background:white;border:1px solid #E2E8F0;border-radius:4px;padding:4px 10px;font-size:11px;cursor:pointer;color:#475569;">All ▼</button>
+              <span style="font-size:11px;color:#64748B;font-weight:600;margin-left:4px;">Source:</span>
+              <button style="background:white;border:1px solid #E2E8F0;border-radius:4px;padding:4px 10px;font-size:11px;cursor:pointer;color:#475569;">All ▼</button>
+              <span style="color:#CBD5E1;margin:0 8px;">|</span>
+              <span style="font-size:11px;color:#64748B;font-weight:600;">View:</span>
+              <button style="background:#1E3A5F;border:1px solid #1E3A5F;border-radius:4px;padding:4px 10px;font-size:11px;cursor:pointer;color:white;font-weight:600;">≡ Table</button>
+              <button style="background:white;border:1px solid #E2E8F0;border-radius:4px 0 0 4px;padding:4px 10px;font-size:11px;cursor:pointer;color:#475569;">⊞ Cards</button>
+              <div style="margin-left:auto;display:flex;gap:6px;">
+                <button style="background:white;border:1px solid #E2E8F0;border-radius:4px;padding:4px 10px;font-size:11px;cursor:pointer;color:#475569;">⬆ Export</button>
+                <button style="background:#3B82F6;border:1px solid #3B82F6;border-radius:4px;padding:4px 10px;font-size:11px;cursor:pointer;color:white;font-weight:600;">+ Add Finding</button>
+              </div>
+            </div>
+
+            <!-- ⑤ Findings Table (scrollable, fills remaining height) -->
+            <div class="modal-findings-scroll">
+              <table class="findings-table" style="width:100%;border-collapse:collapse;">
+                <thead>
+                  <tr>
+                    <th style="width:32px;background:#1E3A5F;color:white;padding:10px 12px;text-align:left;font-size:11px;font-weight:600;"><input type="checkbox" style="accent-color:#94A3B8;"/></th>
+                    <th style="background:#1E3A5F;color:white;padding:10px 12px;text-align:left;font-size:11px;font-weight:600;">Severity</th>
+                    <th style="background:#1E3A5F;color:white;padding:10px 12px;text-align:left;font-size:11px;font-weight:600;">Finding Type</th>
+                    <th style="background:#1E3A5F;color:white;padding:10px 12px;text-align:left;font-size:11px;font-weight:600;">Source</th>
+                    <th style="background:#1E3A5F;color:white;padding:10px 12px;text-align:left;font-size:11px;font-weight:600;">Status</th>
+                    <th style="background:#1E3A5F;color:white;padding:10px 12px;text-align:left;font-size:11px;font-weight:600;">First Detected</th>
+                    <th style="background:#1E3A5F;color:white;padding:10px 12px;text-align:left;font-size:11px;font-weight:600;">Last Reviewed</th>
+                    <th style="background:#1E3A5F;color:white;padding:10px 12px;text-align:left;font-size:11px;font-weight:600;">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="row-high">
+                    <td style="padding:10px 12px;"><input type="checkbox"/></td>
+                    <td style="padding:10px 12px;"><span class="sev-badge sev-high">🔴 HIGH</span></td>
+                    <td style="padding:10px 12px;font-weight:600;color:var(--navy);">Privacy Policy Missing</td>
+                    <td style="padding:10px 12px;"><span class="mono" style="font-size:11px;color:#475569;">Q-AI Scan</span></td>
+                    <td style="padding:10px 12px;"><span class="status-badge status-new">● New Finding</span></td>
+                    <td style="padding:10px 12px;"><span class="mono text-muted" style="font-size:11px;">—</span></td>
+                    <td style="padding:10px 12px;"><span class="mono text-muted" style="font-size:11px;">10/30/2025</span></td>
+                    <td style="padding:10px 12px;"><button class="actions-btn">···</button></td>
+                  </tr>
+                  <tr class="row-high">
+                    <td style="padding:10px 12px;"><input type="checkbox"/></td>
+                    <td style="padding:10px 12px;"><span class="sev-badge sev-high">🔴 HIGH</span></td>
+                    <td style="padding:10px 12px;font-weight:600;color:var(--navy);">Contact Information</td>
+                    <td style="padding:10px 12px;"><span class="mono" style="font-size:11px;color:#475569;">Q-AI Scan</span></td>
+                    <td style="padding:10px 12px;"><span class="status-badge status-new">● New Finding</span></td>
+                    <td style="padding:10px 12px;"><span class="mono text-muted" style="font-size:11px;">—</span></td>
+                    <td style="padding:10px 12px;"><span class="mono text-muted" style="font-size:11px;">03/01/2026</span></td>
+                    <td style="padding:10px 12px;"><button class="actions-btn">···</button></td>
+                  </tr>
+                  <tr class="row-high">
+                    <td style="padding:10px 12px;"><input type="checkbox"/></td>
+                    <td style="padding:10px 12px;"><span class="sev-badge sev-high">🔴 HIGH</span></td>
+                    <td style="padding:10px 12px;font-weight:600;color:var(--navy);">External Links Review</td>
+                    <td style="padding:10px 12px;"><span class="mono" style="font-size:11px;color:#475569;">User Added</span></td>
+                    <td style="padding:10px 12px;"><span class="status-badge status-analyst">Analyst Review</span></td>
+                    <td style="padding:10px 12px;"><span class="mono text-muted" style="font-size:11px;">02/15/2026</span></td>
+                    <td style="padding:10px 12px;"><span class="reviewed-text">Reviewed by Rtq Admin 03/16</span></td>
+                    <td style="padding:10px 12px;"><button class="actions-btn">···</button></td>
+                  </tr>
+                  <tr class="row-medium">
+                    <td style="padding:10px 12px;"><input type="checkbox"/></td>
+                    <td style="padding:10px 12px;"><span class="sev-badge sev-medium">🟡 MED</span></td>
+                    <td style="padding:10px 12px;font-weight:600;color:var(--navy);">Violative Term</td>
+                    <td style="padding:10px 12px;"><span class="mono" style="font-size:11px;color:#475569;">Q-AI Scan</span></td>
+                    <td style="padding:10px 12px;"><span class="status-badge status-new">● New Finding</span></td>
+                    <td style="padding:10px 12px;"><span class="mono text-muted" style="font-size:11px;">—</span></td>
+                    <td style="padding:10px 12px;"><span class="mono text-muted" style="font-size:11px;">03/02/2026</span></td>
+                    <td style="padding:10px 12px;"><button class="actions-btn">···</button></td>
+                  </tr>
+                  <tr class="row-medium">
+                    <td style="padding:10px 12px;"><input type="checkbox"/></td>
+                    <td style="padding:10px 12px;"><span class="sev-badge sev-medium">🟡 MED</span></td>
+                    <td style="padding:10px 12px;font-weight:600;color:var(--navy);">Contact Information</td>
+                    <td style="padding:10px 12px;"><span class="mono" style="font-size:11px;color:#475569;">Q-AI Scan</span></td>
+                    <td style="padding:10px 12px;"><span class="status-badge status-returning">Returning</span></td>
+                    <td style="padding:10px 12px;"><span class="mono text-muted" style="font-size:11px;">10/30/2025</span></td>
+                    <td style="padding:10px 12px;"><span class="reviewed-text">Reviewed 02/27</span></td>
+                    <td style="padding:10px 12px;"><button class="actions-btn">···</button></td>
+                  </tr>
+                  <tr class="row-pending">
+                    <td style="padding:10px 12px;"><input type="checkbox"/></td>
+                    <td style="padding:10px 12px;"><span class="sev-badge sev-pending">⚠ PENDING</span></td>
+                    <td style="padding:10px 12px;font-weight:600;color:var(--navy);">Product Subscription Model</td>
+                    <td style="padding:10px 12px;"><span class="mono" style="font-size:11px;color:#475569;">Analyst Review</span></td>
+                    <td style="padding:10px 12px;"><span class="status-badge status-pending">Pending</span></td>
+                    <td style="padding:10px 12px;"><span class="mono text-muted" style="font-size:11px;">02/23/2026</span></td>
+                    <td style="padding:10px 12px;"><span class="reviewed-text">Quinn ALUM 02/23</span></td>
+                    <td style="padding:10px 12px;"><button class="actions-btn">···</button></td>
+                  </tr>
+                  <tr class="row-pending">
+                    <td style="padding:10px 12px;"><input type="checkbox"/></td>
+                    <td style="padding:10px 12px;"><span class="sev-badge sev-pending">⚠ PENDING</span></td>
+                    <td style="padding:10px 12px;font-weight:600;color:var(--navy);">THC Disclaimer</td>
+                    <td style="padding:10px 12px;"><span class="mono" style="font-size:11px;color:#475569;">Analyst Review</span></td>
+                    <td style="padding:10px 12px;"><span class="status-badge status-pending">Pending</span></td>
+                    <td style="padding:10px 12px;"><span class="mono text-muted" style="font-size:11px;">03/01/2026</span></td>
+                    <td style="padding:10px 12px;"><span class="mono text-muted" style="font-size:11px;">—</span></td>
+                    <td style="padding:10px 12px;"><button class="actions-btn">···</button></td>
+                  </tr>
+                  <tr class="row-compliant-toggle">
+                    <td colspan="8" style="padding:10px 12px;">▼ &nbsp;Show 7 Compliant findings</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+          </div><!-- /modal-large -->
+        </div><!-- /modal-large-overlay -->
+
+        <!-- Annotation -->
+        <div class="annotation mt-3">
+          <span class="annotation-icon">💡</span>
+          <span><strong>Large Modal Treatment:</strong> The modal expands to ~95% of screen width and height. All four sticky bars (header, scan+summary, compliance drawer, toolbar) remain visible while scrolling findings. The company selector in the header lets auditors switch between merchant accounts without closing — ideal for multi-merchant audit sessions. A ⤢ maximize icon (future: true fullscreen) sits before the close button.</span>
+        </div>
+      </div>
+    </div>
+  </div><!-- /section 1.5 -->
 
 
   <!-- ═══════════════════════════════════════════════════════ -->
@@ -1499,6 +1749,11 @@
             </tr>
           </thead>
           <tbody>
+            <tr>
+              <td>Near-fullscreen modal</td>
+              <td>Maximum findings density, persistent context</td>
+              <td><span class="effort-low">● Low</span></td>
+            </tr>
             <tr>
               <td>Compact scan header</td>
               <td>High scroll saved — findings above fold without manual scrolling</td>
