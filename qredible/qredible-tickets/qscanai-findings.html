@@ -1,2167 +1,2212 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Q-ScanAI — Findings Modal UX Improvements</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"/>
-  <style>
-    :root {
-      --font-ui: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      --font-mono: 'IBM Plex Mono', monospace;
-      --navy: #1E3A5F;
-      --blue: #3B82F6;
-      --green: #16A34A;
-      --green-light: #22C55E;
-      --red: #DC2626;
-      --red-light: #FEE2E2;
-      --amber: #D97706;
-      --amber-light: #F59E0B;
-      --amber-bg: #FFFBEB;
-      --border: #E2E8F0;
-      --bg: #F8FAFC;
-      --surface: #FFFFFF;
-      --text: #0F172A;
-      --text-muted: #64748B;
-      --radius-card: 10px;
-      --radius-sm: 6px;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Q-ScanAI — Findings Modal UX Improvements</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #1E293B;
+    color: #111827;
+    font-size: 14px;
+    line-height: 1.5;
+  }
 
-    body {
-      font-family: var(--font-ui);
-      background: #1E293B;
-      min-height: 100vh;
-      color: var(--text);
-      padding-top: 48px;
-    }
+  /* ── Proto Nav ── */
+  .proto-nav {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: #0F172A;
+    padding: 0 24px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 13px;
+    color: #94A3B8;
+    border-bottom: 1px solid #1E293B;
+  }
+  .proto-nav a { color: #60A5FA; text-decoration: none; }
+  .proto-nav a:hover { color: #93C5FD; }
+  .proto-nav .sep { color: #475569; }
+  .proto-nav .crumb { color: #CBD5E1; font-weight: 500; }
 
-    /* ── STICKY NAV ── */
-    .site-nav {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 44px;
-      background: #0F172A;
-      display: flex;
-      align-items: center;
-      padding: 0 24px;
-      z-index: 1000;
-      gap: 12px;
-    }
-    .site-nav a {
-      color: #94A3B8;
-      text-decoration: none;
-      font-size: 13px;
-      font-weight: 500;
-    }
-    .site-nav a:hover { color: #E2E8F0; }
-    .nav-sep { color: #475569; font-size: 13px; }
-    .nav-title { color: #E2E8F0; font-size: 13px; font-weight: 600; }
+  /* ── Page layout ── */
+  .page-content { padding: 48px 24px 80px; max-width: 1100px; margin: 0 auto; }
 
-    /* ── PAGE WRAPPER ── */
-    .page-wrapper {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 32px 24px 80px;
-      display: flex;
-      flex-direction: column;
-      gap: 56px;
-    }
+  /* ── Section headers ── */
+  .section-label {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    color: #94A3B8;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    margin-top: 56px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #334155;
+  }
+  .section-label:first-of-type { margin-top: 0; }
 
-    .page-heading {
-      text-align: center;
-    }
-    .page-heading h1 {
-      color: #F1F5F9;
-      font-size: 22px;
-      font-weight: 700;
-      margin-bottom: 6px;
-    }
-    .page-heading p {
-      color: #94A3B8;
-      font-size: 13px;
-    }
+  .section-desc {
+    color: #94A3B8;
+    font-size: 13px;
+    margin-bottom: 24px;
+    line-height: 1.6;
+  }
 
-    /* ── SECTION BLOCK ── */
-    .section-block {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-    .section-header {
-      display: flex;
-      align-items: baseline;
-      gap: 12px;
-    }
-    .section-badge {
-      background: #334155;
-      color: #94A3B8;
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      padding: 3px 8px;
-      border-radius: 4px;
-    }
-    .section-title {
-      color: #E2E8F0;
-      font-size: 16px;
-      font-weight: 700;
-    }
-    .section-desc {
-      color: #94A3B8;
-      font-size: 13px;
-      line-height: 1.6;
-    }
+  /* ── Modal simulation ── */
+  .modal-sim {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 24px 80px rgba(0,0,0,.3);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 900px;
+    height: 85vh;
+    min-height: 600px;
+    margin: 0 auto;
+  }
+  .modal-sim.fullscreen {
+    max-width: 100%;
+    height: 92vh;
+  }
 
-    /* ── MOCKUP CARD ── */
-    .mockup-card {
-      background: var(--bg);
-      border-radius: var(--radius-card);
-      overflow: hidden;
-      border: 1px solid #475569;
-    }
-    .mockup-card-header {
-      background: var(--navy);
-      color: white;
-      padding: 10px 16px;
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .mockup-body {
-      padding: 20px;
-    }
+  /* ── Modal Header ── */
+  .modal-header {
+    background: #F7F5FF;
+    min-height: 97px;
+    display: flex;
+    align-items: center;
+    padding: 16px 20px 16px 24px;
+    position: relative;
+    flex-shrink: 0;
+    gap: 16px;
+  }
+  .modal-header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+  }
+  .brain-icon { font-size: 28px; line-height: 1; }
+  .modal-title { font-size: 20px; font-weight: 600; color: #111827; }
+  .modal-subtitle { font-size: 14px; font-weight: 500; color: #4b5563; margin-top: 2px; }
+  .modal-header-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-right: 36px;
+  }
+  .company-btn {
+    border: 1px solid rgba(255,255,255,0.6);
+    background: rgba(255,255,255,0.5);
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #374151;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .expand-btn {
+    background: none;
+    border: 1px solid #D1D5DB;
+    border-radius: 6px;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 14px;
+    color: #6B7280;
+  }
+  .close-btn {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: #9CA3AF;
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+  }
+  .close-btn:hover { background: rgba(0,0,0,0.05); }
 
-    /* ── ANNOTATION BOX ── */
-    .annotation {
-      border: 1.5px dashed #D97706;
-      background: #FFFBEB;
-      border-radius: 6px;
-      padding: 10px 14px;
-      font-size: 12px;
-      color: #92400E;
-      line-height: 1.5;
-      display: flex;
-      gap: 8px;
-      align-items: flex-start;
-    }
-    .annotation-icon { flex-shrink: 0; font-size: 14px; }
+  /* ── Tab bar ── */
+  .tab-bar {
+    display: flex;
+    align-items: center;
+    background: #fff;
+    border-bottom: 1px solid #E5E7EB;
+    height: 54px;
+    flex-shrink: 0;
+    padding: 0 24px;
+    gap: 0;
+  }
+  .tab {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #6B7280;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    gap: 6px;
+  }
+  .tab.active {
+    color: #2563eb;
+    border-bottom-color: #2563eb;
+    font-weight: 600;
+  }
 
-    /* ── WIREFRAME STYLES (Section 0) ── */
-    .wireframe-layout {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      font-family: var(--font-mono);
-      font-size: 11px;
-      position: relative;
-    }
-    .wf-block {
-      background: #E2E8F0;
-      border: 1px solid #CBD5E1;
-      border-radius: 4px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #64748B;
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-    .wf-modal-header { height: 44px; }
-    .wf-scan-history { height: 110px; background: #DBEAFE; border-color: #93C5FD; color: #1D4ED8; font-weight: 700; }
-    .wf-summary-grid { height: 80px; background: #E8E8E8; }
-    .wf-compliance-block { height: 120px; background: #E5E7EB; }
-    .wf-toolbar { height: 40px; background: #F1F5F9; }
-    .wf-findings { height: 200px; background: #FEF9C3; border-color: #FDE047; color: #854D0E; }
+  /* ── Scrollable content ── */
+  .modal-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
 
-    .wf-annotation-wrap {
-      position: relative;
-      margin-bottom: 8px;
-    }
-    .wf-callout {
-      position: absolute;
-      right: -8px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      transform: translateX(100%);
-    }
-    .wf-callout-line {
-      width: 32px;
-      height: 1px;
-      border-top: 1.5px dashed #DC2626;
-    }
-    .wf-callout-label {
-      background: #FEE2E2;
-      border: 1px dashed #DC2626;
-      border-radius: 4px;
-      padding: 4px 8px;
-      font-size: 10.5px;
-      color: #991B1B;
-      font-family: var(--font-ui);
-      font-weight: 500;
-      white-space: nowrap;
-      max-width: 230px;
-      white-space: normal;
-    }
-    .wf-row { display: flex; gap: 4px; }
-    .wf-row .wf-block { flex: 1; }
+  /* ── Cards ── */
+  .card {
+    background: #fff;
+    border: 1px solid #E5E7EB;
+    border-radius: 8px;
+    padding: 20px;
+  }
+  .card-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 4px;
+  }
+  .card-subtitle { font-size: 14px; color: #6b7280; }
 
-    /* ── SCAN SELECTOR BAR ── */
-    .scan-selector-bar {
-      background: white;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 8px 14px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-size: 13px;
-    }
-    .scan-nav-btn {
-      background: #F1F5F9;
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 4px 10px;
-      font-size: 12px;
-      font-weight: 600;
-      color: #334155;
-      cursor: pointer;
-      white-space: nowrap;
-    }
-    .scan-nav-btn:hover { background: #E2E8F0; }
-    .scan-label {
-      font-weight: 700;
-      color: var(--navy);
-      font-size: 13px;
-    }
-    .scan-meta { color: var(--text-muted); font-size: 12px; }
-    .scan-dot { color: #CBD5E1; }
-    .scan-all-link {
-      color: var(--blue);
-      font-size: 12px;
-      text-decoration: none;
-      margin-left: auto;
-      white-space: nowrap;
-    }
-    .scan-all-link:hover { text-decoration: underline; }
+  /* ── Scan history row ── */
+  .scan-history-row {
+    background: #fff;
+    border: 1px solid #E5E7EB;
+    border-radius: 8px;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 13px;
+    color: #374151;
+  }
+  .scan-nav-btn {
+    background: none;
+    border: 1px solid #D1D5DB;
+    border-radius: 5px;
+    padding: 4px 10px;
+    font-size: 12px;
+    cursor: pointer;
+    color: #6B7280;
+  }
+  .scan-info { font-weight: 500; color: #111827; }
+  .scan-meta { color: #6B7280; }
+  .scan-range-select {
+    margin-left: auto;
+    border: 1px solid #D1D5DB;
+    border-radius: 6px;
+    padding: 5px 10px;
+    font-size: 12px;
+    font-family: inherit;
+    color: #374151;
+    background: #fff;
+  }
 
-    /* ── SUMMARY PILLS ── */
-    .summary-pills {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-      padding: 6px 0;
-    }
-    .pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      padding: 5px 12px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 600;
-      cursor: pointer;
-      border: 1.5px solid transparent;
-      transition: all 0.15s;
-    }
-    .pill:hover { transform: translateY(-1px); }
-    .pill-high { background: #FEE2E2; color: #991B1B; border-color: #FCA5A5; }
-    .pill-medium { background: #FEF3C7; color: #92400E; border-color: #FCD34D; }
-    .pill-low { background: #DCFCE7; color: #14532D; border-color: #86EFAC; }
-    .pill-compliant { background: #F0FDF4; color: #166534; border-color: #6EE7B7; }
-    .pill-sep { color: #CBD5E1; font-size: 16px; }
-    .new-findings-notice {
-      font-size: 12px;
-      color: #92400E;
-      font-weight: 500;
-      padding: 3px 0;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
+  /* ── Severity cards grid ── */
+  .severity-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 16px;
+  }
+  .sev-card {
+    border-radius: 8px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .sev-card-icon { font-size: 18px; font-weight: 700; flex-shrink: 0; }
+  .sev-card-label { font-size: 12px; font-weight: 600; }
+  .sev-card-count { font-size: 24px; font-weight: 700; line-height: 1; }
+  .sev-card-text { display: flex; flex-direction: column; gap: 2px; }
 
-    /* ── COMPLIANCE DRAWER ── */
-    .compliance-drawer {
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      overflow: hidden;
-    }
-    .compliance-drawer-header {
-      background: #F8FAFC;
-      padding: 9px 14px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      cursor: pointer;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--navy);
-      border-bottom: 1px solid transparent;
-    }
-    .compliance-drawer-header.open { border-bottom-color: var(--border); }
-    .compliance-drawer-header .drawer-meta {
-      font-weight: 400;
-      color: var(--text-muted);
-      font-size: 12px;
-    }
-    .drawer-toggle {
-      margin-left: auto;
-      color: var(--blue);
-      font-size: 12px;
-      font-weight: 600;
-    }
-    .compliance-drawer-body {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 0;
-      background: white;
-    }
-    .drawer-col {
-      padding: 14px;
-      border-right: 1px solid var(--border);
-    }
-    .drawer-col:last-child { border-right: none; }
-    .drawer-col-title {
-      font-size: 10px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.07em;
-      color: var(--text-muted);
-      margin-bottom: 10px;
-    }
-    .drawer-item {
-      font-size: 12px;
-      padding: 3px 0;
-      color: var(--text);
-      border-bottom: 1px solid #F1F5F9;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .drawer-item.issue { color: var(--red); font-weight: 600; }
-    .drawer-item.compliant { color: var(--green); }
-    .drawer-item-badge {
-      font-size: 10px;
-      padding: 1px 5px;
-      border-radius: 3px;
-      font-weight: 600;
-    }
-    .badge-issue { background: #FEE2E2; color: #991B1B; }
-    .badge-ok { background: #DCFCE7; color: #14532D; }
+  /* Severity card variants */
+  .sev-high { background: #FEF2F2; border: 1px solid #FECACA; }
+  .sev-high .sev-card-icon, .sev-high .sev-card-count { color: #DC2626; }
+  .sev-high .sev-card-label { color: #7F1F1F; }
+  .sev-medium { background: #FEFCE8; border: 1px solid #FEF08A; }
+  .sev-medium .sev-card-icon, .sev-medium .sev-card-count { color: #CA8A04; }
+  .sev-medium .sev-card-label { color: #713F12; }
+  .sev-low { background: #F0FDF4; border: 1px solid #BBF7D0; }
+  .sev-low .sev-card-icon, .sev-low .sev-card-count { color: #16A34A; }
+  .sev-low .sev-card-label { color: #14532D; }
+  .sev-compliant { background: #EFF6FF; border: 1px solid #BFDBFE; }
+  .sev-compliant .sev-card-icon, .sev-compliant .sev-card-count { color: #2563eb; }
+  .sev-compliant .sev-card-label { color: #1E3A8A; }
 
-    /* ── SORT/VIEW TOOLBAR ── */
-    .findings-toolbar {
-      background: white;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 8px 12px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-    .toolbar-label {
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-    }
-    .toolbar-select {
-      background: #F8FAFC;
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 4px 10px;
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--navy);
-      font-family: var(--font-ui);
-      cursor: pointer;
-    }
-    .toolbar-select.active {
-      background: var(--navy);
-      color: white;
-      border-color: var(--navy);
-    }
-    .toolbar-sep { color: #E2E8F0; }
-    .view-toggle {
-      display: flex;
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      overflow: hidden;
-    }
-    .view-btn {
-      padding: 4px 10px;
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--text-muted);
-      background: #F8FAFC;
-      cursor: pointer;
-      border: none;
-      font-family: var(--font-ui);
-    }
-    .view-btn.active {
-      background: var(--navy);
-      color: white;
-    }
-    .view-btn + .view-btn {
-      border-left: 1px solid var(--border);
-    }
-    .toolbar-spacer { flex: 1; }
+  /* ── Scan results header ── */
+  .scan-results-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+  .findings-summary-badge {
+    font-size: 14px;
+    font-weight: 600;
+    color: #2563eb;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
 
-    /* ── FINDINGS TABLE ── */
-    .findings-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 12.5px;
-    }
-    .findings-table thead tr {
-      background: var(--navy);
-      color: white;
-    }
-    .findings-table thead th {
-      padding: 8px 10px;
-      text-align: left;
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      white-space: nowrap;
-    }
-    .findings-table thead th:first-child { width: 32px; padding: 8px 10px; }
-    .findings-table tbody tr {
-      border-bottom: 1px solid var(--border);
-      transition: background 0.1s;
-    }
-    .findings-table tbody tr:hover { background: #F8FAFC; }
-    .findings-table td {
-      padding: 9px 10px;
-      vertical-align: middle;
-    }
-    .findings-table td:first-child { width: 32px; }
+  /* ── Compliance Summary card ── */
+  .compliance-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+    margin-top: 0;
+  }
+  .comp-col-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: #374151;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #E5E7EB;
+  }
+  .comp-keyword {
+    font-size: 12px;
+    color: #374151;
+    padding: 3px 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .comp-keyword::before { content: '•'; color: #9CA3AF; font-size: 10px; }
+  .comp-check {
+    font-size: 12px;
+    padding: 3px 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .comp-check.issue { color: #DC2626; }
+  .comp-check.ok { color: #16A34A; }
+  .comp-check-icon { font-size: 11px; font-weight: 700; }
+  .comp-phrase {
+    font-size: 12px;
+    color: #374151;
+    padding: 3px 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-style: italic;
+  }
+  .comp-phrase::before { content: '▸'; color: #9CA3AF; font-size: 10px; }
 
-    /* Row severity borders */
-    .row-high { border-left: 3px solid #DC2626 !important; }
-    .row-medium { border-left: 3px solid #D97706 !important; }
-    .row-pending { border-left: 3px solid #D97706 !important; background: #FFFBEB; }
-    .row-pending:hover { background: #FEF3C7 !important; }
+  /* ── Filter & Actions ── */
+  .filter-outer { padding: 24px; }
+  .filter-inner {
+    background: #f9fafb;
+    border-radius: 8px;
+    padding: 16px 20px;
+  }
+  .filter-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .filter-label { font-size: 14px; font-weight: 500; color: #374151; }
+  .select-all-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: #374151;
+  }
+  .search-box {
+    width: 100%;
+    height: 40px;
+    border: 1px solid #D1D5DB;
+    border-radius: 6px;
+    padding: 0 12px;
+    font-size: 14px;
+    font-family: inherit;
+    color: #374151;
+    background: #fff;
+    margin-bottom: 12px;
+  }
+  .filter-dropdowns {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+  }
+  .filter-select-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    border: 1px solid #D1D5DB;
+    border-radius: 6px;
+    background: #fff;
+    overflow: hidden;
+    height: 40px;
+    min-width: 140px;
+  }
+  .filter-select-prefix {
+    padding: 0 8px;
+    font-size: 12px;
+    color: #6B7280;
+    white-space: nowrap;
+    border-right: 1px solid #E5E7EB;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    background: #F9FAFB;
+  }
+  .filter-select {
+    border: none;
+    outline: none;
+    padding: 0 8px;
+    font-size: 13px;
+    font-family: inherit;
+    color: #374151;
+    background: transparent;
+    height: 100%;
+    cursor: pointer;
+  }
+  .filter-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 4px;
+  }
+  .no-filters-text { font-size: 12px; color: #9CA3AF; font-style: italic; }
+  .active-filter-chip {
+    background: #dbeafe;
+    color: #1e40af;
+    border-radius: 5px;
+    font-size: 12px;
+    padding: 2px 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .btn-add-finding {
+    background: #2563eb;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 6px 16px;
+    cursor: pointer;
+  }
+  .btn-add-finding:hover { background: #1d4ed8; }
 
-    /* Severity badge */
-    .sev-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      padding: 2px 7px;
-      border-radius: 4px;
-      font-size: 11px;
-      font-weight: 700;
-      white-space: nowrap;
-    }
-    .sev-high { background: #FEE2E2; color: #991B1B; }
-    .sev-medium { background: #FEF3C7; color: #92400E; }
-    .sev-pending { background: #FEF3C7; color: #78350F; }
-    .sev-low { background: #DCFCE7; color: #14532D; }
+  /* ── Bulk action bar ── */
+  .bulk-bar {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 6px;
+    padding: 10px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .bulk-selected-text { font-size: 14px; font-weight: 500; color: #1e3a8a; }
+  .btn-bulk-green {
+    background: #16a34a;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 5px 12px;
+    cursor: pointer;
+  }
+  .btn-bulk-amber {
+    background: #d97706;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 5px 12px;
+    cursor: pointer;
+  }
+  .btn-bulk-text {
+    background: none;
+    border: none;
+    font-size: 13px;
+    color: #4b5563;
+    cursor: pointer;
+    padding: 5px 8px;
+    font-family: inherit;
+  }
 
-    /* Status badges */
-    .status-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      padding: 2px 7px;
-      border-radius: 4px;
-      font-size: 11px;
-      font-weight: 600;
-    }
-    .status-new { background: #DBEAFE; color: #1E40AF; }
-    .status-returning { background: #F3F4F6; color: #374151; }
-    .status-analyst { background: #FEF3C7; color: #92400E; }
-    .status-pending { background: #FEF3C7; color: #78350F; }
+  /* ── Finding cards ── */
+  .finding-card {
+    border: 1px solid #E5E7EB;
+    border-radius: 8px;
+    padding: 12px;
+    background: #fff;
+  }
+  .finding-card.has-notes { border-color: #2563EB; }
+  .finding-card-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .finding-check { margin-top: 2px; flex-shrink: 0; }
+  .finding-status-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+  .finding-title { font-size: 14px; font-weight: 600; color: #111827; flex: 1; }
+  .finding-badges {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    flex: 1;
+  }
+  .finding-desc {
+    font-size: 12px;
+    color: #6B7280;
+    font-style: italic;
+    padding: 6px 10px;
+    background: #F9FAFB;
+    border-radius: 4px;
+    margin-bottom: 8px;
+    margin-left: 26px;
+    border-left: 2px solid #E5E7EB;
+  }
+  .finding-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: 26px;
+    flex-wrap: wrap;
+  }
+  .finding-date { font-size: 11px; color: #9CA3AF; margin-left: auto; }
+  .btn-mark-reviewed {
+    font-size: 12px;
+    font-weight: 500;
+    color: #2563eb;
+    background: none;
+    border: 1px solid #BFDBFE;
+    border-radius: 4px;
+    padding: 3px 10px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .btn-view-page {
+    font-size: 12px;
+    color: #6B7280;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-decoration: underline;
+    font-family: inherit;
+  }
+  .btn-three-dot {
+    font-size: 16px;
+    color: #9CA3AF;
+    background: none;
+    border: 1px solid #E5E7EB;
+    border-radius: 4px;
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin-left: auto;
+    flex-shrink: 0;
+  }
 
-    /* Inline selects */
-    .inline-select {
-      background: #F8FAFC;
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 2px 6px;
-      font-size: 11px;
-      font-family: var(--font-ui);
-      color: var(--text);
-    }
-    .reviewed-text {
-      font-size: 11px;
-      color: var(--text-muted);
-      font-family: var(--font-mono);
-    }
-    .actions-btn {
-      background: #F1F5F9;
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 3px 8px;
-      font-size: 12px;
-      cursor: pointer;
-      color: var(--text-muted);
-      font-family: var(--font-ui);
-    }
-    .actions-btn:hover { background: #E2E8F0; color: var(--navy); }
+  /* ── Badges/chips ── */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+  .badge-high { background: #FEE2E2; border: 1px solid #fecaca; color: #991B1B; }
+  .badge-medium { background: #FEF9C3; border: 1px solid #ffef8a; color: #854D0E; }
+  .badge-low { background: #DCFCE7; border: 1px solid #bbf7d0; color: #166534; }
+  .badge-compliant { background: #EFF6FF; border: 1px solid #BFDBFE; color: #1E3A8A; }
 
-    /* Compliant toggle row */
-    .row-compliant-toggle td {
-      background: #F8FAFC;
-      color: var(--text-muted);
-      font-size: 12px;
-      font-weight: 600;
-      text-align: center;
-      padding: 8px;
-      cursor: pointer;
-      border-left: 3px solid #E2E8F0 !important;
-    }
-    .row-compliant-toggle:hover td { background: #F1F5F9; color: var(--blue); }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 3px 10px;
+    border-radius: 16px;
+    white-space: nowrap;
+  }
+  .chip-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .chip-new { background: #EFF6FF; color: #2563eb; }
+  .chip-new .chip-dot { background: #2563eb; }
+  .chip-ongoing { background: #f3f4f6; color: #374151; }
+  .chip-ongoing .chip-dot { background: #9CA3AF; }
+  .chip-analyst { background: #FEF9C3; color: #854D0E; border: 1px solid #FFEF8A; }
+  .chip-cleared { background: #f3f4f6; color: #374151; }
+  .chip-cleared .chip-dot { background: #9CA3AF; }
 
-    /* ── CARD VIEW ── */
-    .card-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 12px;
-    }
-    .finding-card {
-      background: white;
-      border-radius: var(--radius-card);
-      border: 1px solid var(--border);
-      overflow: hidden;
-      transition: box-shadow 0.15s;
-    }
-    .finding-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
-    .card-severity-stripe {
-      height: 4px;
-    }
-    .stripe-high { background: #DC2626; }
-    .stripe-medium { background: #D97706; }
-    .stripe-low { background: #16A34A; }
-    .card-body {
-      padding: 12px 14px;
-    }
-    .card-top-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 6px;
-    }
-    .card-type {
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--navy);
-    }
-    .card-new-badge {
-      background: var(--blue);
-      color: white;
-      font-size: 10px;
-      font-weight: 700;
-      padding: 2px 7px;
-      border-radius: 10px;
-      letter-spacing: 0.03em;
-    }
-    .card-excerpt {
-      font-size: 12px;
-      color: #475569;
-      line-height: 1.5;
-      margin-bottom: 8px;
-      font-family: var(--font-mono);
-      background: #F8FAFC;
-      border-radius: 4px;
-      padding: 6px 8px;
-      border: 1px solid #E8EAED;
-    }
-    .card-meta-row {
-      font-size: 11px;
-      color: var(--text-muted);
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      margin-bottom: 8px;
-    }
-    .card-meta-sep { color: #CBD5E1; }
-    .card-actions {
-      display: flex;
-      gap: 8px;
-      border-top: 1px solid var(--border);
-      padding-top: 8px;
-    }
-    .card-action-link {
-      font-size: 11px;
-      color: var(--blue);
-      text-decoration: none;
-      font-weight: 500;
-    }
-    .card-action-link:hover { text-decoration: underline; }
-    .card-action-sep { color: #E2E8F0; }
-    .card-action-remove {
-      font-size: 11px;
-      color: #EF4444;
-      text-decoration: none;
-      font-weight: 500;
-      margin-left: auto;
-    }
+  .source-badge {
+    display: inline-flex;
+    align-items: center;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 2px 10px;
+    border-radius: 25px;
+    height: 25px;
+    white-space: nowrap;
+  }
+  .source-ai { background: #f3f4f6; color: #374151; }
+  .source-user { background: #F0FDF4; color: #166534; }
 
-    /* ── MULTI-SELECT DROPDOWN ── */
-    .type-filter-wrap {
-      position: relative;
-      display: inline-flex;
-      flex-direction: column;
-      gap: 0;
-    }
-    .type-filter-btn {
-      background: var(--navy);
-      color: white;
-      border: none;
-      border-radius: 4px;
-      padding: 5px 12px;
-      font-size: 12px;
-      font-weight: 700;
-      font-family: var(--font-ui);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .type-filter-btn .filter-count {
-      background: var(--blue);
-      color: white;
-      border-radius: 10px;
-      padding: 0 6px;
-      font-size: 10px;
-    }
-    .type-filter-dropdown {
-      background: white;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
-      width: 240px;
-      overflow: hidden;
-      margin-top: 4px;
-    }
-    .filter-dropdown-search {
-      padding: 8px 10px;
-      border-bottom: 1px solid var(--border);
-    }
-    .filter-dropdown-search input {
-      width: 100%;
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 4px 8px;
-      font-size: 12px;
-      font-family: var(--font-ui);
-      color: var(--text);
-      outline: none;
-    }
-    .filter-option {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 7px 12px;
-      font-size: 12.5px;
-      cursor: pointer;
-      border-bottom: 1px solid #F8FAFC;
-    }
-    .filter-option:hover { background: #F1F5F9; }
-    .filter-option input[type="checkbox"] {
-      accent-color: var(--navy);
-      width: 13px;
-      height: 13px;
-      cursor: pointer;
-    }
-    .filter-option.checked { color: var(--navy); font-weight: 600; }
-    .filter-actions {
-      display: flex;
-      justify-content: space-between;
-      padding: 8px 12px;
-      border-top: 1px solid var(--border);
-      background: #F8FAFC;
-    }
-    .filter-clear {
-      font-size: 12px;
-      color: var(--text-muted);
-      cursor: pointer;
-      text-decoration: none;
-    }
-    .filter-clear:hover { color: var(--red); }
-    .filter-apply {
-      background: var(--blue);
-      color: white;
-      border: none;
-      border-radius: 4px;
-      padding: 4px 14px;
-      font-size: 12px;
-      font-weight: 600;
-      font-family: var(--font-ui);
-      cursor: pointer;
-    }
-    .filter-apply:hover { background: #2563EB; }
+  .keyword-chip {
+    display: inline-flex;
+    align-items: center;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: #fee2e2;
+    color: #b91c1c;
+  }
 
-    /* ── QUICK WINS TABLE ── */
-    .quick-wins-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 13px;
-      background: white;
-      border-radius: var(--radius-card);
-      overflow: hidden;
-      border: 1px solid var(--border);
-    }
-    .quick-wins-table thead tr {
-      background: var(--navy);
-    }
-    .quick-wins-table thead th {
-      color: white;
-      padding: 11px 16px;
-      text-align: left;
-      font-size: 11.5px;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-    }
-    .quick-wins-table tbody tr {
-      border-bottom: 1px solid var(--border);
-    }
-    .quick-wins-table tbody tr:last-child { border-bottom: none; }
-    .quick-wins-table tbody tr:hover { background: #F8FAFC; }
-    .quick-wins-table td {
-      padding: 10px 16px;
-      vertical-align: top;
-    }
-    .quick-wins-table td:first-child {
-      font-weight: 600;
-      color: var(--navy);
-    }
-    .effort-low {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      padding: 2px 8px;
-      background: #DCFCE7;
-      color: #14532D;
-      border-radius: 4px;
-      font-size: 11px;
-      font-weight: 700;
-    }
-    .effort-medium {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      padding: 2px 8px;
-      background: #FEF3C7;
-      color: #92400E;
-      border-radius: 4px;
-      font-size: 11px;
-      font-weight: 700;
-    }
+  .severity-select {
+    border: 1px solid #D1D5DB;
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-size: 12px;
+    font-family: inherit;
+    width: 92px;
+    height: 26px;
+    cursor: pointer;
+    color: #374151;
+    background: #fff;
+  }
 
-    /* ── LARGE MODAL TREATMENT ── */
-    .modal-large {
-      position: relative;
-      width: 95vw;
-      max-width: 1400px;
-      height: 92vh;
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 24px 80px rgba(0,0,0,.4);
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
-    .modal-large-overlay {
-      background: rgba(15,23,42,.6);
-      border-radius: 16px;
-      padding: 24px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 700px;
-    }
-    .modal-sticky-header {
-      background: #1E3A5F;
-      padding: 0 20px;
-      height: 52px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      flex-shrink: 0;
-      color: white;
-    }
-    .modal-sticky-scan-bar {
-      padding: 0 20px;
-      height: 44px;
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      border-bottom: 1px solid #E2E8F0;
-      background: white;
-      flex-shrink: 0;
-      font-size: 12px;
-    }
-    .modal-sticky-toolbar {
-      padding: 8px 20px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      border-bottom: 1px solid #E2E8F0;
-      background: #F8FAFC;
-      flex-shrink: 0;
-    }
-    .modal-findings-scroll {
-      flex: 1;
-      overflow-y: auto;
-    }
+  /* ── Annotation callouts ── */
+  .annotation-container { position: relative; }
+  .annotation {
+    border: 1.5px dashed #FCD34D;
+    background: #FFFBEB;
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 12px;
+    color: #78350F;
+    line-height: 1.5;
+    margin-top: 8px;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .annotation::before { content: '⚠'; font-size: 12px; flex-shrink: 0; margin-top: 1px; }
+  .annotation-box {
+    border: 1.5px dashed #FCD34D;
+    background: #FFFBEB;
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: #78350F;
+    line-height: 1.6;
+    margin: 12px 0;
+  }
+  .annotation-box strong { color: #451A03; }
 
-    /* ── WIREFRAME ANNO LAYOUT ── */
-    .wireframe-container {
-      display: flex;
-      gap: 20px;
-    }
-    .wireframe-stack {
-      flex: 1;
-      min-width: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-    .callout-list {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      flex-shrink: 0;
-      width: 240px;
-      padding-top: 8px;
-    }
-    .callout-item {
-      background: #FEE2E2;
-      border: 1px dashed #DC2626;
-      border-radius: 4px;
-      padding: 6px 10px;
-      font-size: 11.5px;
-      color: #991B1B;
-      font-weight: 500;
-      line-height: 1.4;
-      display: flex;
-      gap: 6px;
-      align-items: flex-start;
-    }
-    .callout-dot { font-size: 14px; flex-shrink: 0; line-height: 1.2; }
-    .wf-label-inside {
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: inherit;
-    }
-    .wf-pct {
-      font-size: 10px;
-      font-weight: 400;
-      font-style: italic;
-      margin-top: 2px;
-    }
+  /* Arrow annotation overlay style */
+  .annotated-area {
+    border: 2px dashed #F87171;
+    border-radius: 6px;
+    position: relative;
+  }
+  .annotated-label {
+    position: absolute;
+    right: -4px;
+    top: -4px;
+    background: #EF4444;
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 10px;
+    white-space: nowrap;
+  }
 
-    /* ── UTILITIES ── */
-    .mt-3 { margin-top: 12px; }
-    .mt-4 { margin-top: 16px; }
-    .mt-2 { margin-top: 8px; }
-    .mono { font-family: var(--font-mono); }
-    .text-muted { color: var(--text-muted); }
-    .gap-section { margin-top: 24px; }
-    .subsection-label {
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: #94A3B8;
-      margin-bottom: 10px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .subsection-label::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: #334155;
-    }
-    hr.divider {
-      border: none;
-      border-top: 1px dashed #475569;
-      margin: 24px 0;
-    }
-    .flex-row { display: flex; align-items: center; gap: 10px; }
-    .inner-spacer { margin-bottom: 12px; }
-  </style>
+  /* ── Section 1 — Scan bar ── */
+  .scan-bar {
+    background: #fff;
+    border-bottom: 1px solid #E5E7EB;
+    height: 44px;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+    font-size: 13px;
+    flex-wrap: wrap;
+  }
+  .scan-bar-nav { color: #9CA3AF; cursor: pointer; font-size: 16px; }
+  .scan-bar-info { font-weight: 500; color: #111827; }
+  .scan-bar-meta { color: #6B7280; }
+  .scan-bar-sep { color: #D1D5DB; }
+  .scan-bar-pills { display: flex; align-items: center; gap: 6px; }
+  .scan-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .scan-pill-high { background: #FEE2E2; border: 1px solid #fecaca; color: #991B1B; }
+  .scan-pill-medium { background: #FEF9C3; border: 1px solid #ffef8a; color: #854D0E; }
+  .scan-pill-low { background: #DCFCE7; border: 1px solid #bbf7d0; color: #166534; }
+  .scan-pill-compliant { background: #EFF6FF; border: 1px solid #BFDBFE; color: #1E3A8A; }
+  .scan-pill-analyst { background: #FEF9C3; border: 1px solid #FFEF8A; color: #854D0E; }
+  .scan-new-badge { font-size: 12px; font-weight: 600; color: #D97706; }
+  .all-scans-select {
+    border: 1px solid #D1D5DB;
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 12px;
+    font-family: inherit;
+    color: #374151;
+    background: #fff;
+  }
+
+  /* Compliance Summary drawer */
+  .summary-drawer {
+    background: #fff;
+    border-bottom: 1px solid #E5E7EB;
+    padding: 0 20px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+    font-size: 13px;
+    color: #374151;
+    cursor: pointer;
+  }
+  .summary-drawer span { color: #6B7280; font-size: 12px; }
+  .summary-drawer .expand-btn-sm {
+    margin-left: auto;
+    font-size: 12px;
+    color: #2563eb;
+    font-weight: 500;
+  }
+
+  /* ── Section 2 — Table view ── */
+  .findings-toolbar {
+    background: #f9fafb;
+    border-bottom: 1px solid #E5E7EB;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+  }
+  .toolbar-left { display: flex; align-items: center; gap: 8px; flex: 1; flex-wrap: wrap; }
+  .toolbar-right { display: flex; align-items: center; gap: 8px; }
+  .toolbar-select-wrap {
+    display: flex;
+    align-items: center;
+    height: 34px;
+    border: 1px solid #D1D5DB;
+    border-radius: 6px;
+    background: #fff;
+    overflow: hidden;
+  }
+  .toolbar-prefix {
+    padding: 0 8px;
+    font-size: 12px;
+    color: #6B7280;
+    border-right: 1px solid #E5E7EB;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    background: #F9FAFB;
+    white-space: nowrap;
+  }
+  .toolbar-select {
+    border: none;
+    outline: none;
+    padding: 0 8px;
+    font-size: 12px;
+    font-family: inherit;
+    color: #374151;
+    background: transparent;
+    height: 100%;
+    cursor: pointer;
+  }
+  .view-toggle {
+    display: flex;
+    border: 1px solid #D1D5DB;
+    border-radius: 6px;
+    overflow: hidden;
+    height: 34px;
+  }
+  .view-btn {
+    padding: 0 12px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    background: #F9FAFB;
+    color: #6B7280;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-family: inherit;
+  }
+  .view-btn.active { background: #fff; color: #2563eb; }
+  .view-btn:not(:last-child) { border-right: 1px solid #E5E7EB; }
+  .btn-export {
+    background: #16a34a;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 5px 12px;
+    cursor: pointer;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-family: inherit;
+  }
+  .btn-add-sm {
+    background: #2563eb;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 5px 12px;
+    cursor: pointer;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-family: inherit;
+  }
+
+  /* Findings table */
+  .findings-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .findings-table th {
+    background: #F3F4F6;
+    text-align: left;
+    padding: 8px 12px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #374151;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border-bottom: 1px solid #E5E7EB;
+    white-space: nowrap;
+  }
+  .findings-table td {
+    padding: 9px 12px;
+    border-bottom: 1px solid #F3F4F6;
+    vertical-align: middle;
+  }
+  .findings-table tr.row-high { border-left: 3px solid #DC2626; }
+  .findings-table tr.row-medium { border-left: 3px solid #CA8A04; }
+  .findings-table tr.row-analyst { border-left: 3px solid #D97706; background: #FFFBEB; }
+  .findings-table tr.row-low { border-left: 3px solid #16A34A; }
+  .findings-table tr:hover:not(.collapse-row) { background: #FAFAFA; }
+  .findings-table tr.row-analyst:hover { background: #FFF8E7; }
+  .notes-indicator { font-size: 12px; color: #2563eb; font-weight: 600; }
+  .reviewed-text { font-size: 12px; color: #166534; font-weight: 500; }
+  .unreviewed-text { font-size: 12px; color: #9CA3AF; }
+  .collapse-row td {
+    background: #f3f4f6;
+    color: #6b7280;
+    font-size: 12px;
+    font-style: italic;
+    text-align: center;
+    padding: 10px;
+    cursor: pointer;
+  }
+  .actions-cell { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+  .btn-dots {
+    background: none;
+    border: 1px solid #E5E7EB;
+    border-radius: 4px;
+    width: 26px;
+    height: 26px;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* ── Section 2.5 — Analyst Review filters ── */
+  .two-col-demo { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .demo-box {
+    border: 1px solid #E5E7EB;
+    border-radius: 8px;
+    background: #fff;
+    padding: 16px;
+  }
+  .demo-box-title { font-size: 12px; font-weight: 600; color: #6B7280; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px; }
+  .pill-bar { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 5px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  .pill-high { background: #FEE2E2; border: 1px solid #fecaca; color: #991B1B; }
+  .pill-medium { background: #FEF9C3; border: 1px solid #ffef8a; color: #854D0E; }
+  .pill-low { background: #DCFCE7; border: 1px solid #bbf7d0; color: #166534; }
+  .pill-compliant { background: #EFF6FF; border: 1px solid #BFDBFE; color: #1E3A8A; }
+  .pill-analyst-inactive { background: #FEF3C7; border: 1px solid #FDE68A; color: #92400E; font-weight: 700; }
+  .pill-analyst-active { background: #D97706; color: #fff; font-weight: 700; }
+  .pill.dimmed { opacity: 0.5; }
+
+  .sub-filter-bar {
+    border-left: 3px solid #D97706;
+    background: #FFFBEB;
+    border-bottom: 1px solid #FDE68A;
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 12px;
+    color: #374151;
+    flex-wrap: wrap;
+    border-radius: 0 6px 6px 0;
+    margin-top: 8px;
+  }
+  .sub-filter-tab {
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    font-family: inherit;
+  }
+  .sub-filter-tab.active-tab { background: #D97706; color: #fff; }
+  .sub-filter-tab.normal-tab { background: #f3f4f6; color: #374151; }
+  .sub-filter-tab.cleared-tab { background: #DCFCE7; color: #166534; }
+  .sub-filter-sep { color: #D1D5DB; margin: 0 4px; }
+
+  /* Set Severity dropdown visual */
+  .set-sev-dropdown {
+    background: #fff;
+    border: 1px solid #E5E7EB;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0,0,0,.1);
+    padding: 4px 0;
+    min-width: 120px;
+    font-size: 12px;
+    display: inline-block;
+    vertical-align: middle;
+  }
+  .set-sev-item {
+    padding: 6px 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .set-sev-item:hover { background: #F9FAFB; }
+  .set-sev-item.sev-pending { color: #92400E; background: #FFFBEB; }
+  .set-sev-item.sev-hi { color: #991B1B; }
+  .set-sev-item.sev-med { color: #854D0E; }
+  .set-sev-item.sev-lo { color: #166534; }
+  .set-sev-item.sev-clear { color: #6B7280; }
+
+  /* ── Section 3 — Improved cards ── */
+  .cards-grid { display: flex; flex-direction: column; gap: 12px; }
+  .finding-card-v2 {
+    border: 1px solid #E5E7EB;
+    border-radius: 8px;
+    padding: 12px;
+    background: #fff;
+    border-left-width: 4px;
+    border-left-style: solid;
+  }
+  .finding-card-v2.high { border-left-color: #DC2626; }
+  .finding-card-v2.medium { border-left-color: #CA8A04; }
+  .finding-card-v2.low { border-left-color: #16A34A; }
+  .finding-card-v2.analyst { border-left-color: #D97706; }
+  .fcard-row1 { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 6px; }
+  .fcard-title { font-size: 13px; font-weight: 600; color: #111827; }
+  .fcard-desc { font-size: 12px; color: #6B7280; font-style: italic; margin-bottom: 8px; padding: 4px 0; }
+  .fcard-actions { display: flex; align-items: center; gap: 8px; font-size: 12px; }
+  .fcard-date { margin-left: auto; font-size: 11px; color: #9CA3AF; }
+
+  /* Multi-select dropdown */
+  .multiselect-dropdown {
+    background: #fff;
+    border: 1px solid #E5E7EB;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.12);
+    width: 280px;
+    overflow: hidden;
+  }
+  .multiselect-header {
+    padding: 10px 14px;
+    border-bottom: 1px solid #E5E7EB;
+    font-size: 13px;
+    font-weight: 600;
+    color: #111827;
+    background: #F9FAFB;
+  }
+  .multiselect-body { max-height: 300px; overflow-y: auto; padding: 6px 0; }
+  .multiselect-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 14px;
+    font-size: 13px;
+    color: #374151;
+    cursor: pointer;
+  }
+  .multiselect-item:hover { background: #F9FAFB; }
+  .multiselect-item.checked { font-weight: 600; color: #111827; }
+  .multiselect-footer {
+    padding: 10px 14px;
+    border-top: 1px solid #E5E7EB;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #F9FAFB;
+  }
+  .btn-clear-all { font-size: 12px; color: #6B7280; background: none; border: none; cursor: pointer; font-family: inherit; }
+  .btn-apply { background: #2563eb; color: #fff; border: none; border-radius: 4px; font-size: 12px; font-weight: 500; padding: 5px 14px; cursor: pointer; font-family: inherit; }
+
+  /* ── Section 4 — Impact table ── */
+  .impact-table {
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid #E2E8F0;
+    font-size: 13px;
+  }
+  .impact-table thead th {
+    background: #1E3A5F;
+    color: #fff;
+    font-weight: 600;
+    font-size: 12px;
+    padding: 12px 16px;
+    text-align: left;
+  }
+  .impact-table tbody tr:nth-child(even) { background: #F8FAFC; }
+  .impact-table tbody tr:hover { background: #EFF6FF; }
+  .impact-table td {
+    padding: 11px 16px;
+    border-bottom: 1px solid #E2E8F0;
+    vertical-align: middle;
+    color: #374151;
+  }
+  .impact-table td:first-child { font-weight: 600; color: #111827; }
+  .effort-low {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: #DCFCE7;
+    color: #166534;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 12px;
+  }
+  .effort-medium {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: #FEF3C7;
+    color: #92400E;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 12px;
+  }
+
+  /* ── Pending dropdown visual ── */
+  .pending-select {
+    border: 1px solid #D1D5DB;
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-size: 11px;
+    font-family: inherit;
+    width: 92px;
+    height: 26px;
+    cursor: pointer;
+    color: #92400E;
+    background: #FFFBEB;
+    border-color: #FDE68A;
+  }
+
+  /* Modal content scroll */
+  .modal-scroll { overflow-y: auto; flex: 1; }
+
+  /* ── Utility ── */
+  .flex { display: flex; }
+  .flex-col { flex-direction: column; }
+  .items-center { align-items: center; }
+  .gap-2 { gap: 8px; }
+  .gap-3 { gap: 12px; }
+  .mt-2 { margin-top: 8px; }
+  .mt-3 { margin-top: 12px; }
+  .mb-2 { margin-bottom: 8px; }
+  .text-sm { font-size: 13px; }
+  .text-xs { font-size: 11px; }
+  .text-grey { color: #6B7280; }
+  .font-600 { font-weight: 600; }
+  .spacer { flex: 1; }
+
+  /* Section wrapper */
+  .section-wrapper { margin-bottom: 8px; }
+
+  /* Dropdown open simulation */
+  .dropdown-open-wrap { position: relative; display: inline-block; }
+  .dropdown-open-menu {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    background: #fff;
+    border: 1px solid #E5E7EB;
+    border-radius: 6px;
+    box-shadow: 0 4px 16px rgba(0,0,0,.12);
+    min-width: 110px;
+    z-index: 10;
+    padding: 4px 0;
+  }
+  .dropdown-open-item {
+    padding: 6px 12px;
+    font-size: 12px;
+    color: #374151;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .dropdown-open-item:hover { background: #F9FAFB; }
+
+  /* Annotation number marker */
+  .ann-marker {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    background: #EF4444;
+    color: #fff;
+    border-radius: 50%;
+    font-size: 10px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .section-intro {
+    background: #0F172A;
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    color: #94A3B8;
+    font-size: 13px;
+    line-height: 1.6;
+    border-left: 3px solid #3B82F6;
+  }
+  .section-intro strong { color: #E2E8F0; }
+
+  .finding-row-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+
+  @media (max-width: 700px) {
+    .severity-grid { grid-template-columns: 1fr; }
+    .compliance-cols { grid-template-columns: 1fr; }
+    .two-col-demo { grid-template-columns: 1fr; }
+    .filter-dropdowns { flex-direction: column; }
+  }
+</style>
 </head>
 <body>
 
-<!-- STICKY NAV -->
-<nav class="site-nav">
+<!-- ── Proto Nav ── -->
+<nav class="proto-nav">
   <a href="../">← All Mockups</a>
-  <span class="nav-sep">›</span>
-  <span class="nav-title">Q-ScanAI — Findings Modal UX Improvements</span>
+  <span class="sep">/</span>
+  <span class="crumb">Q-ScanAI — Findings Modal UX Improvements</span>
 </nav>
 
-<div class="page-wrapper">
+<div class="page-content">
 
-  <!-- PAGE HEADING -->
-  <div class="page-heading">
-    <h1>Q-ScanAI — Findings Modal UX Improvements</h1>
-    <p>Prototype · March 2026 · Qredible Design System</p>
+<!-- ══════════════════════════════════════════════ -->
+<!-- SECTION 0: Current State                       -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="section-label">Section 0 — Current State (Annotated Replica)</div>
+<div class="section-intro">
+  <strong>What you're looking at:</strong> An exact replica of the current Q-ScanAI Findings modal as it exists in production. Annotation callouts highlight the UX issues being addressed in the sections below.
+</div>
+
+<div class="modal-sim" style="position:relative;">
+
+  <!-- Header -->
+  <div class="modal-header">
+    <div class="modal-header-left">
+      <span class="brain-icon">🧠</span>
+      <div>
+        <div class="modal-title">Q-ScanAI</div>
+        <div class="modal-subtitle">AI-Enhanced Compliance Scanning</div>
+      </div>
+    </div>
+    <div class="modal-header-right">
+      <button class="company-btn">Westtown Payments ▼</button>
+    </div>
+    <button class="close-btn">✕</button>
   </div>
 
-  <!-- ═══════════════════════════════════════════════════════ -->
-  <!-- SECTION 0: CURRENT PAIN POINTS                         -->
-  <!-- ═══════════════════════════════════════════════════════ -->
-  <div class="section-block">
-    <div class="section-header">
-      <span class="section-badge">Section 0</span>
-      <span class="section-title">Current Pain Points — Annotated Layout Diagram</span>
-    </div>
-    <div class="section-desc">
-      A wireframe of the <em>current</em> Findings modal state. The large scan history, expanded compliance summary,
-      and unordered findings list together push the actual findings content far below the fold.
-    </div>
-
-    <div class="mockup-card">
-      <div class="mockup-card-header">
-        <span>Current State — Modal Layout (Wireframe)</span>
-        <span style="font-weight:400;font-size:11px;opacity:0.7;">Not to pixel-scale — proportional representation</span>
-      </div>
-      <div class="mockup-body">
-        <div class="wireframe-container">
-          <!-- Left: wireframe blocks -->
-          <div class="wireframe-stack">
-
-            <!-- Modal header -->
-            <div class="wf-block wf-modal-header">
-              <span class="wf-label-inside">Modal Header / Title Bar</span>
-            </div>
-
-            <!-- Scan History - BIG block -->
-            <div class="wf-block" style="height:120px; background:#DBEAFE; border:1px solid #93C5FD; border-radius:4px; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#1D4ED8;">
-              <span class="wf-label-inside">Scan History — 3 Cards</span>
-              <span class="wf-pct" style="color:#1D4ED8;">≈ 30% of modal height before findings</span>
-            </div>
-
-            <!-- Summary 4-card grid -->
-            <div class="wf-block" style="height:80px; background:#E8E8E8; border-radius:4px; flex-direction:column;">
-              <span class="wf-label-inside">Summary — 4 Stat Cards (High / Med / Low / Compliant)</span>
-            </div>
-
-            <!-- Compliance Summary expanded -->
-            <div class="wf-block" style="height:130px; background:#EDE9FE; border:1px solid #C4B5FD; border-radius:4px; flex-direction:column; color:#5B21B6;">
-              <span class="wf-label-inside">Compliance Scan Summary (Always Expanded)</span>
-              <span class="wf-pct" style="color:#5B21B6;">3-column keyword/term/check list — always visible</span>
-            </div>
-
-            <!-- Toolbar -->
-            <div class="wf-block wf-toolbar" style="border-radius:4px;">
-              <span class="wf-label-inside">Filter Toolbar (single-select type)</span>
-            </div>
-
-            <!-- Findings — pushed down -->
-            <div class="wf-block" style="height:200px; background:#FEF9C3; border:1.5px solid #FDE047; border-radius:4px; color:#854D0E; flex-direction:column;">
-              <span class="wf-label-inside">Findings List (Cards, unsorted)</span>
-              <span class="wf-pct" style="color:#854D0E;">Pushed below fold · No sort order · Compliant mixed with High severity</span>
-            </div>
-          </div>
-
-          <!-- Right: callout annotations -->
-          <div class="callout-list">
-            <div class="callout-item">
-              <span class="callout-dot">🔴</span>
-              <span>Scan History takes ~30% of vertical space before you reach findings</span>
-            </div>
-            <div class="callout-item">
-              <span class="callout-dot">🔴</span>
-              <span>No sort order — compliant items appear between high-severity findings</span>
-            </div>
-            <div class="callout-item">
-              <span class="callout-dot">🔴</span>
-              <span>Analyst Review Checks pinned/mixed in regardless of status</span>
-            </div>
-            <div class="callout-item">
-              <span class="callout-dot">🔴</span>
-              <span>Type filter is single-select only — can't view multiple categories at once</span>
-            </div>
-            <div class="callout-item">
-              <span class="callout-dot">🔴</span>
-              <span>Card view: only 3–4 findings visible without scrolling</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div><!-- /section 0 -->
-
-
-  <!-- ═══════════════════════════════════════════════════════ -->
-  <!-- SECTION 1: COMPACT HEADER + SMART SUMMARY              -->
-  <!-- ═══════════════════════════════════════════════════════ -->
-  <div class="section-block">
-    <div class="section-header">
-      <span class="section-badge">Section 1</span>
-      <span class="section-title">Compact Header + Smart Summary</span>
-    </div>
-    <div class="section-desc">
-      The redesigned modal header collapses scan history into a single navigation row and folds compliance details
-      into a dismissible drawer — pushing findings above the fold by default.
-    </div>
-
-    <div class="mockup-card">
-      <div class="mockup-card-header">Redesigned Modal Header — Scan Selector + Summary + Compliance Drawer</div>
-      <div class="mockup-body" style="display:flex;flex-direction:column;gap:10px;">
-
-        <!-- Compact scan selector bar -->
-        <div class="subsection-label">Compact Scan Selector Bar</div>
-        <div class="scan-selector-bar">
-          <button class="scan-nav-btn">← Previous</button>
-          <span class="scan-label">Scan #27</span>
-          <span class="scan-dot">·</span>
-          <span class="scan-meta">3/2/2026</span>
-          <span class="scan-dot">·</span>
-          <span class="scan-meta">20 findings</span>
-          <button class="scan-nav-btn" style="margin-left:4px;">Next →</button>
-          <a href="#" class="scan-all-link">▼ Show all scans</a>
-        </div>
-
-        <!-- Summary pills row -->
-        <div class="subsection-label mt-2">Severity Summary — Click to Filter</div>
-        <div style="background:white;border:1px solid var(--border);border-radius:6px;padding:10px 14px;">
-          <div class="summary-pills">
-            <span class="pill pill-high">🔴 3 High</span>
-            <span class="pill-sep">·</span>
-            <span class="pill pill-medium">🟡 5 Medium</span>
-            <span class="pill-sep">·</span>
-            <span class="pill pill-low">🟢 3 Low</span>
-            <span class="pill-sep">·</span>
-            <span class="pill pill-compliant">✓ 7 Compliant</span>
-          </div>
-          <div class="new-findings-notice">⚠ 3 New Findings since last scan</div>
-        </div>
-
-        <!-- Compliance drawer — COLLAPSED -->
-        <div class="subsection-label mt-2">Compliance Scan Summary — Collapsible Drawer</div>
-        <div class="compliance-drawer">
-          <div class="compliance-drawer-header">
-            <span>📋</span>
-            <span style="font-weight:700;">Compliance Scan Summary</span>
-            <span class="drawer-meta">— 8 violations out of 125 items checked</span>
-            <span class="drawer-toggle">▼ Show details</span>
-          </div>
-        </div>
-
-        <!-- Compliance drawer — EXPANDED (shown below for reference) -->
-        <div style="font-size:11px;color:#94A3B8;margin:4px 0 2px;font-style:italic;">↓ Expanded state (shown below for reference)</div>
-        <div class="compliance-drawer">
-          <div class="compliance-drawer-header open">
-            <span>📋</span>
-            <span style="font-weight:700;">Compliance Scan Summary</span>
-            <span class="drawer-meta">— 8 violations out of 125 items checked</span>
-            <span class="drawer-toggle">▲ Hide details</span>
-          </div>
-          <div class="compliance-drawer-body">
-            <!-- Keywords column -->
-            <div class="drawer-col">
-              <div class="drawer-col-title">Keywords (A–Z)</div>
-              <div class="drawer-item">Age gate</div>
-              <div class="drawer-item">CBD content</div>
-              <div class="drawer-item">Contact information</div>
-              <div class="drawer-item">Delta-8 THC</div>
-              <div class="drawer-item">External links</div>
-              <div class="drawer-item">FDA disclaimer</div>
-              <div class="drawer-item">Privacy policy</div>
-              <div class="drawer-item">Subscription model</div>
-              <div class="drawer-item">THC disclaimer</div>
-            </div>
-            <!-- Violative Terms column -->
-            <div class="drawer-col">
-              <div class="drawer-col-title">Violative Terms / Phrases (A–Z)</div>
-              <div class="drawer-item issue"><span class="drawer-item-badge badge-issue">✗</span>Cures anxiety</div>
-              <div class="drawer-item issue"><span class="drawer-item-badge badge-issue">✗</span>Get high legally</div>
-              <div class="drawer-item issue"><span class="drawer-item-badge badge-issue">✗</span>Medical-grade CBD</div>
-              <div class="drawer-item issue"><span class="drawer-item-badge badge-issue">✗</span>No prescription needed</div>
-              <div class="drawer-item compliant"><span class="drawer-item-badge badge-ok">✓</span>Broad spectrum</div>
-              <div class="drawer-item compliant"><span class="drawer-item-badge badge-ok">✓</span>Full spectrum</div>
-              <div class="drawer-item compliant"><span class="drawer-item-badge badge-ok">✓</span>Lab tested</div>
-              <div class="drawer-item compliant"><span class="drawer-item-badge badge-ok">✓</span>Third-party verified</div>
-            </div>
-            <!-- Compliance Checks column -->
-            <div class="drawer-col">
-              <div class="drawer-col-title">Compliance Checks — Issues First</div>
-              <div class="drawer-item issue"><span class="drawer-item-badge badge-issue">✗</span>Privacy policy present</div>
-              <div class="drawer-item issue"><span class="drawer-item-badge badge-issue">✗</span>Contact info visible</div>
-              <div class="drawer-item issue"><span class="drawer-item-badge badge-issue">✗</span>Age verification gate</div>
-              <div class="drawer-item issue"><span class="drawer-item-badge badge-issue">✗</span>External links reviewed</div>
-              <div class="drawer-item compliant"><span class="drawer-item-badge badge-ok">✓</span>FDA disclaimer present</div>
-              <div class="drawer-item compliant"><span class="drawer-item-badge badge-ok">✓</span>Lab results linked</div>
-              <div class="drawer-item compliant"><span class="drawer-item-badge badge-ok">✓</span>No medical claims</div>
-              <div class="drawer-item compliant"><span class="drawer-item-badge badge-ok">✓</span>Serving size disclosed</div>
-              <div class="drawer-item compliant"><span class="drawer-item-badge badge-ok">✓</span>THC level disclosed</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Annotation -->
-        <div class="annotation mt-2">
-          <span class="annotation-icon">💡</span>
-          <span><strong>Space savings:</strong> Scan history and compliance summary collapse to ~80px combined, pushing the findings list above the fold. Analysts see violations immediately without any manual scrolling.</span>
-        </div>
-      </div>
-    </div>
-  </div><!-- /section 1 -->
-
-
-  <!-- ═══════════════════════════════════════════════════════ -->
-  <!-- SECTION 1.5: LARGE MODAL TREATMENT                     -->
-  <!-- ═══════════════════════════════════════════════════════ -->
-  <div class="section-block">
-    <div class="section-header">
-      <span class="section-badge">Section 1.5</span>
-      <span class="section-title">Large Modal Treatment + Sticky Navigation Zones</span>
-    </div>
-    <div class="section-desc">
-      The modal expands to ~95% of screen width and height, giving analysts maximum findings density
-      without leaving the context of their current workflow. All four sticky bars remain visible while
-      scrolling through the findings list.
-    </div>
-
-    <div class="mockup-card" style="padding:0;overflow:hidden;">
-      <div class="mockup-card-header">Full-Screen Modal Treatment — Near-Fullscreen at 95vw × 92vh</div>
-      <div class="mockup-body" style="padding:16px 16px 20px;">
-
-        <!-- Large modal overlay container -->
-        <div class="modal-large-overlay">
-          <div class="modal-large">
-
-            <!-- ① Modal Header Bar (sticky, dark navy) -->
-            <div class="modal-sticky-header">
-              <div style="display:flex;align-items:center;gap:8px;">
-                <div style="width:28px;height:28px;background:#3B82F6;border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:white;flex-shrink:0;">Q</div>
-                <span style="font-size:14px;font-weight:700;letter-spacing:.01em;">Q-ScanAI Findings</span>
-              </div>
-              <div style="margin-left:auto;display:flex;align-items:center;gap:8px;">
-                <div style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);border-radius:6px;padding:5px 12px;font-size:12px;font-weight:600;color:white;cursor:pointer;display:flex;align-items:center;gap:6px;">
-                  🏢 Westtown Payments <span style="color:rgba(255,255,255,.6);font-size:10px;">▼</span>
-                </div>
-                <span style="color:rgba(255,255,255,.4);cursor:pointer;font-size:18px;padding:4px;" title="Expand to fullscreen">⤢</span>
-                <span style="color:rgba(255,255,255,.4);cursor:pointer;font-size:18px;padding:4px;" title="Close">✕</span>
-              </div>
-            </div>
-
-            <!-- ② Scan + Summary Bar (sticky) -->
-            <div class="modal-sticky-scan-bar">
-              <button style="background:none;border:1px solid #E2E8F0;border-radius:4px;padding:2px 8px;font-size:11px;cursor:pointer;color:#475569;">←</button>
-              <span style="font-weight:700;color:#0F172A;font-size:12px;">Scan #27</span>
-              <span style="color:#CBD5E1;">·</span>
-              <span style="color:#475569;">Mar 2, 2026</span>
-              <span style="color:#CBD5E1;">·</span>
-              <span style="color:#475569;">20 findings</span>
-              <button style="background:none;border:1px solid #E2E8F0;border-radius:4px;padding:2px 8px;font-size:11px;cursor:pointer;color:#475569;">→</button>
-              <button style="background:none;border:1px solid #E2E8F0;border-radius:4px;padding:3px 10px;font-size:11px;cursor:pointer;color:#475569;">Show all scans ▼</button>
-              <span style="color:#CBD5E1;margin:0 4px;">|</span>
-              <span style="color:#DC2626;font-weight:600;">🔴 3 High</span>
-              <span style="color:#CBD5E1;">·</span>
-              <span style="color:#D97706;font-weight:600;">🟡 5 Med</span>
-              <span style="color:#CBD5E1;">·</span>
-              <span style="color:#16A34A;font-weight:600;">🟢 3 Low</span>
-              <span style="color:#CBD5E1;">·</span>
-              <span style="color:#475569;font-weight:600;">✓ 7 Compliant</span>
-              <span style="color:#CBD5E1;">·</span>
-              <span style="color:#D97706;font-weight:600;">⚠ 3 New</span>
-            </div>
-
-            <!-- ③ Compliance Summary Drawer (collapsed) -->
-            <div style="padding:0 20px;height:38px;display:flex;align-items:center;gap:8px;border-bottom:1px solid #E2E8F0;background:#FFFBEB;flex-shrink:0;font-size:12px;">
-              <span>📋</span>
-              <span style="font-weight:700;color:#92400E;">Compliance Scan Summary</span>
-              <span style="color:#78350F;">— 8 violations · 125 items checked</span>
-              <button style="margin-left:auto;background:none;border:1px solid #D97706;border-radius:4px;padding:2px 10px;font-size:11px;color:#92400E;cursor:pointer;font-weight:600;">▼ Show details</button>
-            </div>
-
-            <!-- ④ Findings Toolbar (sticky) -->
-            <div class="modal-sticky-toolbar">
-              <span style="font-size:11px;color:#64748B;font-weight:600;">Sort:</span>
-              <button style="background:white;border:1px solid #E2E8F0;border-radius:4px;padding:4px 10px;font-size:11px;cursor:pointer;color:#1E3A5F;font-weight:600;">Priority ▼</button>
-              <span style="font-size:11px;color:#64748B;font-weight:600;margin-left:4px;">Type:</span>
-              <button style="background:white;border:1px solid #E2E8F0;border-radius:4px;padding:4px 10px;font-size:11px;cursor:pointer;color:#475569;">3 selected ▼</button>
-              <span style="font-size:11px;color:#64748B;font-weight:600;margin-left:4px;">Status:</span>
-              <button style="background:white;border:1px solid #E2E8F0;border-radius:4px;padding:4px 10px;font-size:11px;cursor:pointer;color:#475569;">All ▼</button>
-              <span style="font-size:11px;color:#64748B;font-weight:600;margin-left:4px;">Source:</span>
-              <button style="background:white;border:1px solid #E2E8F0;border-radius:4px;padding:4px 10px;font-size:11px;cursor:pointer;color:#475569;">All ▼</button>
-              <span style="color:#CBD5E1;margin:0 8px;">|</span>
-              <span style="font-size:11px;color:#64748B;font-weight:600;">View:</span>
-              <button style="background:#1E3A5F;border:1px solid #1E3A5F;border-radius:4px;padding:4px 10px;font-size:11px;cursor:pointer;color:white;font-weight:600;">≡ Table</button>
-              <button style="background:white;border:1px solid #E2E8F0;border-radius:4px 0 0 4px;padding:4px 10px;font-size:11px;cursor:pointer;color:#475569;">⊞ Cards</button>
-              <div style="margin-left:auto;display:flex;gap:6px;">
-                <button style="background:white;border:1px solid #E2E8F0;border-radius:4px;padding:4px 10px;font-size:11px;cursor:pointer;color:#475569;">⬆ Export</button>
-                <button style="background:#3B82F6;border:1px solid #3B82F6;border-radius:4px;padding:4px 10px;font-size:11px;cursor:pointer;color:white;font-weight:600;">+ Add Finding</button>
-              </div>
-            </div>
-
-            <!-- ⑤ Findings Table (scrollable, fills remaining height) -->
-            <div class="modal-findings-scroll">
-              <table class="findings-table" style="width:100%;border-collapse:collapse;">
-                <thead>
-                  <tr>
-                    <th style="width:32px;background:#1E3A5F;color:white;padding:10px 12px;text-align:left;font-size:11px;font-weight:600;"><input type="checkbox" style="accent-color:#94A3B8;"/></th>
-                    <th style="background:#1E3A5F;color:white;padding:10px 12px;text-align:left;font-size:11px;font-weight:600;">Severity</th>
-                    <th style="background:#1E3A5F;color:white;padding:10px 12px;text-align:left;font-size:11px;font-weight:600;">Finding Type</th>
-                    <th style="background:#1E3A5F;color:white;padding:10px 12px;text-align:left;font-size:11px;font-weight:600;">Source</th>
-                    <th style="background:#1E3A5F;color:white;padding:10px 12px;text-align:left;font-size:11px;font-weight:600;">Status</th>
-                    <th style="background:#1E3A5F;color:white;padding:10px 12px;text-align:left;font-size:11px;font-weight:600;">First Detected</th>
-                    <th style="background:#1E3A5F;color:white;padding:10px 12px;text-align:left;font-size:11px;font-weight:600;">Last Reviewed</th>
-                    <th style="background:#1E3A5F;color:white;padding:10px 12px;text-align:left;font-size:11px;font-weight:600;">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr class="row-high">
-                    <td style="padding:10px 12px;"><input type="checkbox"/></td>
-                    <td style="padding:10px 12px;"><span class="sev-badge sev-high">🔴 HIGH</span></td>
-                    <td style="padding:10px 12px;font-weight:600;color:var(--navy);">Privacy Policy Missing</td>
-                    <td style="padding:10px 12px;"><span class="mono" style="font-size:11px;color:#475569;">Q-AI Scan</span></td>
-                    <td style="padding:10px 12px;"><span class="status-badge status-new">● New Finding</span></td>
-                    <td style="padding:10px 12px;"><span class="mono text-muted" style="font-size:11px;">—</span></td>
-                    <td style="padding:10px 12px;"><span class="mono text-muted" style="font-size:11px;">10/30/2025</span></td>
-                    <td style="padding:10px 12px;"><button class="actions-btn">···</button></td>
-                  </tr>
-                  <tr class="row-high">
-                    <td style="padding:10px 12px;"><input type="checkbox"/></td>
-                    <td style="padding:10px 12px;"><span class="sev-badge sev-high">🔴 HIGH</span></td>
-                    <td style="padding:10px 12px;font-weight:600;color:var(--navy);">Contact Information</td>
-                    <td style="padding:10px 12px;"><span class="mono" style="font-size:11px;color:#475569;">Q-AI Scan</span></td>
-                    <td style="padding:10px 12px;"><span class="status-badge status-new">● New Finding</span></td>
-                    <td style="padding:10px 12px;"><span class="mono text-muted" style="font-size:11px;">—</span></td>
-                    <td style="padding:10px 12px;"><span class="mono text-muted" style="font-size:11px;">03/01/2026</span></td>
-                    <td style="padding:10px 12px;"><button class="actions-btn">···</button></td>
-                  </tr>
-                  <tr class="row-high">
-                    <td style="padding:10px 12px;"><input type="checkbox"/></td>
-                    <td style="padding:10px 12px;"><span class="sev-badge sev-high">🔴 HIGH</span></td>
-                    <td style="padding:10px 12px;font-weight:600;color:var(--navy);">External Links Review</td>
-                    <td style="padding:10px 12px;"><span class="mono" style="font-size:11px;color:#475569;">User Added</span></td>
-                    <td style="padding:10px 12px;"><span class="status-badge status-analyst">Analyst Review</span></td>
-                    <td style="padding:10px 12px;"><span class="mono text-muted" style="font-size:11px;">02/15/2026</span></td>
-                    <td style="padding:10px 12px;"><span class="reviewed-text">Reviewed by Rtq Admin 03/16</span></td>
-                    <td style="padding:10px 12px;"><button class="actions-btn">···</button></td>
-                  </tr>
-                  <tr class="row-medium">
-                    <td style="padding:10px 12px;"><input type="checkbox"/></td>
-                    <td style="padding:10px 12px;"><span class="sev-badge sev-medium">🟡 MED</span></td>
-                    <td style="padding:10px 12px;font-weight:600;color:var(--navy);">Violative Term</td>
-                    <td style="padding:10px 12px;"><span class="mono" style="font-size:11px;color:#475569;">Q-AI Scan</span></td>
-                    <td style="padding:10px 12px;"><span class="status-badge status-new">● New Finding</span></td>
-                    <td style="padding:10px 12px;"><span class="mono text-muted" style="font-size:11px;">—</span></td>
-                    <td style="padding:10px 12px;"><span class="mono text-muted" style="font-size:11px;">03/02/2026</span></td>
-                    <td style="padding:10px 12px;"><button class="actions-btn">···</button></td>
-                  </tr>
-                  <tr class="row-medium">
-                    <td style="padding:10px 12px;"><input type="checkbox"/></td>
-                    <td style="padding:10px 12px;"><span class="sev-badge sev-medium">🟡 MED</span></td>
-                    <td style="padding:10px 12px;font-weight:600;color:var(--navy);">Contact Information</td>
-                    <td style="padding:10px 12px;"><span class="mono" style="font-size:11px;color:#475569;">Q-AI Scan</span></td>
-                    <td style="padding:10px 12px;"><span class="status-badge status-returning">Returning</span></td>
-                    <td style="padding:10px 12px;"><span class="mono text-muted" style="font-size:11px;">10/30/2025</span></td>
-                    <td style="padding:10px 12px;"><span class="reviewed-text">Reviewed 02/27</span></td>
-                    <td style="padding:10px 12px;"><button class="actions-btn">···</button></td>
-                  </tr>
-                  <tr class="row-pending">
-                    <td style="padding:10px 12px;"><input type="checkbox"/></td>
-                    <td style="padding:10px 12px;"><span class="sev-badge sev-pending">⚠ PENDING</span></td>
-                    <td style="padding:10px 12px;font-weight:600;color:var(--navy);">Product Subscription Model</td>
-                    <td style="padding:10px 12px;"><span class="mono" style="font-size:11px;color:#475569;">Analyst Review</span></td>
-                    <td style="padding:10px 12px;"><span class="status-badge status-pending">Pending</span></td>
-                    <td style="padding:10px 12px;"><span class="mono text-muted" style="font-size:11px;">02/23/2026</span></td>
-                    <td style="padding:10px 12px;"><span class="reviewed-text">Quinn ALUM 02/23</span></td>
-                    <td style="padding:10px 12px;"><button class="actions-btn">···</button></td>
-                  </tr>
-                  <tr class="row-pending">
-                    <td style="padding:10px 12px;"><input type="checkbox"/></td>
-                    <td style="padding:10px 12px;"><span class="sev-badge sev-pending">⚠ PENDING</span></td>
-                    <td style="padding:10px 12px;font-weight:600;color:var(--navy);">THC Disclaimer</td>
-                    <td style="padding:10px 12px;"><span class="mono" style="font-size:11px;color:#475569;">Analyst Review</span></td>
-                    <td style="padding:10px 12px;"><span class="status-badge status-pending">Pending</span></td>
-                    <td style="padding:10px 12px;"><span class="mono text-muted" style="font-size:11px;">03/01/2026</span></td>
-                    <td style="padding:10px 12px;"><span class="mono text-muted" style="font-size:11px;">—</span></td>
-                    <td style="padding:10px 12px;"><button class="actions-btn">···</button></td>
-                  </tr>
-                  <tr class="row-compliant-toggle">
-                    <td colspan="8" style="padding:10px 12px;">▼ &nbsp;Show 7 Compliant findings</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-
-          </div><!-- /modal-large -->
-        </div><!-- /modal-large-overlay -->
-
-        <!-- Annotation -->
-        <div class="annotation mt-3">
-          <span class="annotation-icon">💡</span>
-          <span><strong>Large Modal Treatment:</strong> The modal expands to ~95% of screen width and height. All four sticky bars (header, scan+summary, compliance drawer, toolbar) remain visible while scrolling findings. The company selector in the header lets auditors switch between merchant accounts without closing — ideal for multi-merchant audit sessions. A ⤢ maximize icon (future: true fullscreen) sits before the close button.</span>
-        </div>
-      </div>
-    </div>
-  </div><!-- /section 1.5 -->
-
-
-  <!-- ═══════════════════════════════════════════════════════ -->
-  <!-- SECTION 2: SMART SORT — PRIORITY-FIRST FINDINGS        -->
-  <!-- ═══════════════════════════════════════════════════════ -->
-  <div class="section-block">
-    <div class="section-header">
-      <span class="section-badge">Section 2</span>
-      <span class="section-title">Smart Sort Order — Priority-First Findings List</span>
-    </div>
-    <div class="section-desc">
-      The default sort order surfaces what matters most immediately: unreviewed High findings first,
-      then Medium, then Analyst Review Pending items, then Low — with Compliant items collapsed by default.
-    </div>
-
-    <div class="mockup-card">
-      <div class="mockup-card-header">Findings List — Table View (Priority Sort Default)</div>
-      <div class="mockup-body" style="padding:16px;">
-
-        <!-- Sort/View Toolbar -->
-        <div class="findings-toolbar inner-spacer">
-          <span class="toolbar-label">Sort:</span>
-          <select class="toolbar-select" style="background:#1E3A5F;color:white;border-color:#1E3A5F;">
-            <option>Priority ▼</option>
-            <option>Date Detected</option>
-            <option>Type A–Z</option>
-            <option>Severity</option>
-          </select>
-          <span style="width:8px;"></span>
-          <span class="toolbar-label">View:</span>
-          <div class="view-toggle">
-            <button class="view-btn active">⊞ Table</button>
-            <button class="view-btn">▤ Cards</button>
-          </div>
-          <span style="width:8px;"></span>
-          <span class="toolbar-label">Type:</span>
-          <select class="toolbar-select">
-            <option>Multi-select ▼</option>
-          </select>
-          <span style="width:4px;"></span>
-          <select class="toolbar-select">
-            <option>Status: All ▼</option>
-          </select>
-          <select class="toolbar-select">
-            <option>Source: All ▼</option>
-          </select>
-          <div class="toolbar-spacer"></div>
-          <span style="font-size:11px;color:var(--text-muted);">8 findings</span>
-        </div>
-
-        <!-- Sort order legend -->
-        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;font-size:11px;color:var(--text-muted);align-items:center;">
-          <span style="font-weight:700;color:var(--navy);">Default priority order:</span>
-          <span style="color:#DC2626;font-weight:600;">🔴 HIGH New</span>
-          <span>→</span>
-          <span style="color:#DC2626;font-weight:600;">🔴 HIGH Existing</span>
-          <span>→</span>
-          <span style="color:#D97706;font-weight:600;">🟡 MED New</span>
-          <span>→</span>
-          <span style="color:#D97706;font-weight:600;">🟡 MED Existing</span>
-          <span>→</span>
-          <span style="color:#D97706;font-weight:600;">⚠ Analyst Pending</span>
-          <span>→</span>
-          <span style="color:#16A34A;font-weight:600;">🟢 LOW</span>
-          <span>→</span>
-          <span style="color:var(--text-muted);font-weight:600;">✓ Compliant (collapsed)</span>
-        </div>
-
-        <!-- Table -->
-        <div style="border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;">
-          <table class="findings-table">
-            <thead>
-              <tr>
-                <th><input type="checkbox" style="accent-color:#94A3B8;"/></th>
-                <th>Severity</th>
-                <th>Finding Type</th>
-                <th>Source</th>
-                <th>Status</th>
-                <th>First Detected</th>
-                <th>Last Reviewed</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <!-- Row 1: High New -->
-              <tr class="row-high">
-                <td><input type="checkbox"/></td>
-                <td><span class="sev-badge sev-high">🔴 HIGH</span></td>
-                <td style="font-weight:600;color:var(--navy);">Privacy Policy Missing</td>
-                <td><span class="mono" style="font-size:11px;color:#475569;">Q-AI Scan</span></td>
-                <td><span class="status-badge status-new">● New Finding</span></td>
-                <td><span class="mono text-muted" style="font-size:11px;">—</span></td>
-                <td><span class="mono text-muted" style="font-size:11px;">10/30/2025</span></td>
-                <td><button class="actions-btn">···</button></td>
-              </tr>
-              <!-- Row 2: High New -->
-              <tr class="row-high">
-                <td><input type="checkbox"/></td>
-                <td><span class="sev-badge sev-high">🔴 HIGH</span></td>
-                <td style="font-weight:600;color:var(--navy);">Contact Information</td>
-                <td><span class="mono" style="font-size:11px;color:#475569;">Q-AI Scan</span></td>
-                <td><span class="status-badge status-new">● New Finding</span></td>
-                <td><span class="mono text-muted" style="font-size:11px;">—</span></td>
-                <td><span class="mono text-muted" style="font-size:11px;">03/01/2026</span></td>
-                <td><button class="actions-btn">···</button></td>
-              </tr>
-              <!-- Row 3: High Analyst Review -->
-              <tr class="row-high">
-                <td><input type="checkbox"/></td>
-                <td><span class="sev-badge sev-high">🔴 HIGH</span></td>
-                <td style="font-weight:600;color:var(--navy);">External Links Review</td>
-                <td><span class="mono" style="font-size:11px;color:#475569;">User Added</span></td>
-                <td><span class="status-badge status-analyst">Analyst Review</span></td>
-                <td><span class="mono text-muted" style="font-size:11px;">02/15/2026</span></td>
-                <td>
-                  <span class="reviewed-text">Reviewed by Rtq Admin 03/16</span>
-                </td>
-                <td><button class="actions-btn">···</button></td>
-              </tr>
-              <!-- Row 4: Med New -->
-              <tr class="row-medium">
-                <td><input type="checkbox"/></td>
-                <td><span class="sev-badge sev-medium">🟡 MED</span></td>
-                <td style="font-weight:600;color:var(--navy);">Violative Term</td>
-                <td><span class="mono" style="font-size:11px;color:#475569;">Q-AI Scan</span></td>
-                <td><span class="status-badge status-new">● New Finding</span></td>
-                <td><span class="mono text-muted" style="font-size:11px;">—</span></td>
-                <td><span class="mono text-muted" style="font-size:11px;">03/02/2026</span></td>
-                <td><button class="actions-btn">···</button></td>
-              </tr>
-              <!-- Row 5: Med Returning -->
-              <tr class="row-medium">
-                <td><input type="checkbox"/></td>
-                <td><span class="sev-badge sev-medium">🟡 MED</span></td>
-                <td style="font-weight:600;color:var(--navy);">Contact Information</td>
-                <td><span class="mono" style="font-size:11px;color:#475569;">Q-AI Scan</span></td>
-                <td><span class="status-badge status-returning">Returning</span></td>
-                <td><span class="mono text-muted" style="font-size:11px;">10/30/2025</span></td>
-                <td><span class="reviewed-text">Reviewed 02/27</span></td>
-                <td><button class="actions-btn">···</button></td>
-              </tr>
-              <!-- Row 6: Analyst Pending -->
-              <tr class="row-pending">
-                <td><input type="checkbox"/></td>
-                <td><span class="sev-badge sev-pending">⚠ PENDING</span></td>
-                <td style="font-weight:600;color:var(--navy);">Product Subscription Model</td>
-                <td><span class="mono" style="font-size:11px;color:#475569;">Analyst Review</span></td>
-                <td><span class="status-badge status-pending">Pending</span></td>
-                <td><span class="mono text-muted" style="font-size:11px;">02/23/2026</span></td>
-                <td><span class="reviewed-text">Quinn ALUM 02/23</span></td>
-                <td><button class="actions-btn">···</button></td>
-              </tr>
-              <!-- Row 7: Analyst Pending -->
-              <tr class="row-pending">
-                <td><input type="checkbox"/></td>
-                <td><span class="sev-badge sev-pending">⚠ PENDING</span></td>
-                <td style="font-weight:600;color:var(--navy);">THC Disclaimer</td>
-                <td><span class="mono" style="font-size:11px;color:#475569;">Analyst Review</span></td>
-                <td><span class="status-badge status-pending">Pending</span></td>
-                <td><span class="mono text-muted" style="font-size:11px;">03/01/2026</span></td>
-                <td><span class="mono text-muted" style="font-size:11px;">—</span></td>
-                <td><button class="actions-btn">···</button></td>
-              </tr>
-              <!-- Row 8: Compliant collapsed toggle -->
-              <tr class="row-compliant-toggle">
-                <td colspan="8">▼ &nbsp;Show 7 Compliant findings</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <!-- Annotation -->
-        <div class="annotation mt-3">
-          <span class="annotation-icon">💡</span>
-          <span><strong>Priority sort</strong> puts unreviewed High findings first, Pending analyst checks before Low, and collapses Compliant items — reducing scroll to zero for the issues that matter. Analysts can triage the entire list in a single viewport.</span>
-        </div>
-      </div>
-    </div>
-  </div><!-- /section 2 -->
-
-
-  <!-- ═══════════════════════════════════════════════════════ -->
-  <!-- SECTION 2.5: ANALYST REVIEW QUICK FILTERS              -->
-  <!-- ═══════════════════════════════════════════════════════ -->
-  <div class="section-block">
-    <div class="section-header">
-      <span class="section-badge">Section 2.5</span>
-      <span class="section-title">Analyst Review Check Quick Filters</span>
-    </div>
-    <div class="section-desc">
-      The ⚠ Analyst Review pill in the summary bar instantly isolates all analyst-triggered findings.
-      A secondary sub-filter bar, inline severity dropdowns, and bulk actions let analysts process
-      a queue of pending checks in seconds — without opening each finding individually.
-    </div>
-
-    <!-- Part A: Summary bar — two states side by side -->
-    <div class="mockup-card">
-      <div class="mockup-card-header">
-        <span>Part A — Summary Bar: ⚠ Analyst Review Pill (Inactive vs Active)</span>
-        <span style="font-size:11px;font-weight:400;opacity:0.7;">Click to filter · Two states</span>
-      </div>
-      <div class="mockup-body" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
-
-        <!-- State 1: Pill inactive -->
-        <div>
-          <div style="font-size:11px;font-weight:600;color:#64748B;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">Pill Inactive (default)</div>
-          <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:6px;padding:10px 14px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:12px;">
-            <button style="background:none;border:1px solid #E2E8F0;border-radius:4px;padding:2px 8px;font-size:11px;cursor:pointer;color:#475569;">←</button>
-            <span style="font-weight:700;color:#0F172A;font-size:12px;">Scan #27</span>
-            <span style="color:#CBD5E1;">·</span>
-            <span style="color:#475569;">Mar 2, 2026</span>
-            <span style="color:#CBD5E1;">·</span>
-            <span style="color:#475569;">20 findings</span>
-            <button style="background:none;border:1px solid #E2E8F0;border-radius:4px;padding:2px 8px;font-size:11px;cursor:pointer;color:#475569;">→</button>
-            <span style="color:#CBD5E1;margin:0 2px;">|</span>
-            <!-- Severity pills -->
-            <span style="background:#FEE2E2;border:1px solid #FECACA;border-radius:4px;padding:2px 8px;font-size:11px;color:#DC2626;font-weight:700;cursor:pointer;">🔴 3 High</span>
-            <span style="color:#CBD5E1;">·</span>
-            <span style="background:#FEF3C7;border:1px solid #FDE68A;border-radius:4px;padding:2px 8px;font-size:11px;color:#92400E;font-weight:700;cursor:pointer;">🟡 5 Medium</span>
-            <span style="color:#CBD5E1;">·</span>
-            <span style="background:#DCFCE7;border:1px solid #BBF7D0;border-radius:4px;padding:2px 8px;font-size:11px;color:#16A34A;font-weight:700;cursor:pointer;">🟢 3 Low</span>
-            <span style="color:#CBD5E1;">·</span>
-            <span style="background:#F1F5F9;border:1px solid #E2E8F0;border-radius:4px;padding:2px 8px;font-size:11px;color:#475569;font-weight:700;cursor:pointer;">✓ 7 Compliant</span>
-            <span style="color:#CBD5E1;">·</span>
-            <!-- Analyst Review pill — inactive -->
-            <span style="background:#FEF3C7;border:1px solid #FDE68A;border-radius:4px;padding:2px 8px;font-size:11px;color:#92400E;font-weight:700;cursor:pointer;">⚠ 4 Analyst Review</span>
-          </div>
-        </div>
-
-        <!-- State 2: Pill active -->
-        <div>
-          <div style="font-size:11px;font-weight:600;color:#D97706;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">Pill Active (clicked — list filtered)</div>
-          <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:6px;padding:10px 14px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:12px;">
-            <button style="background:none;border:1px solid #E2E8F0;border-radius:4px;padding:2px 8px;font-size:11px;cursor:pointer;color:#475569;">←</button>
-            <span style="font-weight:700;color:#0F172A;font-size:12px;">Scan #27</span>
-            <span style="color:#CBD5E1;">·</span>
-            <span style="color:#475569;">Mar 2, 2026</span>
-            <span style="color:#CBD5E1;">·</span>
-            <span style="color:#475569;">20 findings</span>
-            <button style="background:none;border:1px solid #E2E8F0;border-radius:4px;padding:2px 8px;font-size:11px;cursor:pointer;color:#475569;">→</button>
-            <span style="color:#CBD5E1;margin:0 2px;">|</span>
-            <!-- Severity pills — dimmed when analyst filter is active -->
-            <span style="background:#F1F5F9;border:1px solid #E2E8F0;border-radius:4px;padding:2px 8px;font-size:11px;color:#94A3B8;font-weight:700;cursor:pointer;">🔴 3 High</span>
-            <span style="color:#CBD5E1;">·</span>
-            <span style="background:#F1F5F9;border:1px solid #E2E8F0;border-radius:4px;padding:2px 8px;font-size:11px;color:#94A3B8;font-weight:700;cursor:pointer;">🟡 5 Medium</span>
-            <span style="color:#CBD5E1;">·</span>
-            <span style="background:#F1F5F9;border:1px solid #E2E8F0;border-radius:4px;padding:2px 8px;font-size:11px;color:#94A3B8;font-weight:700;cursor:pointer;">🟢 3 Low</span>
-            <span style="color:#CBD5E1;">·</span>
-            <span style="background:#F1F5F9;border:1px solid #E2E8F0;border-radius:4px;padding:2px 8px;font-size:11px;color:#94A3B8;font-weight:700;cursor:pointer;">✓ 7 Compliant</span>
-            <span style="color:#CBD5E1;">·</span>
-            <!-- Analyst Review pill — active/filled -->
-            <span style="background:#D97706;border:1px solid #D97706;border-radius:4px;padding:2px 8px;font-size:11px;color:white;font-weight:700;cursor:pointer;box-shadow:0 1px 4px rgba(217,119,6,.3);">⚠ 4 Analyst Review ✕</span>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- Part B: Sub-filter bar -->
-    <div class="mockup-card">
-      <div class="mockup-card-header">
-        <span>Part B — Analyst Review Sub-Filter Bar (appears when pill is active)</span>
-        <span style="font-size:11px;font-weight:400;opacity:0.7;">Slides in below summary row</span>
-      </div>
-      <div class="mockup-body">
-        <!-- Summary bar (active state, compact) -->
-        <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:6px 6px 0 0;padding:10px 14px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:12px;border-bottom:none;">
-          <span style="font-weight:700;color:#0F172A;font-size:12px;">Scan #27</span>
-          <span style="color:#CBD5E1;">·</span>
-          <span style="color:#475569;">Mar 2, 2026 · 20 findings</span>
-          <span style="color:#CBD5E1;margin:0 2px;">|</span>
-          <span style="background:#F1F5F9;border:1px solid #E2E8F0;border-radius:4px;padding:2px 8px;font-size:11px;color:#94A3B8;font-weight:700;">🔴 3 High</span>
-          <span style="color:#CBD5E1;">·</span>
-          <span style="background:#F1F5F9;border:1px solid #E2E8F0;border-radius:4px;padding:2px 8px;font-size:11px;color:#94A3B8;font-weight:700;">🟡 5 Medium</span>
-          <span style="color:#CBD5E1;">·</span>
-          <span style="background:#F1F5F9;border:1px solid #E2E8F0;border-radius:4px;padding:2px 8px;font-size:11px;color:#94A3B8;font-weight:700;">🟢 3 Low</span>
-          <span style="color:#CBD5E1;">·</span>
-          <span style="background:#F1F5F9;border:1px solid #E2E8F0;border-radius:4px;padding:2px 8px;font-size:11px;color:#94A3B8;font-weight:700;">✓ 7 Compliant</span>
-          <span style="color:#CBD5E1;">·</span>
-          <span style="background:#D97706;border:1px solid #D97706;border-radius:4px;padding:2px 8px;font-size:11px;color:white;font-weight:700;">⚠ 4 Analyst Review ✕</span>
-        </div>
-
-        <!-- Sub-filter bar — slides in -->
-        <div style="border-left:3px solid #D97706;background:#FFFBEB;border:1px solid #FDE68A;border-left:3px solid #D97706;border-radius:0 0 6px 6px;padding:8px 14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:12px;">
-          <span style="font-size:11px;font-weight:700;color:#92400E;text-transform:uppercase;letter-spacing:.04em;flex-shrink:0;">Show:</span>
-
-          <!-- Status tabs -->
-          <div style="display:flex;gap:4px;">
-            <button style="background:#D97706;border:1px solid #D97706;border-radius:4px;padding:3px 10px;font-size:11px;font-weight:700;color:white;cursor:pointer;">Pending <span style="background:rgba(255,255,255,.25);border-radius:3px;padding:1px 5px;font-size:10px;margin-left:2px;">●4</span></button>
-            <button style="background:white;border:1px solid #E2E8F0;border-radius:4px;padding:3px 10px;font-size:11px;font-weight:600;color:#64748B;cursor:pointer;">Reviewed <span style="background:#E2E8F0;border-radius:3px;padding:1px 5px;font-size:10px;margin-left:2px;color:#475569;">●2</span></button>
-            <button style="background:white;border:1px solid #BBF7D0;border-radius:4px;padding:3px 10px;font-size:11px;font-weight:600;color:#16A34A;cursor:pointer;">Cleared <span style="background:#DCFCE7;border-radius:3px;padding:1px 5px;font-size:10px;margin-left:2px;">●1</span></button>
-          </div>
-
-          <!-- Divider -->
-          <span style="color:#FDE68A;font-size:14px;margin:0 2px;">|</span>
-
-          <!-- Assigned to -->
-          <span style="font-size:11px;font-weight:700;color:#92400E;flex-shrink:0;">Assigned to:</span>
-          <button style="background:white;border:1px solid #FDE68A;border-radius:4px;padding:3px 10px;font-size:11px;color:#92400E;font-weight:600;cursor:pointer;">All reviewers ▼</button>
-
-          <!-- Divider -->
-          <span style="color:#FDE68A;font-size:14px;margin:0 2px;">|</span>
-
-          <!-- Sort -->
-          <span style="font-size:11px;font-weight:700;color:#92400E;flex-shrink:0;">Sort:</span>
-          <button style="background:white;border:1px solid #FDE68A;border-radius:4px;padding:3px 10px;font-size:11px;color:#92400E;font-weight:600;cursor:pointer;">Oldest first ▼</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Part C: Filtered findings list -->
-    <div class="mockup-card">
-      <div class="mockup-card-header">
-        <span>Part C — Filtered Findings List (Analyst Review · Pending · Oldest First)</span>
-        <span style="font-size:11px;font-weight:400;opacity:0.7;">4 rows · amber highlight · inline severity dropdown</span>
-      </div>
-      <div class="mockup-body" style="padding:0;overflow:hidden;">
-
-        <!-- Info banner -->
-        <div style="background:#EFF6FF;border-bottom:1px solid #BFDBFE;padding:8px 16px;font-size:11px;color:#1E40AF;font-weight:600;display:flex;align-items:center;gap:6px;">
-          <span>ℹ</span>
-          <span>Showing 4 Analyst Review findings · 4 Pending · Sorted by oldest first</span>
-        </div>
-
-        <!-- Table -->
-        <table style="width:100%;border-collapse:collapse;font-size:12px;">
-          <thead>
-            <tr>
-              <th style="width:32px;background:#1E3A5F;color:white;padding:9px 12px;text-align:left;font-size:11px;font-weight:600;"><input type="checkbox"/></th>
-              <th style="background:#1E3A5F;color:white;padding:9px 12px;text-align:left;font-size:11px;font-weight:600;">Severity</th>
-              <th style="background:#1E3A5F;color:white;padding:9px 12px;text-align:left;font-size:11px;font-weight:600;">Finding</th>
-              <th style="background:#1E3A5F;color:white;padding:9px 12px;text-align:left;font-size:11px;font-weight:600;">Source</th>
-              <th style="background:#1E3A5F;color:white;padding:9px 12px;text-align:left;font-size:11px;font-weight:600;">Status</th>
-              <th style="background:#1E3A5F;color:white;padding:9px 12px;text-align:left;font-size:11px;font-weight:600;">First Detected</th>
-              <th style="background:#1E3A5F;color:white;padding:9px 12px;text-align:left;font-size:11px;font-weight:600;">Assigned</th>
-              <th style="background:#1E3A5F;color:white;padding:9px 12px;text-align:left;font-size:11px;font-weight:600;">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- Row 1 -->
-            <tr style="background:#FFFBEB;border-left:3px solid #D97706;">
-              <td style="padding:10px 12px;"><input type="checkbox"/></td>
-              <td style="padding:10px 12px;">
-                <span style="background:#FEF3C7;border:1px solid #FDE68A;border-radius:4px;padding:2px 7px;font-size:10px;font-weight:700;color:#92400E;">⚠ PENDING</span>
-              </td>
-              <td style="padding:10px 12px;font-weight:600;color:#0F172A;">Product Subscription Model</td>
-              <td style="padding:10px 12px;"><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#475569;">User Added</span></td>
-              <td style="padding:10px 12px;">
-                <!-- Inline severity dropdown -->
-                <div style="position:relative;display:inline-block;">
-                  <button style="background:white;border:1px solid #FDE68A;border-radius:4px;padding:3px 10px;font-size:11px;color:#92400E;font-weight:600;cursor:pointer;white-space:nowrap;">Pending ▼</button>
-                </div>
-              </td>
-              <td style="padding:10px 12px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#475569;">02/15/2026</td>
-              <td style="padding:10px 12px;font-size:11px;color:#94A3B8;">—</td>
-              <td style="padding:10px 12px;"><button style="background:none;border:1px solid #E2E8F0;border-radius:4px;padding:3px 8px;font-size:11px;color:#475569;cursor:pointer;">···</button></td>
-            </tr>
-            <!-- Row 2 -->
-            <tr style="background:#FFFBEB;border-left:3px solid #D97706;border-top:1px solid #FEF3C7;">
-              <td style="padding:10px 12px;"><input type="checkbox"/></td>
-              <td style="padding:10px 12px;">
-                <span style="background:#FEF3C7;border:1px solid #FDE68A;border-radius:4px;padding:2px 7px;font-size:10px;font-weight:700;color:#92400E;">⚠ PENDING</span>
-              </td>
-              <td style="padding:10px 12px;font-weight:600;color:#0F172A;">THC Disclaimer</td>
-              <td style="padding:10px 12px;"><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#475569;">Analyst Review</span></td>
-              <td style="padding:10px 12px;">
-                <div style="position:relative;display:inline-block;">
-                  <button style="background:white;border:1px solid #FDE68A;border-radius:4px;padding:3px 10px;font-size:11px;color:#92400E;font-weight:600;cursor:pointer;white-space:nowrap;">Pending ▼</button>
-                </div>
-              </td>
-              <td style="padding:10px 12px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#475569;">02/23/2026</td>
-              <td style="padding:10px 12px;font-size:11px;color:#475569;font-weight:600;">Quinn A.</td>
-              <td style="padding:10px 12px;"><button style="background:none;border:1px solid #E2E8F0;border-radius:4px;padding:3px 8px;font-size:11px;color:#475569;cursor:pointer;">···</button></td>
-            </tr>
-            <!-- Row 3 -->
-            <tr style="background:#FFFBEB;border-left:3px solid #D97706;border-top:1px solid #FEF3C7;">
-              <td style="padding:10px 12px;"><input type="checkbox"/></td>
-              <td style="padding:10px 12px;">
-                <span style="background:#FEF3C7;border:1px solid #FDE68A;border-radius:4px;padding:2px 7px;font-size:10px;font-weight:700;color:#92400E;">⚠ PENDING</span>
-              </td>
-              <td style="padding:10px 12px;font-weight:600;color:#0F172A;">External Links Review</td>
-              <td style="padding:10px 12px;"><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#475569;">User Added</span></td>
-              <td style="padding:10px 12px;">
-                <div style="position:relative;display:inline-block;">
-                  <button style="background:white;border:1px solid #FDE68A;border-radius:4px;padding:3px 10px;font-size:11px;color:#92400E;font-weight:600;cursor:pointer;white-space:nowrap;">Pending ▼</button>
-                </div>
-              </td>
-              <td style="padding:10px 12px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#475569;">03/01/2026</td>
-              <td style="padding:10px 12px;font-size:11px;color:#94A3B8;">—</td>
-              <td style="padding:10px 12px;"><button style="background:none;border:1px solid #E2E8F0;border-radius:4px;padding:3px 8px;font-size:11px;color:#475569;cursor:pointer;">···</button></td>
-            </tr>
-            <!-- Row 4 -->
-            <tr style="background:#FFFBEB;border-left:3px solid #D97706;border-top:1px solid #FEF3C7;">
-              <td style="padding:10px 12px;"><input type="checkbox"/></td>
-              <td style="padding:10px 12px;">
-                <span style="background:#FEF3C7;border:1px solid #FDE68A;border-radius:4px;padding:2px 7px;font-size:10px;font-weight:700;color:#92400E;">⚠ PENDING</span>
-              </td>
-              <td style="padding:10px 12px;font-weight:600;color:#0F172A;">Age Verification</td>
-              <td style="padding:10px 12px;"><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#475569;">Analyst Review</span></td>
-              <td style="padding:10px 12px;">
-                <div style="position:relative;display:inline-block;">
-                  <button style="background:white;border:1px solid #FDE68A;border-radius:4px;padding:3px 10px;font-size:11px;color:#92400E;font-weight:600;cursor:pointer;white-space:nowrap;">Pending ▼</button>
-                </div>
-              </td>
-              <td style="padding:10px 12px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#475569;">03/02/2026</td>
-              <td style="padding:10px 12px;font-size:11px;color:#94A3B8;">—</td>
-              <td style="padding:10px 12px;"><button style="background:none;border:1px solid #E2E8F0;border-radius:4px;padding:3px 8px;font-size:11px;color:#475569;cursor:pointer;">···</button></td>
-            </tr>
-          </tbody>
-        </table>
-
-        <!-- Inline severity dropdown (shown open, floating) -->
-        <div style="margin:12px 16px;padding:10px 14px;background:white;border:1px solid #FDE68A;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,.12);display:inline-flex;flex-direction:column;gap:2px;min-width:140px;">
-          <div style="font-size:10px;font-weight:700;color:#92400E;text-transform:uppercase;letter-spacing:.05em;padding-bottom:6px;border-bottom:1px solid #FEF3C7;margin-bottom:4px;">Set Severity</div>
-          <button style="text-align:left;background:none;border:none;padding:5px 8px;font-size:12px;font-weight:700;color:#DC2626;cursor:pointer;border-radius:4px;display:flex;align-items:center;gap:6px;"><span style="background:#FEE2E2;border-radius:3px;padding:1px 5px;font-size:10px;">🔴</span> High</button>
-          <button style="text-align:left;background:#FEF3C7;border:none;padding:5px 8px;font-size:12px;font-weight:700;color:#D97706;cursor:pointer;border-radius:4px;display:flex;align-items:center;gap:6px;"><span style="background:#FDE68A;border-radius:3px;padding:1px 5px;font-size:10px;">🟡</span> Medium</button>
-          <button style="text-align:left;background:none;border:none;padding:5px 8px;font-size:12px;font-weight:700;color:#16A34A;cursor:pointer;border-radius:4px;display:flex;align-items:center;gap:6px;"><span style="background:#DCFCE7;border-radius:3px;padding:1px 5px;font-size:10px;">🟢</span> Low</button>
-          <div style="border-top:1px solid #F1F5F9;margin-top:4px;padding-top:4px;">
-            <button style="text-align:left;background:none;border:none;padding:5px 8px;font-size:12px;color:#94A3B8;cursor:pointer;width:100%;border-radius:4px;">— Clear</button>
-          </div>
-        </div>
-        <div style="font-size:11px;color:#94A3B8;font-style:italic;margin:0 16px 16px;padding-top:4px;">↑ Inline severity dropdown — set High / Medium / Low directly from the row, no modal required.</div>
-      </div>
-    </div>
-
-    <!-- Part D: Bulk action bar (3 rows selected) -->
-    <div class="mockup-card">
-      <div class="mockup-card-header">
-        <span>Part D — Bulk Action Bar (3 rows selected) + Set Severity Dropdown Open</span>
-        <span style="font-size:11px;font-weight:400;opacity:0.7;">Rows 1, 3, 4 checked · bulk-process queue</span>
-      </div>
-      <div class="mockup-body" style="padding:0;overflow:hidden;">
-
-        <!-- Bulk action bar -->
-        <div style="background:#EFF6FF;border-bottom:1px solid #BFDBFE;padding:8px 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-          <span style="font-size:12px;font-weight:700;color:#1E40AF;">3 selected</span>
-          <span style="color:#BFDBFE;">·</span>
-
-          <!-- Set Severity dropdown (shown open) -->
-          <div style="position:relative;display:inline-block;">
-            <button style="background:#3B82F6;border:1px solid #2563EB;border-radius:4px;padding:4px 12px;font-size:11px;font-weight:700;color:white;cursor:pointer;">Set Severity ▲</button>
-            <!-- Dropdown open -->
-            <div style="position:absolute;top:100%;left:0;margin-top:4px;background:white;border:1px solid #BFDBFE;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,.12);z-index:10;min-width:130px;overflow:hidden;">
-              <div style="padding:6px 10px;font-size:10px;font-weight:700;color:#1E40AF;text-transform:uppercase;letter-spacing:.05em;background:#EFF6FF;border-bottom:1px solid #BFDBFE;">Set Severity</div>
-              <button style="display:block;width:100%;text-align:left;background:none;border:none;padding:7px 12px;font-size:12px;font-weight:700;color:#DC2626;cursor:pointer;">🔴 High</button>
-              <button style="display:block;width:100%;text-align:left;background:none;border:none;padding:7px 12px;font-size:12px;font-weight:700;color:#D97706;cursor:pointer;background:#FEF9F0;">🟡 Medium</button>
-              <button style="display:block;width:100%;text-align:left;background:none;border:none;padding:7px 12px;font-size:12px;font-weight:700;color:#16A34A;cursor:pointer;">🟢 Low</button>
-              <div style="border-top:1px solid #F1F5F9;">
-                <button style="display:block;width:100%;text-align:left;background:none;border:none;padding:7px 12px;font-size:12px;color:#94A3B8;cursor:pointer;">— Clear</button>
-              </div>
-            </div>
-          </div>
-
-          <button style="background:white;border:1px solid #BFDBFE;border-radius:4px;padding:4px 12px;font-size:11px;font-weight:600;color:#1E40AF;cursor:pointer;">Assign to ▼</button>
-          <button style="background:white;border:1px solid #BFDBFE;border-radius:4px;padding:4px 12px;font-size:11px;font-weight:600;color:#1E40AF;cursor:pointer;">Mark Reviewed</button>
-          <button style="background:none;border:1px solid #BFDBFE;border-radius:4px;padding:4px 12px;font-size:11px;font-weight:600;color:#64748B;cursor:pointer;margin-left:auto;">Clear All</button>
-        </div>
-
-        <!-- Info banner -->
-        <div style="background:#EFF6FF;border-bottom:1px solid #BFDBFE;padding:6px 16px;font-size:11px;color:#1E40AF;font-weight:600;display:flex;align-items:center;gap:6px;">
-          <span>ℹ</span>
-          <span>Showing 4 Analyst Review findings · 4 Pending · Sorted by oldest first</span>
-        </div>
-
-        <!-- Table (with 3 rows checked) -->
-        <table style="width:100%;border-collapse:collapse;font-size:12px;">
-          <thead>
-            <tr>
-              <th style="width:32px;background:#1E3A5F;color:white;padding:9px 12px;text-align:left;font-size:11px;font-weight:600;"><input type="checkbox" checked style="accent-color:#3B82F6;"/></th>
-              <th style="background:#1E3A5F;color:white;padding:9px 12px;text-align:left;font-size:11px;font-weight:600;">Severity</th>
-              <th style="background:#1E3A5F;color:white;padding:9px 12px;text-align:left;font-size:11px;font-weight:600;">Finding</th>
-              <th style="background:#1E3A5F;color:white;padding:9px 12px;text-align:left;font-size:11px;font-weight:600;">Source</th>
-              <th style="background:#1E3A5F;color:white;padding:9px 12px;text-align:left;font-size:11px;font-weight:600;">Status</th>
-              <th style="background:#1E3A5F;color:white;padding:9px 12px;text-align:left;font-size:11px;font-weight:600;">First Detected</th>
-              <th style="background:#1E3A5F;color:white;padding:9px 12px;text-align:left;font-size:11px;font-weight:600;">Assigned</th>
-              <th style="background:#1E3A5F;color:white;padding:9px 12px;text-align:left;font-size:11px;font-weight:600;">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- Row 1 — checked -->
-            <tr style="background:#EFF6FF;border-left:3px solid #3B82F6;outline:1px solid #BFDBFE;">
-              <td style="padding:10px 12px;"><input type="checkbox" checked style="accent-color:#3B82F6;"/></td>
-              <td style="padding:10px 12px;"><span style="background:#FEF3C7;border:1px solid #FDE68A;border-radius:4px;padding:2px 7px;font-size:10px;font-weight:700;color:#92400E;">⚠ PENDING</span></td>
-              <td style="padding:10px 12px;font-weight:600;color:#0F172A;">Product Subscription Model</td>
-              <td style="padding:10px 12px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#475569;">User Added</td>
-              <td style="padding:10px 12px;"><button style="background:white;border:1px solid #FDE68A;border-radius:4px;padding:3px 10px;font-size:11px;color:#92400E;font-weight:600;cursor:pointer;">Pending ▼</button></td>
-              <td style="padding:10px 12px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#475569;">02/15/2026</td>
-              <td style="padding:10px 12px;font-size:11px;color:#94A3B8;">—</td>
-              <td style="padding:10px 12px;"><button style="background:none;border:1px solid #E2E8F0;border-radius:4px;padding:3px 8px;font-size:11px;color:#475569;cursor:pointer;">···</button></td>
-            </tr>
-            <!-- Row 2 — unchecked -->
-            <tr style="background:#FFFBEB;border-left:3px solid #D97706;border-top:1px solid #FEF3C7;">
-              <td style="padding:10px 12px;"><input type="checkbox"/></td>
-              <td style="padding:10px 12px;"><span style="background:#FEF3C7;border:1px solid #FDE68A;border-radius:4px;padding:2px 7px;font-size:10px;font-weight:700;color:#92400E;">⚠ PENDING</span></td>
-              <td style="padding:10px 12px;font-weight:600;color:#0F172A;">THC Disclaimer</td>
-              <td style="padding:10px 12px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#475569;">Analyst Review</td>
-              <td style="padding:10px 12px;"><button style="background:white;border:1px solid #FDE68A;border-radius:4px;padding:3px 10px;font-size:11px;color:#92400E;font-weight:600;cursor:pointer;">Pending ▼</button></td>
-              <td style="padding:10px 12px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#475569;">02/23/2026</td>
-              <td style="padding:10px 12px;font-size:11px;color:#475569;font-weight:600;">Quinn A.</td>
-              <td style="padding:10px 12px;"><button style="background:none;border:1px solid #E2E8F0;border-radius:4px;padding:3px 8px;font-size:11px;color:#475569;cursor:pointer;">···</button></td>
-            </tr>
-            <!-- Row 3 — checked -->
-            <tr style="background:#EFF6FF;border-left:3px solid #3B82F6;outline:1px solid #BFDBFE;border-top:1px solid #BFDBFE;">
-              <td style="padding:10px 12px;"><input type="checkbox" checked style="accent-color:#3B82F6;"/></td>
-              <td style="padding:10px 12px;"><span style="background:#FEF3C7;border:1px solid #FDE68A;border-radius:4px;padding:2px 7px;font-size:10px;font-weight:700;color:#92400E;">⚠ PENDING</span></td>
-              <td style="padding:10px 12px;font-weight:600;color:#0F172A;">External Links Review</td>
-              <td style="padding:10px 12px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#475569;">User Added</td>
-              <td style="padding:10px 12px;"><button style="background:white;border:1px solid #FDE68A;border-radius:4px;padding:3px 10px;font-size:11px;color:#92400E;font-weight:600;cursor:pointer;">Pending ▼</button></td>
-              <td style="padding:10px 12px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#475569;">03/01/2026</td>
-              <td style="padding:10px 12px;font-size:11px;color:#94A3B8;">—</td>
-              <td style="padding:10px 12px;"><button style="background:none;border:1px solid #E2E8F0;border-radius:4px;padding:3px 8px;font-size:11px;color:#475569;cursor:pointer;">···</button></td>
-            </tr>
-            <!-- Row 4 — checked -->
-            <tr style="background:#EFF6FF;border-left:3px solid #3B82F6;outline:1px solid #BFDBFE;border-top:1px solid #BFDBFE;">
-              <td style="padding:10px 12px;"><input type="checkbox" checked style="accent-color:#3B82F6;"/></td>
-              <td style="padding:10px 12px;"><span style="background:#FEF3C7;border:1px solid #FDE68A;border-radius:4px;padding:2px 7px;font-size:10px;font-weight:700;color:#92400E;">⚠ PENDING</span></td>
-              <td style="padding:10px 12px;font-weight:600;color:#0F172A;">Age Verification</td>
-              <td style="padding:10px 12px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#475569;">Analyst Review</td>
-              <td style="padding:10px 12px;"><button style="background:white;border:1px solid #FDE68A;border-radius:4px;padding:3px 10px;font-size:11px;color:#92400E;font-weight:600;cursor:pointer;">Pending ▼</button></td>
-              <td style="padding:10px 12px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#475569;">03/02/2026</td>
-              <td style="padding:10px 12px;font-size:11px;color:#94A3B8;">—</td>
-              <td style="padding:10px 12px;"><button style="background:none;border:1px solid #E2E8F0;border-radius:4px;padding:3px 8px;font-size:11px;color:#475569;cursor:pointer;">···</button></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- Annotation -->
-    <div class="annotation mt-3">
-      <span class="annotation-icon">💡</span>
-      <span><strong>Analyst Review Quick Filters:</strong> The ⚠ Analyst Review pill in the summary bar instantly isolates all analyst-triggered findings. The secondary sub-filter bar (Pending / Reviewed / Cleared) narrows further without leaving the modal. Inline severity dropdowns + bulk action bar let analysts process a queue of pending checks in seconds rather than opening each finding individually. Crucial as analyst check volume grows.</span>
-    </div>
-
-  </div><!-- /section 2.5 -->
-
-
-  <!-- ═══════════════════════════════════════════════════════ -->
-  <!-- SECTION 3: TABLE vs CARD TOGGLE + MULTI-SELECT FILTER  -->
-  <!-- ═══════════════════════════════════════════════════════ -->
-  <div class="section-block">
-    <div class="section-header">
-      <span class="section-badge">Section 3</span>
-      <span class="section-title">Table View vs Card View Toggle + Multi-select Type Filter</span>
-    </div>
-    <div class="section-desc">
-      Toggleable views let analysts choose density. Table view shows 3× more findings per screen.
-      The multi-select type filter replaces the legacy single-select dropdown.
-    </div>
-
-    <!-- Sub-section A: Table View reference -->
-    <div class="mockup-card">
-      <div class="mockup-card-header">
-        <span>Sub-section A — Table View (see Section 2 for full table)</span>
-        <span style="font-size:11px;font-weight:400;opacity:0.7;">Compact · 3× findings density vs cards</span>
-      </div>
-      <div class="mockup-body">
-        <div style="display:flex;gap:12px;align-items:flex-start;">
-          <div style="flex:1;background:#F1F5F9;border:1px dashed #CBD5E1;border-radius:6px;padding:14px;font-size:12px;color:#475569;text-align:center;min-height:80px;display:flex;align-items:center;justify-content:center;">
-            <span>Table view renders 8–12 compact rows per viewport<br/>with full sortable column headers and bulk-select checkboxes.<br/><em style="color:#94A3B8;">See Section 2 for the full table implementation.</em></span>
-          </div>
-          <div class="annotation" style="max-width:300px;">
-            <span class="annotation-icon">💡</span>
-            <span>Table view renders ~3× more findings per viewport compared to card view — from 3–4 cards visible to 10–12 table rows. Critical for BPO team efficiency during bulk review cycles.</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Sub-section B: Improved Card View -->
-    <div class="mockup-card">
-      <div class="mockup-card-header">
-        <span>Sub-section B — Improved Card View</span>
-        <span style="font-size:11px;font-weight:400;opacity:0.7;">More compact · Left border severity · De-emphasized secondary actions</span>
-      </div>
-      <div class="mockup-body">
-        <div style="margin-bottom:10px;" class="findings-toolbar">
-          <span class="toolbar-label">Sort:</span>
-          <select class="toolbar-select" style="background:#1E3A5F;color:white;border-color:#1E3A5F;"><option>Priority ▼</option></select>
-          <span style="width:8px;"></span>
-          <span class="toolbar-label">View:</span>
-          <div class="view-toggle">
-            <button class="view-btn">⊞ Table</button>
-            <button class="view-btn active">▤ Cards</button>
-          </div>
-          <div class="toolbar-spacer"></div>
-        </div>
-
-        <div class="card-grid">
-          <!-- Card 1: High New -->
-          <div class="finding-card">
-            <div class="card-severity-stripe stripe-high"></div>
-            <div class="card-body">
-              <div class="card-top-row">
-                <div>
-                  <span class="sev-badge sev-high" style="font-size:10px;padding:1px 6px;">🔴 HIGH</span>
-                </div>
-                <span class="card-new-badge">● New Finding</span>
-              </div>
-              <div class="card-type">Privacy Policy Missing</div>
-              <div class="card-excerpt">"No privacy policy page found on domain. Regulatory requirement under CCPA / state cannabis regs."</div>
-              <div class="card-meta-row">
-                <span>Q-AI Scan</span>
-                <span class="card-meta-sep">·</span>
-                <span>First detected 10/30/2025</span>
-                <span class="card-meta-sep">·</span>
-                <span style="color:#94A3B8;font-style:italic;">Not yet reviewed</span>
-              </div>
-              <div class="card-actions">
-                <a href="#" class="card-action-link">View Page</a>
-                <span class="card-action-sep">|</span>
-                <a href="#" class="card-action-link">Mark Reviewed</a>
-                <a href="#" class="card-action-remove">Remove</a>
-              </div>
-            </div>
-          </div>
-
-          <!-- Card 2: Medium New -->
-          <div class="finding-card">
-            <div class="card-severity-stripe stripe-medium"></div>
-            <div class="card-body">
-              <div class="card-top-row">
-                <div>
-                  <span class="sev-badge sev-medium" style="font-size:10px;padding:1px 6px;">🟡 MEDIUM</span>
-                </div>
-                <span class="card-new-badge">● New Finding</span>
-              </div>
-              <div class="card-type">Violative Term</div>
-              <div class="card-excerpt">"Cures anxiety" detected on /products/cbd-tincture — prohibited medical claim language.</div>
-              <div class="card-meta-row">
-                <span>Q-AI Scan</span>
-                <span class="card-meta-sep">·</span>
-                <span>First detected 03/02/2026</span>
-                <span class="card-meta-sep">·</span>
-                <span style="color:#94A3B8;font-style:italic;">Not yet reviewed</span>
-              </div>
-              <div class="card-actions">
-                <a href="#" class="card-action-link">View Page</a>
-                <span class="card-action-sep">|</span>
-                <a href="#" class="card-action-link">Mark Reviewed</a>
-                <a href="#" class="card-action-remove">Remove</a>
-              </div>
-            </div>
-          </div>
-
-          <!-- Card 3: Analyst Pending -->
-          <div class="finding-card" style="background:#FFFBEB;">
-            <div class="card-severity-stripe" style="background:#D97706;"></div>
-            <div class="card-body">
-              <div class="card-top-row">
-                <div>
-                  <span class="sev-badge sev-pending" style="font-size:10px;padding:1px 6px;">⚠ PENDING</span>
-                </div>
-                <span style="background:#FEF3C7;color:#78350F;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;border:1px solid #FCD34D;">Analyst Review</span>
-              </div>
-              <div class="card-type">Product Subscription Model</div>
-              <div class="card-excerpt">Subscription billing terms unclear — potential auto-renewal disclosure violation. Added by analyst for manual review.</div>
-              <div class="card-meta-row">
-                <span>User Added</span>
-                <span class="card-meta-sep">·</span>
-                <span>Added 02/23/2026</span>
-                <span class="card-meta-sep">·</span>
-                <span style="color:#92400E;font-weight:600;">Quinn ALUM 02/23</span>
-              </div>
-              <div class="card-actions">
-                <a href="#" class="card-action-link">View Page</a>
-                <span class="card-action-sep">|</span>
-                <a href="#" class="card-action-link">Resolve</a>
-                <a href="#" class="card-action-remove">Remove</a>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="annotation mt-3">
-          <span class="annotation-icon">💡</span>
-          <span><strong>Card improvements:</strong> Severity left border stripe replaces header badges (cleaner visual scan). "New Finding" badge is a solid blue pill for high visibility. Secondary actions (Remove, View Page) are de-emphasized with smaller font. Reviewer info and first-detected date are collapsed into one meta row instead of two separate lines.</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Sub-section C: Multi-select Type Filter -->
-    <div class="mockup-card">
-      <div class="mockup-card-header">
-        <span>Sub-section C — Multi-select Type Filter</span>
-        <span style="font-size:11px;font-weight:400;opacity:0.7;">Replaces single-select dropdown</span>
-      </div>
-      <div class="mockup-body">
-        <div style="display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap;">
-
-          <!-- Toolbar context showing button -->
-          <div style="flex:1;min-width:280px;">
-            <div class="subsection-label">Filter bar with multi-select open</div>
-            <div class="findings-toolbar" style="margin-bottom:12px;position:relative;">
-              <span class="toolbar-label">Sort:</span>
-              <select class="toolbar-select" style="background:#1E3A5F;color:white;border-color:#1E3A5F;"><option>Priority ▼</option></select>
-              <span style="width:4px;"></span>
-              <span class="toolbar-label">View:</span>
-              <div class="view-toggle">
-                <button class="view-btn active">⊞ Table</button>
-                <button class="view-btn">▤ Cards</button>
-              </div>
-              <span style="width:4px;"></span>
-              <span class="toolbar-label">Type:</span>
-              <div class="type-filter-wrap">
-                <button class="type-filter-btn">
-                  3 selected <span class="filter-count">3</span> ▼
-                </button>
-              </div>
-              <div class="toolbar-spacer"></div>
-            </div>
-
-            <!-- Dropdown open state -->
-            <div class="type-filter-dropdown" style="position:relative;z-index:10;">
-              <div class="filter-dropdown-search">
-                <input type="text" placeholder="Search types…" value=""/>
-              </div>
-              <div class="filter-option checked">
-                <input type="checkbox" checked/> Privacy Policy
-              </div>
-              <div class="filter-option checked">
-                <input type="checkbox" checked/> Contact Information
-              </div>
-              <div class="filter-option checked">
-                <input type="checkbox" checked/> External Links Review
-              </div>
-              <div class="filter-option">
-                <input type="checkbox"/> Violative Term
-              </div>
-              <div class="filter-option">
-                <input type="checkbox"/> Age Verification
-              </div>
-              <div class="filter-option">
-                <input type="checkbox"/> Product Subscription Model
-              </div>
-              <div class="filter-option">
-                <input type="checkbox"/> FDA Disclaimer
-              </div>
-              <div class="filter-option">
-                <input type="checkbox"/> THC Disclaimer
-              </div>
-              <div class="filter-option">
-                <input type="checkbox"/> Lab Results Link
-              </div>
-              <div class="filter-actions">
-                <a href="#" class="filter-clear">Clear all</a>
-                <button class="filter-apply">Apply</button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Annotation -->
-          <div style="flex:1;min-width:240px;">
-            <div class="annotation" style="margin-top:60px;">
-              <span class="annotation-icon">💡</span>
-              <span><strong>Multi-select type filter</strong> lets reviewers focus on specific violation categories across multiple types at once — e.g., selecting both "Privacy Policy" and "Contact Information" to audit all business info findings in one pass. The legacy single-select forced analysts to run separate filter sessions per type.</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div><!-- /section 3 -->
-
-
-  <!-- ═══════════════════════════════════════════════════════ -->
-  <!-- SECTION 4: QUICK WINS SUMMARY                          -->
-  <!-- ═══════════════════════════════════════════════════════ -->
-  <div class="section-block">
-    <div class="section-header">
-      <span class="section-badge">Section 4</span>
-      <span class="section-title">Quick Wins Summary</span>
-    </div>
-    <div class="section-desc">
-      All proposed improvements are low-to-medium effort with immediate measurable impact on analyst workflow efficiency.
-    </div>
-
-    <div class="mockup-card">
-      <div class="mockup-card-header">Improvement Impact Matrix</div>
-      <div class="mockup-body" style="padding:0;">
-        <table class="quick-wins-table">
-          <thead>
-            <tr>
-              <th style="width:30%;">Improvement</th>
-              <th style="width:50%;">Impact</th>
-              <th style="width:20%;">Effort</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Near-fullscreen modal</td>
-              <td>Maximum findings density, persistent context</td>
-              <td><span class="effort-low">● Low</span></td>
-            </tr>
-            <tr>
-              <td>Compact scan header</td>
-              <td>High scroll saved — findings above fold without manual scrolling</td>
-              <td><span class="effort-low">● Low</span></td>
-            </tr>
-            <tr>
-              <td>Priority sort default</td>
-              <td>New High findings always appear first — zero missed critical violations</td>
-              <td><span class="effort-low">● Low</span></td>
-            </tr>
-            <tr>
-              <td>Analyst Review Pending below Low</td>
-              <td>Avoids confusion with confirmed scan violations — clear mental model separation</td>
-              <td><span class="effort-low">● Low</span></td>
-            </tr>
-            <tr>
-              <td>Compliant findings collapsed</td>
-              <td>Reduces visible list noise by ~35% — focus stays on actionable items</td>
-              <td><span class="effort-low">● Low</span></td>
-            </tr>
-            <tr>
-              <td>Table view option</td>
-              <td>3× more findings visible per viewport — dramatically faster bulk triage</td>
-              <td><span class="effort-medium">◑ Medium</span></td>
-            </tr>
-            <tr>
-              <td>Multi-select type filter</td>
-              <td>Focused category auditing — e.g., all contact/business info in one session</td>
-              <td><span class="effort-medium">◑ Medium</span></td>
-            </tr>
-            <tr>
-              <td>Alphabetized compliance summary</td>
-              <td>Faster key term lookup during review — consistent A–Z ordering</td>
-              <td><span class="effort-low">● Low</span></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <div class="annotation">
-      <span class="annotation-icon">🎯</span>
-      <span><strong>Implementation note:</strong> The 5 Low-effort items can be shipped as a single sprint with no backend changes — pure frontend/UX. The 2 Medium items (table view + multi-select filter) require new UI components but no API changes. Combined, these changes reduce analyst review time per merchant by an estimated 40–60% for BPO cycle runs.</span>
-    </div>
-  </div><!-- /section 4 -->
-
-  <!-- Footer -->
-  <div style="text-align:center;color:#475569;font-size:11px;padding-bottom:24px;">
-    Q-ScanAI Findings Modal UX Improvements · Qredible Design System · March 2026
+  <!-- Tab bar -->
+  <div class="tab-bar">
+    <div class="tab">⚡ Scanner</div>
+    <div class="tab active">⚠ Findings</div>
   </div>
 
-</div><!-- /page-wrapper -->
+  <!-- Scrollable content -->
+  <div class="modal-content">
 
+    <!-- (A) Scan History -->
+    <div style="position:relative;">
+      <div class="annotated-area" style="padding:2px;">
+        <span class="annotated-label">① Space hog</span>
+        <div class="scan-history-row">
+          <button class="scan-nav-btn">← Prev</button>
+          <span class="scan-info">Scan #27</span>
+          <span style="color:#D1D5DB;">·</span>
+          <span class="scan-meta">03/02/2026</span>
+          <span style="color:#D1D5DB;">·</span>
+          <span class="scan-meta">duration: 4m 32s</span>
+          <button class="scan-nav-btn">Next →</button>
+          <select class="scan-range-select">
+            <option>Last 30 days ▼</option>
+          </select>
+        </div>
+      </div>
+      <div class="annotation"><span class="ann-marker">①</span> These sections take ~40% of vertical space before findings appear</div>
+    </div>
+
+    <!-- (B) Latest Scan Results -->
+    <div class="card">
+      <div class="scan-results-header">
+        <div>
+          <div class="card-title">Latest Scan Results</div>
+          <div class="card-subtitle">Scan #27 &nbsp;·&nbsp; 03/02/2026 &nbsp;·&nbsp; 09:42 AM EST</div>
+        </div>
+        <div class="findings-summary-badge">⚠ 3 Findings</div>
+      </div>
+      <div class="severity-grid">
+        <div class="sev-card sev-high">
+          <div class="sev-card-icon">⚠</div>
+          <div class="sev-card-text">
+            <div class="sev-card-label">High Risk</div>
+            <div class="sev-card-count">3</div>
+          </div>
+        </div>
+        <div class="sev-card sev-medium">
+          <div class="sev-card-icon">⚠</div>
+          <div class="sev-card-text">
+            <div class="sev-card-label">Medium Risk</div>
+            <div class="sev-card-count">5</div>
+          </div>
+        </div>
+        <div class="sev-card sev-low">
+          <div class="sev-card-icon">⚠</div>
+          <div class="sev-card-text">
+            <div class="sev-card-label">Low Risk</div>
+            <div class="sev-card-count">3</div>
+          </div>
+        </div>
+        <div class="sev-card sev-compliant">
+          <div class="sev-card-icon">✓</div>
+          <div class="sev-card-text">
+            <div class="sev-card-label">Compliant</div>
+            <div class="sev-card-count">7</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- (C) Compliance Scan Summary -->
+    <div class="card">
+      <div class="card-title" style="font-size:16px; margin-bottom:14px;">Compliance Scan Summary</div>
+      <div class="compliance-cols">
+        <div>
+          <div class="comp-col-title">Violative Keywords</div>
+          <div class="comp-keyword">cannabinoid</div>
+          <div class="comp-keyword">delta-9</div>
+          <div class="comp-keyword">psychoactive</div>
+          <div class="comp-keyword">THC</div>
+          <div class="comp-keyword">terpenes</div>
+        </div>
+        <div>
+          <div class="comp-col-title">Violative Terms / Phrases</div>
+          <div class="comp-phrase">"Contains delta-9-THC in trace amounts"</div>
+          <div class="comp-phrase">"Full-spectrum with naturally occurring cannabinoids"</div>
+          <div class="comp-phrase">"May cause psychoactive effects"</div>
+          <div class="comp-phrase">"Not evaluated by the FDA"</div>
+        </div>
+        <div>
+          <div class="comp-col-title">Compliance Checks</div>
+          <div class="comp-check issue"><span class="comp-check-icon">✗</span> Privacy Policy</div>
+          <div class="comp-check issue"><span class="comp-check-icon">✗</span> Age Verification</div>
+          <div class="comp-check issue"><span class="comp-check-icon">✗</span> Business Email Address</div>
+          <div class="comp-check ok"><span class="comp-check-icon">✓</span> FDA Disclaimer Present</div>
+          <div class="comp-check ok"><span class="comp-check-icon">✓</span> Return/Refund Policy</div>
+          <div class="comp-check ok"><span class="comp-check-icon">✓</span> SSL/TLS Secure</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- (D) Filter & Actions -->
+    <div class="card" style="padding:0;">
+      <div class="filter-outer">
+        <div class="filter-inner">
+          <div class="filter-header">
+            <span class="filter-label">Filter &amp; Actions</span>
+            <div class="select-all-row">
+              <input type="checkbox"> Select All (20)
+            </div>
+          </div>
+          <input class="search-box" placeholder="Search...">
+          <div class="filter-dropdowns">
+            <div class="filter-select-wrap" style="position:relative;">
+              <span class="filter-select-prefix">Result:</span>
+              <select class="filter-select"><option>All</option></select>
+            </div>
+            <div class="filter-select-wrap">
+              <span class="filter-select-prefix">Review:</span>
+              <select class="filter-select"><option>All</option></select>
+            </div>
+            <div class="filter-select-wrap">
+              <span class="filter-select-prefix">Risk:</span>
+              <select class="filter-select"><option>All</option></select>
+            </div>
+            <div class="annotated-area" style="display:inline-flex; padding:0;">
+              <span class="annotated-label" style="top:-6px; right:-6px; white-space:nowrap; font-size:9px;">④ Single-select only</span>
+              <div class="filter-select-wrap" style="border:none;">
+                <span class="filter-select-prefix">Type:</span>
+                <select class="filter-select"><option>All</option></select>
+              </div>
+            </div>
+            <div class="filter-select-wrap">
+              <span class="filter-select-prefix">History:</span>
+              <select class="filter-select"><option>All</option></select>
+            </div>
+          </div>
+          <div class="filter-footer">
+            <span class="no-filters-text">No active filters</span>
+            <button class="btn-add-finding">+ Add Findings</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- (E) Bulk action bar -->
+    <div class="bulk-bar">
+      <span class="bulk-selected-text">3 finding(s) selected</span>
+      <button class="btn-bulk-green">⬆ Export Findings</button>
+      <button class="btn-bulk-green">✏ Bulk Edit</button>
+      <button class="btn-bulk-green">✓ Mark All Reviewed</button>
+      <button class="btn-bulk-text">✕ Clear Selection</button>
+    </div>
+
+    <!-- (F) Finding cards -->
+    <!-- Annotation 5: card view density -->
+    <div class="annotated-area" style="padding:4px;">
+      <span class="annotated-label">⑤ Card view: ~3-4 findings visible</span>
+
+      <!-- Card 1: Compliant — mixed in -->
+      <div style="position:relative; margin-bottom:10px;">
+        <div class="finding-card annotated-area" style="border-style:solid;">
+          <span class="annotated-label" style="top:-6px; right:-4px; font-size:9px;">② Compliant mixed in</span>
+          <div class="finding-card-header">
+            <input type="checkbox" class="finding-check" checked>
+            <span class="finding-status-icon" style="color:#2563eb;">✓</span>
+            <div class="finding-badges">
+              <span class="fcard-title">Required privacy policy found</span>
+              <span class="badge badge-compliant">COMPLIANT</span>
+              <span class="chip chip-new"><span class="chip-dot"></span>New Finding</span>
+              <span class="source-badge source-ai">Q-AI Scan</span>
+            </div>
+          </div>
+          <div class="finding-actions">
+            <button class="btn-mark-reviewed">Mark Reviewed</button>
+            <button class="btn-view-page">View Page</button>
+            <span class="finding-date">First detected: 10/30/2025</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2: High — Violative Term -->
+      <div style="position:relative; margin-bottom:10px;">
+        <div class="finding-card">
+          <div class="finding-card-header">
+            <input type="checkbox" class="finding-check" checked>
+            <span class="finding-status-icon" style="color:#DC2626;">✗</span>
+            <div class="finding-badges">
+              <span class="fcard-title">Violative Term</span>
+              <span class="keyword-chip">"delta-9"</span>
+              <span class="badge badge-high">HIGH</span>
+              <span class="chip chip-ongoing"><span class="chip-dot"></span>Ongoing Issue</span>
+              <span class="source-badge source-ai">Q-AI Scan</span>
+              <div class="spacer"></div>
+              <select class="severity-select"><option>High ▼</option></select>
+              <button class="btn-three-dot">···</button>
+            </div>
+          </div>
+          <div class="finding-desc">"Contains delta-9-THC in trace amounts from full-spectrum hemp extract."</div>
+          <div class="finding-actions">
+            <button class="btn-mark-reviewed">Mark Reviewed</button>
+            <button class="btn-view-page">View Page</button>
+            <span class="finding-date">First detected: 09/15/2025</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3: Analyst Review — mixed in randomly -->
+      <div style="position:relative; margin-bottom:10px;">
+        <div class="finding-card annotated-area" style="border-style:solid;">
+          <span class="annotated-label" style="top:-6px; right:-4px; font-size:9px;">③ Analyst Review appears randomly</span>
+          <div class="finding-card-header">
+            <input type="checkbox" class="finding-check">
+            <div class="finding-badges">
+              <span class="fcard-title">Product Subscription Model</span>
+              <span class="chip chip-analyst">Analyst Review Check</span>
+              <span class="source-badge source-ai">Q-AI Scan</span>
+              <div class="spacer"></div>
+              <div class="dropdown-open-wrap">
+                <select class="pending-select"><option>Pending ▼</option><option>High</option><option>Medium</option><option>Low</option></select>
+              </div>
+              <button class="btn-three-dot">···</button>
+            </div>
+          </div>
+          <div class="finding-desc" style="font-style:normal; color:#92400E; background:#FFFBEB; border-left-color:#FDE68A;">This finding requires manual analyst review to determine compliance severity. Please assess the subscription model terms and assign an appropriate risk level.</div>
+          <div class="finding-actions">
+            <button class="btn-mark-reviewed">Mark Reviewed</button>
+            <button class="btn-view-page">View Page</button>
+            <span class="finding-date">First detected: 02/23/2026</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 4: Medium — Age Verification -->
+      <div style="position:relative;">
+        <div class="finding-card">
+          <div class="finding-card-header">
+            <input type="checkbox" class="finding-check" checked>
+            <span class="finding-status-icon" style="color:#DC2626;">✗</span>
+            <div class="finding-badges">
+              <span class="fcard-title">Age Verification Missing</span>
+              <span class="badge badge-medium">MEDIUM</span>
+              <span class="chip chip-new"><span class="chip-dot"></span>New Finding</span>
+              <span class="source-badge source-ai">Q-AI Scan</span>
+              <div class="spacer"></div>
+              <select class="severity-select"><option>Medium ▼</option></select>
+              <button class="btn-three-dot">···</button>
+            </div>
+          </div>
+          <div class="finding-desc">No age verification popup or entry gate detected on the storefront homepage.</div>
+          <div class="finding-actions">
+            <button class="btn-mark-reviewed">Mark Reviewed</button>
+            <button class="btn-view-page">View Page</button>
+            <span class="finding-date">First detected: 03/02/2026</span>
+          </div>
+        </div>
+      </div>
+    </div><!-- end annotated cards area -->
+
+  </div><!-- end modal-content -->
+</div><!-- end modal-sim -->
+
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- SECTION 1: Compact Header + Near-Fullscreen    -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="section-label">Section 1 — Compact Header + Near-Fullscreen</div>
+<div class="section-intro">
+  <strong>Key change:</strong> Modal expands to near-fullscreen (95vw × 92vh). Scan history row, 4 severity cards, and the full compliance summary are collapsed into a single sticky ~130px header band. Findings are immediately visible without any scrolling.
+</div>
+
+<div class="modal-sim fullscreen">
+
+  <!-- Header (same bg, full-width) -->
+  <div class="modal-header">
+    <div class="modal-header-left">
+      <span class="brain-icon">🧠</span>
+      <div>
+        <div class="modal-title">Q-ScanAI</div>
+        <div class="modal-subtitle">AI-Enhanced Compliance Scanning</div>
+      </div>
+    </div>
+    <div class="modal-header-right">
+      <button class="company-btn">Westtown Payments ▼</button>
+      <button class="expand-btn" title="Expand">⤢</button>
+    </div>
+    <button class="close-btn">✕</button>
+  </div>
+
+  <!-- Tab bar -->
+  <div class="tab-bar">
+    <div class="tab">⚡ Scanner</div>
+    <div class="tab active">⚠ Findings</div>
+  </div>
+
+  <!-- Sticky scan bar (replaces history row + severity cards) -->
+  <div class="scan-bar">
+    <span class="scan-bar-nav">←</span>
+    <span class="scan-bar-info">Scan #27</span>
+    <span style="color:#D1D5DB;">·</span>
+    <span class="scan-bar-meta">Mar 2, 2026</span>
+    <span style="color:#D1D5DB;">·</span>
+    <span class="scan-bar-meta">20 findings</span>
+    <span class="scan-bar-nav">→</span>
+    <select class="all-scans-select"><option>All Scans ▼</option></select>
+    <span class="scan-bar-sep">|</span>
+    <div class="scan-bar-pills">
+      <span class="scan-pill scan-pill-high">🔴 3 High</span>
+      <span class="scan-pill scan-pill-medium">🟡 5 Med</span>
+      <span class="scan-pill scan-pill-low">🟢 3 Low</span>
+      <span class="scan-pill scan-pill-compliant">✓ 7 Compliant</span>
+      <span class="scan-pill scan-pill-analyst">⚠ 4 Analyst Review</span>
+    </div>
+    <span style="color:#D1D5DB;">·</span>
+    <span class="scan-new-badge">⚠ 3 New</span>
+  </div>
+
+  <!-- Compliance Summary drawer (collapsed) -->
+  <div class="summary-drawer">
+    <span>📋</span>
+    <span style="font-weight:500; color:#374151;">Compliance Scan Summary</span>
+    <span>— 8 violations · 125 items checked</span>
+    <span class="expand-btn-sm">▼ Expand</span>
+  </div>
+
+  <!-- Annotation -->
+  <div style="padding: 12px 20px; background: #FFFBEB; border-bottom: 1px dashed #FCD34D;">
+    <div style="font-size:12px; color:#78350F; display:flex; align-items:flex-start; gap:8px;">
+      <strong>✅ Improvement:</strong>
+      Scan history + 4 severity cards + full compliance summary collapsed to ~130px total. Findings are now visible above the fold without any scrolling. Severity pills are clickable filters. Compliance summary expands on demand.
+    </div>
+  </div>
+
+  <!-- Scrollable content (findings visible immediately) -->
+  <div class="modal-content" style="padding-top:12px;">
+    <div style="color:#6B7280; font-size:12px; font-style:italic; text-align:center; padding:20px;">
+      ↓ Findings list begins here — immediately visible without scrolling
+    </div>
+    <!-- Show a couple of table rows to indicate findings are present -->
+    <div style="border:1px solid #E5E7EB; border-radius:8px; overflow:hidden;">
+      <table class="findings-table" style="margin:0;">
+        <thead>
+          <tr>
+            <th style="width:32px;"><input type="checkbox"></th>
+            <th>Risk</th>
+            <th>Finding Type</th>
+            <th>Classification</th>
+            <th>Source</th>
+            <th>Review</th>
+            <th>First Detected</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="row-high">
+            <td><input type="checkbox" checked></td>
+            <td><span class="badge badge-high">HIGH</span></td>
+            <td><strong>Privacy Policy Missing</strong></td>
+            <td><span class="chip chip-new"><span class="chip-dot"></span>New Finding</span></td>
+            <td><span class="source-badge source-ai">Q-AI Scan</span></td>
+            <td><span class="unreviewed-text">—</span></td>
+            <td style="white-space:nowrap;">10/30/2025</td>
+            <td><div class="actions-cell"><button class="btn-dots">···</button></div></td>
+          </tr>
+          <tr class="row-high">
+            <td><input type="checkbox"></td>
+            <td><span class="badge badge-high">HIGH</span></td>
+            <td><strong>Business Email Address Missing</strong></td>
+            <td><span class="chip chip-new"><span class="chip-dot"></span>New Finding</span></td>
+            <td><span class="source-badge source-ai">Q-AI Scan</span></td>
+            <td><span class="unreviewed-text">—</span></td>
+            <td style="white-space:nowrap;">03/01/2026</td>
+            <td><div class="actions-cell"><button class="btn-dots">···</button></div></td>
+          </tr>
+          <tr style="background:#F3F4F6;">
+            <td colspan="8" style="text-align:center; color:#6B7280; font-size:12px; font-style:italic; padding:8px;">↓ More findings below (priority sorted)…</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- SECTION 2: Priority-First Findings — Table    -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="section-label">Section 2 — Priority-First Findings: Table View</div>
+<div class="section-intro">
+  <strong>Key change:</strong> Default sort is Priority (High New → High Ongoing → Medium → Analyst Review → Low → Compliant collapsed). Table view shows 3× more findings per screen. Multi-select Type filter. Compliant findings are collapsed by default to reduce noise.
+</div>
+
+<div class="modal-sim fullscreen">
+
+  <!-- Header -->
+  <div class="modal-header">
+    <div class="modal-header-left">
+      <span class="brain-icon">🧠</span>
+      <div>
+        <div class="modal-title">Q-ScanAI</div>
+        <div class="modal-subtitle">AI-Enhanced Compliance Scanning</div>
+      </div>
+    </div>
+    <div class="modal-header-right">
+      <button class="company-btn">Westtown Payments ▼</button>
+      <button class="expand-btn">⤢</button>
+    </div>
+    <button class="close-btn">✕</button>
+  </div>
+
+  <!-- Tab bar -->
+  <div class="tab-bar">
+    <div class="tab">⚡ Scanner</div>
+    <div class="tab active">⚠ Findings</div>
+  </div>
+
+  <!-- Scan bar -->
+  <div class="scan-bar">
+    <span class="scan-bar-nav">←</span>
+    <span class="scan-bar-info">Scan #27</span>
+    <span style="color:#D1D5DB;">·</span>
+    <span class="scan-bar-meta">Mar 2, 2026</span>
+    <span style="color:#D1D5DB;">·</span>
+    <span class="scan-bar-meta">20 findings</span>
+    <span class="scan-bar-nav">→</span>
+    <select class="all-scans-select"><option>All Scans ▼</option></select>
+    <span class="scan-bar-sep">|</span>
+    <div class="scan-bar-pills">
+      <span class="scan-pill scan-pill-high">🔴 3 High</span>
+      <span class="scan-pill scan-pill-medium">🟡 5 Med</span>
+      <span class="scan-pill scan-pill-low">🟢 3 Low</span>
+      <span class="scan-pill scan-pill-compliant">✓ 7 Compliant</span>
+      <span class="scan-pill scan-pill-analyst">⚠ 4 Analyst Review</span>
+    </div>
+    <span style="color:#D1D5DB;">·</span>
+    <span class="scan-new-badge">⚠ 3 New</span>
+  </div>
+
+  <!-- Compliance Summary drawer -->
+  <div class="summary-drawer">
+    <span>📋</span>
+    <span style="font-weight:500; color:#374151;">Compliance Scan Summary</span>
+    <span>— 8 violations · 125 items checked</span>
+    <span class="expand-btn-sm">▼ Expand</span>
+  </div>
+
+  <!-- Annotation — sort order legend -->
+  <div style="padding:8px 20px; background:#FFFBEB; border-bottom:1px dashed #FCD34D;">
+    <div style="font-size:12px; color:#78350F;">
+      <strong>Priority sort order:</strong>
+      1. HIGH — New findings first &nbsp;·&nbsp;
+      2. HIGH — Ongoing &nbsp;·&nbsp;
+      3. MEDIUM — New &nbsp;·&nbsp;
+      4. MEDIUM — Ongoing &nbsp;·&nbsp;
+      5. Analyst Review (Pending, unreviewed) &nbsp;·&nbsp;
+      6. LOW &nbsp;·&nbsp;
+      7. Compliant (collapsed)
+    </div>
+  </div>
+
+  <!-- Findings toolbar -->
+  <div class="findings-toolbar">
+    <div class="toolbar-left">
+      <div class="toolbar-select-wrap">
+        <span class="toolbar-prefix">Sort:</span>
+        <select class="toolbar-select"><option>Priority ▼</option></select>
+      </div>
+      <div class="toolbar-select-wrap">
+        <span class="toolbar-prefix">Result:</span>
+        <select class="toolbar-select"><option>All ▼</option></select>
+      </div>
+      <div class="toolbar-select-wrap">
+        <span class="toolbar-prefix">Review:</span>
+        <select class="toolbar-select"><option>All ▼</option></select>
+      </div>
+      <div class="toolbar-select-wrap">
+        <span class="toolbar-prefix">Risk:</span>
+        <select class="toolbar-select"><option>All ▼</option></select>
+      </div>
+      <div class="toolbar-select-wrap" style="border-color:#2563eb; box-shadow:0 0 0 2px #DBEAFE;">
+        <span class="toolbar-prefix" style="background:#EFF6FF; color:#2563eb; font-weight:600;">Type:</span>
+        <select class="toolbar-select" style="color:#2563eb; font-weight:600;"><option>3 selected ▼</option></select>
+      </div>
+      <div class="toolbar-select-wrap">
+        <span class="toolbar-prefix">History:</span>
+        <select class="toolbar-select"><option>All ▼</option></select>
+      </div>
+    </div>
+    <div class="toolbar-right">
+      <div class="view-toggle">
+        <button class="view-btn active">≡ Table</button>
+        <button class="view-btn">⊞ Cards</button>
+      </div>
+      <button class="btn-export">⬆ Export</button>
+      <button class="btn-add-sm">+ Add Finding</button>
+    </div>
+  </div>
+
+  <!-- Findings table -->
+  <div class="modal-scroll">
+    <table class="findings-table">
+      <thead>
+        <tr>
+          <th style="width:36px;"><input type="checkbox"></th>
+          <th>Risk</th>
+          <th>Finding Type</th>
+          <th>Classification</th>
+          <th>Source</th>
+          <th>Review</th>
+          <th style="white-space:nowrap;">First Detected</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Row 1: HIGH New -->
+        <tr class="row-high">
+          <td><input type="checkbox" checked></td>
+          <td><span class="badge badge-high">HIGH</span></td>
+          <td><strong>Privacy Policy Missing</strong></td>
+          <td><span class="chip chip-new"><span class="chip-dot"></span>New Finding</span></td>
+          <td><span class="source-badge source-ai">Q-AI Scan</span></td>
+          <td><span class="unreviewed-text">—</span></td>
+          <td style="white-space:nowrap; color:#6B7280; font-size:12px;">10/30/2025</td>
+          <td><div class="actions-cell"><button class="btn-dots">···</button></div></td>
+        </tr>
+        <!-- Row 2: HIGH New -->
+        <tr class="row-high">
+          <td><input type="checkbox"></td>
+          <td><span class="badge badge-high">HIGH</span></td>
+          <td><strong>Business Email Address Missing</strong></td>
+          <td><span class="chip chip-new"><span class="chip-dot"></span>New Finding</span></td>
+          <td><span class="source-badge source-ai">Q-AI Scan</span></td>
+          <td><span class="unreviewed-text">—</span></td>
+          <td style="white-space:nowrap; color:#6B7280; font-size:12px;">03/01/2026</td>
+          <td><div class="actions-cell"><button class="btn-dots">···</button></div></td>
+        </tr>
+        <!-- Row 3: HIGH Ongoing — with notes -->
+        <tr class="row-high">
+          <td><input type="checkbox"></td>
+          <td><span class="badge badge-high">HIGH</span></td>
+          <td>
+            <span class="keyword-chip" style="margin-right:4px;">"delta-9"</span>
+            <strong>Violative Term</strong>
+          </td>
+          <td><span class="chip chip-ongoing"><span class="chip-dot"></span>Ongoing Issue</span></td>
+          <td><span class="source-badge source-ai">Q-AI Scan</span></td>
+          <td><span class="reviewed-text">✓ Reviewed</span></td>
+          <td style="white-space:nowrap; color:#6B7280; font-size:12px;">09/15/2025</td>
+          <td>
+            <div class="actions-cell">
+              <span class="notes-indicator">💬 2</span>
+              <button class="btn-dots">···</button>
+            </div>
+          </td>
+        </tr>
+        <!-- Row 4: MEDIUM New -->
+        <tr class="row-medium">
+          <td><input type="checkbox"></td>
+          <td><span class="badge badge-medium">MEDIUM</span></td>
+          <td><strong>Age Verification Missing</strong></td>
+          <td><span class="chip chip-new"><span class="chip-dot"></span>New Finding</span></td>
+          <td><span class="source-badge source-ai">Q-AI Scan</span></td>
+          <td><span class="unreviewed-text">—</span></td>
+          <td style="white-space:nowrap; color:#6B7280; font-size:12px;">03/02/2026</td>
+          <td><div class="actions-cell"><button class="btn-dots">···</button></div></td>
+        </tr>
+        <!-- Row 5: MEDIUM Ongoing -->
+        <tr class="row-medium">
+          <td><input type="checkbox"></td>
+          <td><span class="badge badge-medium">MEDIUM</span></td>
+          <td><strong>Business Contact Information</strong></td>
+          <td><span class="chip chip-ongoing"><span class="chip-dot"></span>Ongoing Issue</span></td>
+          <td><span class="source-badge source-ai">Q-AI Scan</span></td>
+          <td><span class="reviewed-text" style="font-size:11px;">✓ Reviewed 02/27</span></td>
+          <td style="white-space:nowrap; color:#6B7280; font-size:12px;">10/30/2025</td>
+          <td><div class="actions-cell"><button class="btn-dots">···</button></div></td>
+        </tr>
+        <!-- Row 6: ANALYST REVIEW -->
+        <tr class="row-analyst">
+          <td><input type="checkbox"></td>
+          <td><select class="pending-select"><option>Pending ▼</option><option>High</option><option>Medium</option><option>Low</option></select></td>
+          <td><strong>Product Subscription Model</strong></td>
+          <td><span class="chip chip-analyst">Analyst Review Check</span></td>
+          <td><span class="source-badge source-ai">Q-AI Scan</span></td>
+          <td><span class="unreviewed-text">—</span></td>
+          <td style="white-space:nowrap; color:#6B7280; font-size:12px;">02/23/2026</td>
+          <td><div class="actions-cell"><button class="btn-dots">···</button></div></td>
+        </tr>
+        <!-- Row 7: ANALYST REVIEW -->
+        <tr class="row-analyst">
+          <td><input type="checkbox"></td>
+          <td><select class="pending-select"><option>Pending ▼</option><option>High</option><option>Medium</option><option>Low</option></select></td>
+          <td><strong>THC Disclaimer Missing</strong></td>
+          <td><span class="chip chip-analyst">Analyst Review Check</span></td>
+          <td><span class="source-badge source-user">User Added</span></td>
+          <td><span class="unreviewed-text">—</span></td>
+          <td style="white-space:nowrap; color:#6B7280; font-size:12px;">03/01/2026</td>
+          <td><div class="actions-cell"><button class="btn-dots">···</button></div></td>
+        </tr>
+        <!-- Row 8: Compliant collapse row -->
+        <tr class="collapse-row">
+          <td colspan="8">▼ &nbsp; Show 7 Compliant findings &nbsp; <em>(not affecting compliance status)</em></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="annotation-box" style="margin:12px 16px 16px;">
+      <strong>✅ Priority sort:</strong> High New → High Ongoing → Medium → Analyst Review Pending → Low → Compliant (collapsed). Reviewers see their most urgent work first without any scrolling.
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- SECTION 2.5: Analyst Review Quick Filters      -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="section-label">Section 2.5 — Analyst Review Quick Filters</div>
+<div class="section-intro">
+  <strong>Key change:</strong> The ⚠ Analyst Review pill in the scan bar acts as a one-click filter. When active, it reveals a sub-filter bar (Pending / Reviewed / Cleared) and transforms the bulk action bar to show analyst-specific actions like Set Severity and Assign To.
+</div>
+
+<!-- Two states side-by-side -->
+<div class="two-col-demo" style="margin-bottom:20px;">
+  <div class="demo-box">
+    <div class="demo-box-title">Analyst Review Pill — Inactive</div>
+    <div class="pill-bar">
+      <span class="pill pill-high">🔴 3 High</span>
+      <span class="pill pill-medium">🟡 5 Med</span>
+      <span class="pill pill-low">🟢 3 Low</span>
+      <span class="pill pill-compliant">✓ 7 Compliant</span>
+      <span class="pill pill-analyst-inactive">⚠ 4 Analyst Review</span>
+    </div>
+  </div>
+  <div class="demo-box">
+    <div class="demo-box-title">Analyst Review Pill — Active (filled)</div>
+    <div class="pill-bar">
+      <span class="pill pill-high dimmed">🔴 3 High</span>
+      <span class="pill pill-medium dimmed">🟡 5 Med</span>
+      <span class="pill pill-low dimmed">🟢 3 Low</span>
+      <span class="pill pill-compliant dimmed">✓ 7 Compliant</span>
+      <span class="pill pill-analyst-active">⚠ 4 Analyst Review ×</span>
+    </div>
+  </div>
+</div>
+
+<!-- Sub-filter bar + filtered table (active state) -->
+<div style="border:1px solid #E5E7EB; border-radius:8px; overflow:hidden; background:#fff; margin-bottom:8px;">
+
+  <!-- Sub-filter bar -->
+  <div class="sub-filter-bar">
+    <span style="font-size:12px; color:#92400E; font-weight:600;">Show:</span>
+    <button class="sub-filter-tab active-tab">All</button>
+    <button class="sub-filter-tab active-tab">Pending ●4</button>
+    <button class="sub-filter-tab normal-tab">Reviewed ●2</button>
+    <button class="sub-filter-tab cleared-tab">Cleared ●1</button>
+    <span class="sub-filter-sep">|</span>
+    <span style="font-size:12px; color:#374151;">Assigned to:</span>
+    <select style="border:1px solid #D1D5DB; border-radius:4px; padding:3px 8px; font-size:12px; font-family:inherit; background:#fff; color:#374151;">
+      <option>All reviewers ▼</option>
+    </select>
+    <span class="sub-filter-sep">|</span>
+    <span style="font-size:12px; color:#374151;">Sort:</span>
+    <select style="border:1px solid #D1D5DB; border-radius:4px; padding:3px 8px; font-size:12px; font-family:inherit; background:#fff; color:#374151;">
+      <option>Oldest first ▼</option>
+    </select>
+  </div>
+
+  <!-- Bulk action bar — 3 selected, showing Set Severity open -->
+  <div class="bulk-bar" style="border-radius:0; border-left:none; border-right:none; border-top:none; position:relative;">
+    <span class="bulk-selected-text">3 finding(s) selected</span>
+    <!-- Set Severity dropdown — shown open -->
+    <div class="dropdown-open-wrap">
+      <button class="btn-bulk-green" style="background:#D97706;">Set Severity ▼</button>
+      <div class="dropdown-open-menu" style="min-width:130px; z-index:50;">
+        <div class="dropdown-open-item sev-pending" style="background:#FFFBEB; color:#92400E; font-weight:600;">● Pending</div>
+        <div class="dropdown-open-item sev-hi" style="color:#991B1B;">▲ High</div>
+        <div class="dropdown-open-item sev-med" style="color:#854D0E;">● Medium</div>
+        <div class="dropdown-open-item sev-lo" style="color:#166534;">▼ Low</div>
+        <div style="height:1px; background:#E5E7EB; margin:4px 0;"></div>
+        <div class="dropdown-open-item sev-clear" style="color:#6B7280;">✕ Clear</div>
+      </div>
+    </div>
+    <button class="btn-bulk-green" style="background:#6B7280;">Assign to ▼</button>
+    <button class="btn-bulk-green">✓ Mark Reviewed</button>
+    <button class="btn-bulk-text">✕ Clear Selection</button>
+  </div>
+
+  <!-- Filtered table — 4 analyst rows -->
+  <table class="findings-table">
+    <thead>
+      <tr>
+        <th style="width:36px;"><input type="checkbox"></th>
+        <th>Risk</th>
+        <th>Finding Type</th>
+        <th>Classification</th>
+        <th>Source</th>
+        <th>Review</th>
+        <th style="white-space:nowrap;">First Detected</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Row 1: checked, dropdown open -->
+      <tr class="row-analyst">
+        <td><input type="checkbox" checked></td>
+        <td>
+          <div class="dropdown-open-wrap">
+            <select class="pending-select"><option>Pending ▼</option></select>
+            <div class="dropdown-open-menu" style="top:calc(100% + 2px); min-width:110px;">
+              <div class="dropdown-open-item" style="background:#FFFBEB; color:#92400E; font-weight:600;">Pending</div>
+              <div class="dropdown-open-item" style="color:#991B1B;">High</div>
+              <div class="dropdown-open-item" style="color:#854D0E;">Medium</div>
+              <div class="dropdown-open-item" style="color:#166534;">Low</div>
+            </div>
+          </div>
+        </td>
+        <td><strong>Product Subscription Model</strong></td>
+        <td><span class="chip chip-analyst">Analyst Review Check</span></td>
+        <td><span class="source-badge source-user">User Added</span></td>
+        <td><span class="unreviewed-text">—</span></td>
+        <td style="white-space:nowrap; color:#6B7280; font-size:12px;">02/15/2026</td>
+        <td><div class="actions-cell"><button class="btn-dots">···</button></div></td>
+      </tr>
+      <!-- Row 2: unchecked -->
+      <tr class="row-analyst">
+        <td><input type="checkbox"></td>
+        <td><select class="pending-select"><option>Pending ▼</option></select></td>
+        <td><strong>THC Disclaimer</strong></td>
+        <td><span class="chip chip-analyst">Analyst Review Check</span></td>
+        <td><span class="source-badge source-ai">Q-AI Scan</span></td>
+        <td><span class="unreviewed-text">—</span></td>
+        <td style="white-space:nowrap; color:#6B7280; font-size:12px;">02/23/2026</td>
+        <td><div class="actions-cell"><button class="btn-dots">···</button></div></td>
+      </tr>
+      <!-- Row 3: checked -->
+      <tr class="row-analyst">
+        <td><input type="checkbox" checked></td>
+        <td><select class="pending-select"><option>Pending ▼</option></select></td>
+        <td><strong>External Links Review</strong></td>
+        <td><span class="chip chip-analyst">Analyst Review Check</span></td>
+        <td><span class="source-badge source-user">User Added</span></td>
+        <td><span class="unreviewed-text">—</span></td>
+        <td style="white-space:nowrap; color:#6B7280; font-size:12px;">03/01/2026</td>
+        <td><div class="actions-cell"><button class="btn-dots">···</button></div></td>
+      </tr>
+      <!-- Row 4: checked -->
+      <tr class="row-analyst">
+        <td><input type="checkbox" checked></td>
+        <td><select class="pending-select"><option>Pending ▼</option></select></td>
+        <td><strong>Age Verification</strong></td>
+        <td><span class="chip chip-analyst">Analyst Review Check</span></td>
+        <td><span class="source-badge source-ai">Q-AI Scan</span></td>
+        <td><span class="unreviewed-text">—</span></td>
+        <td style="white-space:nowrap; color:#6B7280; font-size:12px;">03/02/2026</td>
+        <td><div class="actions-cell"><button class="btn-dots">···</button></div></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="annotation-box">
+  <strong>✅ Analyst Review workflow:</strong> The ⚠ Analyst Review pill isolates all analyst checks in one click. Sub-filter (Pending / Reviewed / Cleared) narrows further. Inline severity dropdowns + bulk Set Severity let analysts process an entire pending queue without opening individual findings.
+</div>
+
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- SECTION 3: Cards View (Improved) + Multi-select -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="section-label">Section 3 — Improved Cards View + Multi-select Type Filter</div>
+<div class="section-intro">
+  <strong>Key changes:</strong> Cards get a left severity stripe (replaces the top severity card section overhead). Compact 12px padding. Type filter is now multi-select with checkboxes.
+</div>
+
+<!-- Sub-section A: 3 improved cards -->
+<div style="font-size:12px; font-weight:600; color:#6B7280; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:12px;">A — Improved Finding Cards (compact, left severity stripe)</div>
+
+<div class="cards-grid">
+
+  <!-- Card 1: HIGH -->
+  <div class="finding-card-v2 high">
+    <div class="fcard-row1">
+      <input type="checkbox" checked>
+      <span style="color:#DC2626; font-size:15px;">✗</span>
+      <span class="fcard-title">Privacy Policy Missing</span>
+      <span class="badge badge-high">HIGH</span>
+      <span class="chip chip-new"><span class="chip-dot"></span>New Finding</span>
+      <span class="source-badge source-ai">Q-AI Scan</span>
+      <div class="spacer"></div>
+      <select class="severity-select"><option>High ▼</option></select>
+      <button class="btn-three-dot">···</button>
+    </div>
+    <div class="fcard-desc">No privacy policy page found or linked from the footer of the storefront.</div>
+    <div class="fcard-actions">
+      <button class="btn-mark-reviewed">Mark Reviewed</button>
+      <button class="btn-view-page">View Page</button>
+      <span class="fcard-date">First detected: 10/30/2025</span>
+    </div>
+  </div>
+
+  <!-- Card 2: ANALYST REVIEW -->
+  <div class="finding-card-v2 analyst">
+    <div class="fcard-row1">
+      <input type="checkbox">
+      <span class="fcard-title">Product Subscription Model</span>
+      <select class="pending-select"><option>Pending ▼</option><option>High</option><option>Medium</option><option>Low</option></select>
+      <span class="chip chip-analyst">Analyst Review Check</span>
+      <span class="source-badge source-user">User Added</span>
+      <div class="spacer"></div>
+      <button class="btn-three-dot">···</button>
+    </div>
+    <div class="fcard-desc" style="color:#92400E; background:#FFFBEB; border-left-color:#FDE68A;">This finding requires manual analyst review to determine compliance severity. Please assess and assign risk level.</div>
+    <div class="fcard-actions">
+      <button class="btn-mark-reviewed" style="border-color:#FDE68A; color:#92400E;">Mark Reviewed</button>
+      <button class="btn-view-page">View Page</button>
+      <span class="fcard-date">First detected: 02/23/2026</span>
+    </div>
+  </div>
+
+  <!-- Card 3: LOW -->
+  <div class="finding-card-v2 low">
+    <div class="fcard-row1">
+      <input type="checkbox">
+      <span style="color:#DC2626; font-size:15px;">✗</span>
+      <span class="fcard-title">FDA Disclaimer Missing</span>
+      <span class="badge badge-low">LOW</span>
+      <span class="chip chip-ongoing"><span class="chip-dot"></span>Ongoing Issue</span>
+      <span class="source-badge source-ai">Q-AI Scan</span>
+      <div class="spacer"></div>
+      <select class="severity-select"><option>Low ▼</option></select>
+      <button class="btn-three-dot">···</button>
+    </div>
+    <div class="fcard-desc">Standard FDA disclaimer language not present on product detail pages.</div>
+    <div class="fcard-actions">
+      <button class="btn-mark-reviewed">Mark Reviewed</button>
+      <button class="btn-view-page">View Page</button>
+      <span class="fcard-date">First detected: 01/15/2026</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- Sub-section B: Multi-select Type filter dropdown -->
+<div style="font-size:12px; font-weight:600; color:#6B7280; text-transform:uppercase; letter-spacing:0.06em; margin-top:24px; margin-bottom:12px;">B — Multi-select Type Filter (shown open)</div>
+
+<div style="display:flex; align-items:flex-start; gap:20px; flex-wrap:wrap;">
+
+  <!-- Trigger button -->
+  <div>
+    <div style="font-size:12px; color:#6B7280; margin-bottom:8px;">Filter trigger (active state):</div>
+    <div class="toolbar-select-wrap" style="border-color:#2563eb; box-shadow:0 0 0 2px #DBEAFE; height:34px;">
+      <span class="toolbar-prefix" style="background:#EFF6FF; color:#2563eb; font-weight:600;">Type:</span>
+      <select class="toolbar-select" style="color:#2563eb; font-weight:600;"><option>3 selected ▼</option></select>
+    </div>
+  </div>
+
+  <!-- Dropdown open -->
+  <div>
+    <div style="font-size:12px; color:#6B7280; margin-bottom:8px;">Dropdown (open):</div>
+    <div class="multiselect-dropdown">
+      <div class="multiselect-header">Filter by Finding Type</div>
+      <div class="multiselect-body">
+        <div class="multiselect-item checked">
+          <input type="checkbox" checked> Privacy Policy
+        </div>
+        <div class="multiselect-item checked">
+          <input type="checkbox" checked> Business Contact Information
+        </div>
+        <div class="multiselect-item checked">
+          <input type="checkbox" checked> FDA Disclaimer
+        </div>
+        <div class="multiselect-item">
+          <input type="checkbox"> Age Verification / Controls
+        </div>
+        <div class="multiselect-item">
+          <input type="checkbox"> Violative Term
+        </div>
+        <div class="multiselect-item">
+          <input type="checkbox"> Product Subscription Model
+        </div>
+        <div class="multiselect-item">
+          <input type="checkbox"> Terms of Use
+        </div>
+        <div class="multiselect-item">
+          <input type="checkbox"> Return / Refund Policy
+        </div>
+        <div class="multiselect-item">
+          <input type="checkbox"> Accepted Payment Methods Disclosure
+        </div>
+        <div class="multiselect-item">
+          <input type="checkbox"> THC Disclaimer
+        </div>
+        <div class="multiselect-item">
+          <input type="checkbox"> SSL/TLS Security &amp; Integrity
+        </div>
+        <div class="multiselect-item">
+          <input type="checkbox"> COA Directory
+        </div>
+      </div>
+      <div class="multiselect-footer">
+        <button class="btn-clear-all">Clear all</button>
+        <button class="btn-apply">Apply</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="annotation-box" style="margin-top:16px;">
+  <strong>✅ Multi-select Type filter:</strong> Reviewers can now filter to multiple finding types simultaneously (e.g., "Privacy Policy + Business Contact Information + FDA Disclaimer"). Previously single-select only — required multiple filter passes to review related categories.
+</div>
+
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- SECTION 4: Impact Summary                      -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="section-label">Section 4 — Impact Summary</div>
+
+<table class="impact-table">
+  <thead>
+    <tr>
+      <th>Improvement</th>
+      <th>Impact</th>
+      <th>Effort</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Near-fullscreen modal</td>
+      <td>Maximum findings density, company switching without close</td>
+      <td><span class="effort-low">🟢 Low</span></td>
+    </tr>
+    <tr>
+      <td>Compact scan header (pills → single row)</td>
+      <td>~300px reclaimed, findings above fold</td>
+      <td><span class="effort-low">🟢 Low</span></td>
+    </tr>
+    <tr>
+      <td>Priority sort default</td>
+      <td>High New always first, Analyst Review before Low</td>
+      <td><span class="effort-low">🟢 Low</span></td>
+    </tr>
+    <tr>
+      <td>Analyst Review pill + sub-filter</td>
+      <td>One-click isolation + Pending/Reviewed/Cleared sub-filter</td>
+      <td><span class="effort-medium">🟡 Medium</span></td>
+    </tr>
+    <tr>
+      <td>Compliant findings collapsed</td>
+      <td>Reduces visual noise by ~35%</td>
+      <td><span class="effort-low">🟢 Low</span></td>
+    </tr>
+    <tr>
+      <td>Table view toggle</td>
+      <td>3× more findings visible per scroll</td>
+      <td><span class="effort-medium">🟡 Medium</span></td>
+    </tr>
+    <tr>
+      <td>Multi-select Type filter</td>
+      <td>Filter to multiple violation types simultaneously</td>
+      <td><span class="effort-medium">🟡 Medium</span></td>
+    </tr>
+    <tr>
+      <td>Alphabetized compliance summary</td>
+      <td>Faster keyword lookup</td>
+      <td><span class="effort-low">🟢 Low</span></td>
+    </tr>
+    <tr>
+      <td>Inline severity + bulk assign</td>
+      <td>Process Analyst Review queue in batch</td>
+      <td><span class="effort-medium">🟡 Medium</span></td>
+    </tr>
+  </tbody>
+</table>
+
+</div><!-- end page-content -->
 </body>
 </html>
