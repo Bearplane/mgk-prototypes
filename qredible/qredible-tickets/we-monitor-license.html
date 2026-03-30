@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>We Monitor — License Status Improvements</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "Uber Move", -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #1E293B;
+      color: #111827;
+    }
+
+    /* Proto nav */
+    .proto-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: #0F172A;
+      padding: 10px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .proto-nav a {
+      color: #94A3B8;
+      text-decoration: none;
+      font-size: 13px;
+    }
+    .proto-nav a:hover { color: white; }
+    .proto-nav-sep { color: #475569; font-size: 13px; }
+    .proto-nav-title { color: #F1F5F9; font-size: 13px; font-weight: 500; }
+
+    /* Page layout */
+    .page-wrap {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 32px 24px 80px;
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+    }
+
+    /* Section card */
+    .section-card {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,.15), 0 2px 4px -2px rgba(0,0,0,.1);
+    }
+    .section-header {
+      padding: 20px 24px 16px;
+      border-bottom: 1px solid #E5E7EB;
+    }
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: #9CA3AF;
+      margin-bottom: 4px;
+    }
+    .section-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #111827;
+    }
+    .section-desc {
+      font-size: 13px;
+      color: #6B7280;
+      margin-top: 6px;
+    }
+    .section-body {
+      padding: 24px;
+    }
+
+    /* License status badges */
+    .ls-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+      font-style: italic;
+      white-space: nowrap;
+      border: 1px solid;
+    }
+    .ls-validating { background: #FEF3C7; border-color: #FDE68A; color: #92400E; }
+    .ls-active { background: #d7e9c9; border-color: #bfdea8; color: #5F9932; }
+    .ls-not-found { background: rgba(100,116,139,0.10); border-color: rgba(100,116,139,0.25); color: #334155; }
+    .ls-not-required { background: #d7e9c9; border-color: #bfdea8; color: #5F9932; }
+    .ls-failed { background: rgba(220,38,38,0.10); border-color: rgba(220,38,38,0.25); color: #991B1B; }
+    .ls-pending { background: #FEF3C7; border-color: #FDE68A; color: #92400E; }
+    .ls-multiple { background: rgba(2,132,199,0.10); border-color: rgba(2,132,199,0.25); color: #075985; }
+
+    /* Tooltip hover card */
+    .hover-tooltip {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 10px 15px -3px rgba(0,0,0,.15), 0 4px 6px -4px rgba(0,0,0,.1);
+      border: 1px solid #E5E7EB;
+      padding: 14px 16px;
+      min-width: 260px;
+      font-size: 13px;
+    }
+    .hover-tooltip-title { font-size: 13px; font-weight: 600; color: #111827; margin-bottom: 10px; }
+    .hover-tooltip-row { display: flex; flex-direction: column; gap: 3px; padding: 8px 0; border-bottom: 1px solid #F3F4F6; }
+    .hover-tooltip-row:last-of-type { border-bottom: none; }
+    .hover-tooltip-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: #6b7280; }
+    .hover-tooltip-value { font-size: 13px; color: #111827; }
+    .hover-tooltip-timestamp { font-size: 12px; color: #6b7280; margin-top: 4px; }
+    .hover-tooltip-note { background: #EFF6FF; border-radius: 5px; padding: 8px 10px; font-size: 12px; color: #1e40af; margin-top: 8px; }
+    .hover-tooltip-divider { height: 1px; background: #E5E7EB; margin: 8px 0; }
+    .hover-tooltip-footer { background: #EFF6FF; margin: -14px -16px; margin-top: 10px; padding: 8px 16px; border-radius: 0 0 8px 8px; font-size: 12px; color: #1e40af; }
+
+    /* Table styles */
+    .we-monitor-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .we-monitor-table th { color: #2563eb; font-weight: 600; font-size: 12px; padding: 10px 12px; text-align: left; border-bottom: 2px solid #E5E7EB; white-space: nowrap; }
+    .we-monitor-table td { padding: 12px 12px; border-bottom: 1px solid #E5E7EB; vertical-align: top; }
+    .we-monitor-table tr:hover td { background: #FAFAFA; }
+    .table-wrap { overflow-x: auto; border: 1px solid #E5E7EB; border-radius: 8px; }
+
+    /* Sort arrows */
+    .sort-arrows { display: inline-flex; flex-direction: column; margin-left: 4px; gap: 1px; vertical-align: middle; }
+    .sort-arrow { font-size: 9px; color: #D1D5DB; line-height: 1; }
+    .sort-arrow.active { color: #2563eb; }
+
+    /* Filter chips */
+    .filter-chip { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; background: #EFF6FF; border: 1px solid #BFDBFE; border-radius: 16px; font-size: 12px; font-weight: 600; color: #1e40af; }
+    .filter-chip-clear { cursor: pointer; color: #93C5FD; font-size: 14px; }
+
+    /* Annotation callouts */
+    .annotation-callout {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      background: #FFF5F5;
+      border: 1.5px dashed #FCA5A5;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 12px;
+      color: #7F1D1D;
+      margin-top: 12px;
+    }
+    .annotation-callout .callout-icon { color: #EF4444; font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+    .annotation-list { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
+
+    /* Generic tags/pills */
+    .tag { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+    .tag-blue { background: #DBEAFE; color: #1D4ED8; }
+    .tag-green { background: #D1FAE5; color: #065F46; }
+    .tag-grey { background: #F3F4F6; color: #374151; }
+    .tag-red { background: #FEE2E2; color: #991B1B; }
+    .tag-amber { background: #FEF3C7; color: #92400E; }
+
+    /* Scan rows */
+    .scan-row { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #6B7280; }
+    .scan-row + .scan-row { margin-top: 4px; }
+    .scan-icon { font-size: 13px; }
+
+    /* Action button */
+    .action-btn {
+      background: white;
+      border: 1px solid #E5E7EB;
+      border-radius: 6px;
+      padding: 5px 10px;
+      font-size: 12px;
+      font-weight: 500;
+      color: #374151;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* Section 1: Flow diagram */
+    .flow-diagram {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+    }
+    .flow-box {
+      border-radius: 8px;
+      padding: 10px 20px;
+      font-size: 13px;
+      font-weight: 500;
+      text-align: center;
+      min-width: 320px;
+      max-width: 420px;
+    }
+    .flow-box-blue { background: #EFF6FF; border: 1.5px solid #BFDBFE; color: #1E40AF; }
+    .flow-box-grey { background: #F9FAFB; border: 1.5px solid #E5E7EB; color: #374151; }
+    .flow-box-amber { background: #FEF3C7; border: 1.5px solid #FDE68A; color: #92400E; }
+    .flow-box-green { background: #D1FAE5; border: 1.5px solid #6EE7B7; color: #065F46; }
+    .flow-arrow { font-size: 20px; color: #9CA3AF; line-height: 1; padding: 2px 0; }
+    .flow-branch {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      margin: 4px 0;
+    }
+    .flow-branch-col { display: flex; flex-direction: column; align-items: center; gap: 0; }
+    .flow-branch-label { font-size: 11px; font-weight: 700; color: #6B7280; margin-bottom: 4px; }
+
+    /* Toolbar */
+    .toolbar {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .toolbar-input {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: white;
+      border: 1px solid #E5E7EB;
+      border-radius: 6px;
+      padding: 7px 12px;
+      font-size: 13px;
+      color: #9CA3AF;
+      min-width: 260px;
+    }
+    .toolbar-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: white;
+      border: 1px solid #E5E7EB;
+      border-radius: 6px;
+      padding: 7px 12px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #374151;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .toolbar-btn.active {
+      border-color: #2563eb;
+      color: #2563eb;
+      background: #EFF6FF;
+    }
+
+    /* Dropdown */
+    .dropdown-card {
+      background: white;
+      border: 1px solid #E5E7EB;
+      border-radius: 8px;
+      box-shadow: 0 10px 15px -3px rgba(0,0,0,.1), 0 4px 6px -4px rgba(0,0,0,.1);
+      overflow: hidden;
+      min-width: 220px;
+    }
+    .dropdown-header {
+      padding: 10px 14px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #374151;
+      border-bottom: 1px solid #E5E7EB;
+    }
+    .dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 14px;
+      font-size: 13px;
+      color: #374151;
+      cursor: pointer;
+    }
+    .dropdown-item:hover { background: #F9FAFB; }
+    .dropdown-item.new-item { background: #EFF6FF; border-left: 3px solid #2563eb; color: #1E40AF; font-weight: 600; }
+    .dropdown-divider { height: 1px; background: #E5E7EB; }
+    .dropdown-footer {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 14px;
+      border-top: 1px solid #E5E7EB;
+    }
+    .btn-clear { font-size: 12px; color: #6B7280; cursor: pointer; background: none; border: none; }
+    .btn-apply {
+      font-size: 12px;
+      font-weight: 600;
+      color: white;
+      background: #2563eb;
+      border: none;
+      border-radius: 5px;
+      padding: 5px 14px;
+      cursor: pointer;
+    }
+
+    /* Filter checkbox row */
+    .filter-option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 7px 14px;
+      font-size: 13px;
+      color: #374151;
+      cursor: pointer;
+    }
+    .filter-option:hover { background: #F9FAFB; }
+    .filter-checkbox {
+      width: 15px;
+      height: 15px;
+      border: 1.5px solid #D1D5DB;
+      border-radius: 3px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+    }
+    .filter-checkbox.checked { background: #2563eb; border-color: #2563eb; color: white; }
+
+    /* Annotation boxes */
+    .annotation-box {
+      background: #FFFBEB;
+      border: 1.5px dashed #FCD34D;
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 12px;
+      color: #78350F;
+      margin-top: 16px;
+    }
+    .annotation-box.blue {
+      background: #EFF6FF;
+      border-color: #93C5FD;
+      color: #1E3A5F;
+    }
+
+    /* Side-by-side layout */
+    .side-by-side { display: flex; gap: 24px; flex-wrap: wrap; }
+    .side-by-side > * { flex: 1; min-width: 260px; }
+
+    /* Subsection */
+    .subsection { margin-bottom: 32px; }
+    .subsection-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #374151;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #F3F4F6;
+    }
+    .subsection-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: #9CA3AF;
+      margin-bottom: 8px;
+    }
+
+    /* State label */
+    .state-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: #6B7280;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      margin-bottom: 8px;
+    }
+
+    /* Row count */
+    .row-count { font-size: 12px; color: #6B7280; }
+
+    /* Tooltip wrapper for demo */
+    .tooltip-demo-wrap {
+      position: relative;
+      display: inline-block;
+    }
+    .tooltip-demo-wrap .hover-tooltip {
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 0;
+      z-index: 10;
+    }
+
+    /* EIN / meta text */
+    .meta-text { font-size: 11px; color: #9CA3AF; margin-top: 2px; }
+    .company-name { font-size: 13px; font-weight: 600; color: #111827; }
+
+    .compliance-findings { font-size: 12px; }
+    .compliance-row { display: flex; align-items: center; gap: 4px; margin-bottom: 2px; }
+    .comp-red { color: #991B1B; }
+    .comp-green { color: #5F9932; }
+    .comp-amber { color: #92400E; }
+
+    .actions-col { position: relative; }
+
+    hr.section-sep {
+      border: none;
+      border-top: 1px solid #E5E7EB;
+      margin: 28px 0;
+    }
+
+    /* Tooltip bottom badge row */
+    .tooltip-bottom-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid #E5E7EB;
+      font-size: 12px;
+      color: #374151;
+    }
+
+    /* Sort state display */
+    .sort-state-group { display: flex; gap: 20px; flex-wrap: wrap; }
+    .sort-state-card {
+      flex: 1;
+      min-width: 280px;
+      border: 1px solid #E5E7EB;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .sort-state-label {
+      background: #F9FAFB;
+      padding: 8px 12px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: #6B7280;
+      border-bottom: 1px solid #E5E7EB;
+    }
+
+    /* NEW badge */
+    .new-badge {
+      display: inline-flex;
+      align-items: center;
+      background: #DBEAFE;
+      color: #1D4ED8;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 10px;
+      letter-spacing: .04em;
+      margin-left: 6px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Proto nav -->
+<nav class="proto-nav">
+  <a href="../">← All Mockups</a>
+  <span class="proto-nav-sep">/</span>
+  <span class="proto-nav-title">We Monitor — License Status Improvements</span>
+</nav>
+
+<div class="page-wrap">
+
+  <!-- ═══════════════════════════════════════
+       SECTION 0: CURRENT STATE
+  ═══════════════════════════════════════ -->
+  <div class="section-card">
+    <div class="section-header">
+      <div class="section-label">Section 0</div>
+      <div class="section-title">Current State (Annotated)</div>
+      <div class="section-desc">We Monitor companies table as it exists today — with annotation callouts showing what's being improved.</div>
+    </div>
+    <div class="section-body">
+
+      <!-- Toolbar (current) -->
+      <div class="toolbar" style="margin-bottom: 16px;">
+        <div class="toolbar-input" style="min-width: 300px;">
+          <span>🔍</span>
+          <span>Search by Legal Name, DBA, or Website...</span>
+        </div>
+        <div class="toolbar-input" style="min-width: 180px;">
+          <span>📍</span>
+          <span>Enter a location</span>
+        </div>
+        <div class="toolbar-btn">Filter ▼</div>
+      </div>
+
+      <!-- Table -->
+      <div class="table-wrap" style="position: relative;">
+        <table class="we-monitor-table">
+          <thead>
+            <tr>
+              <th>Legal Name</th>
+              <th>DBA Names</th>
+              <th>License Status</th>
+              <th>Website Compliance</th>
+              <th>Product Compliance</th>
+              <th>Website</th>
+              <th>Team Members</th>
+              <th>Scans</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Row 1: 3 TALL PINES LLC -->
+            <tr>
+              <td>
+                <div class="company-name">3 TALL PINES LLC DBA 3 TALL PINES - WHOLESALE</div>
+                <div class="meta-text">EIN 5835234000002345</div>
+                <div style="display:flex; gap: 4px; flex-wrap: wrap; margin-top: 4px;">
+                  <span class="tag tag-blue">WI</span>
+                  <span class="tag tag-green">Hemp/CBD</span>
+                  <span class="tag tag-grey">Retailer</span>
+                </div>
+              </td>
+              <td><span class="tag tag-blue">3 TALL PINES - WHOLESALE</span></td>
+              <td>
+                <span class="ls-badge ls-validating">ⓘ Validating</span>
+              </td>
+              <td>
+                <div class="compliance-findings">
+                  <div class="compliance-row comp-amber">⚠ 99+ Findings</div>
+                  <div class="compliance-row comp-green">✓ 99 Compliant</div>
+                </div>
+              </td>
+              <td>
+                <div class="compliance-findings">
+                  <div class="compliance-row">99+ Products</div>
+                  <div class="compliance-row comp-red">⚠ 19 Missing COA</div>
+                  <div class="compliance-row comp-red">⚠ 99+ Violative</div>
+                  <div class="compliance-row comp-green">✓ 76 Compliant</div>
+                </div>
+              </td>
+              <td><a href="#" style="font-size:12px; color: #2563eb;">3tallpineswholesale.com</a></td>
+              <td><span style="font-size:12px; color:#6B7280;">—</span></td>
+              <td>
+                <div class="scan-row"><span class="scan-icon">🌐</span> Completed Last: Mar 14</div>
+                <div class="scan-row"><span class="scan-icon">📦</span> Completed Last: Mar 14</div>
+              </td>
+              <td><button class="action-btn">Actions ▼</button></td>
+            </tr>
+            <!-- Row 2: AFICIONADO DESIGNS LLC -->
+            <tr>
+              <td>
+                <div class="company-name">AFICIONADO DESIGNS LLC</div>
+                <div class="meta-text">EIN 8827634000009921</div>
+                <div style="display:flex; gap: 4px; flex-wrap: wrap; margin-top: 4px;">
+                  <span class="tag tag-blue">CA</span>
+                  <span class="tag tag-green">Hemp/CBD</span>
+                  <span class="tag tag-grey">Distributor</span>
+                </div>
+              </td>
+              <td><span class="tag tag-blue">AFICIONADO SEEDS</span></td>
+              <td>
+                <span class="ls-badge ls-validating">ⓘ Validating</span>
+              </td>
+              <td>
+                <div class="compliance-findings">
+                  <div class="compliance-row comp-amber">⚠ 42 Findings</div>
+                  <div class="compliance-row comp-green">✓ 18 Compliant</div>
+                </div>
+              </td>
+              <td>
+                <div class="compliance-findings">
+                  <div class="compliance-row">54 Products</div>
+                  <div class="compliance-row comp-red">⚠ 7 Missing COA</div>
+                  <div class="compliance-row comp-red">⚠ 12 Violative</div>
+                  <div class="compliance-row comp-green">✓ 35 Compliant</div>
+                </div>
+              </td>
+              <td><a href="#" style="font-size:12px; color: #2563eb;">AFICIONADOSEEDS.COM</a></td>
+              <td><span style="font-size:12px; color:#6B7280;">2</span></td>
+              <td>
+                <div class="scan-row"><span class="scan-icon">🌐</span> Completed Last: Mar 10</div>
+                <div class="scan-row"><span class="scan-icon">📦</span> Completed Last: Mar 10</div>
+              </td>
+              <td><button class="action-btn">Actions ▼</button></td>
+            </tr>
+            <!-- Row 3: 1912 2 — with tooltip visible -->
+            <tr style="background: #FAFAFA;">
+              <td>
+                <div class="company-name">1912 2</div>
+                <div class="meta-text">EIN 4412890000001234</div>
+                <div style="display:flex; gap: 4px; flex-wrap: wrap; margin-top: 4px;">
+                  <span class="tag tag-blue">AL</span>
+                  <span class="tag tag-green">Hemp/CBD</span>
+                </div>
+              </td>
+              <td><span class="tag tag-blue">1912 SEEDS CO</span></td>
+              <td style="position:relative;">
+                <!-- Badge (old — being renamed) -->
+                <span class="ls-badge ls-not-required" style="max-width: 160px; overflow: hidden; text-overflow: ellipsis;">✓ License Not Req...</span>
+
+                <!-- Tooltip popover (shown for demo) -->
+                <div class="hover-tooltip" style="position:absolute; top: 48px; left: -10px; z-index: 20; width: 300px;">
+                  <div class="hover-tooltip-title">License Information</div>
+                  <div class="hover-tooltip-row">
+                    <span class="hover-tooltip-label">Business Name</span>
+                    <span class="hover-tooltip-value">1912 2</span>
+                  </div>
+                  <div class="hover-tooltip-row">
+                    <span class="hover-tooltip-label">DBA</span>
+                    <span class="hover-tooltip-value">1912 SEEDS CO</span>
+                  </div>
+                  <div class="hover-tooltip-row">
+                    <span class="hover-tooltip-label">Address</span>
+                    <span class="hover-tooltip-value">AL</span>
+                  </div>
+                  <div class="hover-tooltip-row">
+                    <span class="hover-tooltip-label">License Number</span>
+                    <span class="hover-tooltip-value">test license 1</span>
+                  </div>
+                  <div class="hover-tooltip-row">
+                    <span class="hover-tooltip-label">License Type</span>
+                    <span class="hover-tooltip-value">Tier 1-mixed</span>
+                  </div>
+                  <div class="hover-tooltip-row">
+                    <span class="hover-tooltip-label">License Status</span>
+                    <span class="hover-tooltip-value">Active</span>
+                  </div>
+                  <div class="hover-tooltip-row">
+                    <span class="hover-tooltip-label">Contact Information</span>
+                    <span class="hover-tooltip-value" style="color:#9CA3AF;">Missing —</span>
+                  </div>
+                  <div class="hover-tooltip-row">
+                    <span class="hover-tooltip-label">Data Source</span>
+                    <span class="hover-tooltip-value" style="color:#9CA3AF;">—</span>
+                  </div>
+                  <div class="hover-tooltip-row">
+                    <span class="hover-tooltip-label">Retrieved</span>
+                    <span class="hover-tooltip-value" style="color:#9CA3AF;">—</span>
+                  </div>
+                  <div class="hover-tooltip-footer">
+                    Note: Showing primary license. 3 additional licenses found.
+                  </div>
+                  <div class="tooltip-bottom-badge">
+                    <span class="ls-badge ls-active" style="font-size:11px; padding: 2px 8px;">ⓘ Active | test lic... | Tie...</span>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="compliance-findings">
+                  <div class="compliance-row comp-green">✓ 0 Findings</div>
+                  <div class="compliance-row comp-green">✓ 12 Compliant</div>
+                </div>
+              </td>
+              <td>
+                <div class="compliance-findings">
+                  <div class="compliance-row">24 Products</div>
+                  <div class="compliance-row comp-green">✓ 24 Compliant</div>
+                </div>
+              </td>
+              <td><a href="#" style="font-size:12px; color: #2563eb;">1912seeds.com</a></td>
+              <td><span style="font-size:12px; color:#6B7280;">1</span></td>
+              <td>
+                <div class="scan-row"><span class="scan-icon">🌐</span> Completed Last: Mar 28</div>
+                <div class="scan-row"><span class="scan-icon">📦</span> Completed Last: Mar 28</div>
+              </td>
+              <td><button class="action-btn">Actions ▼</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Spacer for tooltip overflow -->
+      <div style="height: 220px;"></div>
+
+      <!-- Annotation callouts -->
+      <div class="annotation-list">
+        <div class="annotation-callout">
+          <span class="callout-icon">➊</span>
+          <div>
+            <strong>Validating badge (Rows 1 & 2):</strong> Current hover tooltip shows only a generic "License verification in progress" message — no timestamp for when validation started or how long it's been running. Reviewers can't assess staleness.
+          </div>
+        </div>
+        <div class="annotation-callout">
+          <span class="callout-icon">➋</span>
+          <div>
+            <strong>"License Not Required" badge (Row 3):</strong> Being renamed to <strong>"License Not Found"</strong> — semantically more accurate. "Not Required" implies a confirmed exemption; the reality is CannaSpyGlass found no license record for this company.
+          </div>
+        </div>
+        <div class="annotation-callout">
+          <span class="callout-icon">➌</span>
+          <div>
+            <strong>Actions dropdown (all rows):</strong> No "Run License Check" action exists. Reviewers must wait for the next scheduled run — there's no way to manually trigger a fresh CannaSpyGlass lookup from this view.
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /section-body -->
+  </div><!-- /section-card -->
+
+
+  <!-- ═══════════════════════════════════════
+       SECTION 1: RUN LICENSE CHECK ACTION
+  ═══════════════════════════════════════ -->
+  <div class="section-card">
+    <div class="section-header">
+      <div class="section-label">Section 1</div>
+      <div class="section-title">Run License Check Action</div>
+      <div class="section-desc">New "Run License Check" option in the Actions dropdown, with flow diagram showing what happens when triggered.</div>
+    </div>
+    <div class="section-body">
+
+      <div class="side-by-side" style="align-items: flex-start;">
+
+        <!-- Actions dropdown -->
+        <div>
+          <div class="subsection-label">Actions Dropdown — Updated</div>
+          <div style="display: flex; align-items: flex-start; gap: 16px;">
+            <button class="action-btn">Actions ▼</button>
+            <div class="dropdown-card" style="min-width: 200px;">
+              <div class="dropdown-item">
+                <span>🔍</span> Scan
+              </div>
+              <div class="dropdown-item new-item">
+                <span>📋</span> Run License Check
+                <span class="new-badge">NEW</span>
+              </div>
+              <div class="dropdown-divider"></div>
+              <div class="dropdown-item" style="color: #9CA3AF;">
+                <span>🗄</span> Archive Company
+              </div>
+            </div>
+          </div>
+
+          <div class="annotation-box blue" style="margin-top: 20px; max-width: 400px;">
+            <strong>Run License Check</strong> creates one Q-Audit task per license found in CannaSpyGlass. License number is the unique identifier — existing records are updated, not duplicated.
+          </div>
+        </div>
+
+        <!-- Flow diagram -->
+        <div style="flex: 2;">
+          <div class="subsection-label">What Happens When Clicked</div>
+          <div class="flow-diagram">
+            <div class="flow-box flow-box-blue">
+              <strong>Run License Check clicked</strong>
+            </div>
+            <div class="flow-arrow">↓</div>
+            <div class="flow-box flow-box-grey">
+              CannaSpyGlass API called for this company
+            </div>
+            <div class="flow-arrow">↓</div>
+            <div class="flow-box flow-box-grey" style="text-align: left; min-width: 380px;">
+              <strong>For each license found:</strong><br><br>
+              <div style="display: flex; gap: 24px;">
+                <div style="flex: 1;">
+                  <div style="font-size: 12px; font-weight: 700; color: #059669; margin-bottom: 4px;">YES — License # exists in Q-Audit</div>
+                  <div style="font-size: 12px; color: #374151; background: #F0FDF4; border: 1px solid #BBF7D0; border-radius: 6px; padding: 6px 10px;">Update existing record<br>Reset status → Validating</div>
+                </div>
+                <div style="flex: 1;">
+                  <div style="font-size: 12px; font-weight: 700; color: #7C3AED; margin-bottom: 4px;">NO — License # not in Q-Audit</div>
+                  <div style="font-size: 12px; color: #374151; background: #F5F3FF; border: 1px solid #DDD6FE; border-radius: 6px; padding: 6px 10px;">Create new Q-Audit<br>validation task</div>
+                </div>
+              </div>
+            </div>
+            <div class="flow-arrow">↓</div>
+            <div class="flow-box flow-box-amber">
+              License Status badge → <strong>ⓘ Validating</strong> (all licenses reset immediately)
+            </div>
+            <div class="flow-arrow">↓</div>
+            <div class="flow-box flow-box-grey">
+              Q-Audit runs validation async
+            </div>
+            <div class="flow-arrow">↓</div>
+            <div class="flow-box flow-box-green">
+              Status updates to <strong>Active / Not Found / Failed / Multiple</strong>
+            </div>
+          </div>
+
+          <div style="margin-top: 16px; background: #F0FDF4; border: 1px solid #BBF7D0; border-radius: 8px; padding: 10px 14px; font-size: 12px; color: #065F46;">
+            ✓ <strong>Success snackbar shown:</strong> "License check started — status will update when complete"
+          </div>
+        </div>
+
+      </div>
+    </div><!-- /section-body -->
+  </div><!-- /section-card -->
+
+
+  <!-- ═══════════════════════════════════════
+       SECTION 2: VALIDATING BADGE HOVER STATES + LICENSE NOT FOUND
+  ═══════════════════════════════════════ -->
+  <div class="section-card">
+    <div class="section-header">
+      <div class="section-label">Section 2</div>
+      <div class="section-title">Updated Validating Badge — Hover States &amp; Badge Rename</div>
+      <div class="section-desc">Timestamps added to the Validating badge hover tooltip. "License Not Required" renamed to "License Not Found" with updated styling.</div>
+    </div>
+    <div class="section-body">
+
+      <!-- Hover states -->
+      <div class="subsection">
+        <div class="subsection-title">Validating Badge — Hover States (Side-by-Side)</div>
+        <div class="side-by-side" style="align-items: flex-start;">
+
+          <!-- State A: During validation -->
+          <div>
+            <div class="state-label" style="color: #92400E;">During Validation</div>
+            <span class="ls-badge ls-validating" style="margin-bottom: 12px; display: inline-flex;">ⓘ Validating</span>
+            <div class="hover-tooltip" style="margin-top: 8px;">
+              <div class="hover-tooltip-title">License Verification In Progress</div>
+              <div class="hover-tooltip-divider"></div>
+              <div class="hover-tooltip-timestamp" style="margin-bottom: 6px;">
+                <strong>Audit task created:</strong> Mar 28, 2026 at 2:14 PM
+              </div>
+              <div style="height: 8px;"></div>
+              <div style="font-size: 12px; color: #6B7280; font-style: italic;">
+                This status will update upon completion.
+              </div>
+            </div>
+          </div>
+
+          <!-- State B: After validation completed -->
+          <div>
+            <div class="state-label" style="color: #5F9932;">After Validation Completed</div>
+            <span class="ls-badge ls-active" style="margin-bottom: 12px; display: inline-flex;">✓ Active</span>
+            <div class="hover-tooltip" style="margin-top: 8px;">
+              <div class="hover-tooltip-title">License Verified</div>
+              <div class="hover-tooltip-divider"></div>
+              <div class="hover-tooltip-timestamp" style="margin-bottom: 4px;">
+                <strong>Audit task created:</strong> Mar 28, 2026 at 2:14 PM
+              </div>
+              <div class="hover-tooltip-timestamp" style="margin-bottom: 8px;">
+                <strong>Validation completed:</strong> Mar 28, 2026 at 2:47 PM
+              </div>
+              <div class="hover-tooltip-divider"></div>
+              <div style="font-size: 12px; color: #374151; margin-top: 6px;">
+                <strong>License Number:</strong> test lic 1<br>
+                <strong>Type:</strong> Tier 1-mixed
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <hr class="section-sep" />
+
+      <!-- Badge rename -->
+      <div class="subsection">
+        <div class="subsection-title">"License Not Required" → "License Not Found" — Badge Rename</div>
+        <div class="side-by-side" style="align-items: flex-start; gap: 40px;">
+
+          <div>
+            <div class="state-label" style="color: #991B1B;">Old Badge — Being Removed</div>
+            <span class="ls-badge ls-not-required">✓ License Not Required</span>
+            <div style="margin-top: 10px; font-size: 12px; color: #6B7280;">
+              bg: #d7e9c9 · border: #bfdea8 · color: #5F9932<br>
+              <em>Green implied a confirmed exemption</em>
+            </div>
+          </div>
+
+          <div>
+            <div class="state-label" style="color: #334155;">New Badge — Replacing It</div>
+            <span class="ls-badge ls-not-found">? License Not Found</span>
+            <div style="margin-top: 10px; font-size: 12px; color: #6B7280;">
+              bg: rgba(100,116,139,0.10) · color: #334155<br>
+              <em>Muted grey — indicates absence, not exemption</em>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="annotation-box" style="margin-top: 20px;">
+          <strong>Semantically more accurate</strong> — "Not Required" implied CannaSpyGlass confirmed this company doesn't need a license. "Not Found" accurately reflects that no license record was returned — the company may or may not need one, we simply couldn't find it.
+        </div>
+      </div>
+
+    </div><!-- /section-body -->
+  </div><!-- /section-card -->
+
+
+  <!-- ═══════════════════════════════════════
+       SECTION 3: LICENSE STATUS COLUMN SORT
+  ═══════════════════════════════════════ -->
+  <div class="section-card">
+    <div class="section-header">
+      <div class="section-label">Section 3</div>
+      <div class="section-title">License Status Column Sort</div>
+      <div class="section-desc">Sort controls added to the License Status column header. Three states: unsorted, ascending (A→Z), descending (Z→A).</div>
+    </div>
+    <div class="section-body">
+
+      <div class="sort-state-group">
+
+        <!-- State 1: Unsorted -->
+        <div class="sort-state-card">
+          <div class="sort-state-label">① Unsorted (default)</div>
+          <table class="we-monitor-table">
+            <thead>
+              <tr>
+                <th>Legal Name</th>
+                <th>
+                  License Status
+                  <span class="sort-arrows">
+                    <span class="sort-arrow">▲</span>
+                    <span class="sort-arrow">▼</span>
+                  </span>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Acme Hemp Co</td><td><span class="ls-badge ls-validating">ⓘ Validating</span></td></tr>
+              <tr><td>Blue Ridge LLC</td><td><span class="ls-badge ls-active">✓ Active</span></td></tr>
+              <tr><td>Canyon Farms</td><td><span class="ls-badge ls-not-found">? License Not Found</span></td></tr>
+              <tr><td>Delta Greens</td><td><span class="ls-badge ls-failed">⚠ Failed</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- State 2: Sorted A→Z -->
+        <div class="sort-state-card">
+          <div class="sort-state-label">② Sorted A→Z (ascending)</div>
+          <table class="we-monitor-table">
+            <thead>
+              <tr>
+                <th>Legal Name</th>
+                <th style="color: #2563eb;">
+                  License Status
+                  <span class="sort-arrows">
+                    <span class="sort-arrow">▲</span>
+                    <span class="sort-arrow active">▼</span>
+                  </span>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Blue Ridge LLC</td><td><span class="ls-badge ls-active">✓ Active</span></td></tr>
+              <tr><td>Delta Greens</td><td><span class="ls-badge ls-failed">⚠ Failed</span></td></tr>
+              <tr><td>Canyon Farms</td><td><span class="ls-badge ls-not-found">? License Not Found</span></td></tr>
+              <tr><td>Acme Hemp Co</td><td><span class="ls-badge ls-validating">ⓘ Validating</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- State 3: Sorted Z→A -->
+        <div class="sort-state-card">
+          <div class="sort-state-label">③ Sorted Z→A (descending)</div>
+          <table class="we-monitor-table">
+            <thead>
+              <tr>
+                <th>Legal Name</th>
+                <th style="color: #2563eb;">
+                  License Status
+                  <span class="sort-arrows">
+                    <span class="sort-arrow active">▲</span>
+                    <span class="sort-arrow">▼</span>
+                  </span>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Acme Hemp Co</td><td><span class="ls-badge ls-validating">ⓘ Validating</span></td></tr>
+              <tr><td>Canyon Farms</td><td><span class="ls-badge ls-not-found">? License Not Found</span></td></tr>
+              <tr><td>Delta Greens</td><td><span class="ls-badge ls-failed">⚠ Failed</span></td></tr>
+              <tr><td>Blue Ridge LLC</td><td><span class="ls-badge ls-active">✓ Active</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+
+      <div class="annotation-box blue" style="margin-top: 20px;">
+        <strong>Sort is column-only — it does not filter.</strong> To show only specific statuses, use the License Status filter panel (see Section 4). Sort cycles: Unsorted → A→Z → Z→A → Unsorted. Active direction highlighted in blue; inactive arrow is grey.
+      </div>
+
+    </div><!-- /section-body -->
+  </div><!-- /section-card -->
+
+
+  <!-- ═══════════════════════════════════════
+       SECTION 4: LICENSE STATUS FILTER PANEL
+  ═══════════════════════════════════════ -->
+  <div class="section-card">
+    <div class="section-header">
+      <div class="section-label">Section 4</div>
+      <div class="section-title">License Status Filter Panel</div>
+      <div class="section-desc">New "License Status ▼" quick-filter in the We Monitor toolbar. Multi-select with filter chip. Larger UI change — separate ticket from Sort.</div>
+    </div>
+    <div class="section-body">
+
+      <!-- Current toolbar -->
+      <div class="subsection">
+        <div class="subsection-label">Current Toolbar</div>
+        <div class="toolbar">
+          <div class="toolbar-input" style="min-width: 300px;">
+            <span>🔍</span>
+            <span>Search by Legal Name, DBA, or Website...</span>
+          </div>
+          <div class="toolbar-input" style="min-width: 180px;">
+            <span>📍</span>
+            <span>Enter a location</span>
+          </div>
+          <div class="toolbar-btn">Filter ▼</div>
+        </div>
+      </div>
+
+      <hr class="section-sep" />
+
+      <!-- Updated toolbar -->
+      <div class="subsection">
+        <div class="subsection-label">Updated Toolbar — With License Status Filter</div>
+        <div class="toolbar">
+          <div class="toolbar-input" style="min-width: 300px;">
+            <span>🔍</span>
+            <span>Search by Legal Name, DBA, or Website...</span>
+          </div>
+          <div class="toolbar-input" style="min-width: 180px;">
+            <span>📍</span>
+            <span>Enter a location</span>
+          </div>
+          <div class="toolbar-btn active">License Status ▼ <span class="new-badge">NEW</span></div>
+          <div class="toolbar-btn">Filter ▼</div>
+        </div>
+      </div>
+
+      <hr class="section-sep" />
+
+      <!-- Filter dropdown open -->
+      <div class="subsection">
+        <div class="subsection-label">License Status Dropdown — Open State</div>
+        <div style="display: flex; gap: 32px; flex-wrap: wrap; align-items: flex-start;">
+
+          <div>
+            <div class="dropdown-card" style="min-width: 260px;">
+              <div class="dropdown-header">License Status</div>
+              <div class="dropdown-divider"></div>
+              <div class="filter-option">
+                <div class="filter-checkbox checked">✓</div>
+                All
+              </div>
+              <div class="dropdown-divider"></div>
+              <div class="filter-option">
+                <div class="filter-checkbox"></div>
+                <span class="ls-badge ls-active" style="font-size:11px; padding: 2px 8px;">✓ Active</span>
+              </div>
+              <div class="filter-option">
+                <div class="filter-checkbox"></div>
+                <span class="ls-badge ls-validating" style="font-size:11px; padding: 2px 8px;">ⓘ Validating</span>
+              </div>
+              <div class="filter-option">
+                <div class="filter-checkbox"></div>
+                <span class="ls-badge ls-failed" style="font-size:11px; padding: 2px 8px;">⚠ Failed</span>
+              </div>
+              <div class="filter-option">
+                <div class="filter-checkbox"></div>
+                <span class="ls-badge ls-not-found" style="font-size:11px; padding: 2px 8px;">? License Not Found</span>
+              </div>
+              <div class="filter-option">
+                <div class="filter-checkbox"></div>
+                <span class="ls-badge ls-pending" style="font-size:11px; padding: 2px 8px;">⏳ Pending</span>
+              </div>
+              <div class="filter-option">
+                <div class="filter-checkbox"></div>
+                <span class="ls-badge ls-multiple" style="font-size:11px; padding: 2px 8px;">⊕ Multiple</span>
+              </div>
+              <div class="dropdown-divider"></div>
+              <div class="dropdown-footer">
+                <button class="btn-clear">Clear</button>
+                <button class="btn-apply">Apply</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- With "Validating" selected -->
+          <div>
+            <div class="subsection-label" style="margin-bottom: 8px;">With "Validating" Selected</div>
+            <div class="dropdown-card" style="min-width: 260px;">
+              <div class="dropdown-header">License Status</div>
+              <div class="dropdown-divider"></div>
+              <div class="filter-option">
+                <div class="filter-checkbox"></div>
+                All
+              </div>
+              <div class="dropdown-divider"></div>
+              <div class="filter-option">
+                <div class="filter-checkbox"></div>
+                <span class="ls-badge ls-active" style="font-size:11px; padding: 2px 8px;">✓ Active</span>
+              </div>
+              <div class="filter-option" style="background: #FFFBEB;">
+                <div class="filter-checkbox checked">✓</div>
+                <span class="ls-badge ls-validating" style="font-size:11px; padding: 2px 8px;">ⓘ Validating</span>
+              </div>
+              <div class="filter-option">
+                <div class="filter-checkbox"></div>
+                <span class="ls-badge ls-failed" style="font-size:11px; padding: 2px 8px;">⚠ Failed</span>
+              </div>
+              <div class="filter-option">
+                <div class="filter-checkbox"></div>
+                <span class="ls-badge ls-not-found" style="font-size:11px; padding: 2px 8px;">? License Not Found</span>
+              </div>
+              <div class="filter-option">
+                <div class="filter-checkbox"></div>
+                <span class="ls-badge ls-pending" style="font-size:11px; padding: 2px 8px;">⏳ Pending</span>
+              </div>
+              <div class="filter-option">
+                <div class="filter-checkbox"></div>
+                <span class="ls-badge ls-multiple" style="font-size:11px; padding: 2px 8px;">⊕ Multiple</span>
+              </div>
+              <div class="dropdown-divider"></div>
+              <div class="dropdown-footer">
+                <button class="btn-clear">Clear</button>
+                <button class="btn-apply">Apply</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- With Validating + Failed selected -->
+          <div>
+            <div class="subsection-label" style="margin-bottom: 8px;">Multi-Select: Validating + Failed</div>
+            <div class="dropdown-card" style="min-width: 260px;">
+              <div class="dropdown-header">License Status</div>
+              <div class="dropdown-divider"></div>
+              <div class="filter-option">
+                <div class="filter-checkbox"></div>
+                All
+              </div>
+              <div class="dropdown-divider"></div>
+              <div class="filter-option">
+                <div class="filter-checkbox"></div>
+                <span class="ls-badge ls-active" style="font-size:11px; padding: 2px 8px;">✓ Active</span>
+              </div>
+              <div class="filter-option" style="background: #FFFBEB;">
+                <div class="filter-checkbox checked">✓</div>
+                <span class="ls-badge ls-validating" style="font-size:11px; padding: 2px 8px;">ⓘ Validating</span>
+              </div>
+              <div class="filter-option" style="background: #FFF5F5;">
+                <div class="filter-checkbox checked" style="background: #EF4444; border-color: #EF4444;">✓</div>
+                <span class="ls-badge ls-failed" style="font-size:11px; padding: 2px 8px;">⚠ Failed</span>
+              </div>
+              <div class="filter-option">
+                <div class="filter-checkbox"></div>
+                <span class="ls-badge ls-not-found" style="font-size:11px; padding: 2px 8px;">? License Not Found</span>
+              </div>
+              <div class="filter-option">
+                <div class="filter-checkbox"></div>
+                <span class="ls-badge ls-pending" style="font-size:11px; padding: 2px 8px;">⏳ Pending</span>
+              </div>
+              <div class="filter-option">
+                <div class="filter-checkbox"></div>
+                <span class="ls-badge ls-multiple" style="font-size:11px; padding: 2px 8px;">⊕ Multiple</span>
+              </div>
+              <div class="dropdown-divider"></div>
+              <div class="dropdown-footer">
+                <button class="btn-clear">Clear</button>
+                <button class="btn-apply">Apply</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <hr class="section-sep" />
+
+      <!-- Filter applied state -->
+      <div class="subsection">
+        <div class="subsection-label">Filter Applied — Single Status</div>
+        <div class="toolbar" style="margin-bottom: 16px;">
+          <div class="toolbar-input" style="min-width: 300px;">
+            <span>🔍</span>
+            <span>Search by Legal Name, DBA, or Website...</span>
+          </div>
+          <div class="toolbar-input" style="min-width: 180px;">
+            <span>📍</span>
+            <span>Enter a location</span>
+          </div>
+          <div class="filter-chip">
+            License Status: Validating <span class="filter-chip-clear">×</span>
+          </div>
+          <div class="toolbar-btn active">License Status ▼</div>
+          <div class="toolbar-btn">Filter ▼</div>
+        </div>
+        <div class="row-count" style="margin-bottom: 12px;">Showing 2 of 847 companies</div>
+        <div class="table-wrap">
+          <table class="we-monitor-table">
+            <thead>
+              <tr>
+                <th>Legal Name</th>
+                <th>DBA Names</th>
+                <th>License Status</th>
+                <th>Website</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><div class="company-name">3 TALL PINES LLC</div><div class="meta-text">EIN 5835234000002345</div></td>
+                <td><span class="tag tag-blue">3 TALL PINES - WHOLESALE</span></td>
+                <td><span class="ls-badge ls-validating">ⓘ Validating</span></td>
+                <td><a href="#" style="font-size:12px; color: #2563eb;">3tallpineswholesale.com</a></td>
+                <td><button class="action-btn">Actions ▼</button></td>
+              </tr>
+              <tr>
+                <td><div class="company-name">AFICIONADO DESIGNS LLC</div><div class="meta-text">EIN 8827634000009921</div></td>
+                <td><span class="tag tag-blue">AFICIONADO SEEDS</span></td>
+                <td><span class="ls-badge ls-validating">ⓘ Validating</span></td>
+                <td><a href="#" style="font-size:12px; color: #2563eb;">AFICIONADOSEEDS.COM</a></td>
+                <td><button class="action-btn">Actions ▼</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <div class="subsection-label">Filter Applied — Multiple Statuses</div>
+        <div class="toolbar">
+          <div class="toolbar-input" style="min-width: 300px;">
+            <span>🔍</span>
+            <span>Search by Legal Name, DBA, or Website...</span>
+          </div>
+          <div class="filter-chip">
+            License Status: 2 selected <span class="filter-chip-clear">×</span>
+          </div>
+          <div class="toolbar-btn active">License Status ▼</div>
+          <div class="toolbar-btn">Filter ▼</div>
+        </div>
+        <div class="row-count" style="margin-top: 10px;">Showing 17 of 847 companies</div>
+      </div>
+
+      <div class="annotation-box blue" style="margin-top: 8px;">
+        <strong>License Status filter</strong> is a dedicated quick-access control separate from the general Filter panel — it's the most commonly used filter on this view. Multi-select allows e.g. Validating + Failed to see all companies needing attention in one queue.
+      </div>
+
+    </div><!-- /section-body -->
+  </div><!-- /section-card -->
+
+</div><!-- /page-wrap -->
+
+</body>
+</html>
