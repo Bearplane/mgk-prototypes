@@ -674,8 +674,8 @@
   }
   .annotated-label {
     position: absolute;
-    right: -4px;
-    top: -4px;
+    right: 6px;
+    top: 4px;
     background: #EF4444;
     color: white;
     font-size: 10px;
@@ -683,6 +683,7 @@
     padding: 1px 6px;
     border-radius: 10px;
     white-space: nowrap;
+    z-index: 10;
   }
 
   /* ── Section 1 — Scan bar ── */
@@ -1416,7 +1417,7 @@
               <select class="filter-select"><option>All</option></select>
             </div>
             <div class="annotated-area" style="display:inline-flex; padding:0;">
-              <span class="annotated-label" style="top:-6px; right:-6px; white-space:nowrap; font-size:9px;">④ Single-select only</span>
+              <span class="annotated-label" style="top:4px; right:6px; white-space:nowrap; font-size:9px;">④ Single-select only</span>
               <div class="filter-select-wrap" style="border:none;">
                 <span class="filter-select-prefix">Type:</span>
                 <select class="filter-select"><option>All</option></select>
@@ -1452,7 +1453,7 @@
       <!-- Card 1: Compliant — mixed in -->
       <div style="position:relative; margin-bottom:10px;">
         <div class="finding-card annotated-area" style="border-style:solid;">
-          <span class="annotated-label" style="top:-6px; right:-4px; font-size:9px;">② Compliant mixed in</span>
+          <span class="annotated-label" style="top:4px; right:6px; font-size:9px;">② Compliant mixed in</span>
           <div class="finding-card-header">
             <input type="checkbox" class="finding-check" checked>
             <span class="finding-status-icon" style="color:#2563eb;">✓</span>
@@ -1500,7 +1501,7 @@
       <!-- Card 3: Analyst Review — mixed in randomly -->
       <div style="position:relative; margin-bottom:10px;">
         <div class="finding-card annotated-area" style="border-style:solid;">
-          <span class="annotated-label" style="top:-6px; right:-4px; font-size:9px;">③ Analyst Review appears randomly</span>
+          <span class="annotated-label" style="top:4px; right:6px; font-size:9px;">③ Analyst Review appears randomly</span>
           <div class="finding-card-header">
             <input type="checkbox" class="finding-check">
             <div class="finding-badges">
