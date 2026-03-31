@@ -891,7 +891,7 @@
     padding: 10px;
     cursor: pointer;
   }
-  .actions-cell { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+  .actions-cell { display: flex; align-items: center; justify-content: flex-start; gap: 4px; white-space: nowrap; flex-wrap: nowrap; }
   .btn-dots {
     background: none;
     border: 1px solid #E5E7EB;
@@ -1673,11 +1673,13 @@
           <tr>
             <th style="width:32px;"><input type="checkbox"></th>
             <th>Risk</th>
-            <th>Finding Type</th>
+            <th>Finding</th>
+            <th>Description / Text</th>
+            <th>URL</th>
             <th>Classification</th>
             <th>Source</th>
             <th>Review</th>
-            <th>First Detected</th>
+            <th style="white-space:nowrap;">First Detected</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -1686,24 +1688,39 @@
             <td><input type="checkbox" checked></td>
             <td><span class="badge badge-high">HIGH</span></td>
             <td><strong>Privacy Policy Missing</strong></td>
+            <td><span class="table-desc">Required privacy policy not found</span></td>
+            <td><a href="#" class="table-url">3tallpineswholesale.com/...</a></td>
             <td><span class="chip chip-new"><span class="chip-dot"></span>New Finding</span></td>
             <td><span class="source-badge source-ai">Q-AI Scan</span></td>
             <td><span class="unreviewed-text">—</span></td>
-            <td style="white-space:nowrap;">10/30/2025</td>
-            <td><div class="actions-cell"><button class="btn-dots">···</button></div></td>
+            <td style="white-space:nowrap; color:#6B7280; font-size:12px;">10/30/2025</td>
+            <td>
+              <div class="actions-cell">
+                <div class="screenshot-preview-wrap">
+                  <button class="table-screenshot-btn">📷</button>
+                  <div class="screenshot-preview-tooltip">
+                    <div style="width:100%;height:70px;background:#F3F4F6;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#94A3B8;">Screenshot preview</div>
+                    <div class="preview-label">Click to view full screenshot</div>
+                  </div>
+                </div>
+                <button class="btn-dots">···</button>
+              </div>
+            </td>
           </tr>
           <tr class="row-high">
             <td><input type="checkbox"></td>
             <td><span class="badge badge-high">HIGH</span></td>
             <td><strong>Business Email Address Missing</strong></td>
+            <td><span class="table-desc">Business email address not found on website</span></td>
+            <td><a href="#" class="table-url">aficionadoseeds.com/contact</a></td>
             <td><span class="chip chip-new"><span class="chip-dot"></span>New Finding</span></td>
             <td><span class="source-badge source-ai">Q-AI Scan</span></td>
             <td><span class="unreviewed-text">—</span></td>
-            <td style="white-space:nowrap;">03/01/2026</td>
+            <td style="white-space:nowrap; color:#6B7280; font-size:12px;">03/01/2026</td>
             <td><div class="actions-cell"><button class="btn-dots">···</button></div></td>
           </tr>
           <tr style="background:#F3F4F6;">
-            <td colspan="8" style="text-align:center; color:#6B7280; font-size:12px; font-style:italic; padding:8px;">↓ More findings below (priority sorted)…</td>
+            <td colspan="10" style="text-align:center; color:#6B7280; font-size:12px; font-style:italic; padding:8px;">↓ More findings below (priority sorted)…</td>
           </tr>
         </tbody>
       </table>
