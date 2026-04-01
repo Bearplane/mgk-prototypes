@@ -874,9 +874,38 @@ body { font-family: "Uber Move", system-ui, -apple-system, BlinkMacSystemFont, s
           </div>
         </div>
 
-        <!-- Drafts divider hint -->
-        <div style="text-align:center;padding:10px;font-size:12px;color:#9CA3AF;">
-          + 2 draft cases not yet sent to merchant · <button onclick="void(0)" style="background:none;border:none;color:#2563eb;font-size:12px;cursor:pointer;">View Drafts</button>
+        <!-- Drafts section -->
+        <div style="border-top:1px solid #E5E7EB;margin-top:4px;padding-top:12px;">
+          <div style="font-size:11px;font-weight:600;color:#6B7280;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:10px;">Drafts — Not sent to merchant</div>
+
+          <div style="border:1px dashed #E5E7EB;border-radius:8px;padding:12px 14px;margin-bottom:8px;background:#FAFAFA;">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
+              <div>
+                <div style="font-size:13px;font-weight:600;color:#1a202e;">License Verification — Draft</div>
+                <div style="font-size:11px;color:#6B7280;">CR-2026-DRAFT-01 · R. Wilson · 2 items</div>
+              </div>
+              <span style="font-size:10px;font-weight:700;background:#F3F4F6;color:#374151;padding:2px 7px;border-radius:12px;">DRAFT</span>
+            </div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;">
+              <button class="btn-secondary btn-sm" style="font-size:11px;" onclick="showScreen(4)">Edit Draft</button>
+              <button class="btn-secondary btn-sm" style="font-size:11px;" onclick="showScreen(3)">+ Add Items</button>
+              <button class="btn-primary btn-sm" style="font-size:11px;" onclick="showScreen(5)">Send →</button>
+            </div>
+          </div>
+
+          <div style="border:1px dashed #E5E7EB;border-radius:8px;padding:12px 14px;background:#FAFAFA;">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
+              <div>
+                <div style="font-size:13px;font-weight:600;color:#1a202e;">Product Compliance — Draft</div>
+                <div style="font-size:11px;color:#6B7280;">CR-2026-DRAFT-02 · S. Johnson · 0 items</div>
+              </div>
+              <span style="font-size:10px;font-weight:700;background:#F3F4F6;color:#374151;padding:2px 7px;border-radius:12px;">DRAFT</span>
+            </div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;">
+              <button class="btn-secondary btn-sm" style="font-size:11px;" onclick="showScreen(4)">Edit Draft</button>
+              <button class="btn-green btn-sm" style="font-size:11px;" onclick="showScreen(3)">+ Add Items</button>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -963,10 +992,42 @@ body { font-family: "Uber Move", system-ui, -apple-system, BlinkMacSystemFont, s
       <!-- Bulk bar -->
       <div class="bulk-bar">
         <span class="bulk-label">2 products selected · <strong>3 compliance items detected</strong></span>
-        <button class="btn-primary btn-sm" onclick="showScreen(3)">📋 Create Case (3 items)</button>
+        <button class="btn-primary btn-sm" onclick="document.getElementById('case-mode-chooser').style.display=document.getElementById('case-mode-chooser').style.display==='none'?'block':'none'">📋 Create Case (3 items)</button>
         <button class="btn-secondary btn-sm">✏ Bulk Edit</button>
         <button class="btn-secondary btn-sm">🗑 Delete</button>
         <button class="btn-secondary btn-sm">✕ Clear</button>
+      </div>
+
+      <!-- Case creation mode chooser (shown when Create Case is clicked) -->
+      <div id="case-mode-chooser" style="display:none;background:white;border:1px solid #E5E7EB;border-radius:8px;padding:16px 20px;margin-bottom:16px;box-shadow:0 4px 12px rgba(0,0,0,0.08);">
+        <div style="font-size:14px;font-weight:600;color:#1a202e;margin-bottom:12px;">📋 Create Compliance Case</div>
+        <div style="font-size:13px;color:#6B7280;margin-bottom:14px;">3 compliance items detected for Black Bear Wellness LLC</div>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px;">
+          <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;padding:10px 12px;border:2px solid #2563eb;border-radius:6px;background:#EFF6FF;">
+            <input type="radio" name="case-mode" value="new" checked style="margin-top:3px;">
+            <div>
+              <div style="font-size:13px;font-weight:600;color:#1a202e;">Create new case</div>
+              <div style="font-size:12px;color:#6B7280;margin-top:2px;">Start a fresh case with these 3 items</div>
+            </div>
+          </label>
+          <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;padding:10px 12px;border:1px solid #E5E7EB;border-radius:6px;">
+            <input type="radio" name="case-mode" value="existing" style="margin-top:3px;">
+            <div style="flex:1;">
+              <div style="font-size:13px;font-weight:600;color:#1a202e;">Add to existing draft</div>
+              <div style="font-size:12px;color:#6B7280;margin-top:2px;">Append these items to a draft you're already working on</div>
+              <div style="margin-top:8px;">
+                <select style="width:100%;border:1px solid #E5E7EB;border-radius:6px;padding:7px 10px;font-size:13px;color:#374151;">
+                  <option>Black Bear — Product &amp; Website Compliance (2 items)</option>
+                  <option>Black Bear — KYC Documentation (0 items)</option>
+                </select>
+              </div>
+            </div>
+          </label>
+        </div>
+        <div style="display:flex;gap:8px;justify-content:flex-end;">
+          <button class="btn-secondary" onclick="document.getElementById('case-mode-chooser').style.display='none'">Cancel</button>
+          <button class="btn-primary" onclick="showScreen(3)">Continue →</button>
+        </div>
       </div>
 
       <div class="table-wrapper">
@@ -1145,8 +1206,17 @@ body { font-family: "Uber Move", system-ui, -apple-system, BlinkMacSystemFont, s
 
     <!-- CaseDraftDrawer -->
     <div class="case-drawer">
+      <!-- Mode toggle at top of drawer -->
+      <div style="background:#F0FDF4;border-bottom:1px solid #BBF7D0;padding:8px 20px;display:flex;align-items:center;justify-content:space-between;">
+        <div style="font-size:12px;color:#166534;">
+          <strong>Mode:</strong>
+          <span style="margin-left:6px;background:white;border:1px solid #BBF7D0;border-radius:4px;padding:2px 8px;">Adding to existing draft</span>
+          <span style="margin-left:8px;color:#6B7280;">Black Bear — Product &amp; Website Compliance</span>
+        </div>
+        <button onclick="void(0)" style="font-size:11px;color:#2563eb;background:none;border:none;cursor:pointer;">Switch to new case</button>
+      </div>
       <div class="drawer-header">
-        <span class="drawer-header-title">📋 Create Compliance Case</span>
+        <span class="drawer-header-title">📋 Add Items to Draft</span>
         <button class="panel-close" onclick="showScreen(2)">×</button>
       </div>
 
@@ -1195,7 +1265,10 @@ body { font-family: "Uber Move", system-ui, -apple-system, BlinkMacSystemFont, s
 
         <!-- Case Items -->
         <div class="section-header">
-          <div class="section-title">Case Items (3)</div>
+          <div>
+            <div class="section-title">Case Items (3)</div>
+            <div style="font-size:11px;color:#6B7280;margin-top:4px;margin-bottom:12px;">2 existing items + 1 being added</div>
+          </div>
           <button class="btn-secondary btn-sm">+ Add Item</button>
         </div>
 
@@ -1224,7 +1297,7 @@ body { font-family: "Uber Move", system-ui, -apple-system, BlinkMacSystemFont, s
 
         <!-- Item 3 -->
         <div class="case-item-card" style="border-left:3px solid #EF4444;">
-          <div class="case-item-type red">🔴 COMPLIANCE_FINDING</div>
+          <div class="case-item-type red">🔴 COMPLIANCE_FINDING <span style="background:#DCFCE7;color:#166534;font-size:10px;font-weight:700;padding:1px 6px;border-radius:4px;margin-left:6px;">NEW</span></div>
           <div class="case-item-product">Website: blackbeardispens.com</div>
           <div class="case-item-coa">Finding: Privacy Policy Missing (HIGH)</div>
           <div class="case-item-desc">Privacy policy page required</div>
@@ -1517,6 +1590,17 @@ body { font-family: "Uber Move", system-ui, -apple-system, BlinkMacSystemFont, s
               <div style="font-size:13px;font-weight:500;color:#1a202e;">Privacy Policy Missing</div>
               <div style="font-size:12px;color:#6B7280;">Resolution: Correct Website · Not sent yet</div>
             </div>
+
+          <!-- Add Items CTA -->
+          <div style="border:2px dashed #E5E7EB;border-radius:8px;padding:14px;margin-top:4px;">
+            <div style="font-size:12px;font-weight:600;color:#6B7280;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:10px;">+ Add More Items</div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;">
+              <button class="btn-secondary btn-sm" onclick="showScreen(2)" style="font-size:12px;">From Product Compliance</button>
+              <button class="btn-secondary btn-sm" style="font-size:12px;">From Q-ScanAI</button>
+              <button class="btn-secondary btn-sm" style="font-size:12px;">From License Check</button>
+              <button class="btn-secondary btn-sm" style="font-size:12px;">Add Manually</button>
+            </div>
+          </div>
           </div>
         </div>
 
