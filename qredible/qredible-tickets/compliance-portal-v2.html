@@ -1,0 +1,1971 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Compliance Portal — Interactive Clickthrough v2 — QP-3579–QP-3586</title>
+<style>
+/* ─── RESET & BASE ─── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: "Uber Move", system-ui, -apple-system, BlinkMacSystemFont, sans-serif; background: #1E293B; color: #374151; }
+
+/* ─── PROTO NAV ─── */
+.proto-nav {
+  background: #0F172A;
+  color: #CBD5E1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 24px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  font-size: 13px;
+  gap: 16px;
+}
+.proto-nav a { color: #94A3B8; text-decoration: none; }
+.proto-nav a:hover { color: white; }
+.proto-nav .proto-center { color: #E2E8F0; font-weight: 500; flex: 1; text-align: center; }
+.proto-nav .proto-right { color: #94A3B8; white-space: nowrap; }
+
+/* ─── SCREEN SYSTEM ─── */
+.screen { display: none; }
+.screen.active { display: block; }
+.screen-wrapper { background: #f8fafc; min-height: calc(100vh - 40px); }
+
+/* ─── APP CHROME ─── */
+.app-top-bar {
+  background: white;
+  border-bottom: 1px solid #E5E7EB;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 52px;
+  gap: 16px;
+}
+.app-top-left { display: flex; align-items: center; gap: 20px; }
+.app-brand { font-weight: 700; font-size: 15px; color: #1a202e; }
+.app-nav-links { display: flex; gap: 16px; }
+.app-nav-link { font-size: 13px; color: #6B7280; cursor: pointer; text-decoration: none; padding-bottom: 2px; }
+.app-nav-link.active { color: #2563eb; border-bottom: 2px solid #2563eb; font-weight: 500; }
+.app-top-right { display: flex; align-items: center; gap: 12px; font-size: 13px; color: #374151; }
+.company-selector { background: #f8fafc; border: 1px solid #E5E7EB; border-radius: 6px; padding: 5px 10px; font-size: 13px; display: flex; align-items: center; gap: 4px; cursor: pointer; }
+.user-btn { display: flex; align-items: center; gap: 4px; cursor: pointer; color: #374151; font-size: 13px; }
+.bell-btn { cursor: pointer; font-size: 16px; position: relative; }
+.wordmark { font-weight: 800; font-size: 15px; color: #2563eb; }
+
+.app-tabs {
+  background: white;
+  border-bottom: 1px solid #E5E7EB;
+  padding: 0 24px;
+  display: flex;
+  gap: 0;
+  overflow-x: auto;
+}
+.app-tab {
+  padding: 12px 16px;
+  font-size: 14px;
+  color: #6B7280;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  text-decoration: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.app-tab.active { color: #2563eb; border-bottom-color: #2563eb; font-weight: 500; }
+
+/* ─── TABLE ─── */
+.data-table { width: 100%; border-collapse: collapse; background: white; font-size: 13px; }
+.data-table th {
+  background: #f1f5f9;
+  padding: 10px 12px;
+  text-align: left;
+  font-size: 12px;
+  font-weight: 600;
+  color: #1a202e;
+  border-bottom: 1px solid #E5E7EB;
+  white-space: nowrap;
+}
+.data-table th.sortable { color: #2563eb; cursor: pointer; }
+.data-table th.col-new { background: #EFF6FF !important; }
+.data-table td {
+  padding: 11px 12px;
+  font-size: 13px;
+  color: #374151;
+  border-bottom: 1px solid #E5E7EB;
+  vertical-align: middle;
+}
+.data-table tr:hover td { background: #f8fafc; }
+.data-table tr.selected td { background: #EFF6FF; }
+.data-table tr.clickable { cursor: pointer; }
+
+/* ─── PILLS ─── */
+.pill {
+  display: inline-block;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  white-space: nowrap;
+}
+.pill-draft { background: #F3F4F6; color: #374151; }
+.pill-open { background: #DBEAFE; color: #1E40AF; }
+.pill-awaiting { background: #FEF3C7; color: #92400E; }
+.pill-in-review { background: #EDE9FE; color: #5B21B6; }
+.pill-disputed { background: #FEE2E2; color: #991B1B; }
+.pill-resolved { background: #DCFCE7; color: #166534; }
+.pill-closed { background: #F3F4F6; color: #9CA3AF; }
+.pill-high { background: #FEE2E2; color: #991B1B; }
+.pill-medium { background: #FEF9C3; color: #854D0E; }
+.pill-low { background: #DCFCE7; color: #166534; }
+
+/* ─── BADGES ─── */
+.case-badge-red { background: #FEE2E2; color: #991B1B; border-radius: 12px; padding: 2px 9px; font-size: 12px; font-weight: 700; cursor: pointer; border: none; }
+.case-badge-red:hover { background: #fecaca; }
+.case-badge-amber { background: #FEF3C7; color: #92400E; border-radius: 12px; padding: 2px 9px; font-size: 12px; font-weight: 700; }
+
+/* ─── PORTAL STATUS ─── */
+.portal-invited { background: #FEF3C7; color: #92400E; border-radius: 12px; padding: 2px 8px; font-size: 11px; font-weight: 500; }
+.portal-active { background: #DCFCE7; color: #166534; border-radius: 12px; padding: 2px 8px; font-size: 11px; font-weight: 500; }
+.portal-none { color: #9CA3AF; font-size: 13px; }
+
+/* ─── NEW BADGE ─── */
+.new-badge { display: inline-block; background: #2563eb; color: white; font-size: 9px; font-weight: 700; padding: 1px 5px; border-radius: 4px; margin-left: 4px; vertical-align: middle; letter-spacing: 0.3px; }
+
+/* ─── BUTTONS ─── */
+.btn-primary { background: #2563eb; color: white; border: none; border-radius: 6px; padding: 7px 14px; font-size: 13px; font-weight: 500; cursor: pointer; white-space: nowrap; }
+.btn-primary:hover { background: #1d4ed8; }
+.btn-secondary { background: white; color: #374151; border: 1px solid #E5E7EB; border-radius: 6px; padding: 7px 14px; font-size: 13px; cursor: pointer; white-space: nowrap; }
+.btn-secondary:hover { background: #f8fafc; }
+.btn-green { background: #16a34a; color: white; border: none; border-radius: 6px; padding: 7px 14px; font-size: 13px; font-weight: 500; cursor: pointer; }
+.btn-green:hover { background: #15803d; }
+.btn-red-outline { background: white; color: #991B1B; border: 1px solid #fca5a5; border-radius: 6px; padding: 7px 14px; font-size: 13px; cursor: pointer; }
+.btn-danger { background: #dc2626; color: white; border: none; border-radius: 6px; padding: 7px 14px; font-size: 13px; cursor: pointer; }
+.btn-sm { padding: 4px 10px; font-size: 12px; }
+.btn-disabled { opacity: 0.45; cursor: not-allowed !important; }
+.btn-with-chevron { display: inline-flex; align-items: center; gap: 5px; }
+
+/* ─── DROPDOWN ─── */
+.dropdown-container { position: relative; display: inline-block; }
+.dropdown-menu {
+  position: absolute;
+  background: white;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+  min-width: 220px;
+  z-index: 500;
+  display: none;
+  right: 0;
+  top: calc(100% + 4px);
+}
+.dropdown-menu.open { display: block; }
+.dropdown-item { padding: 9px 14px; font-size: 13px; color: #374151; cursor: pointer; }
+.dropdown-item:hover { background: #f8fafc; }
+.dropdown-item.blue { color: #2563eb; font-weight: 500; }
+.dropdown-item.disabled { color: #9CA3AF; cursor: not-allowed; font-style: italic; }
+.dropdown-item.disabled:hover { background: white; }
+.dropdown-divider { border-top: 1px solid #E5E7EB; margin: 4px 0; }
+
+/* ─── SIDE PANEL (Screen 4) ─── */
+.panel-host { position: relative; overflow: hidden; }
+.side-panel {
+  position: absolute;
+  top: 0; right: 0;
+  width: 42%;
+  min-height: 100%;
+  background: white;
+  box-shadow: -4px 0 24px rgba(0,0,0,0.12);
+  z-index: 100;
+  display: none;
+  flex-direction: column;
+}
+.side-panel.open { display: flex; }
+.panel-header { background: #F7F5FF; padding: 16px 20px; border-bottom: 1px solid #E5E7EB; }
+.panel-header-row { display: flex; justify-content: space-between; align-items: flex-start; }
+.panel-title { font-size: 15px; font-weight: 600; color: #1a202e; }
+.panel-close { background: none; border: none; cursor: pointer; font-size: 18px; color: #6B7280; line-height: 1; padding: 0 2px; }
+.panel-close:hover { color: #1a202e; }
+.panel-meta { display: flex; gap: 12px; margin-top: 8px; align-items: center; flex-wrap: wrap; font-size: 12px; color: #6B7280; }
+.panel-tabs { display: flex; border-bottom: 1px solid #E5E7EB; background: white; }
+.panel-tab { padding: 10px 16px; font-size: 13px; color: #6B7280; cursor: pointer; border-bottom: 2px solid transparent; }
+.panel-tab.active { color: #2563eb; border-bottom-color: #2563eb; font-weight: 500; }
+.panel-body { padding: 16px 20px; flex: 1; overflow-y: auto; }
+.panel-footer { padding: 14px 20px; border-top: 1px solid #E5E7EB; display: flex; gap: 8px; flex-wrap: wrap; background: white; }
+
+/* ─── DRAWER (Screen 3) ─── */
+.drawer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 150; }
+.case-drawer {
+  position: fixed;
+  top: 0; right: 0;
+  width: 440px;
+  height: 100vh;
+  background: white;
+  box-shadow: -4px 0 24px rgba(0,0,0,0.15);
+  z-index: 200;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+.drawer-header {
+  background: #F7F5FF;
+  padding: 16px 20px;
+  border-bottom: 1px solid #E5E7EB;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.drawer-header-title { font-size: 15px; font-weight: 600; color: #1a202e; }
+.drawer-body { padding: 20px; flex: 1; }
+.drawer-section { margin-bottom: 20px; }
+.drawer-label { font-size: 11px; font-weight: 600; color: #6B7280; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+.drawer-input { width: 100%; border: 1px solid #E5E7EB; border-radius: 6px; padding: 8px 12px; font-size: 13px; color: #1a202e; background: white; font-family: inherit; }
+.drawer-input:focus { outline: none; border-color: #2563eb; }
+.drawer-divider { border: none; border-top: 1px solid #E5E7EB; margin: 20px 0; }
+.case-item-card { border: 1px solid #E5E7EB; border-radius: 8px; padding: 12px 14px; margin-bottom: 10px; position: relative; background: white; }
+.case-item-type { font-size: 11px; font-weight: 700; margin-bottom: 6px; }
+.case-item-type.red { color: #991B1B; }
+.case-item-type.amber { color: #854D0E; }
+.case-item-product { font-size: 13px; color: #1a202e; font-weight: 500; }
+.case-item-coa { font-size: 12px; color: #6B7280; margin-top: 2px; }
+.case-item-desc { font-size: 12px; color: #6B7280; margin-top: 4px; }
+.case-item-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; }
+.case-item-remove { background: none; border: none; cursor: pointer; color: #9CA3AF; font-size: 16px; }
+.case-item-remove:hover { color: #374151; }
+.add-items-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+.drawer-footer {
+  padding: 16px 20px;
+  border-top: 1px solid #E5E7EB;
+  display: flex;
+  gap: 8px;
+  position: sticky;
+  bottom: 0;
+  background: white;
+  z-index: 10;
+}
+
+/* ─── ANNOTATION ─── */
+.annotation {
+  border: 1.5px dashed #FCD34D;
+  background: #FFFBEB;
+  color: #92400E;
+  padding: 12px 16px;
+  border-radius: 6px;
+  font-size: 12px;
+  line-height: 1.65;
+}
+
+/* ─── PROGRESS BAR ─── */
+.progress-bar { height: 8px; background: #E5E7EB; border-radius: 4px; overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 4px; transition: width 0.3s; }
+.progress-fill.blue { background: #2563eb; }
+.progress-fill.green { background: #16a34a; }
+.progress-fill.amber { background: #F59E0B; }
+.progress-fill.red { background: #EF4444; }
+
+/* ─── MODAL ─── */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.modal-box { background: white; border-radius: 10px; max-width: 560px; width: 100%; box-shadow: 0 16px 48px rgba(0,0,0,0.2); overflow: hidden; }
+.modal-header { background: #F7F5FF; padding: 16px 20px; border-bottom: 1px solid #E5E7EB; display: flex; justify-content: space-between; align-items: center; }
+.modal-title { font-size: 16px; font-weight: 600; color: #1a202e; }
+.modal-body { padding: 20px; }
+.modal-footer { padding: 16px 20px; border-top: 1px solid #E5E7EB; display: flex; gap: 10px; justify-content: flex-end; background: #fafafa; }
+
+/* ─── TOAST ─── */
+.toast { position: fixed; top: 20px; right: 20px; background: #16a34a; color: white; padding: 12px 20px; border-radius: 8px; font-size: 14px; z-index: 9999; font-weight: 500; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+
+/* ─── SCREEN NAV ─── */
+.screen-nav {
+  background: #1E293B;
+  padding: 14px 24px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* ─── PAGE CONTENT ─── */
+.page-content { padding: 24px; max-width: 1400px; margin: 0 auto; }
+.page-header { margin-bottom: 20px; }
+.page-title { font-size: 20px; font-weight: 700; color: #1a202e; }
+.page-subtitle { font-size: 13px; color: #6B7280; margin-top: 4px; }
+
+/* ─── INFO BAR ─── */
+.info-bar { background: #EFF6FF; border: 1px solid #BFDBFE; border-radius: 6px; padding: 10px 14px; font-size: 13px; color: #1E40AF; margin-bottom: 16px; }
+.info-bar.amber { background: #FFFBEB; border-color: #FDE68A; color: #92400E; }
+.info-bar.purple { background: #F5F3FF; border-color: #DDD6FE; color: #5B21B6; }
+.info-bar.green { background: #F0FDF4; border-color: #BBF7D0; color: #166534; }
+
+/* ─── BULK BAR ─── */
+.bulk-bar { background: #EFF6FF; border: 1px solid #BFDBFE; border-radius: 6px; padding: 10px 14px; margin-bottom: 12px; display: flex; align-items: center; gap: 12px; font-size: 13px; color: #1E40AF; flex-wrap: wrap; }
+.bulk-bar .bulk-label { font-weight: 500; flex: 1; min-width: 150px; }
+
+/* ─── TABLE WRAPPER ─── */
+.table-wrapper { border: 1px solid #E5E7EB; border-radius: 8px; overflow: hidden; }
+
+/* ─── COA SUBROW ─── */
+.coa-subrow td { background: #fafafa !important; padding-left: 32px !important; font-size: 12px; color: #6B7280; }
+
+/* ─── UPLOAD ZONE ─── */
+.upload-zone {
+  border: 2px dashed #D1D5DB;
+  border-radius: 8px;
+  padding: 24px;
+  text-align: center;
+  color: #9CA3AF;
+  font-size: 13px;
+  cursor: pointer;
+  background: #fafafa;
+  margin-bottom: 12px;
+}
+.upload-zone:hover { border-color: #2563eb; color: #2563eb; background: #EFF6FF; }
+.upload-zone-icon { font-size: 28px; margin-bottom: 8px; }
+
+/* ─── TEXTAREA ─── */
+.form-textarea { width: 100%; border: 1px solid #E5E7EB; border-radius: 6px; padding: 8px 12px; font-size: 13px; font-family: inherit; resize: vertical; min-height: 72px; color: #374151; }
+.form-textarea:focus { outline: none; border-color: #2563eb; }
+
+/* ─── RADIO ─── */
+.radio-group { display: flex; flex-direction: column; gap: 10px; }
+.radio-item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #374151; cursor: pointer; }
+.radio-item input { cursor: pointer; }
+
+/* ─── MERCHANT PORTAL NAV ─── */
+.comply-nav {
+  background: white;
+  border-bottom: 1px solid #E5E7EB;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+}
+.comply-logo { display: flex; align-items: center; gap: 8px; }
+.comply-logo-icon { width: 28px; height: 28px; background: #2563eb; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 14px; }
+.comply-logo-text { font-weight: 700; font-size: 16px; color: #1a202e; }
+.comply-portal-label { font-size: 16px; color: #374151; font-weight: 500; }
+.comply-user-area { display: flex; align-items: center; gap: 14px; font-size: 13px; }
+.comply-bell { font-size: 18px; position: relative; cursor: pointer; }
+.bell-badge { position: absolute; top: -4px; right: -6px; background: #EF4444; color: white; border-radius: 50%; width: 16px; height: 16px; font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+
+/* ─── SUMMARY CARDS ─── */
+.summary-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+.summary-card { background: white; border-radius: 8px; padding: 18px 20px; border: 1px solid #E5E7EB; border-top-width: 4px; }
+.summary-card .card-label { font-size: 12px; color: #6B7280; font-weight: 500; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.04em; }
+.summary-card .card-value { font-size: 28px; font-weight: 700; color: #1a202e; }
+.summary-card .card-sub { font-size: 12px; color: #6B7280; margin-top: 4px; }
+
+/* ─── RESPONSE CARDS ─── */
+.response-card { border: 1px solid #E5E7EB; border-radius: 8px; padding: 16px; margin-bottom: 14px; }
+.response-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+.response-card-item { font-size: 13px; font-weight: 600; color: #1a202e; }
+.response-card-meta { font-size: 12px; color: #6B7280; margin-top: 2px; }
+.response-card-attachment { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #2563eb; margin: 8px 0; }
+.response-card-note { font-size: 13px; color: #374151; font-style: italic; background: #f8fafc; border-radius: 4px; padding: 8px 10px; margin-bottom: 10px; }
+.response-card-actions { display: flex; gap: 8px; }
+
+/* ─── ITEM CARD (merchant response) ─── */
+.item-response-card { border: 1px solid #E5E7EB; border-radius: 8px; margin-bottom: 20px; overflow: hidden; }
+.item-response-header { padding: 14px 18px; border-bottom: 1px solid #E5E7EB; display: flex; justify-content: space-between; align-items: center; background: white; }
+.item-response-body { padding: 18px; }
+.item-counter { font-size: 12px; font-weight: 600; color: #6B7280; text-transform: uppercase; letter-spacing: 0.04em; }
+.item-title { font-size: 15px; font-weight: 600; color: #1a202e; margin-top: 4px; }
+.item-desc { font-size: 13px; color: #6B7280; line-height: 1.6; margin: 10px 0; background: #f8fafc; border-radius: 6px; padding: 10px 12px; }
+.item-field-label { font-size: 12px; font-weight: 600; color: #6B7280; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 4px; margin-top: 12px; }
+
+/* ─── AWAITING ROW ─── */
+.awaiting-row { background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 6px; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: #92400E; }
+
+/* ─── EMAIL PREVIEW ─── */
+.email-preview { border: 1px solid #E5E7EB; border-radius: 8px; overflow: hidden; font-size: 13px; margin: 16px 0; }
+.email-preview-header { background: #f8fafc; border-bottom: 1px solid #E5E7EB; padding: 10px 14px; }
+.email-preview-header div { color: #6B7280; font-size: 12px; margin-bottom: 2px; }
+.email-preview-header div span { color: #374151; font-weight: 500; }
+.email-preview-body { padding: 16px; color: #374151; line-height: 1.6; }
+.email-preview-items { margin: 12px 0; padding-left: 4px; }
+.email-preview-items li { margin: 4px 0; font-size: 13px; list-style: disc; margin-left: 16px; }
+.email-cta { background: #2563eb; color: white; border: none; border-radius: 6px; padding: 10px 20px; font-size: 14px; font-weight: 500; cursor: default; margin: 12px 0; display: inline-block; }
+.email-footer { font-size: 12px; color: #9CA3AF; }
+
+/* ─── MERCHANT BLOCK ─── */
+.merchant-block { background: #f8fafc; border: 1px solid #E5E7EB; border-radius: 8px; padding: 14px 16px; margin: 12px 0; }
+.merchant-block-name { font-weight: 600; font-size: 14px; color: #1a202e; }
+.merchant-block-meta { font-size: 13px; color: #6B7280; margin-top: 4px; }
+.portal-status-row { margin-top: 8px; font-size: 13px; display: flex; align-items: center; gap: 6px; }
+
+/* ─── SEARCH ROW ─── */
+.search-row { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+.search-input { border: 1px solid #E5E7EB; border-radius: 6px; padding: 8px 12px; font-size: 13px; color: #374151; background: white; flex: 1; min-width: 200px; font-family: inherit; }
+.search-input:focus { outline: none; border-color: #2563eb; }
+
+/* ─── ACTION ROW ─── */
+.action-row { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+
+/* ─── SUBTABS ─── */
+.subtabs { display: flex; gap: 0; border-bottom: 1px solid #E5E7EB; margin-bottom: 16px; }
+.subtab { padding: 10px 16px; font-size: 13px; color: #6B7280; cursor: pointer; border-bottom: 2px solid transparent; position: relative; }
+.subtab.active { color: #1a202e; border-bottom-color: #1a202e; font-weight: 500; }
+.subtab .dot-amber { display: inline-block; width: 7px; height: 7px; background: #F59E0B; border-radius: 50%; margin-left: 5px; vertical-align: middle; }
+.subtab .badge { display: inline-block; background: #FEF3C7; color: #92400E; border-radius: 10px; padding: 0px 6px; font-size: 11px; font-weight: 600; margin-left: 4px; }
+
+/* ─── CASE TABLE DIVIDER ─── */
+.table-section-divider td { background: #f1f5f9 !important; font-size: 11px; font-weight: 600; color: #6B7280; text-transform: uppercase; letter-spacing: 0.05em; padding: 6px 12px !important; border-bottom: 1px solid #E5E7EB !important; }
+
+/* ─── COMPLY CASE TABLE ─── */
+.comply-case-row-urgent { border-left: 4px solid #EF4444; }
+
+/* ─── BREADCRUMB ─── */
+.breadcrumb { font-size: 13px; color: #6B7280; margin-bottom: 16px; }
+.breadcrumb span { color: #374151; }
+
+/* ─── FILTER BAR ─── */
+.filter-bar { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; align-items: center; }
+.filter-bar-right { margin-left: auto; display: flex; gap: 8px; }
+
+/* ─── CASE HEADER CARD ─── */
+.case-header-card { background: white; border: 1px solid #E5E7EB; border-radius: 8px; padding: 20px; margin-bottom: 24px; }
+.case-header-title { font-size: 20px; font-weight: 700; color: #1a202e; margin-bottom: 8px; }
+.case-header-meta { font-size: 13px; color: #6B7280; display: flex; gap: 16px; flex-wrap: wrap; align-items: center; }
+.case-header-meta .meta-sep { color: #D1D5DB; }
+
+/* ─── PROGRESS SECTION ─── */
+.progress-section { background: white; border: 1px solid #E5E7EB; border-radius: 8px; padding: 16px 20px; margin-bottom: 16px; }
+.progress-label { display: flex; justify-content: space-between; font-size: 13px; color: #374151; margin-bottom: 8px; }
+
+/* ─── SECTION HEADER ─── */
+.section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.section-title { font-size: 15px; font-weight: 600; color: #1a202e; }
+
+/* ─── LICENSE STATUS ─── */
+.license-valid { color: #166534; font-size: 12px; }
+.license-validating { color: #92400E; font-size: 12px; }
+
+/* ─── FINDING CHIP ─── */
+.finding-high { color: #991B1B; font-size: 12px; }
+.finding-low { color: #166534; font-size: 12px; }
+.finding-triangle { color: #D97706; }
+
+/* ─── PRIORITY RADIO ─── */
+.priority-row { display: flex; gap: 16px; }
+.priority-opt { display: flex; align-items: center; gap: 5px; font-size: 13px; cursor: pointer; }
+
+/* ─── SLA ROW ─── */
+.sla-row { display: flex; align-items: center; gap: 10px; }
+.sla-badge { background: #f8fafc; border: 1px solid #E5E7EB; border-radius: 6px; padding: 6px 12px; font-size: 13px; color: #374151; }
+
+/* ─── TOOLTIP ─── */
+[data-tooltip] { position: relative; }
+[data-tooltip]:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1a202e;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 12px;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* ─── UTILITY ─── */
+.mt-8 { margin-top: 8px; }
+.mt-12 { margin-top: 12px; }
+.mt-16 { margin-top: 16px; }
+.mt-20 { margin-top: 20px; }
+.mb-8 { margin-bottom: 8px; }
+.mb-12 { margin-bottom: 12px; }
+.mb-16 { margin-bottom: 16px; }
+.text-muted { color: #9CA3AF; }
+.text-sm { font-size: 12px; }
+.text-xs { font-size: 11px; }
+.flex { display: flex; }
+.items-center { align-items: center; }
+.gap-8 { gap: 8px; }
+.gap-12 { gap: 12px; }
+.font-semibold { font-weight: 600; }
+.font-bold { font-weight: 700; }
+.text-red { color: #991B1B; }
+.text-amber { color: #92400E; }
+.text-green { color: #166534; }
+.text-blue { color: #2563eb; }
+.text-navy { color: #1a202e; }
+
+/* ─── SCREEN 7/8 SPECIFIC ─── */
+.comply-page { background: #f8fafc; min-height: calc(100vh - 40px); }
+.comply-header { background: white; border-bottom: 1px solid #E5E7EB; padding: 24px; }
+.comply-page-title { font-size: 22px; font-weight: 700; color: #1a202e; }
+.comply-page-sub { font-size: 13px; color: #6B7280; margin-top: 4px; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ PROTO NAV ═══════════════ -->
+<nav class="proto-nav">
+  <a href="../index.html">← All Mockups</a>
+  <div class="proto-center">Compliance Portal — Interactive Clickthrough v2 — QP-3579–QP-3586</div>
+  <div class="proto-right"><span id="screen-label">Screen 1 / 9</span></div>
+</nav>
+
+<!-- ══════════════════════════════════════════════════════════
+     SCREEN 1: We Monitor
+══════════════════════════════════════════════════════════ -->
+<div id="screen-1" class="screen active">
+  <div class="screen-wrapper">
+    <!-- App Chrome -->
+    <div class="app-top-bar">
+      <div class="app-top-left">
+        <span class="app-brand">Qredibility</span>
+        <nav class="app-nav-links">
+          <a class="app-nav-link active">Q-Monitor</a>
+          <a class="app-nav-link">Report</a>
+          <a class="app-nav-link">News</a>
+        </nav>
+      </div>
+      <div class="app-top-right">
+        <div class="company-selector"><span>Select a Company</span> <span style="color:#9CA3AF">▾</span></div>
+        <div class="company-selector" style="font-weight:500;"><span>FLEX Payment Solutions</span> <span style="color:#9CA3AF">▾</span></div>
+        <div class="user-btn">JF Joseph Floyd <span style="color:#9CA3AF">▾</span></div>
+        <div class="bell-btn">🔔</div>
+        <div class="wordmark">Qredible</div>
+      </div>
+    </div>
+    <div class="app-tabs">
+      <div class="app-tab">Findings</div>
+      <div class="app-tab">Product Compliance</div>
+      <div class="app-tab active">We Monitor</div>
+      <div class="app-tab">Monitoring Us</div>
+      <div class="app-tab">Documents</div>
+      <div class="app-tab">COAs</div>
+    </div>
+
+    <div class="page-content">
+      <div class="page-header">
+        <div class="page-title">FLEX Payment Solutions Monitors</div>
+        <div class="page-subtitle">Search a Company that you are monitoring</div>
+      </div>
+
+      <div class="search-row">
+        <input class="search-input" placeholder="Search by Legal Name, DBA, or Website..." style="max-width:380px;">
+        <input class="search-input" placeholder="Enter a location" style="max-width:200px;">
+      </div>
+
+      <div class="action-row">
+        <button class="btn-secondary">+ Add Company</button>
+        <button class="btn-secondary">Upload Companies</button>
+        <button class="btn-secondary">Assign Team Members</button>
+        <button class="btn-secondary">Upload Contact and Referral</button>
+      </div>
+
+      <div class="subtabs">
+        <div class="subtab active">Active Companies</div>
+        <div class="subtab">Archived Companies</div>
+        <div class="subtab">Invites</div>
+      </div>
+
+      <!-- Info hint bar -->
+      <div class="info-bar" style="margin-bottom:14px;">
+        💡 <strong>Try clicking:</strong> The red <strong>"3"</strong> badge on Black Bear Wellness → or <strong>Actions → Create Compliance Case</strong>
+      </div>
+
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th class="sortable">Legal Name</th>
+              <th class="sortable">DBA Names</th>
+              <th>License Status</th>
+              <th class="sortable">Website Compliance</th>
+              <th>Product Compliance</th>
+              <th>Website</th>
+              <th>Team Members</th>
+              <th>Scans</th>
+              <th class="col-new">Active Cases <span class="new-badge">NEW</span></th>
+              <th class="col-new">Portal Status <span class="new-badge">NEW</span></th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Row 1 -->
+            <tr>
+              <td>
+                <div class="font-semibold text-navy" style="font-size:13px;">AG Living Solutions LLC</div>
+                <div class="text-xs text-muted">6783000000007ll</div>
+                <div class="text-xs" style="color:#6B7280;margin-top:2px;">TX Hemp/CBD Retailer</div>
+              </td>
+              <td>Texas Canna RN</td>
+              <td><span class="license-valid">✓ License Not Req...</span></td>
+              <td>
+                <span class="finding-triangle">△</span>
+                <span class="finding-high"> 31 Findings</span>
+                <div class="text-xs text-muted">7 High, 1 Med, 23 Compliant</div>
+              </td>
+              <td>
+                <div class="text-sm">6 Products</div>
+                <div class="text-xs text-green">6 Compliant</div>
+              </td>
+              <td><a href="#" style="color:#2563eb;font-size:12px;">https://bgcannarn.com</a></td>
+              <td><span style="font-size:12px;">Caroline Bertani <span class="text-muted">+4</span></span></td>
+              <td><div class="text-xs text-muted">Completed Last:</div><div class="text-xs">02/26/2026 ×2</div></td>
+              <td><span class="text-muted">—</span></td>
+              <td><span class="text-muted">—</span></td>
+              <td>
+                <div class="dropdown-container">
+                  <button class="btn-secondary btn-sm btn-with-chevron" onclick="toggleDropdown('dd-row1');event.stopPropagation()">Actions <svg width="10" height="6" viewBox="0 0 10 6"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></button>
+                  <div class="dropdown-menu" id="dd-row1">
+                    <div class="dropdown-item">Scan</div>
+                    <div class="dropdown-item">Run License Check</div>
+                    <div class="dropdown-divider"></div>
+                    <div class="dropdown-item">📧 Invite to Compliance Portal</div>
+                    <div class="dropdown-item blue">📋 Create Compliance Case</div>
+                    <div class="dropdown-divider"></div>
+                    <div class="dropdown-item" style="color:#DC2626;">Archive Company</div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            <!-- Row 2 -->
+            <tr>
+              <td>
+                <div class="font-semibold text-navy" style="font-size:13px;">ATX Auctions Corpus Christi LLC</div>
+                <div class="text-xs text-muted">TX Hemp/CBD Retailer</div>
+              </td>
+              <td>Price Catch</td>
+              <td><span class="license-valid">✓ License Not Req...</span></td>
+              <td>
+                <span class="finding-triangle">△</span>
+                <span class="finding-high"> 50 Findings</span>
+                <div class="text-xs text-muted">18 High, 5 Med</div>
+              </td>
+              <td>
+                <div class="text-sm">18 Products</div>
+                <div class="text-xs text-red">2 Violative</div>
+              </td>
+              <td><a href="#" style="color:#2563eb;font-size:12px;">https://pricecatchcbd.com</a></td>
+              <td><span style="font-size:12px;">Caroline Bertani <span class="text-muted">+4</span></span></td>
+              <td><div class="text-xs text-muted">Completed Last:</div><div class="text-xs">02/26/2026</div></td>
+              <td><span class="case-badge-amber">2</span></td>
+              <td><span class="portal-invited">⏳ Invited</span></td>
+              <td>
+                <div class="dropdown-container">
+                  <button class="btn-secondary btn-sm btn-with-chevron" onclick="toggleDropdown('dd-row2');event.stopPropagation()">Actions <svg width="10" height="6" viewBox="0 0 10 6"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></button>
+                  <div class="dropdown-menu" id="dd-row2">
+                    <div class="dropdown-item">Scan</div>
+                    <div class="dropdown-item">Run License Check</div>
+                    <div class="dropdown-divider"></div>
+                    <div class="dropdown-item">📧 Invite to Compliance Portal</div>
+                    <div class="dropdown-item blue">📋 Create Compliance Case</div>
+                    <div class="dropdown-divider"></div>
+                    <div class="dropdown-item" style="color:#DC2626;">Archive Company</div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            <!-- Row 3 — Black Bear Wellness (INTERACTIVE) -->
+            <tr>
+              <td>
+                <div class="font-semibold text-navy" style="font-size:13px;">Black Bear Wellness LLC</div>
+                <div class="text-xs text-muted">PA Hemp/CBD Retailer</div>
+              </td>
+              <td>Black Bear Dispensary</td>
+              <td><span class="license-validating">⊙ Validating</span></td>
+              <td>
+                <span class="finding-triangle">△</span>
+                <span class="finding-high"> 31 Findings</span>
+                <div class="text-xs text-muted">2 Low, 29 Compliant</div>
+              </td>
+              <td>
+                <div class="text-sm">99+ Products</div>
+                <div class="text-xs text-red">80 Violative</div>
+              </td>
+              <td><a href="#" style="color:#2563eb;font-size:12px;">https://www.blackbeardispens...</a></td>
+              <td><span style="font-size:12px;">Caroline Bertani <span class="text-muted">+4</span></span></td>
+              <td><div class="text-xs text-muted">Completed Last:</div><div class="text-xs">03/11/2026 ×3</div></td>
+              <td>
+                <button class="case-badge-red" data-tooltip="3 active cases · Click to view →" onclick="showScreen(4)">3</button>
+              </td>
+              <td><span class="portal-active">✓ Portal Active</span></td>
+              <td>
+                <!-- Black Bear Actions Dropdown — INTERACTIVE -->
+                <div class="dropdown-container">
+                  <button class="btn-secondary btn-sm btn-with-chevron" onclick="toggleDropdown('dd-blackbear');event.stopPropagation()">Actions <svg width="10" height="6" viewBox="0 0 10 6"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></button>
+                  <div class="dropdown-menu" id="dd-blackbear">
+                    <div class="dropdown-item">Scan</div>
+                    <div class="dropdown-item">Run License Check</div>
+                    <div class="dropdown-divider"></div>
+                    <div class="dropdown-item disabled" data-tooltip="Black Bear is already a portal member">📧 Invite to Compliance Portal</div>
+                    <div class="dropdown-item blue" onclick="showScreen(3)">📋 Create Compliance Case</div>
+                    <div class="dropdown-divider"></div>
+                    <div class="dropdown-item" style="color:#DC2626;">Archive Company</div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            <!-- Row 4 -->
+            <tr>
+              <td>
+                <div class="font-semibold text-navy" style="font-size:13px;">BTB Brands LLC DBA Beach Break</div>
+                <div class="text-xs text-muted">TX Hemp/CBD Retailer</div>
+              </td>
+              <td>Beach Break</td>
+              <td><span class="license-valid">✓ License Not Req...</span></td>
+              <td>
+                <span class="text-green">✓</span>
+                <span class="text-sm"> 25 Findings / 25 Compliant</span>
+              </td>
+              <td>
+                <div class="text-sm">7 Products</div>
+                <div class="text-xs text-green">7 Compliant</div>
+              </td>
+              <td><a href="#" style="color:#2563eb;font-size:12px;">https://sjbbeachbreak.com/col...</a></td>
+              <td><span style="font-size:12px;">Caroline Bertani <span class="text-muted">+4</span></span></td>
+              <td><div class="text-xs text-muted">Completed Last:</div><div class="text-xs">03/11/2026</div></td>
+              <td><span class="text-muted">—</span></td>
+              <td><span class="text-muted">—</span></td>
+              <td>
+                <div class="dropdown-container">
+                  <button class="btn-secondary btn-sm btn-with-chevron" onclick="toggleDropdown('dd-row4');event.stopPropagation()">Actions <svg width="10" height="6" viewBox="0 0 10 6"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></button>
+                  <div class="dropdown-menu" id="dd-row4">
+                    <div class="dropdown-item">Scan</div>
+                    <div class="dropdown-item">Run License Check</div>
+                    <div class="dropdown-divider"></div>
+                    <div class="dropdown-item">📧 Invite to Compliance Portal</div>
+                    <div class="dropdown-item blue">📋 Create Compliance Case</div>
+                    <div class="dropdown-divider"></div>
+                    <div class="dropdown-item" style="color:#DC2626;">Archive Company</div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div><!-- /page-content -->
+
+    <div class="screen-nav">
+      <button class="btn-primary" onclick="showScreen(2)">Next: Product &amp; COA Relationship →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     SCREEN 2: Product Compliance — COA/Product Relationship
+══════════════════════════════════════════════════════════ -->
+<div id="screen-2" class="screen">
+  <div class="screen-wrapper">
+    <!-- App Chrome -->
+    <div class="app-top-bar">
+      <div class="app-top-left">
+        <span class="app-brand">Qredibility</span>
+        <nav class="app-nav-links">
+          <a class="app-nav-link active">Q-Monitor</a>
+          <a class="app-nav-link">Report</a>
+          <a class="app-nav-link">News</a>
+        </nav>
+      </div>
+      <div class="app-top-right">
+        <div class="company-selector"><span>Select a Company</span> <span style="color:#9CA3AF">▾</span></div>
+        <div class="company-selector" style="font-weight:500;"><span>FLEX Payment Solutions</span> <span style="color:#9CA3AF">▾</span></div>
+        <div class="user-btn">JF Joseph Floyd <span style="color:#9CA3AF">▾</span></div>
+        <div class="bell-btn">🔔</div>
+        <div class="wordmark">Qredible</div>
+      </div>
+    </div>
+    <div class="app-tabs">
+      <div class="app-tab">Findings</div>
+      <div class="app-tab active">Product Compliance</div>
+      <div class="app-tab">We Monitor</div>
+      <div class="app-tab">Monitoring Us</div>
+      <div class="app-tab">Documents</div>
+      <div class="app-tab">COAs</div>
+    </div>
+
+    <div class="page-content">
+      <div class="page-header">
+        <div class="page-title">FLEX Payment Solutions — Product Compliance</div>
+        <div class="page-subtitle">Black Bear Wellness LLC — 99+ Products</div>
+      </div>
+
+      <!-- Toolbar -->
+      <div class="filter-bar">
+        <input class="search-input" placeholder="Search products..." style="max-width:240px;">
+        <button class="btn-secondary btn-with-chevron">COA Status <svg width="10" height="6" viewBox="0 0 10 6"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></button>
+        <button class="btn-secondary btn-with-chevron">Compliance <svg width="10" height="6" viewBox="0 0 10 6"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></button>
+        <button class="btn-secondary btn-with-chevron">Category <svg width="10" height="6" viewBox="0 0 10 6"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></button>
+        <div class="filter-bar-right">
+          <button class="btn-secondary">Export</button>
+          <button class="btn-secondary btn-with-chevron">Columns <svg width="10" height="6" viewBox="0 0 10 6"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></button>
+          <button class="btn-secondary btn-with-chevron">Filter <svg width="10" height="6" viewBox="0 0 10 6"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></button>
+        </div>
+      </div>
+
+      <!-- COA info banner -->
+      <div class="info-bar mb-16">
+        ℹ <strong>COA → Product relationship:</strong> Each product can have multiple COAs assigned. Case items target the specific non-compliant COA — not all COAs on a product.
+      </div>
+
+      <!-- Bulk bar -->
+      <div class="bulk-bar">
+        <span class="bulk-label">2 products selected · <strong>3 compliance items detected</strong></span>
+        <button class="btn-primary btn-sm" onclick="showScreen(3)">📋 Create Case (3 items)</button>
+        <button class="btn-secondary btn-sm">✏ Bulk Edit</button>
+        <button class="btn-secondary btn-sm">🗑 Delete</button>
+        <button class="btn-secondary btn-sm">✕ Clear</button>
+      </div>
+
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th style="width:36px;">☐</th>
+              <th class="sortable">Product Name / SKU</th>
+              <th>Category</th>
+              <th>COAs Assigned</th>
+              <th>COA Status</th>
+              <th class="sortable">Compliance</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Row 1 — checked, missing COA -->
+            <tr class="selected">
+              <td><input type="checkbox" checked></td>
+              <td>
+                <div class="font-semibold text-navy">Gummy Bears 500mg</div>
+                <div class="text-xs text-muted">SKU: GB-500</div>
+              </td>
+              <td>Hemp/CBD</td>
+              <td>
+                <span style="background:#FEE2E2;color:#991B1B;border-radius:10px;padding:1px 8px;font-size:12px;font-weight:700;">0</span>
+                <span class="text-xs text-muted ml-4"> COAs</span>
+              </td>
+              <td><span style="color:#DC2626;font-size:12px;">— Missing</span></td>
+              <td><span style="color:#DC2626;font-weight:600;font-size:12px;">🔴 NON-COMPLIANT</span></td>
+              <td style="display:flex;gap:6px;">
+                <button class="btn-secondary btn-sm">View</button>
+                <button class="btn-primary btn-sm">+ Add COA</button>
+              </td>
+            </tr>
+            <!-- Row 2 — checked, partial -->
+            <tr class="selected">
+              <td><input type="checkbox" checked></td>
+              <td>
+                <div class="font-semibold text-navy">Tincture 1000mg</div>
+                <div class="text-xs text-muted">SKU: TIN-1000</div>
+              </td>
+              <td>Hemp/CBD</td>
+              <td>
+                <span style="background:#EDE9FE;color:#5B21B6;border-radius:10px;padding:1px 8px;font-size:12px;font-weight:700;">2</span>
+                <span class="text-xs text-muted"> COAs</span>
+              </td>
+              <td><span style="color:#D97706;font-size:12px;">PARTIAL: 1 Expired / 1 Valid</span></td>
+              <td><span style="color:#D97706;font-weight:600;font-size:12px;">🟡 PARTIAL</span></td>
+              <td><button class="btn-secondary btn-sm">View</button></td>
+            </tr>
+            <!-- COA subrows for Row 2 -->
+            <tr class="coa-subrow">
+              <td></td>
+              <td colspan="2" style="padding-left:32px !important;">
+                <span style="color:#9CA3AF;">└</span> COA #VCO-847 · Potency Panel · CannTest · Jan 2024
+              </td>
+              <td colspan="2"><span style="color:#DC2626;font-weight:600;">🔴 EXPIRED Jan 2026</span> <span style="font-size:11px;color:#9CA3AF;">— flagged in case</span></td>
+              <td colspan="2"></td>
+            </tr>
+            <tr class="coa-subrow">
+              <td></td>
+              <td colspan="2" style="padding-left:32px !important;">
+                <span style="color:#9CA3AF;">└</span> COA #VCO-1203 · Full Panel · ProVerde · Aug 2025
+              </td>
+              <td colspan="2"><span style="color:#166534;font-weight:600;">✓ Valid</span></td>
+              <td colspan="2"></td>
+            </tr>
+            <!-- Row 3 -->
+            <tr>
+              <td><input type="checkbox"></td>
+              <td>
+                <div class="font-semibold text-navy">Capsules 25mg</div>
+                <div class="text-xs text-muted">SKU: CAP-25</div>
+              </td>
+              <td>Hemp/CBD</td>
+              <td><span style="background:#F3F4F6;color:#374151;border-radius:10px;padding:1px 8px;font-size:12px;font-weight:600;">1</span></td>
+              <td><span style="color:#166534;font-size:12px;">✓ Valid</span></td>
+              <td><span style="color:#166534;font-weight:600;font-size:12px;">✓ COMPLIANT</span></td>
+              <td><button class="btn-secondary btn-sm">View</button></td>
+            </tr>
+            <!-- Row 4 -->
+            <tr>
+              <td><input type="checkbox"></td>
+              <td>
+                <div class="font-semibold text-navy">Sleep Gummies 10mg</div>
+                <div class="text-xs text-muted">SKU: SG-10</div>
+              </td>
+              <td>Hemp/CBD</td>
+              <td><span style="background:#F3F4F6;color:#374151;border-radius:10px;padding:1px 8px;font-size:12px;font-weight:600;">1</span></td>
+              <td><span style="color:#D97706;font-size:12px;">⚠ Violative</span></td>
+              <td><span style="color:#DC2626;font-weight:600;font-size:12px;">🔴 NON-COMPLIANT</span></td>
+              <td><button class="btn-secondary btn-sm">View</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="annotation mt-16">
+        <strong>Many-to-one:</strong> Tincture 1000mg has 2 COAs. Only COA #VCO-847 (expired) is flagged — the valid COA #VCO-1203 is <em>NOT</em> included.<br>
+        • Case item for Row 1: <code>PRODUCT_MISSING_COA</code> (plProductId only, no COA).<br>
+        • Case item for Row 2: <code>COA_EXPIRED</code> (both <code>vaultCoaId: VCO-847</code> AND <code>plProductId: TIN-1000</code> are stored in the case item).
+      </div>
+    </div>
+
+    <div class="screen-nav">
+      <button class="btn-secondary" onclick="showScreen(1)">← Back to We Monitor</button>
+      <button class="btn-primary" onclick="showScreen(3)">Next: Create Case →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     SCREEN 3: CaseDraftDrawer — Create Case
+══════════════════════════════════════════════════════════ -->
+<div id="screen-3" class="screen">
+  <div class="screen-wrapper" style="position:relative;">
+    <!-- Background: dimmed product compliance table -->
+    <div style="opacity:0.6;pointer-events:none;">
+      <!-- App Chrome (dimmed) -->
+      <div class="app-top-bar">
+        <div class="app-top-left">
+          <span class="app-brand">Qredibility</span>
+          <nav class="app-nav-links">
+            <a class="app-nav-link active">Q-Monitor</a>
+            <a class="app-nav-link">Report</a>
+            <a class="app-nav-link">News</a>
+          </nav>
+        </div>
+        <div class="app-top-right">
+          <div class="company-selector">FLEX Payment Solutions <span style="color:#9CA3AF">▾</span></div>
+          <div class="user-btn">JF Joseph Floyd <span style="color:#9CA3AF">▾</span></div>
+          <div class="wordmark">Qredible</div>
+        </div>
+      </div>
+      <div class="app-tabs">
+        <div class="app-tab">Findings</div>
+        <div class="app-tab active">Product Compliance</div>
+        <div class="app-tab">We Monitor</div>
+        <div class="app-tab">Monitoring Us</div>
+        <div class="app-tab">Documents</div>
+        <div class="app-tab">COAs</div>
+      </div>
+      <div class="page-content">
+        <div class="page-title mb-16">FLEX Payment Solutions — Product Compliance</div>
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr><th>☐</th><th>Product Name / SKU</th><th>Category</th><th>COAs Assigned</th><th>COA Status</th><th>Compliance</th><th>Actions</th></tr>
+            </thead>
+            <tbody>
+              <tr class="selected"><td>☑</td><td><strong>Gummy Bears 500mg</strong><br><small>GB-500</small></td><td>Hemp/CBD</td><td>0</td><td>— Missing</td><td>🔴 NON-COMPLIANT</td><td></td></tr>
+              <tr class="selected"><td>☑</td><td><strong>Tincture 1000mg</strong><br><small>TIN-1000</small></td><td>Hemp/CBD</td><td>2</td><td>PARTIAL</td><td>🟡 PARTIAL</td><td></td></tr>
+              <tr><td></td><td style="padding-left:32px;font-size:12px;color:#9CA3AF;">└ #VCO-847 EXPIRED</td><td></td><td></td><td></td><td></td><td></td></tr>
+              <tr><td></td><td><strong>Capsules 25mg</strong></td><td>Hemp/CBD</td><td>1</td><td>✓ Valid</td><td>✓ COMPLIANT</td><td></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dark overlay -->
+    <div class="drawer-overlay" style="position:absolute;"></div>
+
+    <!-- CaseDraftDrawer -->
+    <div class="case-drawer">
+      <div class="drawer-header">
+        <span class="drawer-header-title">📋 Create Compliance Case</span>
+        <button class="panel-close" onclick="showScreen(2)">×</button>
+      </div>
+
+      <div class="drawer-body">
+        <!-- Source -->
+        <div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:6px;padding:8px 12px;font-size:12px;color:#1E40AF;margin-bottom:16px;">
+          <strong>Source:</strong> Items from: Product Compliance (2) + Q-ScanAI Findings (1)
+        </div>
+
+        <!-- Case Title -->
+        <div class="drawer-section">
+          <div class="drawer-label">Case Title</div>
+          <input class="drawer-input" value="Black Bear Wellness — Product &amp; Website Compliance — Apr 1, 2026">
+        </div>
+
+        <!-- Merchant -->
+        <div class="drawer-section">
+          <div class="drawer-label">Merchant</div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="font-size:13px;color:#1a202e;font-weight:500;">Black Bear Wellness LLC</span>
+            <span style="color:#9CA3AF;font-size:12px;">🔒</span>
+          </div>
+        </div>
+
+        <!-- Priority -->
+        <div class="drawer-section">
+          <div class="drawer-label">Priority</div>
+          <div class="priority-row">
+            <label class="priority-opt"><input type="radio" name="priority-s3" checked> <span style="color:#991B1B;font-weight:500;">● High</span></label>
+            <label class="priority-opt"><input type="radio" name="priority-s3"> Medium</label>
+            <label class="priority-opt"><input type="radio" name="priority-s3"> Low</label>
+          </div>
+        </div>
+
+        <!-- SLA -->
+        <div class="drawer-section">
+          <div class="drawer-label">SLA Deadline</div>
+          <div class="sla-row">
+            <span class="sla-badge">📅 Apr 8, 2026</span>
+            <span style="font-size:12px;color:#6B7280;">(7 days)</span>
+            <button class="btn-secondary btn-sm">Change</button>
+          </div>
+        </div>
+
+        <hr class="drawer-divider">
+
+        <!-- Case Items -->
+        <div class="section-header">
+          <div class="section-title">Case Items (3)</div>
+          <button class="btn-secondary btn-sm">+ Add Item</button>
+        </div>
+
+        <!-- Item 1 -->
+        <div class="case-item-card" style="border-left:3px solid #EF4444;">
+          <div class="case-item-type red">🔴 PRODUCT_MISSING_COA</div>
+          <div class="case-item-product">Product: Gummy Bears 500mg (GB-500)</div>
+          <div class="case-item-desc">COA required — none on file</div>
+          <div class="case-item-footer">
+            <button class="btn-secondary btn-sm btn-with-chevron">Upload COA <svg width="10" height="6" viewBox="0 0 10 6"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></button>
+            <button class="case-item-remove">×</button>
+          </div>
+        </div>
+
+        <!-- Item 2 -->
+        <div class="case-item-card" style="border-left:3px solid #F59E0B;">
+          <div class="case-item-type amber">🟡 COA_EXPIRED</div>
+          <div class="case-item-product">Product: Tincture 1000mg (TIN-1000)</div>
+          <div class="case-item-coa">COA: #VCO-847 · CannTest · expired Jan 2026</div>
+          <div class="case-item-desc">Expired COA must be replaced</div>
+          <div class="case-item-footer">
+            <button class="btn-secondary btn-sm btn-with-chevron">Upload COA <svg width="10" height="6" viewBox="0 0 10 6"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></button>
+            <button class="case-item-remove">×</button>
+          </div>
+        </div>
+
+        <!-- Item 3 -->
+        <div class="case-item-card" style="border-left:3px solid #EF4444;">
+          <div class="case-item-type red">🔴 COMPLIANCE_FINDING</div>
+          <div class="case-item-product">Website: blackbeardispens.com</div>
+          <div class="case-item-coa">Finding: Privacy Policy Missing (HIGH)</div>
+          <div class="case-item-desc">Privacy policy page required</div>
+          <div class="case-item-footer">
+            <button class="btn-secondary btn-sm btn-with-chevron">Correct Website <svg width="10" height="6" viewBox="0 0 10 6"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></button>
+            <button class="case-item-remove">×</button>
+          </div>
+        </div>
+
+        <!-- Add more -->
+        <div style="border:1px dashed #E5E7EB;border-radius:6px;padding:10px;margin-top:8px;margin-bottom:16px;">
+          <div style="font-size:11px;color:#9CA3AF;text-align:center;margin-bottom:8px;">── add more ──</div>
+          <div class="add-items-row">
+            <button class="btn-secondary btn-sm">+ From Q-ScanAI</button>
+            <button class="btn-secondary btn-sm">+ From License Check</button>
+            <button class="btn-secondary btn-sm">+ Manually</button>
+          </div>
+        </div>
+
+        <hr class="drawer-divider">
+
+        <!-- Note -->
+        <div class="drawer-section">
+          <div class="drawer-label">Note to Merchant (optional)</div>
+          <textarea class="form-textarea">Please review and respond to each compliance item below. All items must be resolved by the SLA deadline.</textarea>
+        </div>
+
+        <div class="annotation">
+          <strong>CaseDraftDrawer</strong> is a shared component. itemType auto-detected: <code>COMPLIANCE_FINDING</code> from Q-ScanAI, <code>PRODUCT_MISSING_COA</code> / <code>COA_EXPIRED</code> / <code>COA_VIOLATIVE</code> from Product Compliance. <code>vaultCoaId</code> + <code>plProductId</code> both stored for COA items (preserving the specific COA link, not just the product).
+        </div>
+      </div>
+
+      <div class="drawer-footer">
+        <button class="btn-secondary" style="flex:1;" onclick="showScreen(4)">Save as Draft</button>
+        <button class="btn-primary" style="flex:1;" onclick="showScreen(5)">Send to Merchant →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     SCREEN 4: Internal Case Management — /qmonitor/cases
+══════════════════════════════════════════════════════════ -->
+<div id="screen-4" class="screen">
+  <div class="screen-wrapper">
+    <!-- App Chrome -->
+    <div class="app-top-bar">
+      <div class="app-top-left">
+        <span class="app-brand">Qredibility</span>
+        <nav class="app-nav-links">
+          <a class="app-nav-link active">Q-Monitor</a>
+          <a class="app-nav-link">Report</a>
+          <a class="app-nav-link">News</a>
+        </nav>
+      </div>
+      <div class="app-top-right">
+        <div class="company-selector"><span>Select a Company</span> <span style="color:#9CA3AF">▾</span></div>
+        <div class="company-selector" style="font-weight:500;"><span>FLEX Payment Solutions</span> <span style="color:#9CA3AF">▾</span></div>
+        <div class="user-btn">JF Joseph Floyd <span style="color:#9CA3AF">▾</span></div>
+        <div class="bell-btn">🔔</div>
+        <div class="wordmark">Qredible</div>
+      </div>
+    </div>
+    <div class="app-tabs">
+      <div class="app-tab">Findings</div>
+      <div class="app-tab">Product Compliance</div>
+      <div class="app-tab">We Monitor</div>
+      <div class="app-tab">Monitoring Us</div>
+      <div class="app-tab">Documents</div>
+      <div class="app-tab">COAs</div>
+      <div class="app-tab active">Cases</div>
+    </div>
+
+    <!-- Panel host -->
+    <div class="panel-host" style="min-height:calc(100vh - 110px);">
+      <div class="page-content" style="padding-right:calc(42% + 32px);" id="s4-main">
+        <div class="section-header mb-12">
+          <div class="page-title">Compliance Cases</div>
+          <button class="btn-primary">+ New Case</button>
+        </div>
+
+        <!-- Filter bar -->
+        <div class="filter-bar mb-12">
+          <input class="search-input" placeholder="Search..." style="max-width:200px;">
+          <button class="btn-secondary btn-sm btn-with-chevron">Status <svg width="10" height="6" viewBox="0 0 10 6"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></button>
+          <button class="btn-secondary btn-sm btn-with-chevron">Priority <svg width="10" height="6" viewBox="0 0 10 6"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></button>
+          <button class="btn-secondary btn-sm btn-with-chevron">Merchant <svg width="10" height="6" viewBox="0 0 10 6"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></button>
+          <button class="btn-secondary btn-sm btn-with-chevron">Assigned To <svg width="10" height="6" viewBox="0 0 10 6"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></button>
+        </div>
+
+        <!-- Sub-tabs -->
+        <div class="subtabs">
+          <div class="subtab active">All (12)</div>
+          <div class="subtab">Drafts (3) <span class="dot-amber"></span></div>
+          <div class="subtab">Active (7)</div>
+          <div class="subtab">Resolved (2)</div>
+        </div>
+
+        <!-- Bulk bar -->
+        <div class="bulk-bar mb-12">
+          <span class="bulk-label">2 cases selected</span>
+          <button class="btn-secondary btn-sm btn-with-chevron">Reassign <svg width="10" height="6" viewBox="0 0 10 6"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></button>
+          <button class="btn-secondary btn-sm">Close Cases</button>
+          <button class="btn-secondary btn-sm">Update SLA</button>
+          <button class="btn-secondary btn-sm">✕ Clear</button>
+        </div>
+
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th style="width:36px;">☐</th>
+                <th class="sortable">Case # / Title</th>
+                <th>Merchant</th>
+                <th>Status</th>
+                <th>Priority</th>
+                <th>Items</th>
+                <th class="sortable">SLA</th>
+                <th>Assigned</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Row 1 — Draft, selected, clickable to open panel -->
+              <tr class="selected clickable" onclick="openPanel(4)">
+                <td><input type="checkbox" checked onclick="event.stopPropagation()"></td>
+                <td>
+                  <div class="font-semibold" style="color:#2563eb;font-size:13px;">CR-2026-0001</div>
+                  <div class="text-sm text-muted">Black Bear — Product &amp; Website Compliance</div>
+                </td>
+                <td style="font-size:12px;">Black Bear Wellness LLC</td>
+                <td><span class="pill pill-draft">DRAFT</span></td>
+                <td><span class="pill pill-high">HIGH</span></td>
+                <td><span class="text-sm">0/3</span></td>
+                <td><span class="text-sm">Apr 8</span></td>
+                <td><span class="text-sm">S. Johnson</span></td>
+                <td onclick="event.stopPropagation()" style="display:flex;gap:4px;flex-wrap:wrap;">
+                  <button class="btn-secondary btn-sm" onclick="openPanel(4)">Edit Draft</button>
+                  <button class="btn-primary btn-sm" onclick="showScreen(5)">Send →</button>
+                  <button class="btn-secondary btn-sm">···</button>
+                </td>
+              </tr>
+              <!-- Row 2 -->
+              <tr>
+                <td><input type="checkbox"></td>
+                <td>
+                  <div class="font-semibold" style="color:#2563eb;font-size:13px;">CR-2026-0002</div>
+                  <div class="text-sm text-muted">License Verification — ATX</div>
+                </td>
+                <td style="font-size:12px;">ATX Auctions Corp</td>
+                <td><span class="pill pill-draft">DRAFT</span></td>
+                <td><span class="pill pill-medium">MEDIUM</span></td>
+                <td><span class="text-sm">0/2</span></td>
+                <td><span class="text-sm">Apr 10</span></td>
+                <td><span class="text-sm">M. Davis</span></td>
+                <td style="display:flex;gap:4px;">
+                  <button class="btn-secondary btn-sm">Edit Draft</button>
+                  <button class="btn-primary btn-sm">Send →</button>
+                  <button class="btn-secondary btn-sm">···</button>
+                </td>
+              </tr>
+              <!-- Row 3 -->
+              <tr>
+                <td><input type="checkbox"></td>
+                <td>
+                  <div class="font-semibold" style="color:#2563eb;font-size:13px;">CR-2026-0003</div>
+                  <div class="text-sm text-muted">Product Compliance — BTB</div>
+                </td>
+                <td style="font-size:12px;">BTB Brands LLC</td>
+                <td><span class="pill pill-draft">DRAFT</span></td>
+                <td><span class="pill pill-low">LOW</span></td>
+                <td><span class="text-sm">0/1</span></td>
+                <td><span class="text-sm">Apr 15</span></td>
+                <td><span class="text-sm">R. Wilson</span></td>
+                <td style="display:flex;gap:4px;">
+                  <button class="btn-secondary btn-sm">Edit Draft</button>
+                  <button class="btn-primary btn-sm">Send →</button>
+                  <button class="btn-secondary btn-sm">···</button>
+                </td>
+              </tr>
+              <!-- Divider -->
+              <tr class="table-section-divider">
+                <td colspan="9">── Active Cases ──</td>
+              </tr>
+              <!-- Row 4 — OPEN, overdue -->
+              <tr>
+                <td><input type="checkbox"></td>
+                <td>
+                  <div class="font-semibold" style="color:#2563eb;font-size:13px;">CR-2026-0004</div>
+                  <div class="text-sm text-muted">KYC Documentation Update</div>
+                </td>
+                <td style="font-size:12px;">Sunshine Wellness</td>
+                <td><span class="pill pill-open">OPEN</span></td>
+                <td><span class="pill pill-high">HIGH</span></td>
+                <td><span class="text-sm">0/4</span></td>
+                <td><span class="text-sm text-red font-semibold">Apr 5 — ⚠ 2 days</span></td>
+                <td><span class="text-sm">M. Davis</span></td>
+                <td style="display:flex;gap:4px;">
+                  <button class="btn-secondary btn-sm">View</button>
+                  <button class="btn-primary btn-sm">Review (4)</button>
+                </td>
+              </tr>
+              <!-- Row 5 -->
+              <tr>
+                <td><input type="checkbox"></td>
+                <td>
+                  <div class="font-semibold" style="color:#2563eb;font-size:13px;">CR-2026-0005</div>
+                  <div class="text-sm text-muted">Website Compliance Review</div>
+                </td>
+                <td style="font-size:12px;">Aficionado Seeds</td>
+                <td><span class="pill pill-in-review">IN_REVIEW</span></td>
+                <td><span class="pill pill-medium">MEDIUM</span></td>
+                <td><span class="text-sm">2/3</span></td>
+                <td><span class="text-sm">Apr 12</span></td>
+                <td><span class="text-sm">R. Wilson</span></td>
+                <td style="display:flex;gap:4px;">
+                  <button class="btn-secondary btn-sm">View</button>
+                  <button class="btn-primary btn-sm">Accept/Reject</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="annotation mt-16">
+          Draft cases are only visible to the processor. Merchant receives no notification until <strong>"Send to Merchant"</strong> is clicked. Status transitions: <strong>DRAFT → OPEN</strong> (on send). If merchant has no portal account, an invitation is auto-sent.
+        </div>
+      </div>
+
+      <!-- SIDE PANEL -->
+      <div class="side-panel" id="s4-panel">
+        <div class="panel-header">
+          <div class="panel-header-row">
+            <div class="panel-title">Black Bear — Product &amp; Website Compliance</div>
+            <button class="panel-close" onclick="closePanel(4)">×</button>
+          </div>
+          <div class="panel-meta">
+            <span class="pill pill-draft">DRAFT</span>
+            <span class="pill pill-high">HIGH</span>
+            <span style="color:#374151;font-size:12px;">SLA: Apr 8 (7 days)</span>
+            <span style="color:#374151;font-size:12px;">Assigned: S. Johnson</span>
+            <a style="font-size:12px;color:#2563eb;cursor:pointer;text-decoration:underline;">Reassign</a>
+          </div>
+        </div>
+
+        <!-- CTA banner -->
+        <div style="background:#FEF3C7;border-bottom:1px solid #FDE68A;padding:12px 20px;">
+          <div style="font-size:13px;color:#92400E;font-weight:500;margin-bottom:8px;">⚠ Draft — Merchant has not been notified. Review items and send when ready.</div>
+          <button class="btn-primary" style="width:100%;" onclick="showScreen(5)">Review &amp; Send to Merchant →</button>
+        </div>
+
+        <div class="panel-tabs">
+          <div class="panel-tab active">Items ●</div>
+          <div class="panel-tab">Responses</div>
+          <div class="panel-tab">Activity</div>
+        </div>
+
+        <div class="panel-body">
+          <!-- Items -->
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <div style="border:1px solid #E5E7EB;border-radius:6px;padding:12px;">
+              <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+                <span style="font-size:11px;background:#F3F4F6;color:#374151;border-radius:4px;padding:2px 6px;font-weight:600;">⏳ PENDING</span>
+                <span style="font-size:11px;color:#991B1B;font-weight:600;">PRODUCT_MISSING_COA</span>
+              </div>
+              <div style="font-size:13px;font-weight:500;color:#1a202e;">Gummy Bears 500mg</div>
+              <div style="font-size:12px;color:#6B7280;">Resolution: Upload COA · Not sent yet</div>
+            </div>
+            <div style="border:1px solid #E5E7EB;border-radius:6px;padding:12px;">
+              <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+                <span style="font-size:11px;background:#F3F4F6;color:#374151;border-radius:4px;padding:2px 6px;font-weight:600;">⏳ PENDING</span>
+                <span style="font-size:11px;color:#854D0E;font-weight:600;">COA_EXPIRED</span>
+              </div>
+              <div style="font-size:13px;font-weight:500;color:#1a202e;">Tincture 1000mg / #VCO-847</div>
+              <div style="font-size:12px;color:#6B7280;">Resolution: Upload COA · Not sent yet</div>
+            </div>
+            <div style="border:1px solid #E5E7EB;border-radius:6px;padding:12px;">
+              <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+                <span style="font-size:11px;background:#F3F4F6;color:#374151;border-radius:4px;padding:2px 6px;font-weight:600;">⏳ PENDING</span>
+                <span style="font-size:11px;color:#991B1B;font-weight:600;">COMPLIANCE_FINDING</span>
+              </div>
+              <div style="font-size:13px;font-weight:500;color:#1a202e;">Privacy Policy Missing</div>
+              <div style="font-size:12px;color:#6B7280;">Resolution: Correct Website · Not sent yet</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-footer">
+          <button class="btn-secondary btn-sm btn-disabled" style="cursor:not-allowed;">Send Reminder</button>
+          <button class="btn-primary btn-sm" onclick="showScreen(5)">Send to Merchant →</button>
+          <button class="btn-secondary btn-sm" style="color:#DC2626;border-color:#fca5a5;">Delete Draft</button>
+        </div>
+      </div>
+    </div><!-- /panel-host -->
+
+    <div class="screen-nav">
+      <button class="btn-secondary" onclick="showScreen(1)">← We Monitor</button>
+      <button class="btn-primary" onclick="showScreen(5)">Next: Send Confirmation →</button>
+      <button class="btn-secondary" onclick="openPanel(4)" style="margin-left:auto;">Open Draft Panel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     SCREEN 5: Send Confirmation Modal
+══════════════════════════════════════════════════════════ -->
+<div id="screen-5" class="screen">
+  <div class="screen-wrapper" style="position:relative;">
+    <!-- Background: Cases list (dimmed) -->
+    <div style="opacity:0.55;pointer-events:none;">
+      <div class="app-top-bar">
+        <div class="app-top-left">
+          <span class="app-brand">Qredibility</span>
+          <nav class="app-nav-links">
+            <a class="app-nav-link active">Q-Monitor</a>
+            <a class="app-nav-link">Report</a>
+          </nav>
+        </div>
+        <div class="app-top-right">
+          <div class="company-selector">FLEX Payment Solutions <span>▾</span></div>
+          <div class="wordmark">Qredible</div>
+        </div>
+      </div>
+      <div class="app-tabs">
+        <div class="app-tab">Findings</div>
+        <div class="app-tab">Product Compliance</div>
+        <div class="app-tab">We Monitor</div>
+        <div class="app-tab">Monitoring Us</div>
+        <div class="app-tab">Documents</div>
+        <div class="app-tab">COAs</div>
+        <div class="app-tab active">Cases</div>
+      </div>
+      <div class="page-content">
+        <div class="page-title mb-16">Compliance Cases</div>
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead><tr><th>☐</th><th>Case # / Title</th><th>Merchant</th><th>Status</th><th>Priority</th><th>Items</th><th>SLA</th><th>Assigned</th><th>Actions</th></tr></thead>
+            <tbody>
+              <tr class="selected"><td>☑</td><td><strong>CR-2026-0001</strong><br><small>Black Bear — Product &amp; Website Compliance</small></td><td>Black Bear Wellness LLC</td><td><span class="pill pill-draft">DRAFT</span></td><td><span class="pill pill-high">HIGH</span></td><td>0/3</td><td>Apr 8</td><td>S. Johnson</td><td></td></tr>
+              <tr><td></td><td><strong>CR-2026-0002</strong><br><small>License Verification — ATX</small></td><td>ATX Auctions</td><td><span class="pill pill-draft">DRAFT</span></td><td><span class="pill pill-medium">MEDIUM</span></td><td>0/2</td><td>Apr 10</td><td>M. Davis</td><td></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Overlay -->
+    <div class="modal-overlay" style="position:absolute;">
+      <div class="modal-box">
+        <div class="modal-header">
+          <div class="modal-title">Send Case to Merchant</div>
+          <button class="panel-close" onclick="showScreen(4)">×</button>
+        </div>
+        <div class="modal-body">
+          <p style="font-size:13px;color:#374151;margin-bottom:12px;">You are about to send <strong>CR-2026-0001</strong> to merchant:</p>
+
+          <div class="merchant-block">
+            <div class="merchant-block-name">Black Bear Wellness LLC</div>
+            <div class="merchant-block-meta flex items-center gap-8 mt-8">
+              <span>Contact: michael@blackbeardispens.com</span>
+              <a style="color:#2563eb;font-size:12px;cursor:pointer;">[Change]</a>
+            </div>
+            <div class="portal-status-row">
+              <span style="color:#DC2626;">🔴</span>
+              <span style="font-size:13px;color:#374151;">No portal account — an invitation will be sent automatically</span>
+            </div>
+          </div>
+
+          <div class="email-preview">
+            <div class="email-preview-header">
+              <div>From: <span>compliance@qredible.com</span></div>
+              <div>To: <span>michael@blackbeardispens.com</span></div>
+              <div>Subject: <span>FLEX Payment Solutions opened a compliance review requiring your attention</span></div>
+            </div>
+            <div class="email-preview-body">
+              <p>Black Bear Wellness LLC,</p>
+              <p style="margin-top:8px;">FLEX Payment Solutions has created a compliance review with <strong>3 items</strong> requiring your response by <strong>April 8, 2026</strong>.</p>
+              <p style="margin-top:8px;font-weight:500;">Items:</p>
+              <ul class="email-preview-items">
+                <li>Gummy Bears 500mg — Product COA Missing</li>
+                <li>Tincture 1000mg — COA Expired (#VCO-847)</li>
+                <li>blackbeardispens.com — Privacy Policy Missing</li>
+              </ul>
+              <div style="margin-top:12px;">
+                <span class="email-cta">Access Your Compliance Portal →</span>
+              </div>
+              <p class="email-footer">This link creates your secure portal account.</p>
+            </div>
+          </div>
+
+          <div>
+            <div class="drawer-label mb-8">Optional Note</div>
+            <textarea class="form-textarea" placeholder="Add a note to include in the email..."></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-secondary" onclick="showScreen(4)">Cancel</button>
+          <button class="btn-primary" onclick="showScreen(6)">Confirm &amp; Send Case →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     SCREEN 6: Post-Send — We Monitor with Invite Status Updated
+══════════════════════════════════════════════════════════ -->
+<div id="screen-6" class="screen" data-onshow="s6-toast">
+  <div class="screen-wrapper">
+    <!-- App Chrome -->
+    <div class="app-top-bar">
+      <div class="app-top-left">
+        <span class="app-brand">Qredibility</span>
+        <nav class="app-nav-links">
+          <a class="app-nav-link active">Q-Monitor</a>
+          <a class="app-nav-link">Report</a>
+          <a class="app-nav-link">News</a>
+        </nav>
+      </div>
+      <div class="app-top-right">
+        <div class="company-selector"><span>Select a Company</span> <span style="color:#9CA3AF">▾</span></div>
+        <div class="company-selector" style="font-weight:500;"><span>FLEX Payment Solutions</span> <span style="color:#9CA3AF">▾</span></div>
+        <div class="user-btn">JF Joseph Floyd <span style="color:#9CA3AF">▾</span></div>
+        <div class="bell-btn">🔔</div>
+        <div class="wordmark">Qredible</div>
+      </div>
+    </div>
+    <div class="app-tabs">
+      <div class="app-tab">Findings</div>
+      <div class="app-tab">Product Compliance</div>
+      <div class="app-tab active">We Monitor</div>
+      <div class="app-tab">Monitoring Us</div>
+      <div class="app-tab">Documents</div>
+      <div class="app-tab">COAs</div>
+    </div>
+
+    <div class="page-content">
+      <div class="page-header">
+        <div class="page-title">FLEX Payment Solutions Monitors</div>
+      </div>
+
+      <div class="info-bar green mb-16">
+        ✓ <strong>CR-2026-0001 sent</strong> — Black Bear Wellness LLC has been notified. Invitation sent to michael@blackbeardispens.com.
+      </div>
+
+      <div class="subtabs">
+        <div class="subtab">Active Companies</div>
+        <div class="subtab">Archived Companies</div>
+        <div class="subtab active">Invites <span class="badge">1 new</span></div>
+      </div>
+
+      <!-- Invites Table -->
+      <div class="mb-16" style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:6px;padding:10px 14px;font-size:13px;color:#1E40AF;">
+        Merchants who accept their invite will show <strong>"✓ Portal Active"</strong> in the Active Companies table and can submit responses through the Compliance Portal (/comply). Cases can be created for any monitored company — portal access is set up automatically when the case is sent.
+      </div>
+
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Merchant</th>
+              <th>Contact</th>
+              <th>Sent</th>
+              <th>Status</th>
+              <th>Cases Linked</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="background:#FFFBEB;">
+              <td>
+                <div class="font-semibold text-navy">Black Bear Wellness LLC</div>
+                <div class="text-xs" style="color:#F59E0B;font-weight:600;">● Just sent</div>
+              </td>
+              <td>michael@blackbeardispens.com</td>
+              <td>Apr 1, 2026</td>
+              <td><span class="portal-invited">⏳ Pending</span></td>
+              <td><a style="color:#2563eb;font-size:13px;">CR-2026-0001</a></td>
+              <td style="display:flex;gap:6px;">
+                <button class="btn-secondary btn-sm">Resend</button>
+                <button class="btn-secondary btn-sm">Copy Link</button>
+                <button class="btn-secondary btn-sm" style="color:#DC2626;">Revoke</button>
+              </td>
+            </tr>
+            <tr>
+              <td><div class="font-semibold text-navy">ATX Auctions Corp</div></td>
+              <td>legal@atxauctions.com</td>
+              <td>Mar 28, 2026</td>
+              <td><span class="portal-active">✓ Accepted Mar 29</span></td>
+              <td><a style="color:#2563eb;font-size:13px;">CR-2026-0002</a></td>
+              <td><button class="btn-secondary btn-sm">View Portal Activity</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Black Bear in Active Companies context note -->
+      <div class="annotation mt-16">
+        <strong>Black Bear Wellness LLC</strong> Portal Status has updated from <strong>"✓ Portal Active"</strong> → will show <strong>"⏳ Invited"</strong> until Michael accepts the new invitation. (Note: in this prototype, they already had portal access — in production, re-inviting updates the contact email or resends the portal link.)
+      </div>
+    </div>
+
+    <div class="screen-nav">
+      <button class="btn-secondary" onclick="showScreen(1)">← Back to We Monitor</button>
+      <button class="btn-primary" onclick="showScreen(7)">→ See Merchant /comply Portal (Screen 7)</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     SCREEN 7: Merchant /comply Portal
+══════════════════════════════════════════════════════════ -->
+<div id="screen-7" class="screen">
+  <div class="comply-page">
+    <!-- Comply Nav — NO Q-Monitor chrome -->
+    <div class="comply-nav">
+      <div class="comply-logo">
+        <div class="comply-logo-icon">Q</div>
+        <div class="comply-logo-text">Qredible</div>
+      </div>
+      <div class="comply-portal-label">Compliance Portal</div>
+      <div class="comply-user-area">
+        <div class="user-btn" style="font-size:13px;">Black Bear Wellness LLC <span style="color:#9CA3AF">▾</span></div>
+        <div class="comply-bell" style="position:relative;">
+          🔔
+          <span class="bell-badge">1</span>
+        </div>
+        <div class="user-btn" style="font-size:13px;">Michael Johnson <span style="color:#9CA3AF">▾</span></div>
+      </div>
+    </div>
+
+    <div class="comply-header">
+      <div class="comply-page-title">Welcome, Black Bear Wellness LLC</div>
+      <div class="comply-page-sub">Managed by FLEX Payment Solutions · Compliance review portal</div>
+    </div>
+
+    <div class="page-content">
+      <!-- Summary Cards -->
+      <div class="summary-cards">
+        <div class="summary-card" style="border-top-color: #EF4444;">
+          <div class="card-label">Open Cases</div>
+          <div class="card-value">1</div>
+          <div class="card-sub" style="color:#DC2626;">🔴 HIGH PRIORITY</div>
+        </div>
+        <div class="summary-card" style="border-top-color: #F59E0B;">
+          <div class="card-label">Action Required</div>
+          <div class="card-value">3 items</div>
+          <div class="card-sub" style="color:#D97706;">⚠ URGENT</div>
+        </div>
+        <div class="summary-card" style="border-top-color: #10B981;">
+          <div class="card-label">SLA Deadline</div>
+          <div class="card-value">Apr 8</div>
+          <div class="card-sub">5 days remaining</div>
+        </div>
+        <div class="summary-card" style="border-top-color: #6B7280;">
+          <div class="card-label">Completed</div>
+          <div class="card-value">0</div>
+          <div class="card-sub text-muted">—</div>
+        </div>
+      </div>
+
+      <!-- Case Table -->
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Case</th>
+              <th>Status</th>
+              <th>Items Pending</th>
+              <th>SLA</th>
+              <th>From</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Urgent row -->
+            <tr style="border-left:4px solid #EF4444;background:#FFFAFA;">
+              <td>
+                <div class="font-semibold text-navy">Product &amp; Website Compliance Review</div>
+                <div class="text-xs text-muted">CR-2026-0001</div>
+              </td>
+              <td>
+                <span class="pill pill-open">OPEN</span>
+                <span style="margin-left:4px;">🔔</span>
+              </td>
+              <td><span style="color:#DC2626;font-weight:600;">3 pending</span></td>
+              <td><span style="color:#D97706;font-weight:500;">Apr 8 <span class="text-xs">(5 days)</span></span></td>
+              <td>FLEX Payment Solutions</td>
+              <td>
+                <button class="btn-primary" onclick="showScreen(8)">Respond Now →</button>
+              </td>
+            </tr>
+            <!-- Closed row -->
+            <tr>
+              <td>
+                <div class="font-semibold text-navy">Annual Compliance Review</div>
+                <div class="text-xs text-muted">CR-2025-0089</div>
+              </td>
+              <td><span class="pill pill-closed">CLOSED</span></td>
+              <td><span class="text-green font-semibold">3/3 resolved</span></td>
+              <td><span class="text-muted">—</span></td>
+              <td>First National Bank</td>
+              <td><button class="btn-secondary">View History</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="screen-nav">
+      <button class="btn-secondary" onclick="showScreen(6)">← Back to We Monitor</button>
+      <button class="btn-primary" onclick="showScreen(8)">→ Respond to Case (Screen 8)</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     SCREEN 8: Merchant Response Flow
+══════════════════════════════════════════════════════════ -->
+<div id="screen-8" class="screen">
+  <div class="comply-page">
+    <!-- Comply Nav -->
+    <div class="comply-nav">
+      <div class="comply-logo">
+        <div class="comply-logo-icon">Q</div>
+        <div class="comply-logo-text">Qredible</div>
+      </div>
+      <div class="comply-portal-label">Compliance Portal</div>
+      <div class="comply-user-area">
+        <div class="user-btn" style="font-size:13px;">Black Bear Wellness LLC <span style="color:#9CA3AF">▾</span></div>
+        <div class="comply-bell" style="position:relative;">🔔<span class="bell-badge">1</span></div>
+        <div class="user-btn" style="font-size:13px;">Michael Johnson <span style="color:#9CA3AF">▾</span></div>
+      </div>
+    </div>
+
+    <div class="page-content">
+      <!-- Breadcrumb -->
+      <div class="breadcrumb">Compliance Portal <span style="color:#D1D5DB;margin:0 6px;">/</span> <span>Product &amp; Website Compliance Review</span></div>
+
+      <!-- Case Header -->
+      <div class="case-header-card">
+        <div class="case-header-title">Product &amp; Website Compliance Review</div>
+        <div class="case-header-meta">
+          <span>From: FLEX Payment Solutions</span>
+          <span class="meta-sep">·</span>
+          <span>Analyst: S. Johnson</span>
+          <span class="meta-sep">·</span>
+          <span>Case: CR-2026-0001</span>
+          <span class="meta-sep">·</span>
+          <span class="pill pill-open">OPEN</span>
+          <span class="meta-sep">·</span>
+          <span>SLA: <strong>April 8, 2026</strong></span>
+        </div>
+      </div>
+
+      <!-- Progress -->
+      <div class="progress-section mb-16">
+        <div class="progress-label">
+          <span>0 of 3 items responded</span>
+          <span>0%</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill blue" style="width:0%"></div>
+        </div>
+      </div>
+
+      <!-- Summary box -->
+      <div class="info-bar mb-16" style="background:#EFF6FF;border-color:#BFDBFE;">
+        FLEX Payment Solutions has identified <strong>3 compliance items</strong> requiring your response. Please address each item below. Your responses are reviewed by your compliance analyst.
+      </div>
+
+      <!-- ITEM 1 -->
+      <div class="item-response-card">
+        <div class="item-response-header">
+          <div>
+            <div class="item-counter">Item 1 of 3</div>
+            <div class="item-title">Product COA Missing</div>
+          </div>
+          <span class="pill pill-high">🔴 HIGH</span>
+        </div>
+        <div class="item-response-body">
+          <div class="text-sm"><strong>Product:</strong> Gummy Bears 500mg (SKU: GB-500)</div>
+          <div class="item-desc">
+            A Certificate of Analysis (COA) is required for this product to verify cannabinoid content and confirm product safety. The COA must be from an ISO-accredited laboratory and dated within the past 2 years.
+          </div>
+          <div class="item-field-label">Resolution: Upload COA</div>
+          <div class="upload-zone">
+            <div class="upload-zone-icon">📄</div>
+            Drop COA PDF here or click to browse · Max 25MB · PDF only
+          </div>
+          <textarea class="form-textarea" placeholder="Describe what you're uploading (lab name, test date, etc.)..."></textarea>
+          <button class="btn-primary btn-disabled mt-12" style="width:100%;cursor:not-allowed;">Submit Response — Item 1</button>
+        </div>
+      </div>
+
+      <!-- ITEM 2 -->
+      <div class="item-response-card">
+        <div class="item-response-header">
+          <div>
+            <div class="item-counter">Item 2 of 3</div>
+            <div class="item-title">COA Expired</div>
+          </div>
+          <span class="pill pill-medium">🟡 MEDIUM</span>
+        </div>
+        <div class="item-response-body">
+          <div class="text-sm"><strong>Product:</strong> Tincture 1000mg (SKU: TIN-1000)</div>
+          <div class="text-sm mt-8"><strong>COA on file:</strong> #VCO-847 · CannTest Labs · <span style="color:#DC2626;font-weight:500;">Expired January 15, 2026</span></div>
+          <div class="item-desc">
+            The COA currently on file for this product expired on January 15, 2026. Please upload a replacement COA dated after January 15, 2024.
+          </div>
+          <div class="item-field-label">Upload Replacement COA</div>
+          <div class="upload-zone">
+            <div class="upload-zone-icon">📄</div>
+            Drop replacement COA PDF here or click to browse · Max 25MB · PDF only
+          </div>
+          <textarea class="form-textarea" placeholder="Describe what you're uploading (lab name, test date, etc.)..."></textarea>
+          <button class="btn-primary btn-disabled mt-12" style="width:100%;cursor:not-allowed;">Submit Response — Item 2</button>
+        </div>
+      </div>
+
+      <!-- ITEM 3 -->
+      <div class="item-response-card">
+        <div class="item-response-header">
+          <div>
+            <div class="item-counter">Item 3 of 3</div>
+            <div class="item-title">Website — Privacy Policy Missing</div>
+          </div>
+          <span class="pill pill-high">🔴 HIGH</span>
+        </div>
+        <div class="item-response-body">
+          <div class="text-sm"><strong>Website:</strong> blackbeardispens.com</div>
+          <div class="item-desc">
+            A privacy policy must be accessible at a discoverable URL on your website.
+          </div>
+          <div class="item-field-label">Response</div>
+          <div class="radio-group mt-8">
+            <label class="radio-item">
+              <input type="radio" name="item3-radio">
+              I have added a privacy policy — URL:
+              <input class="drawer-input" style="width:220px;display:inline-block;margin-left:8px;" placeholder="https://">
+            </label>
+            <label class="radio-item">
+              <input type="radio" name="item3-radio">
+              I need more time —
+              <button class="btn-secondary btn-sm" style="margin-left:6px;">Request Extension</button>
+            </label>
+            <label class="radio-item">
+              <input type="radio" name="item3-radio">
+              This finding is incorrect —
+              <button class="btn-secondary btn-sm" style="margin-left:6px;">Dispute Finding</button>
+            </label>
+          </div>
+          <button class="btn-primary btn-disabled mt-12" style="width:100%;cursor:not-allowed;">Submit Response — Item 3</button>
+        </div>
+      </div>
+
+      <div class="annotation">
+        📱 <strong>Mobile-first:</strong> On phones, each item is a full-screen expandable card. File upload uses iOS/Android camera or gallery. Built with MUI v5 responsive breakpoints.
+      </div>
+    </div>
+
+    <div class="screen-nav">
+      <button class="btn-secondary" onclick="showScreen(7)">← Back to Case List</button>
+      <button class="btn-primary" onclick="showScreen(9)">→ Processor Review After Response (Screen 9)</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     SCREEN 9: Processor Reviews Responses
+═══════════════════════════════════════════════════════ -->
+  <div id="screen-9" class="screen">
+    <div class="screen-wrapper">
+      <div class="app-top-bar">
+        <div style="display:flex;align-items:center;gap:24px;">
+          <span style="font-weight:700;font-size:15px;color:#1a202e;">Qredible</span>
+          <span style="font-weight:600;color:#2563eb;border-bottom:2px solid #2563eb;padding-bottom:4px;">Q-Monitor</span>
+          <span style="color:#6B7280;font-size:14px;">Report</span>
+          <span style="color:#6B7280;font-size:14px;">News</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:16px;font-size:13px;color:#374151;">
+          <span>FLEX Payment Solutions</span>
+          <span>JF Joseph Floyd ▾</span>
+          <span>🔔</span>
+        </div>
+      </div>
+      <div class="app-tabs">
+        <div class="app-tab">Findings</div>
+        <div class="app-tab">Product Compliance</div>
+        <div class="app-tab">We Monitor</div>
+        <div class="app-tab">Monitoring Us</div>
+        <div class="app-tab">Documents</div>
+        <div class="app-tab">COAs</div>
+        <div class="app-tab active">Cases</div>
+      </div>
+      <div style="position:relative;min-height:calc(100vh - 110px);">
+        <div class="page-content" style="padding-right:calc(42% + 32px);">
+          <div class="section-header mb-12">
+            <div class="page-title">Compliance Cases</div>
+          </div>
+          <div class="table-container">
+          <table class="data-table">
+            <thead><tr>
+              <th style="width:32px;"><input type="checkbox"></th>
+              <th>Case</th><th>Merchant</th><th>Status</th><th>Priority</th><th>Items</th><th>SLA</th><th>Assigned</th><th>Actions</th>
+            </tr></thead>
+            <tbody>
+              <tr class="selected" style="cursor:pointer;">
+                <td><input type="checkbox" checked></td>
+                <td>
+                  <div class="font-semibold" style="font-size:13px;color:#1a202e;">CR-2026-0001</div>
+                  <div style="font-size:12px;color:#6B7280;">Black Bear — Product &amp; Website Compliance</div>
+                </td>
+                <td style="font-size:13px;">Black Bear Wellness LLC</td>
+                <td><span class="pill pill-in-review">IN_REVIEW</span></td>
+                <td><span class="pill pill-high">HIGH</span></td>
+                <td style="font-size:13px;">1/3</td>
+                <td style="font-size:13px;color:#16a34a;">Apr 8 (4 days)</td>
+                <td style="font-size:13px;">S. Johnson</td>
+                <td><button class="btn-secondary btn-sm">View</button></td>
+              </tr>
+            </tbody>
+          </table>
+          </div>
+        </div>
+        <!-- Side panel (open) -->
+        <div class="side-panel open" style="display:flex!important;">
+          <div class="panel-header">
+            <div>
+              <div style="font-weight:600;font-size:15px;color:#1a202e;margin-bottom:6px;">Black Bear — Product &amp; Website Compliance</div>
+              <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+                <span class="pill pill-in-review">IN_REVIEW</span>
+                <span class="pill pill-high">HIGH</span>
+                <span style="font-size:12px;color:#6B7280;">SLA: Apr 8 (4 days)</span>
+                <button style="font-size:12px;color:#2563eb;background:none;border:none;cursor:pointer;">Reassign</button>
+              </div>
+            </div>
+            <button onclick="showScreen(4)" style="background:none;border:none;cursor:pointer;font-size:18px;color:#6B7280;">×</button>
+          </div>
+          <div style="background:#EDE9FE;padding:12px 20px;border-bottom:1px solid #DDD6FE;">
+            <div style="color:#5B21B6;font-size:13px;font-weight:500;">2 of 3 responses received · Review and accept or request revisions</div>
+          </div>
+          <div class="panel-tabs">
+            <div class="panel-tab">Items</div>
+            <div class="panel-tab active">Responses ● 2</div>
+            <div class="panel-tab">Activity</div>
+          </div>
+          <div style="padding:16px 20px;flex:1;overflow-y:auto;">
+            <!-- Response 1 -->
+            <div style="border:1px solid #E5E7EB;border-radius:8px;padding:16px;margin-bottom:12px;">
+              <div style="font-size:11px;color:#6B7280;font-weight:600;text-transform:uppercase;margin-bottom:6px;">PRODUCT_MISSING_COA — Gummy Bears 500mg</div>
+              <div style="font-size:12px;color:#6B7280;margin-bottom:8px;">Submitted: Michael Johnson · Apr 1, 2026 3:15 PM</div>
+              <div style="font-size:13px;color:#374151;display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+                📎 <span style="color:#2563eb;text-decoration:underline;cursor:pointer;">COA_GummyBears_ProVerde_2026.pdf</span> <span style="color:#9CA3AF;font-size:11px;">(2.3 MB)</span>
+              </div>
+              <div style="font-size:13px;color:#374151;margin-bottom:12px;background:#f8fafc;padding:8px;border-radius:4px;">"New COA from ProVerde Labs, March 2026. Full panel."</div>
+              <div style="display:flex;gap:8px;">
+                <button class="btn-green" style="font-size:12px;padding:6px 12px;">✓ Accept</button>
+                <button style="background:white;color:#DC2626;border:1px solid #DC2626;border-radius:6px;padding:6px 12px;font-size:12px;cursor:pointer;">✗ Request Revision</button>
+              </div>
+            </div>
+            <!-- Response 2 -->
+            <div style="border:1px solid #E5E7EB;border-radius:8px;padding:16px;margin-bottom:12px;">
+              <div style="font-size:11px;color:#6B7280;font-weight:600;text-transform:uppercase;margin-bottom:6px;">COMPLIANCE_FINDING — Privacy Policy</div>
+              <div style="font-size:12px;color:#6B7280;margin-bottom:8px;">Submitted: Michael Johnson · Apr 1, 2026 3:22 PM</div>
+              <div style="font-size:13px;color:#374151;margin-bottom:6px;">URL: <a href="#" style="color:#2563eb;text-decoration:underline;">https://blackbeardispens.com/privacy-policy</a></div>
+              <div style="font-size:13px;color:#374151;margin-bottom:12px;background:#f8fafc;padding:8px;border-radius:4px;">"Privacy policy page added today."</div>
+              <div style="display:flex;gap:8px;">
+                <button class="btn-green" style="font-size:12px;padding:6px 12px;">✓ Accept</button>
+                <button style="background:white;color:#DC2626;border:1px solid #DC2626;border-radius:6px;padding:6px 12px;font-size:12px;cursor:pointer;">✗ Request Revision</button>
+              </div>
+            </div>
+            <!-- Awaiting -->
+            <div style="border:1px dashed #E5E7EB;border-radius:8px;padding:16px;background:#f8fafc;">
+              <div style="font-size:11px;color:#6B7280;font-weight:600;text-transform:uppercase;margin-bottom:6px;">COA_EXPIRED — Tincture 1000mg / #VCO-847</div>
+              <div style="font-size:13px;color:#9CA3AF;">⏳ No response yet</div>
+              <button style="margin-top:8px;font-size:12px;color:#2563eb;background:none;border:none;cursor:pointer;">Send Reminder for This Item</button>
+            </div>
+          </div>
+          <div style="padding:14px 20px;border-top:1px solid #E5E7EB;display:flex;gap:8px;flex-wrap:wrap;">
+            <button class="btn-green" style="font-size:13px;">Accept All Ready Responses</button>
+            <button class="btn-secondary btn-sm">Send Reminder — All Pending</button>
+            <button class="btn-secondary btn-sm">Export Case Report</button>
+          </div>
+        </div>
+      </div>
+      <div class="annotation" style="margin:0 24px 24px;">Once all items are accepted: case → RESOLVED. Processor closes the case → CLOSED. If merchant disputes, state → DISPUTED (Phase 2 resolution flow).</div>
+      <div class="screen-nav">
+        <button class="btn-secondary" onclick="showScreen(8)">← Merchant Response View</button>
+        <button class="btn-primary" onclick="showScreen(1)">↩ Back to Start (Screen 1)</button>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
