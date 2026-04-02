@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Merchant Portal & Case Management — Roadmap</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root { --blue: #3B82F6; --navy: #1E3A5F; --green: #16A34A; --red: #DC2626; --orange: #D97706; --purple: #7C3AED; --border: #E2E8F0; --bg: #F8FAFC; --text: #0F172A; --muted: #64748B; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: #0F172A; color: var(--text); padding: 0 0 80px; }
+
+.proto-nav { background: #0F172A; border-bottom: 1px solid rgba(255,255,255,.08); padding: 10px 20px; display: flex; align-items: center; gap: 14px; position: sticky; top: 0; z-index: 100; }
+.proto-nav a { color: #94A3B8; text-decoration: none; font-size: 12px; font-weight: 600; }
+.proto-nav a:hover { color: #F8FAFC; }
+.proto-nav .current { color: #F8FAFC; font-size: 12px; font-weight: 600; }
+.proto-nav .badge { margin-left: auto; background: var(--navy); color: #93C5FD; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 4px; }
+
+.page { max-width: 1100px; margin: 0 auto; padding: 40px 20px; }
+
+.hero { text-align: center; margin-bottom: 48px; }
+.hero h1 { color: #F1F5F9; font-size: 28px; font-weight: 800; margin-bottom: 8px; }
+.hero p { color: #94A3B8; font-size: 14px; max-width: 640px; margin: 0 auto; line-height: 1.6; }
+.hero .meta { margin-top: 16px; display: flex; justify-content: center; gap: 24px; font-size: 12px; color: #64748B; }
+.hero .meta span { display: flex; align-items: center; gap: 6px; }
+
+.section { margin-bottom: 40px; }
+.section-title { color: #94A3B8; font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+.section-title .dot { width: 8px; height: 8px; border-radius: 50%; }
+
+/* Timeline */
+.timeline { position: relative; padding-left: 32px; }
+.timeline::before { content: ''; position: absolute; left: 11px; top: 0; bottom: 0; width: 2px; background: #334155; }
+.phase { position: relative; margin-bottom: 32px; }
+.phase-dot { position: absolute; left: -32px; top: 4px; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; color: white; z-index: 1; }
+.phase-dot.blue { background: var(--blue); }
+.phase-dot.green { background: var(--green); }
+.phase-dot.purple { background: var(--purple); }
+.phase-dot.orange { background: var(--orange); }
+
+.phase-card { background: #1E293B; border: 1px solid #334155; border-radius: 10px; padding: 20px 24px; }
+.phase-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+.phase-name { color: #F1F5F9; font-size: 16px; font-weight: 700; }
+.phase-dates { color: #94A3B8; font-size: 12px; font-weight: 500; }
+.phase-desc { color: #94A3B8; font-size: 13px; line-height: 1.6; margin-bottom: 14px; }
+
+.ticket-list { display: flex; flex-direction: column; gap: 6px; }
+.ticket-row { display: flex; align-items: center; gap: 10px; padding: 8px 12px; background: #0F172A; border-radius: 6px; font-size: 12px; }
+.ticket-key { color: var(--blue); font-weight: 700; font-family: 'IBM Plex Mono', monospace; min-width: 70px; }
+.ticket-title { color: #CBD5E1; flex: 1; }
+.ticket-effort { font-weight: 600; padding: 2px 8px; border-radius: 4px; font-size: 11px; }
+.effort-light { background: #DCFCE7; color: #15803D; }
+.effort-medium { background: #FEF9C3; color: #854D0E; }
+.effort-heavy { background: #FEE2E2; color: #991B1B; }
+.ticket-status { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
+.status-ready { background: #DCFCE7; color: #15803D; }
+.status-in-progress { background: #DBEAFE; color: #1E40AF; }
+.status-blocked { background: #FEE2E2; color: #991B1B; }
+.status-planned { background: #F3F4F6; color: #6B7280; }
+
+.dep-arrow { color: #475569; font-size: 11px; margin: 4px 0 4px 32px; }
+
+/* Summary cards */
+.summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 40px; }
+.summary-card { background: #1E293B; border: 1px solid #334155; border-radius: 10px; padding: 18px 20px; border-top: 3px solid; }
+.summary-card .label { color: #94A3B8; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 8px; }
+.summary-card .value { color: #F1F5F9; font-size: 28px; font-weight: 800; }
+.summary-card .sub { color: #64748B; font-size: 12px; margin-top: 4px; }
+
+/* Open questions */
+.resolved-list { display: flex; flex-direction: column; gap: 8px; }
+.resolved-item { background: #1E293B; border: 1px solid #334155; border-radius: 8px; padding: 12px 16px; display: flex; align-items: flex-start; gap: 10px; }
+.resolved-check { color: var(--green); font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+.resolved-q { color: #94A3B8; font-size: 12px; font-weight: 600; }
+.resolved-a { color: #CBD5E1; font-size: 12px; margin-top: 4px; line-height: 1.5; }
+
+/* Links */
+.link-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.link-card { background: #1E293B; border: 1px solid #334155; border-radius: 8px; padding: 14px 16px; text-decoration: none; transition: border-color .15s; }
+.link-card:hover { border-color: var(--blue); }
+.link-card .link-title { color: #F1F5F9; font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+.link-card .link-sub { color: #64748B; font-size: 11px; }
+</style>
+</head>
+<body>
+
+<nav class="proto-nav">
+  <a href="../">← All Mockups</a>
+  <span style="color:#334155;">/</span>
+  <span class="current">Merchant Portal & Case Management — Roadmap</span>
+  <span class="badge">ROADMAP · APR 2026</span>
+</nav>
+
+<div class="page">
+
+  <div class="hero">
+    <h1>Merchant Portal & Case Management</h1>
+    <p>Compliance case workflow from processor to merchant — create cases from findings, send to merchants, collect responses, review and resolve. Built for FlexPay's 2-month deadline.</p>
+    <div class="meta">
+      <span>📅 Committed: June 1, 2026</span>
+      <span>👤 Owner: Joseph Floyd</span>
+      <span>🏢 For: FlexPay / FLEX Payment Solutions</span>
+      <span>📊 14 tickets</span>
+    </div>
+  </div>
+
+  <!-- Summary -->
+  <div class="summary-grid">
+    <div class="summary-card" style="border-top-color: var(--green);">
+      <div class="label">Ready for Dev</div>
+      <div class="value">8</div>
+      <div class="sub">Specs + mockups complete</div>
+    </div>
+    <div class="summary-card" style="border-top-color: var(--blue);">
+      <div class="label">In Progress</div>
+      <div class="value">3</div>
+      <div class="sub">Mockups being finalized</div>
+    </div>
+    <div class="summary-card" style="border-top-color: var(--orange);">
+      <div class="label">Phase 2 (Deferred)</div>
+      <div class="value">2</div>
+      <div class="sub">Post-launch improvements</div>
+    </div>
+    <div class="summary-card" style="border-top-color: var(--muted);">
+      <div class="label">Total Effort</div>
+      <div class="value">~8w</div>
+      <div class="sub">Dev estimate needed from Huy</div>
+    </div>
+  </div>
+
+  <!-- Phase 1: Data Model -->
+  <div class="section">
+    <div class="section-title"><div class="dot" style="background:var(--blue);"></div> Phase 1 — Data Model & Infrastructure (Week 1-2)</div>
+    <div class="timeline">
+      <div class="phase">
+        <div class="phase-dot blue">1</div>
+        <div class="phase-card">
+          <div class="phase-header">
+            <div class="phase-name">Case Management Data Model</div>
+            <div class="phase-dates">Week 1</div>
+          </div>
+          <div class="phase-desc">Core entities, status machine, and API contracts. Must be solid before any UI work begins.</div>
+          <div class="ticket-list">
+            <div class="ticket-row">
+              <span class="ticket-key">QP-3579</span>
+              <span class="ticket-title">PlComplianceCase Data Model — entities, status machine, API contracts</span>
+              <span class="ticket-effort effort-heavy">Heavy</span>
+              <span class="ticket-status status-ready">Ready</span>
+            </div>
+            <div class="ticket-row">
+              <span class="ticket-key">QP-3580</span>
+              <span class="ticket-title">Case Management API — CRUD, status transitions, validation</span>
+              <span class="ticket-effort effort-heavy">Heavy</span>
+              <span class="ticket-status status-ready">Ready</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Phase 2: Entry Points -->
+      <div class="phase">
+        <div class="phase-dot green">2</div>
+        <div class="phase-card">
+          <div class="phase-header">
+            <div class="phase-name">Case Creation Entry Points</div>
+            <div class="phase-dates">Week 2-3</div>
+          </div>
+          <div class="phase-desc">Users can create cases from Q-ScanAI findings, Product Compliance table, and We Monitor. Shared CaseDraftDrawer component.</div>
+          <div class="ticket-list">
+            <div class="ticket-row">
+              <span class="ticket-key">QP-3581</span>
+              <span class="ticket-title">Add "Create Case" action to Q-ScanAI Findings</span>
+              <span class="ticket-effort effort-medium">Medium</span>
+              <span class="ticket-status status-ready">Ready</span>
+            </div>
+            <div class="ticket-row">
+              <span class="ticket-key">QP-3582</span>
+              <span class="ticket-title">Add "Create Case" action to Product Compliance Table</span>
+              <span class="ticket-effort effort-medium">Medium</span>
+              <span class="ticket-status status-ready">Ready</span>
+            </div>
+            <div class="ticket-row">
+              <span class="ticket-key">QP-3583</span>
+              <span class="ticket-title">We Monitor — Active Cases & Portal Status columns</span>
+              <span class="ticket-effort effort-medium">Medium</span>
+              <span class="ticket-status status-ready">Ready</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Phase 3: Internal Case Management -->
+      <div class="phase">
+        <div class="phase-dot green">3</div>
+        <div class="phase-card">
+          <div class="phase-header">
+            <div class="phase-name">Internal Case Management Screen</div>
+            <div class="phase-dates">Week 3-4</div>
+          </div>
+          <div class="phase-desc">New "Cases" tab in Q-Monitor. Table view + side panel. Draft management, bulk actions, reports.</div>
+          <div class="ticket-list">
+            <div class="ticket-row">
+              <span class="ticket-key">QP-3584</span>
+              <span class="ticket-title">Internal Case Management Screen — /qmonitor/cases</span>
+              <span class="ticket-effort effort-heavy">Heavy</span>
+              <span class="ticket-status status-ready">Ready</span>
+            </div>
+            <div class="ticket-row">
+              <span class="ticket-key">QP-3593</span>
+              <span class="ticket-title">Resolution Types — System defaults per itemType (Phase 1)</span>
+              <span class="ticket-effort effort-medium">Medium</span>
+              <span class="ticket-status status-ready">Ready</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Phase 4: Merchant Portal -->
+      <div class="phase">
+        <div class="phase-dot purple">4</div>
+        <div class="phase-card">
+          <div class="phase-header">
+            <div class="phase-name">Merchant Portal & Authentication</div>
+            <div class="phase-dates">Week 4-6</div>
+          </div>
+          <div class="phase-desc">Merchant-facing /comply portal. Auto-invite on case send. Response form per item type. Mobile-friendly.</div>
+          <div class="ticket-list">
+            <div class="ticket-row">
+              <span class="ticket-key">QP-3585</span>
+              <span class="ticket-title">Merchant Portal Authentication & Onboarding — invite flow from We Monitor</span>
+              <span class="ticket-effort effort-heavy">Heavy</span>
+              <span class="ticket-status status-ready">Ready</span>
+            </div>
+            <div class="ticket-row">
+              <span class="ticket-key">QP-3586</span>
+              <span class="ticket-title">Merchant Compliance Portal Dashboard — /comply</span>
+              <span class="ticket-effort effort-heavy">Heavy</span>
+              <span class="ticket-status status-ready">Ready</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Phase 5: Reporting & Polish -->
+      <div class="phase">
+        <div class="phase-dot orange">5</div>
+        <div class="phase-card">
+          <div class="phase-header">
+            <div class="phase-name">Reporting & Polish</div>
+            <div class="phase-dates">Week 6-8</div>
+          </div>
+          <div class="phase-desc">Case summary reports, compliance trends, export. Bug fixes and UX refinement.</div>
+          <div class="ticket-list">
+            <div class="ticket-row">
+              <span class="ticket-key">QP-3590</span>
+              <span class="ticket-title">Case Summary Reports</span>
+              <span class="ticket-effort effort-medium">Medium</span>
+              <span class="ticket-status status-planned">Planned</span>
+            </div>
+            <div class="ticket-row">
+              <span class="ticket-key">QP-3591</span>
+              <span class="ticket-title">Merchant Compliance Trends</span>
+              <span class="ticket-effort effort-medium">Medium</span>
+              <span class="ticket-status status-planned">Planned</span>
+            </div>
+            <div class="ticket-row">
+              <span class="ticket-key">QP-3592</span>
+              <span class="ticket-title">Export & Scheduled Reports</span>
+              <span class="ticket-effort effort-light">Light</span>
+              <span class="ticket-status status-planned">Planned</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Phase 2 Deferred -->
+  <div class="section">
+    <div class="section-title"><div class="dot" style="background:var(--muted);"></div> Phase 2 — Post-Launch (Deferred)</div>
+    <div class="timeline">
+      <div class="phase">
+        <div class="phase-dot" style="background:#475569;">→</div>
+        <div class="phase-card" style="border-color:#475569;opacity:.8;">
+          <div class="phase-name" style="color:#94A3B8;">Post-Launch Enhancements</div>
+          <div class="phase-desc">Custom resolution types, advanced SLA configuration, processor-level defaults.</div>
+          <div class="ticket-list">
+            <div class="ticket-row" style="opacity:.7;">
+              <span class="ticket-key">QP-3593</span>
+              <span class="ticket-title">Phase 2: Custom Resolution Types — processor-created input types</span>
+              <span class="ticket-effort effort-heavy">Heavy</span>
+              <span class="ticket-status status-planned">Phase 2</span>
+            </div>
+            <div class="ticket-row" style="opacity:.7;">
+              <span class="ticket-key">—</span>
+              <span class="ticket-title">SLA Configuration — processor-level defaults per priority tier</span>
+              <span class="ticket-effort effort-medium">Medium</span>
+              <span class="ticket-status status-planned">Phase 2</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Resolved Questions -->
+  <div class="section">
+    <div class="section-title"><div class="dot" style="background:var(--green);"></div> Resolved Product Decisions</div>
+    <div class="resolved-list">
+      <div class="resolved-item">
+        <span class="resolved-check">✓</span>
+        <div>
+          <div class="resolved-q">Resolution Types: custom or controlled?</div>
+          <div class="resolved-a">Phase 1 = system defaults. Phase 2 = processor can ADD custom types. Automation hooks to violation type, not resolution type.</div>
+        </div>
+      </div>
+      <div class="resolved-item">
+        <span class="resolved-check">✓</span>
+        <div>
+          <div class="resolved-q">SLA defaults</div>
+          <div class="resolved-a">Manual per case at creation. Phase 2 may add processor-level defaults per priority.</div>
+        </div>
+      </div>
+      <div class="resolved-item">
+        <span class="resolved-check">✓</span>
+        <div>
+          <div class="resolved-q">Dispute as merchant right</div>
+          <div class="resolved-a">Yes — DISPUTE always available on COMPLIANCE_FINDING, COA_VIOLATIVE, LICENSE_ISSUE.</div>
+        </div>
+      </div>
+      <div class="resolved-item">
+        <span class="resolved-check">✓</span>
+        <div>
+          <div class="resolved-q">Force Close permissions</div>
+          <div class="resolved-a">Admin-only. Required note. Items archived as FORCE_CLOSED with audit trail.</div>
+        </div>
+      </div>
+      <div class="resolved-item">
+        <span class="resolved-check">✓</span>
+        <div>
+          <div class="resolved-q">Extension request behavior</div>
+          <div class="resolved-a">No auto-pause. Processor approves/denies. Approved = new SLA date. Both actions fire notification.</div>
+        </div>
+      </div>
+      <div class="resolved-item">
+        <span class="resolved-check">✓</span>
+        <div>
+          <div class="resolved-q">Case number format</div>
+          <div class="resolved-a">CR-YYYY-XXXX — auto-generated, tenant-scoped sequence per processor.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mockup Links -->
+  <div class="section">
+    <div class="section-title"><div class="dot" style="background:var(--blue);"></div> Interactive Mockups</div>
+    <div class="link-grid">
+      <a class="link-card" href="compliance-portal-v2.html" target="_blank">
+        <div class="link-title">⚖️ Compliance Portal v2</div>
+        <div class="link-sub">9-screen clickthrough — full case lifecycle</div>
+      </a>
+      <a class="link-card" href="ofac-sanctions-screening.html" target="_blank">
+        <div class="link-title">🛡️ OFAC Sanctions Screening</div>
+        <div class="link-sub">We Monitor + screening modal + match detail</div>
+      </a>
+      <a class="link-card" href="regulatory-rules-engine.html" target="_blank">
+        <div class="link-title">🏷️ Regulatory Rules Engine</div>
+        <div class="link-sub">Attributes + rules + product compliance status</div>
+      </a>
+      <a class="link-card" href="spider-assignment.html" target="_blank">
+        <div class="link-title">🕷️ Spider Assignment</div>
+        <div class="link-sub">Enum-to-company mapping, one-click scan</div>
+      </a>
+      <a class="link-card" href="qscanai-findings.html" target="_blank">
+        <div class="link-title">🔍 Q-ScanAI Findings</div>
+        <div class="link-sub">Current state + improvements + impact matrix</div>
+      </a>
+      <a class="link-card" href="we-monitor-license.html" target="_blank">
+        <div class="link-title">📋 We Monitor License</div>
+        <div class="link-sub">License check flow + action menu</div>
+      </a>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
