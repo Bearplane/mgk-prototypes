@@ -219,6 +219,7 @@
     .badge-template { background: #F1F5F9; color: #475569; }
     .badge-manual { background: #FFF7ED; color: #C2410C; border: 1px solid #FED7AA; }
     .badge-green { background: #DCFCE7; color: #15803D; }
+    .badge-enum { background: #F0F9FF; color: #0369A1; border: 1px solid #BAE6FD; }
 
     /* Custom spider list rows */
     .spider-row {
@@ -256,8 +257,8 @@
     }
 
     /* ── Edit Panel (expanded modal) ─────────────────────────────────── */
-    .modal-wide { width: 900px; }
-    .modal-split { display: flex; min-height: 500px; }
+    .modal-wide { width: 960px; }
+    .modal-split { display: flex; min-height: 560px; }
     .modal-split-left {
       width: 300px; flex-shrink: 0;
       border-right: 1px solid var(--border);
@@ -284,39 +285,40 @@
     }
     .form-input.readonly { background: #F1F5F9; color: var(--text-muted); }
 
-    /* Toggle */
-    .toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; }
-    .toggle-label { font-size: 13px; font-weight: 600; color: var(--text); }
-    .toggle-sub { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
-    .toggle-switch {
-      width: 44px; height: 24px; background: var(--green); border-radius: 12px;
-      position: relative; cursor: pointer; flex-shrink: 0;
+    /* Enum mapping table */
+    .enum-section { display: flex; flex-direction: column; gap: 8px; }
+    .enum-section-header { display: flex; align-items: baseline; justify-content: space-between; }
+    .enum-section-title { font-size: 12px; font-weight: 700; color: var(--text); }
+    .enum-section-desc { font-size: 11px; color: var(--text-muted); line-height: 1.5; }
+    .enum-table { width: 100%; border-collapse: collapse; font-size: 12px; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+    .enum-table thead { background: var(--blue-dark); }
+    .enum-table th { color: white; text-align: left; padding: 8px 12px; font-size: 11px; font-weight: 600; letter-spacing: .03em; }
+    .enum-table td { padding: 9px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    .enum-table tbody tr:last-child td { border-bottom: none; }
+    .enum-table tbody tr:hover { background: #F8FAFC; }
+    .enum-value-cell { font-family: var(--font-mono); font-size: 12px; font-weight: 500; color: var(--text); }
+    .enum-companies-cell { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+    .company-pill {
+      display: inline-flex; align-items: center;
+      background: #EFF6FF; color: #1D4ED8;
+      border: 1px solid #BFDBFE;
+      font-size: 11px; font-weight: 500;
+      padding: 2px 8px; border-radius: 4px;
     }
-    .toggle-switch::after {
-      content: ''; position: absolute;
-      width: 18px; height: 18px; background: white;
-      border-radius: 50%; top: 3px; right: 3px;
-      box-shadow: 0 1px 3px rgba(0,0,0,.2);
+    .enum-default-note { font-size: 11px; color: var(--text-muted); font-style: italic; }
+    .enum-actions { display: flex; gap: 4px; }
+    .badge-default-row {
+      background: #EFF6FF; color: #1D4ED8;
+      border: 1px solid #BFDBFE;
+      font-size: 10px; font-weight: 700;
+      padding: 2px 7px; border-radius: 4px;
+      letter-spacing: .03em; text-transform: uppercase;
     }
-    .toggle-switch.off { background: #CBD5E1; }
-    .toggle-switch.off::after { left: 3px; right: auto; }
-
-    /* Companies multi-select */
-    .companies-header { font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 8px; display: flex; justify-content: space-between; }
-    .company-item {
-      display: flex; align-items: center; gap: 8px;
-      padding: 8px 10px; border-radius: 6px; border: 1px solid var(--border);
-      margin-bottom: 6px; background: white;
+    .enum-add-row {
+      padding: 10px 12px;
+      border-top: 1px solid var(--border);
+      background: #F8FAFC;
     }
-    .company-item.assigned { border-color: #BFDBFE; background: #EFF6FF; }
-    .company-check {
-      width: 16px; height: 16px; border-radius: 4px;
-      border: 2px solid #CBD5E1; flex-shrink: 0;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .company-check.checked { background: var(--blue); border-color: var(--blue); color: white; font-size: 10px; }
-    .company-name { font-size: 12px; font-weight: 500; color: var(--text); }
-    .company-sub { font-size: 11px; color: var(--text-muted); }
 
     /* ── Scan Flow ────────────────────────────────────────────────────── */
     .flow-diagram {
@@ -353,35 +355,6 @@
     .flow-step.highlight-step { background: #F0FDF4; }
     .flow-step.highlight-step .flow-step-title { color: var(--green); }
 
-    /* ── Location Picker Modal ────────────────────────────────────────── */
-    .location-modal {
-      background: white; border-radius: 10px;
-      width: 520px; box-shadow: 0 20px 60px rgba(0,0,0,.25);
-      overflow: hidden;
-    }
-    .location-modal-header { padding: 20px 24px 16px; border-bottom: 1px solid var(--border); }
-    .location-modal-header h3 { font-size: 15px; font-weight: 700; color: var(--text); }
-    .location-modal-header p { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
-    .location-list { padding: 16px 24px; display: flex; flex-direction: column; gap: 8px; }
-    .location-row {
-      display: flex; align-items: center; gap: 10px;
-      padding: 10px 12px; border: 1px solid var(--border);
-      border-radius: 8px; cursor: pointer;
-    }
-    .location-row:hover { background: #F8FAFC; border-color: var(--blue); }
-    .location-pin { font-size: 16px; }
-    .location-name { font-size: 13px; font-weight: 600; color: var(--text); }
-    .location-addr { font-size: 11px; color: var(--text-muted); }
-    .location-select-btn {
-      margin-left: auto; font-size: 11px; font-weight: 600;
-      color: var(--blue); background: #EFF6FF;
-      border: none; padding: 4px 10px; border-radius: 5px; cursor: pointer;
-    }
-    .location-modal-footer {
-      padding: 14px 24px; border-top: 1px solid var(--border);
-      display: flex; justify-content: flex-end; gap: 8px;
-    }
-
     /* product-compliance tab replica */
     .pc-tab-content { padding: 20px 24px; background: var(--bg); }
     .pc-toolbar { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
@@ -390,11 +363,24 @@
     .pc-company-sub { font-size: 12px; color: var(--text-muted); }
     .btn-scan { background: var(--blue); color: white; height: 36px; padding: 0 16px; border-radius: 6px; border: none; font-size: 13px; font-weight: 600; font-family: var(--font-ui); cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
 
-    .scan-notice {
-      padding: 10px 14px; background: #EFF6FF; border: 1px solid #BFDBFE;
-      border-radius: 8px; font-size: 12px; color: #1D4ED8;
-      display: flex; align-items: center; gap: 8px; margin-bottom: 14px;
+    /* Spider indicator chip */
+    .spider-indicator {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: #F0FDF4; border: 1px solid #BBF7D0;
+      color: #15803D; font-size: 11px; font-weight: 500;
+      padding: 4px 10px; border-radius: 6px;
+      font-family: var(--font-mono);
     }
+
+    /* Success toast */
+    .scan-toast {
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 14px;
+      background: #F0FDF4; border: 1px solid #BBF7D0;
+      border-radius: 8px; font-size: 12px; color: #15803D;
+      margin-bottom: 14px; font-weight: 500;
+    }
+    .scan-toast .toast-icon { font-size: 14px; }
 
     .pc-table { background: white; border-radius: 10px; overflow: hidden; border: 1px solid var(--border); }
     .pc-table table { width: 100%; border-collapse: collapse; font-size: 12px; }
@@ -404,9 +390,6 @@
     .pc-table tbody tr:last-child td { border-bottom: none; }
     .badge-compliant { background: #DCFCE7; color: #15803D; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
     .badge-review { background: #FEF9C3; color: #854D0E; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
-
-    /* backdrop for scan flow mockup */
-    .pc-backdrop { background: rgba(0,0,0,.45); padding: 40px; display: flex; justify-content: center; border-radius: 0 0 12px 12px; }
 
     /* Summary table */
     .summary-table { width: 100%; border-collapse: collapse; font-size: 12px; }
@@ -430,7 +413,7 @@
   <!-- Page header -->
   <div style="text-align:center;">
     <h1 class="page-title">Spider Assignment — Q-Audit Global Settings</h1>
-    <p class="page-subtitle">Standardize Custom Scanner Workflow · Zyte Spider Management</p>
+    <p class="page-subtitle">Standardize Custom Scanner Workflow · Manage Spider Configurations</p>
   </div>
 
   <!-- ══════════════════════════════════════════════════════════════
@@ -618,7 +601,7 @@
     </div>
 
     <div class="annotation">
-      <strong>① New tile in Global Settings grid.</strong> The "Spiders" tile is added to Q-Audit Global Settings alongside existing config tiles. It shows the count of configured Zyte spiders (default + custom). The green highlight and "New" badge are for prototype orientation only — not production UI. Clicking the tile opens the Spiders management modal.
+      <strong>① New tile in Global Settings grid.</strong> The "Spiders" tile is added to Q-Audit Global Settings alongside existing config tiles. It shows the count of configured spiders (default + custom). The green highlight and "New" badge are for prototype orientation only — not production UI. Clicking the tile opens the Spiders management modal.
     </div>
   </div>
 
@@ -643,7 +626,7 @@
         <div class="modal">
           <div class="modal-header">
             <h3>🕷️ Spiders</h3>
-            <p>Manage Zyte spider configurations and assign them to companies.</p>
+            <p>Manage spider configurations and assign them to companies.</p>
           </div>
 
           <div class="modal-search">
@@ -688,7 +671,7 @@
                   <div class="spider-row-sub">
                     <span class="badge badge-manual">manual</span>
                     <span>5 companies assigned</span>
-                    <span style="color:#16A34A;font-weight:600;">📍 Location selection required</span>
+                    <span style="color:#0369A1;font-weight:600;">🗂️ 6 enum values · 5 companies mapped</span>
                   </div>
                 </div>
                 <button class="icon-btn blue" title="Edit spider">✏️</button>
@@ -712,7 +695,7 @@
     <div class="annotation">
       <strong>② Spiders Modal — List View.</strong><br/>
       <strong>Default Spider section:</strong> Read-only. Shows <code>qredible_spider</code> (type: template). Displays "All unassigned companies" — no edit or delete controls.<br/>
-      <strong>Custom Spiders section:</strong> Lists non-default spiders. Each row shows name, type badge, assigned company count, and whether location selection is required. Pencil icon opens the edit panel (Section ③). Trash icon deletes with confirmation.<br/>
+      <strong>Custom Spiders section:</strong> Lists non-default spiders. Each row shows name, type badge, assigned company count, and enum mapping summary. Pencil icon opens the edit panel (Section ③). Trash icon deletes with confirmation.<br/>
       <strong>"+ Add Spider" button</strong> opens the edit panel in create mode. Search bar filters both sections.
     </div>
   </div>
@@ -733,12 +716,12 @@
         <div class="app-topnav-right"><div class="avatar">JF</div></div>
       </div>
 
-      <div class="modal-backdrop" style="min-height:640px;">
+      <div class="modal-backdrop" style="min-height:680px;">
         <div class="modal modal-wide">
 
           <div class="modal-header">
             <h3>🕷️ Spiders — Edit: blackbeardispensary_spider</h3>
-            <p>Manage Zyte spider configurations and assign them to companies.</p>
+            <p>Manage spider configurations and assign them to companies.</p>
           </div>
 
           <div class="modal-split">
@@ -764,13 +747,13 @@
 
               <div class="form-group">
                 <div class="form-label">Spider Name</div>
-                <div class="form-sublabel">Maps directly to the Zyte spider name. Read-only.</div>
+                <div class="form-sublabel">Maps directly to the spider configuration name. Read-only.</div>
                 <input class="form-input readonly" type="text" value="blackbeardispensary_spider" readonly/>
               </div>
 
               <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
                 <div class="form-group">
-                  <div class="form-label">Zyte Spider ID</div>
+                  <div class="form-label">Spider ID</div>
                   <input class="form-input readonly" type="text" value="sp_8f2a19c4e3" readonly/>
                 </div>
                 <div class="form-group">
@@ -779,77 +762,116 @@
                 </div>
               </div>
 
-              <!-- Requires Location Selection toggle -->
-              <div class="toggle-row">
-                <div>
-                  <div class="toggle-label">Requires Location Selection</div>
-                  <div class="toggle-sub">When ON, scanning any assigned company will prompt a location-picker modal before triggering the scan.</div>
+              <!-- Enum-to-Company Mapping Section -->
+              <div class="enum-section">
+                <div class="enum-section-header">
+                  <div class="enum-section-title">Spider Enum Values → Company Mapping</div>
                 </div>
-                <div class="toggle-switch" title="Toggle ON"></div>
-              </div>
-
-              <!-- Assigned Companies -->
-              <div>
-                <div class="companies-header">
-                  <span>Assigned Companies</span>
-                  <span style="font-size:11px;color:var(--text-muted);font-weight:400;">5 assigned · Companies not listed here use qredible_spider</span>
+                <div class="enum-section-desc">
+                  Map each spider enum value to one or more companies. When a mapped company triggers "Scan for Products", the system automatically uses this spider with the correct enum value — no location picker needed.
                 </div>
 
-                <div style="margin-bottom:8px;">
-                  <input class="form-input" style="height:32px;font-family:var(--font-ui);" type="text" placeholder="Search companies…"/>
-                </div>
-
-                <div class="company-item assigned">
-                  <div class="company-check checked">✓</div>
-                  <div>
-                    <div class="company-name">Black Bear Hemp Dispensary — Bridgeville</div>
-                    <div class="company-sub">ID: 10421 · Cannabis Retail</div>
-                  </div>
-                </div>
-                <div class="company-item assigned">
-                  <div class="company-check checked">✓</div>
-                  <div>
-                    <div class="company-name">Black Bear Hemp Dispensary — Clarion</div>
-                    <div class="company-sub">ID: 10422 · Cannabis Retail</div>
-                  </div>
-                </div>
-                <div class="company-item assigned">
-                  <div class="company-check checked">✓</div>
-                  <div>
-                    <div class="company-name">Black Bear Hemp Dispensary — Grove City</div>
-                    <div class="company-sub">ID: 10423 · Cannabis Retail</div>
-                  </div>
-                </div>
-                <div class="company-item assigned">
-                  <div class="company-check checked">✓</div>
-                  <div>
-                    <div class="company-name">Black Bear Hemp Dispensary — Meadville</div>
-                    <div class="company-sub">ID: 10424 · Cannabis Retail</div>
-                  </div>
-                </div>
-                <div class="company-item assigned">
-                  <div class="company-check checked">✓</div>
-                  <div>
-                    <div class="company-name">Black Bear Hemp Dispensary — Regent Square</div>
-                    <div class="company-sub">ID: 10425 · Cannabis Retail</div>
-                  </div>
-                </div>
-
-                <div style="margin-top:6px; padding-top:6px; border-top:1px solid var(--border);">
-                  <div style="font-size:11px;color:var(--text-muted);margin-bottom:6px;">Unassigned (use default spider)</div>
-                  <div class="company-item">
-                    <div class="company-check"></div>
-                    <div>
-                      <div class="company-name">Green Valley Dispensary</div>
-                      <div class="company-sub">ID: 9871 · Cannabis Retail</div>
-                    </div>
-                  </div>
-                  <div class="company-item">
-                    <div class="company-check"></div>
-                    <div>
-                      <div class="company-name">NatureMed</div>
-                      <div class="company-sub">ID: 9345 · Cannabis Retail</div>
-                    </div>
+                <div style="border:1px solid var(--border);border-radius:8px;overflow:hidden;">
+                  <table class="enum-table">
+                    <thead>
+                      <tr>
+                        <th style="width:160px;">Enum Value</th>
+                        <th>Mapped Companies</th>
+                        <th style="width:80px;">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <!-- All / Default row -->
+                      <tr style="background:#F8FAFC;">
+                        <td class="enum-value-cell">All</td>
+                        <td>
+                          <div class="enum-companies-cell">
+                            <span class="enum-default-note">— (scans all locations)</span>
+                          </div>
+                        </td>
+                        <td>
+                          <span class="badge-default-row">Default</span>
+                        </td>
+                      </tr>
+                      <!-- Meadville -->
+                      <tr>
+                        <td class="enum-value-cell">Meadville</td>
+                        <td>
+                          <div class="enum-companies-cell">
+                            <span class="company-pill">Black Bear Hemp Dispensary — Meadville</span>
+                          </div>
+                        </td>
+                        <td>
+                          <div class="enum-actions">
+                            <button class="icon-btn blue" title="Edit mapping" style="width:26px;height:26px;font-size:12px;">✏️</button>
+                            <button class="icon-btn red" title="Delete mapping" style="width:26px;height:26px;font-size:12px;">🗑️</button>
+                          </div>
+                        </td>
+                      </tr>
+                      <!-- Grove City -->
+                      <tr>
+                        <td class="enum-value-cell">Grove City</td>
+                        <td>
+                          <div class="enum-companies-cell">
+                            <span class="company-pill">Black Bear Hemp Dispensary — Grove City</span>
+                          </div>
+                        </td>
+                        <td>
+                          <div class="enum-actions">
+                            <button class="icon-btn blue" title="Edit mapping" style="width:26px;height:26px;font-size:12px;">✏️</button>
+                            <button class="icon-btn red" title="Delete mapping" style="width:26px;height:26px;font-size:12px;">🗑️</button>
+                          </div>
+                        </td>
+                      </tr>
+                      <!-- Clarion -->
+                      <tr>
+                        <td class="enum-value-cell">Clarion</td>
+                        <td>
+                          <div class="enum-companies-cell">
+                            <span class="company-pill">Black Bear Hemp Dispensary — Clarion</span>
+                          </div>
+                        </td>
+                        <td>
+                          <div class="enum-actions">
+                            <button class="icon-btn blue" title="Edit mapping" style="width:26px;height:26px;font-size:12px;">✏️</button>
+                            <button class="icon-btn red" title="Delete mapping" style="width:26px;height:26px;font-size:12px;">🗑️</button>
+                          </div>
+                        </td>
+                      </tr>
+                      <!-- Regent Square -->
+                      <tr>
+                        <td class="enum-value-cell">Regent Square</td>
+                        <td>
+                          <div class="enum-companies-cell">
+                            <span class="company-pill">Black Bear Hemp Dispensary — Regent Square</span>
+                          </div>
+                        </td>
+                        <td>
+                          <div class="enum-actions">
+                            <button class="icon-btn blue" title="Edit mapping" style="width:26px;height:26px;font-size:12px;">✏️</button>
+                            <button class="icon-btn red" title="Delete mapping" style="width:26px;height:26px;font-size:12px;">🗑️</button>
+                          </div>
+                        </td>
+                      </tr>
+                      <!-- Bridgeville -->
+                      <tr>
+                        <td class="enum-value-cell">Bridgeville</td>
+                        <td>
+                          <div class="enum-companies-cell">
+                            <span class="company-pill">Black Bear Hemp Dispensary — Bridgeville</span>
+                          </div>
+                        </td>
+                        <td>
+                          <div class="enum-actions">
+                            <button class="icon-btn blue" title="Edit mapping" style="width:26px;height:26px;font-size:12px;">✏️</button>
+                            <button class="icon-btn red" title="Delete mapping" style="width:26px;height:26px;font-size:12px;">🗑️</button>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <div class="enum-add-row">
+                    <button class="btn btn-green-outline btn-sm">+ Add Enum Value</button>
                   </div>
                 </div>
               </div>
@@ -868,55 +890,46 @@
     <div class="annotation">
       <strong>③ Spider Edit Panel.</strong> Clicking the pencil icon on a custom spider expands the modal to a split-panel layout.<br/>
       <strong>Left panel:</strong> Lists all custom spiders for quick switching. "+ Add Spider" at bottom.<br/>
-      <strong>Right panel:</strong> Form fields — Spider Name and Type are read-only (sourced from Zyte). Zyte Spider ID is also read-only.<br/>
-      <strong>Requires Location Selection toggle:</strong> ON = when any assigned company triggers a scan, the system shows a location-picker modal first. OFF = scan proceeds immediately with the custom spider.<br/>
-      <strong>Assigned Companies:</strong> Searchable multi-select. Checked items = assigned to this spider. Unchecked items = use default spider. The 5 Black Bear locations are all assigned and location selection is ON.
+      <strong>Right panel:</strong> Form fields — Spider Name and Type are read-only (sourced from spider configuration). Spider ID is also read-only.<br/>
+      <strong>Spider Enum Values → Company Mapping:</strong> Replaces the old "Assigned Companies" checkbox list and the "Requires Location Selection" toggle. Each enum value (a string the spider accepts to target a specific location) maps to one or more companies. When a mapped company triggers a scan, the system automatically resolves the correct enum value and fires the scan immediately — no modal, no user decision needed. The "All" row is the default fallback: it scans all locations and cannot be deleted. "+ Add Enum Value" allows adding new location mappings as Black Bear expands.
     </div>
   </div>
 
 
   <!-- ══════════════════════════════════════════════════════════════
-       SECTION 4: Scan Trigger Flow — Product Compliance Tab
+       SECTION 4: Scan Trigger Flow — One-Click, No Modal
   ═══════════════════════════════════════════════════════════════ -->
   <div>
-    <div class="section-label">④ Scan Trigger Flow — Product Compliance Tab → Location Picker</div>
+    <div class="section-label">④ Scan Trigger Flow — One-Click Scan, No Modal</div>
 
-    <!-- Flow diagram -->
+    <!-- Flow diagram — 3 steps -->
     <div class="flow-diagram" style="margin-bottom:16px;">
       <div class="flow-step">
         <div class="flow-step-header">
           <div class="flow-step-num">1</div>
           <div class="flow-step-title">User clicks "Scan for Products"</div>
         </div>
-        <div class="flow-step-desc">User is on Product Compliance tab for Black Bear Hemp Dispensary — Bridgeville and clicks the Scan for Products button.</div>
+        <div class="flow-step-desc">User is on Product Compliance tab for Black Bear Hemp Dispensary — Bridgeville and clicks the Scan for Products button. One click. No prompt.</div>
         <div class="flow-arrow">→</div>
       </div>
       <div class="flow-step">
         <div class="flow-step-header">
           <div class="flow-step-num">2</div>
-          <div class="flow-step-title">System checks spider assignment</div>
+          <div class="flow-step-title">System resolves spider + enum value</div>
         </div>
-        <div class="flow-step-desc">Backend looks up: does this company have a custom spider assigned? → YES: <code>blackbeardispensary_spider</code>. Does it require location selection? → YES.</div>
+        <div class="flow-step-desc">System looks up company → finds spider mapping: <code>blackbeardispensary_spider</code> with enum value <code>Bridgeville</code>. No user input needed.</div>
         <div class="flow-arrow">→</div>
       </div>
       <div class="flow-step highlight-step">
         <div class="flow-step-header">
           <div class="flow-step-num green">3</div>
-          <div class="flow-step-title">Location Picker modal appears</div>
+          <div class="flow-step-title">Scan fires immediately</div>
         </div>
-        <div class="flow-step-desc">Same location-picker modal as today's "Custom Product Scan" in Findings tab. User selects which Black Bear location to scan.</div>
-        <div class="flow-arrow">→</div>
-      </div>
-      <div class="flow-step highlight-step">
-        <div class="flow-step-header">
-          <div class="flow-step-num green">4</div>
-          <div class="flow-step-title">Scan fires with correct spider</div>
-        </div>
-        <div class="flow-step-desc">Zyte receives scan request using <code>blackbeardispensary_spider</code> for the selected location. Results flow back normally.</div>
+        <div class="flow-step-desc">Spider receives scan request using <code>blackbeardispensary_spider</code> with enum value <code>Bridgeville</code>. Results flow back normally. No modal. One click.</div>
       </div>
     </div>
 
-    <!-- Mockup: Product Compliance tab + modal overlay -->
+    <!-- Mockup: Product Compliance tab — no modal overlay -->
     <div class="app-frame">
       <div class="app-topnav">
         <div class="app-brand"><div class="app-brand-icon">Q</div> Qredible</div>
@@ -927,7 +940,7 @@
         <div class="app-topnav-right"><div class="avatar">JF</div></div>
       </div>
 
-      <div class="pc-tab-content" style="min-height:520px; position:relative;">
+      <div class="pc-tab-content" style="min-height:420px;">
         <!-- Tab bar -->
         <div style="display:flex;border-bottom:2px solid var(--border);margin-bottom:16px;gap:0;">
           <div style="padding:0 18px;height:40px;display:flex;align-items:center;font-size:13px;font-weight:600;color:var(--blue);border-bottom:2px solid var(--blue);margin-bottom:-2px;">Product Compliance</div>
@@ -936,16 +949,21 @@
           <div style="padding:0 18px;height:40px;display:flex;align-items:center;font-size:13px;font-weight:500;color:var(--text-muted);">Documents</div>
         </div>
 
+        <!-- Success toast -->
+        <div class="scan-toast">
+          <span class="toast-icon">✓</span>
+          <span>Scan initiated using <strong>blackbeardispensary_spider</strong> → <strong>Bridgeville</strong></span>
+        </div>
+
         <div class="pc-toolbar">
           <div class="pc-company-info">
             <div class="pc-company-name">Black Bear Hemp Dispensary — Bridgeville</div>
-            <div class="pc-company-sub">Cannabis Retail · ID: 10421 · Last scan: 2 days ago</div>
+            <div class="pc-company-sub">Cannabis Retail · ID: 10421 · Last scan: just now</div>
           </div>
-          <button class="btn-scan">🔍 Scan for Products</button>
-        </div>
-
-        <div class="scan-notice">
-          ℹ️ <span>This company uses a custom Zyte spider (<strong>blackbeardispensary_spider</strong>). A location picker will appear when you initiate a scan.</span>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <button class="btn-scan">🔍 Scan for Products</button>
+            <span class="spider-indicator">🕷️ blackbeardispensary_spider · Bridgeville</span>
+          </div>
         </div>
 
         <div class="pc-table">
@@ -985,72 +1003,15 @@
           </table>
         </div>
       </div>
-
-      <!-- Location picker modal overlay -->
-      <div class="pc-backdrop">
-        <div class="location-modal">
-          <div class="location-modal-header">
-            <h3>📍 Select Location to Scan</h3>
-            <p>Black Bear Hemp Dispensary uses a custom multi-location spider. Select which store to scan.</p>
-          </div>
-
-          <div class="location-list">
-            <div class="location-row">
-              <div class="location-pin">📍</div>
-              <div>
-                <div class="location-name">Bridgeville</div>
-                <div class="location-addr">Black Bear Hemp Dispensary — Bridgeville, PA</div>
-              </div>
-              <button class="location-select-btn">Select</button>
-            </div>
-            <div class="location-row">
-              <div class="location-pin">📍</div>
-              <div>
-                <div class="location-name">Clarion</div>
-                <div class="location-addr">Black Bear Hemp Dispensary — Clarion, PA</div>
-              </div>
-              <button class="location-select-btn">Select</button>
-            </div>
-            <div class="location-row">
-              <div class="location-pin">📍</div>
-              <div>
-                <div class="location-name">Grove City</div>
-                <div class="location-addr">Black Bear Hemp Dispensary — Grove City, PA</div>
-              </div>
-              <button class="location-select-btn">Select</button>
-            </div>
-            <div class="location-row">
-              <div class="location-pin">📍</div>
-              <div>
-                <div class="location-name">Meadville</div>
-                <div class="location-addr">Black Bear Hemp Dispensary — Meadville, PA</div>
-              </div>
-              <button class="location-select-btn">Select</button>
-            </div>
-            <div class="location-row">
-              <div class="location-pin">📍</div>
-              <div>
-                <div class="location-name">Regent Square</div>
-                <div class="location-addr">Black Bear Hemp Dispensary — Regent Square, PA</div>
-              </div>
-              <button class="location-select-btn">Select</button>
-            </div>
-          </div>
-
-          <div class="location-modal-footer">
-            <button class="btn btn-ghost">Cancel</button>
-          </div>
-        </div>
-      </div>
     </div>
 
     <div class="annotation">
-      <strong>④ Scan Trigger Flow.</strong> When "Scan for Products" is clicked for any company with a custom spider assigned:<br/>
-      • The system checks the spider assignment table for the company.<br/>
-      • If <strong>Requires Location Selection = ON</strong>, the location-picker modal fires before the scan (shown above).<br/>
-      • The user picks a store → scan fires using <code>blackbeardispensary_spider</code> for that location.<br/>
-      <strong>Blue info banner</strong> at the top of the Product Compliance tab informs the user that a custom spider is in use — this prevents confusion about why a modal appears.<br/>
-      <strong>Same behavior applies in We Monitor → Run Product Scan column.</strong> The Findings tab's "Custom Product Scan" button becomes redundant and can be deprecated.
+      <strong>④ One-Click Scan Flow.</strong> When "Scan for Products" is clicked for any company with a custom spider and an enum mapping:<br/>
+      • The system resolves the enum value automatically from the company → spider mapping table.<br/>
+      • <strong>No modal appears.</strong> The scan fires immediately with the correct spider and enum value.<br/>
+      • A green indicator next to the scan button shows the mapped spider and enum value for transparency.<br/>
+      • A success toast confirms the scan was initiated with the correct configuration.<br/>
+      <strong>The Findings tab's "Custom Product Scan" button</strong> (with its location dropdown) remains as the fallback for unmapped companies or for ad-hoc "All" scans — it is not deprecated, but it's no longer the primary path for mapped companies.
     </div>
   </div>
 
@@ -1065,7 +1026,7 @@
         <thead>
           <tr>
             <th>Company has custom spider?</th>
-            <th>Requires Location Selection?</th>
+            <th>Has enum mapping?</th>
             <th>Behavior when scan triggered</th>
             <th>Spider used</th>
           </tr>
@@ -1077,23 +1038,24 @@
             <td>Scan proceeds immediately. No modal.</td>
             <td><code>qredible_spider</code> (default)</td>
           </tr>
-          <tr>
-            <td>✅ Yes</td>
-            <td>❌ No</td>
-            <td>Scan proceeds immediately with custom spider. No modal.</td>
-            <td>Custom spider (e.g. <code>acme_spider</code>)</td>
-          </tr>
           <tr style="background:#F0FDF4;">
             <td>✅ Yes</td>
+            <td>✅ Mapped</td>
+            <td><strong>Scan proceeds immediately</strong> using mapped enum value. No modal. One click.</td>
+            <td>Custom spider + mapped enum (e.g. <code>blackbeardispensary_spider</code> + <code>Bridgeville</code>)</td>
+          </tr>
+          <tr>
             <td>✅ Yes</td>
-            <td><strong>Location-picker modal appears first.</strong> User selects location → scan fires.</td>
-            <td><code>blackbeardispensary_spider</code></td>
+            <td>❌ Not mapped</td>
+            <td>Scan proceeds using custom spider with "All" enum (default). No modal.</td>
+            <td>Custom spider with <code>All</code></td>
           </tr>
         </tbody>
       </table>
     </div>
     <div class="annotation" style="margin-top:10px;">
-      <strong>⑤ Decision logic applies universally</strong> across all scan entry points: Product Compliance tab → "Scan for Products", and We Monitor tab → "Run Product Scan". The Findings tab's "Custom Product Scan" button may be deprecated once this is live, as it becomes redundant for Black Bear.
+      <strong>⑤ Decision logic applies universally</strong> across all scan entry points: Product Compliance tab → "Scan for Products", and We Monitor tab → "Run Product Scan".<br/>
+      <strong>The Findings tab's "Custom Product Scan" button</strong> (with its location dropdown) becomes the fallback path for: (1) companies with custom spiders that have no enum mapping, or (2) admins who need to trigger an ad-hoc "All"-location scan outside the normal mapped flow. It is <em>not</em> deprecated — it serves a distinct purpose as the manual override and unmapped-company fallback.
     </div>
   </div>
 
