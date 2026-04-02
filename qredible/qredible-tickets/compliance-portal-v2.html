@@ -146,6 +146,22 @@ body { font-family: "Uber Move", system-ui, -apple-system, BlinkMacSystemFont, s
 .btn-sm { padding: 4px 10px; font-size: 12px; }
 .btn-disabled { opacity: 0.45; cursor: not-allowed !important; }
 .btn-with-chevron { display: inline-flex; align-items: center; gap: 5px; }
+.btn-navy { background: #1E3A5F; color: white; border: none; border-radius: 6px; padding: 7px 14px; font-size: 13px; font-weight: 500; cursor: pointer; white-space: nowrap; }
+.btn-navy:hover { background: #172e4a; }
+.btn-red { background: #DC2626; color: white; border: none; border-radius: 6px; padding: 7px 14px; font-size: 13px; font-weight: 500; cursor: pointer; white-space: nowrap; }
+.btn-red:hover { background: #b91c1c; }
+.btn-filter { background: white; color: #374151; border: 1px solid #E5E7EB; border-radius: 6px; padding: 7px 14px; font-size: 13px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+.btn-filter:hover { background: #f8fafc; }
+.btn-filter .filter-badge { background: #16a34a; color: white; border-radius: 50%; width: 20px; height: 20px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; }
+.action-card-row { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+.action-card { background: #1a202e; color: white; border: none; border-radius: 6px; padding: 10px 16px; cursor: pointer; text-align: left; min-width: 170px; }
+.action-card:hover { background: #2d3748; }
+.action-card-title { font-size: 13px; font-weight: 600; }
+.action-card-sub { font-size: 11px; color: #CBD5E1; margin-top: 2px; }
+.state-pill { display: inline-block; background: #EFF6FF; color: #1E40AF; font-size: 10px; font-weight: 600; padding: 1px 6px; border-radius: 4px; margin-right: 3px; }
+.dba-pill { display: inline-block; background: #F3F4F6; border: 1px solid #E5E7EB; border-radius: 12px; padding: 2px 8px; font-size: 11px; color: #374151; }
+.filter-chip { display: inline-flex; align-items: center; gap: 4px; background: #F3F4F6; border: 1px solid #E5E7EB; border-radius: 12px; padding: 2px 8px 2px 10px; font-size: 12px; color: #374151; }
+.filter-chip .chip-close { cursor: pointer; color: #9CA3AF; font-weight: 700; }
 
 /* ─── DROPDOWN ─── */
 .dropdown-container { position: relative; display: inline-block; }
@@ -544,7 +560,8 @@ body { font-family: "Uber Move", system-ui, -apple-system, BlinkMacSystemFont, s
         <nav class="app-nav-links">
           <a class="app-nav-link active">Q-Monitor</a>
           <a class="app-nav-link">Report</a>
-          <a class="app-nav-link">News</a>
+          <a class="app-nav-link">Q-Vault ▾</a>
+          <a class="app-nav-link">MyCOA<sup>™</sup></a>
         </nav>
       </div>
       <div class="app-top-right">
@@ -556,6 +573,7 @@ body { font-family: "Uber Move", system-ui, -apple-system, BlinkMacSystemFont, s
       </div>
     </div>
     <div class="app-tabs">
+      <div class="app-tab">Pipeline</div>
       <div class="app-tab">Findings</div>
       <div class="app-tab">Product Compliance</div>
       <div class="app-tab active">We Monitor</div>
@@ -583,11 +601,11 @@ body { font-family: "Uber Move", system-ui, -apple-system, BlinkMacSystemFont, s
         <input class="search-input" placeholder="Enter a location" style="max-width:200px;">
       </div>
 
-      <div class="action-row">
-        <button class="btn-secondary">+ Add Company</button>
-        <button class="btn-secondary">Upload Companies</button>
-        <button class="btn-secondary">Assign Team Members</button>
-        <button class="btn-secondary">Upload Contact and Referral</button>
+      <div class="action-card-row">
+        <button class="action-card"><div class="action-card-title">+ Add Company</div><div class="action-card-sub">Search Company in Qredible</div></button>
+        <button class="action-card"><div class="action-card-title">Upload Companies</div><div class="action-card-sub">Bulk upload Companies with a Template</div></button>
+        <button class="action-card"><div class="action-card-title">Assign Team Members</div><div class="action-card-sub">Bulk assign Team Members to Companies</div></button>
+        <button class="action-card"><div class="action-card-title">Upload Contact and Referral</div><div class="action-card-sub">Bulk upload Contact and Referral Info</div></button>
       </div>
 
       <div class="subtabs">
@@ -634,10 +652,10 @@ body { font-family: "Uber Move", system-ui, -apple-system, BlinkMacSystemFont, s
               <td>
                 <div class="font-semibold text-navy" style="font-size:13px;">AG Living Solutions LLC</div>
                 <div class="text-xs text-muted">6783000000007ll</div>
-                <div class="text-xs" style="color:#6B7280;margin-top:2px;">TX Hemp/CBD Retailer</div>
+                <div style="margin-top:3px;"><span class="state-pill">TX</span><span class="state-pill" style="background:#F0FDF4;color:#166534;">Hemp / CBD</span><span class="state-pill" style="background:#FEF3C7;color:#92400E;">Retailer</span></div>
               </td>
-              <td>Texas Canna RN</td>
-              <td><span class="license-valid">✓ License Not Req...</span></td>
+              <td><span class="dba-pill">Texas Canna RN</span></td>
+              <td><span class="license-valid">✓ Active | CBD-AAA</span></td>
               <td>
                 <span class="finding-triangle">△</span>
                 <span class="finding-high"> 31 Findings</span>
@@ -655,7 +673,7 @@ body { font-family: "Uber Move", system-ui, -apple-system, BlinkMacSystemFont, s
               </td>
               <td>
                 <div class="dropdown-container">
-                  <button class="btn-secondary btn-sm btn-with-chevron" onclick="toggleDropdown('dd-row1');event.stopPropagation()">Actions <svg width="10" height="6" viewBox="0 0 10 6"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></button>
+                  <button class="btn-secondary btn-sm" style="padding:4px 8px;" onclick="toggleDropdown('dd-row1');event.stopPropagation()"><svg width="10" height="6" viewBox="0 0 10 6"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></button>
                   <div class="dropdown-menu" id="dd-row1">
                     <div class="dropdown-item">Scan</div>
                     <div class="dropdown-item">Run License Check</div>
@@ -673,11 +691,11 @@ body { font-family: "Uber Move", system-ui, -apple-system, BlinkMacSystemFont, s
               <td><input type="checkbox" checked></td>
               <td>
                 <div class="font-semibold text-navy" style="font-size:13px;">ATX Auctions Corpus Christi LLC</div>
-                <div class="text-xs text-muted">TX Hemp/CBD Retailer</div>
+                <div style="margin-top:3px;"><span class="state-pill">TX</span><span class="state-pill" style="background:#F0FDF4;color:#166534;">Hemp / CBD</span><span class="state-pill" style="background:#FEF3C7;color:#92400E;">Retailer</span></div>
                 <span class="portal-invited" style="font-size:10px;margin-top:4px;display:inline-block;">⏳ Invited</span>
               </td>
-              <td>Price Catch</td>
-              <td><span class="license-valid">✓ License Not Req...</span></td>
+              <td><span class="dba-pill">Price Catch</span></td>
+              <td><span class="license-validating">⊙ Pending | Test XXX</span></td>
               <td>
                 <span class="finding-triangle">△</span>
                 <span class="finding-high"> 50 Findings</span>
@@ -696,7 +714,7 @@ body { font-family: "Uber Move", system-ui, -apple-system, BlinkMacSystemFont, s
               </td>
               <td>
                 <div class="dropdown-container">
-                  <button class="btn-secondary btn-sm btn-with-chevron" onclick="toggleDropdown('dd-row2');event.stopPropagation()">Actions <svg width="10" height="6" viewBox="0 0 10 6"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></button>
+                  <button class="btn-secondary btn-sm" style="padding:4px 8px;" onclick="toggleDropdown('dd-row2');event.stopPropagation()"><svg width="10" height="6" viewBox="0 0 10 6"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></button>
                   <div class="dropdown-menu" id="dd-row2">
                     <div class="dropdown-item">Scan</div>
                     <div class="dropdown-item">Run License Check</div>
@@ -714,10 +732,10 @@ body { font-family: "Uber Move", system-ui, -apple-system, BlinkMacSystemFont, s
               <td><input type="checkbox" checked></td>
               <td>
                 <div class="font-semibold text-navy" style="font-size:13px;">Black Bear Wellness LLC</div>
-                <div class="text-xs text-muted">PA Hemp/CBD Retailer</div>
+                <div style="margin-top:3px;"><span class="state-pill" style="background:#EDE9FE;color:#5B21B6;">PA</span><span class="state-pill" style="background:#F0FDF4;color:#166534;">Hemp / CBD</span><span class="state-pill" style="background:#FEF3C7;color:#92400E;">Retailer</span></div>
                 <span class="portal-active" style="font-size:10px;margin-top:4px;display:inline-block;">✓ Portal Active</span>
               </td>
-              <td>Black Bear Dispensary</td>
+              <td><span class="dba-pill">Black Bear Dispensary</span></td>
               <td><span class="license-validating">⊙ Validating</span></td>
               <td>
                 <span class="finding-triangle">△</span>
@@ -738,7 +756,7 @@ body { font-family: "Uber Move", system-ui, -apple-system, BlinkMacSystemFont, s
               <td>
                 <!-- Black Bear Actions Dropdown — INTERACTIVE -->
                 <div class="dropdown-container">
-                  <button class="btn-secondary btn-sm btn-with-chevron" onclick="toggleDropdown('dd-blackbear');event.stopPropagation()">Actions <svg width="10" height="6" viewBox="0 0 10 6"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></button>
+                  <button class="btn-secondary btn-sm" style="padding:4px 8px;" onclick="toggleDropdown('dd-blackbear');event.stopPropagation()"><svg width="10" height="6" viewBox="0 0 10 6"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></button>
                   <div class="dropdown-menu" id="dd-blackbear">
                     <div class="dropdown-item">Scan</div>
                     <div class="dropdown-item">Run License Check</div>
@@ -756,10 +774,10 @@ body { font-family: "Uber Move", system-ui, -apple-system, BlinkMacSystemFont, s
               <td><input type="checkbox"></td>
               <td>
                 <div class="font-semibold text-navy" style="font-size:13px;">BTB Brands LLC DBA Beach Break</div>
-                <div class="text-xs text-muted">TX Hemp/CBD Retailer</div>
+                <div style="margin-top:3px;"><span class="state-pill">TX</span><span class="state-pill" style="background:#F0FDF4;color:#166534;">Hemp / CBD</span><span class="state-pill" style="background:#FEF3C7;color:#92400E;">Retailer</span></div>
               </td>
-              <td>Beach Break</td>
-              <td><span class="license-valid">✓ License Not Req...</span></td>
+              <td><span class="dba-pill">Beach Break</span></td>
+              <td><span class="license-valid">✓ Active | CBD-BBB</span></td>
               <td>
                 <span class="text-green">✓</span>
                 <span class="text-sm"> 25 Findings / 25 Compliant</span>
@@ -776,7 +794,7 @@ body { font-family: "Uber Move", system-ui, -apple-system, BlinkMacSystemFont, s
               </td>
               <td>
                 <div class="dropdown-container">
-                  <button class="btn-secondary btn-sm btn-with-chevron" onclick="toggleDropdown('dd-row4');event.stopPropagation()">Actions <svg width="10" height="6" viewBox="0 0 10 6"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></button>
+                  <button class="btn-secondary btn-sm" style="padding:4px 8px;" onclick="toggleDropdown('dd-row4');event.stopPropagation()"><svg width="10" height="6" viewBox="0 0 10 6"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></button>
                   <div class="dropdown-menu" id="dd-row4">
                     <div class="dropdown-item">Scan</div>
                     <div class="dropdown-item">Run License Check</div>
@@ -937,7 +955,8 @@ body { font-family: "Uber Move", system-ui, -apple-system, BlinkMacSystemFont, s
         <nav class="app-nav-links">
           <a class="app-nav-link active">Q-Monitor</a>
           <a class="app-nav-link">Report</a>
-          <a class="app-nav-link">News</a>
+          <a class="app-nav-link">Q-Vault ▾</a>
+          <a class="app-nav-link">MyCOA<sup>™</sup></a>
         </nav>
       </div>
       <div class="app-top-right">
@@ -949,6 +968,7 @@ body { font-family: "Uber Move", system-ui, -apple-system, BlinkMacSystemFont, s
       </div>
     </div>
     <div class="app-tabs">
+      <div class="app-tab">Pipeline</div>
       <div class="app-tab">Findings</div>
       <div class="app-tab active">Product Compliance</div>
       <div class="app-tab">We Monitor</div>
@@ -971,17 +991,52 @@ body { font-family: "Uber Move", system-ui, -apple-system, BlinkMacSystemFont, s
         <div class="page-subtitle">Black Bear Wellness LLC — 99+ Products</div>
       </div>
 
+      <!-- Display Toggle -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+        <div style="display:flex;align-items:center;gap:0;">
+          <span style="font-size:13px;color:#6B7280;margin-right:8px;">Display:</span>
+          <button style="background:#2563eb;color:white;border:none;padding:5px 14px;border-radius:4px 0 0 4px;font-size:13px;font-weight:500;cursor:pointer;">Products</button>
+          <button style="background:#F3F4F6;color:#6B7280;border:1px solid #E5E7EB;border-left:none;padding:5px 14px;border-radius:0 4px 4px 0;font-size:13px;cursor:pointer;">COAs</button>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-size:13px;color:#6B7280;">Company:</span>
+          <div class="company-selector" style="font-weight:500;"><span>Black Bear Wellness LLC</span> <span style="color:#9CA3AF">▾</span></div>
+        </div>
+      </div>
+
       <!-- Toolbar -->
       <div class="filter-bar">
-        <input class="search-input" placeholder="Search products..." style="max-width:240px;">
-        <button class="btn-secondary btn-with-chevron">COA Status <svg width="10" height="6" viewBox="0 0 10 6"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></button>
-        <button class="btn-secondary btn-with-chevron">Compliance <svg width="10" height="6" viewBox="0 0 10 6"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></button>
-        <button class="btn-secondary btn-with-chevron">Category <svg width="10" height="6" viewBox="0 0 10 6"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></button>
-        <div class="filter-bar-right">
-          <button class="btn-secondary">Export</button>
-          <button class="btn-secondary btn-with-chevron">Columns <svg width="10" height="6" viewBox="0 0 10 6"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></button>
-          <button class="btn-secondary btn-with-chevron">Filter <svg width="10" height="6" viewBox="0 0 10 6"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></button>
+        <input class="search-input" placeholder="Search products by definition, classification, SKU or COA file name..." style="flex:1;">
+        <button class="btn-filter">🔽 Filters <span class="filter-badge">3</span></button>
+        <button class="btn-navy">Add Product</button>
+        <button class="btn-navy">Import Products</button>
+        <button class="btn-navy">Scan for Products</button>
+        <button class="btn-red">Report an Issue</button>
+        <button class="btn-primary">Export</button>
+      </div>
+
+      <!-- Active filter chips -->
+      <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:12px;">
+        <span style="font-size:12px;color:#6B7280;">Active:</span>
+        <span class="filter-chip">State: Active <span class="chip-close">×</span></span>
+        <span class="filter-chip">From Date: 04/02/2025 <span class="chip-close">×</span></span>
+        <span class="filter-chip">To Date: 04/02/2026 <span class="chip-close">×</span></span>
+        <a style="font-size:12px;color:#DC2626;cursor:pointer;margin-left:auto;">Clear all</a>
+      </div>
+
+      <!-- Company + URL header -->
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <div>
+          <span style="font-size:14px;font-weight:600;color:#1a202e;">Black Bear Wellness LLC</span>
+          <a href="#" style="color:#2563eb;font-size:13px;margin-left:8px;">https://www.blackbeardispens.com</a>
         </div>
+        <div style="font-size:12px;color:#6B7280;">
+          <a style="color:#2563eb;cursor:pointer;">Expand All</a> · <a style="color:#6B7280;cursor:pointer;">Collapse All</a>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;font-size:12px;color:#6B7280;">
+        <div>15 of 18 Products (filtered)</div>
+        <div>Last Scan: 03/11/2026 · 18 products · 6 COAs found · Rows per page: <select style="border:1px solid #E5E7EB;border-radius:4px;padding:2px 4px;font-size:12px;"><option>25</option></select></div>
       </div>
 
       <!-- COA info banner -->
@@ -1035,92 +1090,105 @@ body { font-family: "Uber Move", system-ui, -apple-system, BlinkMacSystemFont, s
           <thead>
             <tr>
               <th style="width:36px;">☐</th>
-              <th class="sortable">Product Name / SKU</th>
-              <th>Category</th>
-              <th>COAs Assigned</th>
+              <th style="width:36px;"></th>
+              <th class="sortable">SKU</th>
+              <th class="sortable">Product Definition</th>
+              <th>Price</th>
+              <th>Classification</th>
+              <th>COAs</th>
               <th>COA Status</th>
-              <th class="sortable">Compliance</th>
-              <th>Actions</th>
+              <th class="sortable">Disposition</th>
+              <th>Date Added</th>
+              <th>Activity</th>
             </tr>
           </thead>
           <tbody>
             <!-- Row 1 — checked, missing COA -->
             <tr class="selected">
               <td><input type="checkbox" checked></td>
+              <td><div style="width:32px;height:32px;background:#F3F4F6;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:14px;">📦</div></td>
+              <td><span class="text-xs text-muted">GB-500</span></td>
               <td>
                 <div class="font-semibold text-navy">Gummy Bears 500mg</div>
-                <div class="text-xs text-muted">SKU: GB-500</div>
+                <div class="text-xs text-muted">Black Bear Wellness LLC</div>
               </td>
-              <td>Hemp/CBD</td>
-              <td>
-                <span style="background:#FEE2E2;color:#991B1B;border-radius:10px;padding:1px 8px;font-size:12px;font-weight:700;">0</span>
-                <span class="text-xs text-muted ml-4"> COAs</span>
-              </td>
+              <td><span class="text-sm">$29.99</span></td>
+              <td><span class="state-pill" style="background:#F0FDF4;color:#166534;">Hemp / CBD</span></td>
+              <td><span style="background:#FEE2E2;color:#991B1B;border-radius:10px;padding:1px 8px;font-size:12px;font-weight:700;">0</span></td>
               <td><span style="color:#DC2626;font-size:12px;">— Missing</span></td>
               <td><span style="color:#DC2626;font-weight:600;font-size:12px;">🔴 NON-COMPLIANT</span></td>
-              <td><div style="display:flex;gap:6px;">
-                <button class="btn-secondary btn-sm">View</button>
-                <button class="btn-primary btn-sm">+ Add COA</button>
-              </div></td>
+              <td><span class="text-xs text-muted">03/15/2026</span></td>
+              <td><div style="display:flex;gap:4px;"><span style="cursor:pointer;font-size:14px;" title="Notes">📋</span><span style="cursor:pointer;font-size:14px;" title="COA">📄</span><span style="cursor:pointer;font-size:14px;" title="History">📊</span></div></td>
             </tr>
             <!-- Row 2 — checked, partial -->
             <tr class="selected">
               <td><input type="checkbox" checked></td>
+              <td><div style="width:32px;height:32px;background:#F3F4F6;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:14px;">💧</div></td>
+              <td><span class="text-xs text-muted">TIN-1000</span></td>
               <td>
                 <div class="font-semibold text-navy">Tincture 1000mg</div>
-                <div class="text-xs text-muted">SKU: TIN-1000</div>
+                <div class="text-xs text-muted">Black Bear Wellness LLC</div>
               </td>
-              <td>Hemp/CBD</td>
-              <td>
-                <span style="background:#EDE9FE;color:#5B21B6;border-radius:10px;padding:1px 8px;font-size:12px;font-weight:700;">2</span>
-                <span class="text-xs text-muted"> COAs</span>
-              </td>
-              <td><span style="color:#D97706;font-size:12px;">PARTIAL: 1 Expired / 1 Valid</span></td>
+              <td><span class="text-sm">$49.99</span></td>
+              <td><span class="state-pill" style="background:#F0FDF4;color:#166534;">Hemp / CBD</span></td>
+              <td><span style="background:#EDE9FE;color:#5B21B6;border-radius:10px;padding:1px 8px;font-size:12px;font-weight:700;">2</span></td>
+              <td><span style="color:#D97706;font-size:12px;">PARTIAL: 1 Exp / 1 Valid</span></td>
               <td><span style="color:#D97706;font-weight:600;font-size:12px;">🟡 PARTIAL</span></td>
-              <td><button class="btn-secondary btn-sm">View</button></td>
+              <td><span class="text-xs text-muted">02/28/2026</span></td>
+              <td><div style="display:flex;gap:4px;"><span style="cursor:pointer;font-size:14px;" title="Notes">📋</span><span style="cursor:pointer;font-size:14px;" title="COA">📄</span><span style="cursor:pointer;font-size:14px;" title="History">📊</span></div></td>
             </tr>
             <!-- COA subrows for Row 2 -->
             <tr class="coa-subrow">
-              <td></td>
-              <td colspan="2" style="padding-left:32px !important;">
+              <td></td><td></td><td></td>
+              <td colspan="2" style="padding-left:12px !important;">
                 <span style="color:#9CA3AF;">└</span> COA #VCO-847 · Potency Panel · CannTest · Jan 2024
               </td>
+              <td></td><td></td>
               <td colspan="2"><span style="color:#DC2626;font-weight:600;">🔴 EXPIRED Jan 2026</span> <span style="font-size:11px;color:#9CA3AF;">— flagged in case</span></td>
               <td colspan="2"></td>
             </tr>
             <tr class="coa-subrow">
-              <td></td>
-              <td colspan="2" style="padding-left:32px !important;">
+              <td></td><td></td><td></td>
+              <td colspan="2" style="padding-left:12px !important;">
                 <span style="color:#9CA3AF;">└</span> COA #VCO-1203 · Full Panel · ProVerde · Aug 2025
               </td>
+              <td></td><td></td>
               <td colspan="2"><span style="color:#166534;font-weight:600;">✓ Valid</span></td>
               <td colspan="2"></td>
             </tr>
             <!-- Row 3 -->
             <tr>
               <td><input type="checkbox"></td>
+              <td><div style="width:32px;height:32px;background:#F3F4F6;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:14px;">💊</div></td>
+              <td><span class="text-xs text-muted">CAP-25</span></td>
               <td>
                 <div class="font-semibold text-navy">Capsules 25mg</div>
-                <div class="text-xs text-muted">SKU: CAP-25</div>
+                <div class="text-xs text-muted">Black Bear Wellness LLC</div>
               </td>
-              <td>Hemp/CBD</td>
+              <td><span class="text-sm">$34.99</span></td>
+              <td><span class="state-pill" style="background:#F0FDF4;color:#166534;">Hemp / CBD</span></td>
               <td><span style="background:#F3F4F6;color:#374151;border-radius:10px;padding:1px 8px;font-size:12px;font-weight:600;">1</span></td>
               <td><span style="color:#166534;font-size:12px;">✓ Valid</span></td>
               <td><span style="color:#166534;font-weight:600;font-size:12px;">✓ COMPLIANT</span></td>
-              <td><button class="btn-secondary btn-sm">View</button></td>
+              <td><span class="text-xs text-muted">01/20/2026</span></td>
+              <td><div style="display:flex;gap:4px;"><span style="cursor:pointer;font-size:14px;" title="Notes">📋</span><span style="cursor:pointer;font-size:14px;" title="COA">📄</span><span style="cursor:pointer;font-size:14px;" title="History">📊</span></div></td>
             </tr>
             <!-- Row 4 -->
             <tr>
               <td><input type="checkbox"></td>
+              <td><div style="width:32px;height:32px;background:#F3F4F6;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:14px;">🌟</div></td>
+              <td><span class="text-xs text-muted">SG-10</span></td>
               <td>
                 <div class="font-semibold text-navy">Sleep Gummies 10mg</div>
-                <div class="text-xs text-muted">SKU: SG-10</div>
+                <div class="text-xs text-muted">Black Bear Wellness LLC</div>
               </td>
-              <td>Hemp/CBD</td>
+              <td><span class="text-sm">$24.99</span></td>
+              <td><span class="state-pill" style="background:#F0FDF4;color:#166534;">Hemp / CBD</span></td>
               <td><span style="background:#F3F4F6;color:#374151;border-radius:10px;padding:1px 8px;font-size:12px;font-weight:600;">1</span></td>
               <td><span style="color:#D97706;font-size:12px;">⚠ Violative</span></td>
               <td><span style="color:#DC2626;font-weight:600;font-size:12px;">🔴 NON-COMPLIANT</span></td>
-              <td><button class="btn-secondary btn-sm">View</button></td>
+              <td><span class="text-xs text-muted">12/05/2025</span></td>
+              <td><div style="display:flex;gap:4px;"><span style="cursor:pointer;font-size:14px;" title="Notes">📋</span><span style="cursor:pointer;font-size:14px;" title="COA">📄</span><span style="cursor:pointer;font-size:14px;" title="History">📊</span></div></td>
             </tr>
           </tbody>
         </table>
@@ -1154,7 +1222,8 @@ body { font-family: "Uber Move", system-ui, -apple-system, BlinkMacSystemFont, s
           <nav class="app-nav-links">
             <a class="app-nav-link active">Q-Monitor</a>
             <a class="app-nav-link">Report</a>
-            <a class="app-nav-link">News</a>
+            <a class="app-nav-link">Q-Vault ▾</a>
+          <a class="app-nav-link">MyCOA<sup>™</sup></a>
           </nav>
         </div>
         <div class="app-top-right">
@@ -1164,6 +1233,7 @@ body { font-family: "Uber Move", system-ui, -apple-system, BlinkMacSystemFont, s
         </div>
       </div>
       <div class="app-tabs">
+        <div class="app-tab">Pipeline</div>
         <div class="app-tab">Findings</div>
         <div class="app-tab active">Product Compliance</div>
         <div class="app-tab">We Monitor</div>
@@ -1327,6 +1397,7 @@ body { font-family: "Uber Move", system-ui, -apple-system, BlinkMacSystemFont, s
 
         <div class="annotation">
           <strong>CaseDraftDrawer</strong> is a shared component. itemType auto-detected: <code>COMPLIANCE_FINDING</code> from Q-ScanAI, <code>PRODUCT_MISSING_COA</code> / <code>COA_EXPIRED</code> / <code>COA_VIOLATIVE</code> from Product Compliance. <code>vaultCoaId</code> + <code>plProductId</code> both stored for COA items (preserving the specific COA link, not just the product).<br><br>
+          Each item has an <code>allowedResolutionTypes</code> array set from system defaults per itemType. An "Advanced" section per item (not shown here) lets the processor override defaults before sending — e.g. removing DISPUTE from a specific item. See <strong>QP-3593</strong> for the full mapping and configurability spec.<br><br>
           Each item has an <code>allowedResolutionTypes</code> array set from system defaults per itemType. An "Advanced" section per item (not shown here) lets the processor override defaults before sending — e.g. removing DISPUTE from a specific item. See <strong>QP-3593</strong> for the full mapping and configurability spec.
         </div>
       </div>
@@ -1351,7 +1422,8 @@ body { font-family: "Uber Move", system-ui, -apple-system, BlinkMacSystemFont, s
         <nav class="app-nav-links">
           <a class="app-nav-link active">Q-Monitor</a>
           <a class="app-nav-link">Report</a>
-          <a class="app-nav-link">News</a>
+          <a class="app-nav-link">Q-Vault ▾</a>
+          <a class="app-nav-link">MyCOA<sup>™</sup></a>
         </nav>
       </div>
       <div class="app-top-right">
@@ -1363,6 +1435,7 @@ body { font-family: "Uber Move", system-ui, -apple-system, BlinkMacSystemFont, s
       </div>
     </div>
     <div class="app-tabs">
+      <div class="app-tab">Pipeline</div>
       <div class="app-tab">Findings</div>
       <div class="app-tab">Product Compliance</div>
       <div class="app-tab">We Monitor</div>
@@ -1639,6 +1712,8 @@ body { font-family: "Uber Move", system-ui, -apple-system, BlinkMacSystemFont, s
           <nav class="app-nav-links">
             <a class="app-nav-link active">Q-Monitor</a>
             <a class="app-nav-link">Report</a>
+            <a class="app-nav-link">Q-Vault ▾</a>
+            <a class="app-nav-link">MyCOA<sup>™</sup></a>
           </nav>
         </div>
         <div class="app-top-right">
@@ -1647,6 +1722,7 @@ body { font-family: "Uber Move", system-ui, -apple-system, BlinkMacSystemFont, s
         </div>
       </div>
       <div class="app-tabs">
+        <div class="app-tab">Pipeline</div>
         <div class="app-tab">Findings</div>
         <div class="app-tab">Product Compliance</div>
         <div class="app-tab">We Monitor</div>
@@ -1747,7 +1823,8 @@ body { font-family: "Uber Move", system-ui, -apple-system, BlinkMacSystemFont, s
         <nav class="app-nav-links">
           <a class="app-nav-link active">Q-Monitor</a>
           <a class="app-nav-link">Report</a>
-          <a class="app-nav-link">News</a>
+          <a class="app-nav-link">Q-Vault ▾</a>
+          <a class="app-nav-link">MyCOA<sup>™</sup></a>
         </nav>
       </div>
       <div class="app-top-right">
@@ -1759,6 +1836,7 @@ body { font-family: "Uber Move", system-ui, -apple-system, BlinkMacSystemFont, s
       </div>
     </div>
     <div class="app-tabs">
+      <div class="app-tab">Pipeline</div>
       <div class="app-tab">Findings</div>
       <div class="app-tab">Product Compliance</div>
       <div class="app-tab active">We Monitor</div>
@@ -2157,6 +2235,43 @@ body { font-family: "Uber Move", system-ui, -apple-system, BlinkMacSystemFont, s
         <div style="margin-top:8px;font-size:11px;color:#7C3AED;">Spec formalized in <strong>QP-3593</strong> — Configurable Resolution Types per Case Item</div>
       </div>
 
+      <div class="annotation mt-16" style="border-color:#DDD6FE;background:#F5F3FF;color:#5B21B6;">
+        <strong>📋 itemType → Resolution Type Mapping (defaults)</strong><br>
+        The merchant response form renders <em>only</em> the controls matching the item's <code style="background:#EDE9FE;border-radius:3px;padding:1px 4px;">allowedResolutionTypes</code> array.<br>
+        <table style="margin-top:10px;border-collapse:collapse;width:100%;font-size:12px;">
+          <thead>
+            <tr style="background:#EDE9FE;">
+              <th style="padding:6px 10px;text-align:left;border:1px solid #DDD6FE;color:#5B21B6;">itemType</th>
+              <th style="padding:6px 10px;text-align:left;border:1px solid #DDD6FE;color:#5B21B6;">Default allowedResolutionTypes</th>
+              <th style="padding:6px 10px;text-align:left;border:1px solid #DDD6FE;color:#5B21B6;">UI rendered</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="padding:5px 10px;border:1px solid #DDD6FE;"><code>PRODUCT_MISSING_COA</code></td><td style="padding:5px 10px;border:1px solid #DDD6FE;"><code>UPLOAD_FILE</code></td><td style="padding:5px 10px;border:1px solid #DDD6FE;">File upload zone + notes</td></tr>
+            <tr style="background:#F5F3FF;"><td style="padding:5px 10px;border:1px solid #DDD6FE;"><code>COA_EXPIRED</code></td><td style="padding:5px 10px;border:1px solid #DDD6FE;"><code>UPLOAD_FILE</code></td><td style="padding:5px 10px;border:1px solid #DDD6FE;">File upload zone + notes</td></tr>
+            <tr><td style="padding:5px 10px;border:1px solid #DDD6FE;"><code>COA_VIOLATIVE</code></td><td style="padding:5px 10px;border:1px solid #DDD6FE;"><code>UPLOAD_FILE, DISPUTE</code></td><td style="padding:5px 10px;border:1px solid #DDD6FE;">File upload + dispute option</td></tr>
+            <tr style="background:#F5F3FF;"><td style="padding:5px 10px;border:1px solid #DDD6FE;"><code>COMPLIANCE_FINDING</code></td><td style="padding:5px 10px;border:1px solid #DDD6FE;"><code>PROVIDE_URL, REQUEST_EXTENSION, DISPUTE</code></td><td style="padding:5px 10px;border:1px solid #DDD6FE;">URL input + extension request + dispute</td></tr>
+            <tr><td style="padding:5px 10px;border:1px solid #DDD6FE;"><code>LICENSE_ISSUE</code></td><td style="padding:5px 10px;border:1px solid #DDD6FE;"><code>UPLOAD_FILE, REQUEST_EXTENSION, DISPUTE</code></td><td style="padding:5px 10px;border:1px solid #DDD6FE;">File upload + extension + dispute</td></tr>
+            <tr style="background:#F5F3FF;"><td style="padding:5px 10px;border:1px solid #DDD6FE;"><code>KYC_DOCUMENT_MISSING</code></td><td style="padding:5px 10px;border:1px solid #DDD6FE;"><code>UPLOAD_FILE, REQUEST_EXTENSION</code></td><td style="padding:5px 10px;border:1px solid #DDD6FE;">File upload + extension (no dispute)</td></tr>
+            <tr><td style="padding:5px 10px;border:1px solid #DDD6FE;"><code>MANUAL</code></td><td style="padding:5px 10px;border:1px solid #DDD6FE;">All types (processor configures)</td><td style="padding:5px 10px;border:1px solid #DDD6FE;">Processor sets at item creation</td></tr>
+          </tbody>
+        </table>
+        <div style="margin-top:10px;"><strong>⚠ Open Questions — Product decision required before dev:</strong></div>
+        <ul style="margin-top:6px;padding-left:18px;line-height:1.8;">
+          <li><strong>Config scope:</strong> Per-item override at case creation only, or processor-level account defaults?</li>
+          <li><strong>Dispute as merchant right:</strong> Should <code>DISPUTE</code> always be available regardless of processor settings?</li>
+          <li><strong>Post-send restriction:</strong> Can a processor remove an allowed resolution type after a case has been sent?</li>
+          <li><strong>PROVIDE_TEXT:</strong> Should freeform notes always be available as a supplementary option regardless of other types?</li>
+          <li><strong>SLA default:</strong> Is the SLA deadline configured at processor level, per priority, per itemType, or manually set per case?</li>
+          <li><strong>Request Extension:</strong> Does it pause SLA countdown? Who approves the extension? What notification is fired?</li>
+          <li><strong>Force Close:</strong> Permission-gated? What happens to open/disputed items — waived? archived as-is?</li>
+          <li><strong>Case number format:</strong> CR-YYYY-XXXX — auto-generated? Tenant-scoped sequence or global?</li>
+          <li><strong>ARCHIVED state:</strong> Is 90-day auto-purge configurable per processor/tenant?</li>
+          <li><strong>Priority auto-assignment:</strong> Rule-based from source data (e.g. HIGH finding → HIGH priority) or always manual at case creation?</li>
+        </ul>
+        <div style="margin-top:8px;font-size:11px;color:#7C3AED;">Spec formalized in <strong>QP-3593</strong> — Configurable Resolution Types per Case Item</div>
+      </div>
+
     <div class="screen-nav">
       <button class="btn-secondary" onclick="showScreen(7)">← Back to Case List</button>
       <button class="btn-primary" onclick="showScreen(9)">→ Processor Review After Response (Screen 9)</button>
@@ -2171,19 +2286,25 @@ body { font-family: "Uber Move", system-ui, -apple-system, BlinkMacSystemFont, s
   <div id="screen-9" class="screen">
     <div class="screen-wrapper">
       <div class="app-top-bar">
-        <div style="display:flex;align-items:center;gap:24px;">
-          <span style="font-weight:700;font-size:15px;color:#1a202e;">Qredible</span>
-          <span style="font-weight:600;color:#2563eb;border-bottom:2px solid #2563eb;padding-bottom:4px;">Q-Monitor</span>
-          <span style="color:#6B7280;font-size:14px;">Report</span>
-          <span style="color:#6B7280;font-size:14px;">News</span>
+        <div class="app-top-left">
+          <span class="app-brand">● Qredibility</span>
+          <nav class="app-nav-links">
+            <a class="app-nav-link active">Q-Monitor</a>
+            <a class="app-nav-link">Report</a>
+            <a class="app-nav-link">Q-Vault ▾</a>
+            <a class="app-nav-link">MyCOA<sup>™</sup></a>
+          </nav>
         </div>
-        <div style="display:flex;align-items:center;gap:16px;font-size:13px;color:#374151;">
-          <span>FLEX Payment Solutions</span>
-          <span>JF Joseph Floyd ▾</span>
-          <span>🔔</span>
+        <div class="app-top-right">
+          <div class="company-selector"><span>Select a Company</span> <span style="color:#9CA3AF">▾</span></div>
+          <div class="company-selector" style="font-weight:500;"><span>FLEX Payment Solutions</span> <span style="color:#9CA3AF">▾</span></div>
+          <div class="user-btn">JF Joseph Floyd <span style="color:#9CA3AF">▾</span></div>
+          <div class="bell-btn">🔔</div>
+          <div class="wordmark">Qredible</div>
         </div>
       </div>
       <div class="app-tabs">
+        <div class="app-tab">Pipeline</div>
         <div class="app-tab">Findings</div>
         <div class="app-tab">Product Compliance</div>
         <div class="app-tab">We Monitor</div>

@@ -1372,7 +1372,7 @@
       </div>
 
     </div>
-      <div class="game-panel" id="panel-day42" style="display:none">
+          <div class="game-panel" id="panel-day42" style="display:none">
 
       <div class="panel-header">
         <div class="panel-title">
@@ -1383,9 +1383,11 @@
         <div class="panel-divider"></div>
       </div>
 
-      <div class="intent-banner intent-missed">💰 Intent: Maximize Gold — NOT ACHIEVED (earned 2,100g, needed 3,720g)</div>
+      <div class="intent-banner intent-missed">💰 Intent: Maximize Gold — NOT ACHIEVED (earned 2,100g, needed ~3,720g)</div>
 
       <div class="panel-content">
+
+        <!-- LEFT COLUMN -->
         <div class="panel-column">
           <div class="section-card" onclick="selectCard(this,'sc-gold')" data-section="sc-gold">
             <span class="node-tag">GoldEconomyCard</span>
@@ -1393,17 +1395,22 @@
             <div class="section-row"><span class="label">Earned</span><span class="value gold">+2,100g</span></div>
             <div class="section-row"><span class="label">Spent</span><span class="value down">-890g</span></div>
             <div class="section-row"><span class="label">Net</span><span class="value">+1,210g</span></div>
+            <div class="section-row"><span class="label">7-Day Avg</span><span class="best">≈ 3,100g</span></div>
           </div>
           <div class="section-card empty" onclick="selectCard(this,'sc-items')" data-section="sc-items">
             <span class="node-tag">ItemsSoldCard</span>
             <div class="section-title"><span class="sec-icon i-merchant"></span> Storefront Sales</div>
             <div class="section-row"><span class="label">Items Sold</span><span class="value">4</span></div>
             <div class="section-row"><span class="label">Best Sale</span><span class="value gold">Runic Shield — 620g</span></div>
+            <div class="sub-list">
+              <div class="sub-item"><span class="sub-name">Runic Shield</span><span class="sub-val">620g</span></div>
+              <div class="sub-item"><span class="sub-name">Herb Bundle ×2</span><span class="sub-val">140g</span></div>
+            </div>
           </div>
           <div class="section-card" onclick="selectCard(this,'sc-dungeons')" data-section="sc-dungeons">
             <span class="node-tag">DungeonsClearedCard</span>
             <div class="section-title"><span class="sec-icon i-sword"></span> Dungeons Cleared</div>
-            <div class="section-row"><span class="label">Cleared Today</span><span class="value">1</span></div>
+            <div class="section-row"><span class="label">Cleared Today</span><span class="value up">1</span></div>
             <div class="sub-list">
               <div class="sub-item"><span class="sub-name">Ashcroft Ruins</span><span class="sub-val">Aldric, Vex</span></div>
             </div>
@@ -1421,7 +1428,6 @@
             <div class="sub-list">
               <div class="sub-item"><span class="sub-name">Lyra</span><span class="sub-val death">Hospitalized</span></div>
             </div>
-            <div class="streak-banner streak-broken">💀 Death
             <div class="streak-banner streak-broken">💀 Deathless streak broken (was 4 days)</div>
           </div>
         </div><!-- /panel-column left -->
@@ -1452,53 +1458,44 @@
             <span class="node-tag">GuildProgressCard</span>
             <div class="section-title"><span class="sec-icon i-guild"></span> Guild Progress</div>
             <div class="section-row"><span class="label">Rank XP Gained</span><span class="value">+85</span></div>
-            <div class="bar-wrap">
-              <div class="bar-track"><div class="bar-fill" style="width:52%"></div></div>
-            </div>
+            <div class="bar-wrap"><div class="bar-track"><div class="bar-fill" style="width:52%"></div></div></div>
           </div>
           <div class="section-card" onclick="selectCard(this,'sc-bests')" data-section="sc-bests">
             <span class="node-tag">AllTimeBestsCard</span>
             <div class="section-title"><span class="sec-icon i-startan"></span> All-Time Bests</div>
-            <div class="section-row"><span class="label">Best Gold Day</span><span class="value gold">4,820g (Day 43)</span></div>
-            <div class="section-row"><span class="label">Most Dungeons</span><span class="value">3</span></div>
-            <div class="section-row"><span class="label">Best Sale</span><span class="value gold">Shadowfang — 950g</span></div>
+            <div class="section-row"><span class="label">Best Gold Day</span><span class="value gold">2,100g (today)</span></div>
+            <div class="section-row"><span class="label">Most Dungeons</span><span class="value">1</span></div>
+            <div class="section-row"><span class="label">Best Sale</span><span class="value gold">Runic Shield — 620g</span></div>
+            <div class="section-row"><span class="label">Deathless Record</span><span class="value">4 days</span></div>
           </div>
         </div><!-- /panel-column right -->
       </div><!-- /panel-content -->
 
-      <!-- King's Vault — full width bottom row -->
       <div class="vault-full-row">
-      <div class="vault-section" onclick="selectCard(this,'sc-vault')" data-section="sc-vault">
-                  <span class="node-tag">VaultProgressCard</span>
-                  <div class="vault-title"><span class="sec-icon i-crown"></span> King's Vault</div>
-                  <div class="vault-token-row">
-                    <span class="vault-token-label">Tokens This Week</span>
-                    <span class="vault-token-val">6 / 26</span>
-                  </div>
-                  <div class="vault-token-row">
-                    <span class="vault-token-label">Resets in</span>
-                    <span class="vault-token-val" style="font-size:11px">3 days</span>
-                  </div>
-                  <div class="vault-cats">
-                    <div class="vault-cat"><div class="vault-cat-name">Combatant</div><div class="vault-cat-bar-track"><div class="vault-cat-bar-fill" style="width:20%"></div></div><div class="vault-cat-tier">Tier 1/5</div></div>
-                    <div class="vault-cat"><div class="vault-cat-name">Ambassador</div><div class="vault-cat-bar-track"><div class="vault-cat-bar-fill" style="width:40%"></div></div><div class="vault-cat-tier">Tier 2/5</div></div>
-                    <div class="vault-cat"><div class="vault-cat-name">Mercantile</div><div class="vault-cat-bar-track"><div class="vault-cat-bar-fill" style="width:20%"></div></div><div class="vault-cat-tier">Tier 1/5</div></div>
-                    <div class="vault-cat"><div class="vault-cat-name">Craftsman</div><div class="vault-cat-bar-track"><div class="vault-cat-bar-fill" style="width:60%"></div></div><div class="vault-cat-tier">Tier 3/5</div></div>
-                    <div class="vault-cat" style="grid-column:1/-1"><div class="vault-cat-name">Director</div><div class="vault-cat-bar-track"><div class="vault-cat-bar-fill" style="width:0%"></div></div><div class="vault-cat-tier">Tier 0/5</div></div>
-                  </div>
-                </div>
-      </div><!-- /vault-full-row -->
+        <div class="vault-section" onclick="selectCard(this,'sc-vault')" data-section="sc-vault">
+          <span class="node-tag">VaultProgressCard</span>
+          <div class="vault-title"><span class="sec-icon i-crown"></span> King's Vault</div>
+          <div class="vault-token-row"><span class="vault-token-label">Tokens This Week</span><span class="vault-token-val">3 / 26</span></div>
+          <div class="vault-token-row"><span class="vault-token-label">Resets in</span><span class="vault-token-val" style="font-size:11px">5 days</span></div>
+          <div class="vault-cats">
+            <div class="vault-cat"><div class="vault-cat-name">Combatant</div><div class="vault-cat-bar-track"><div class="vault-cat-bar-fill" style="width:20%"></div></div><div class="vault-cat-tier">Tier 1/5</div></div>
+            <div class="vault-cat"><div class="vault-cat-name">Ambassador</div><div class="vault-cat-bar-track"><div class="vault-cat-bar-fill" style="width:20%"></div></div><div class="vault-cat-tier">Tier 1/5</div></div>
+            <div class="vault-cat"><div class="vault-cat-name">Mercantile</div><div class="vault-cat-bar-track"><div class="vault-cat-bar-fill" style="width:20%"></div></div><div class="vault-cat-tier">Tier 1/5</div></div>
+            <div class="vault-cat"><div class="vault-cat-name">Craftsman</div><div class="vault-cat-bar-track"><div class="vault-cat-bar-fill" style="width:40%"></div></div><div class="vault-cat-tier">Tier 2/5</div></div>
+            <div class="vault-cat" style="grid-column:1/-1"><div class="vault-cat-name">Director</div><div class="vault-cat-bar-track"><div class="vault-cat-bar-fill" style="width:0%"></div></div><div class="vault-cat-tier">Tier 0/5</div></div>
+          </div>
+        </div>
+      </div>
 
       <div class="panel-footer">
         <button class="nav-btn"><span>← Prev</span></button>
-        <span class="page-indicator">Day 42</span>
+        <span class="page-indicator">Day 42 of 44  ·  30-day hist</span>
         <button class="nav-btn"><span>Next →</span></button>
         <button class="close-btn"><span>✕</span></button>
       </div>
 
     </div><!-- /panel day42 -->
 
-    <!-- ═════════════════════════ PANEL DAY 44 ═════════════════════════ -->
     <div class="game-panel" id="panel-day44" style="display:none">
 
       <div class="panel-header">
@@ -1513,6 +1510,8 @@
       <div class="intent-banner intent-missed">🏕 Intent: Stock Materials — NOT ACHIEVED (gathered 42, needed 50+)</div>
 
       <div class="panel-content">
+
+        <!-- LEFT COLUMN -->
         <div class="panel-column">
           <div class="section-card" onclick="selectCard(this,'sc-gold')" data-section="sc-gold">
             <span class="node-tag">GoldEconomyCard</span>
@@ -1520,6 +1519,7 @@
             <div class="section-row"><span class="label">Earned</span><span class="value gold">+3,100g</span></div>
             <div class="section-row"><span class="label">Spent</span><span class="value down">-2,400g</span></div>
             <div class="section-row"><span class="label">Net</span><span class="value up">+700g</span></div>
+            <div class="section-row"><span class="label">7-Day Avg</span><span class="best">≈ 3,100g</span></div>
           </div>
           <div class="section-card" onclick="selectCard(this,'sc-items')" data-section="sc-items">
             <span class="node-tag">ItemsSoldCard</span>
@@ -1555,12 +1555,14 @@
             </div>
             <div class="streak-banner streak-broken">💀 Deathless streak reset</div>
           </div>
-        </div>
+        </div><!-- /panel-column left -->
+
         <div class="panel-column">
           <div class="section-card" onclick="selectCard(this,'sc-favors')" data-section="sc-favors">
             <span class="node-tag">FavorsCard</span>
             <div class="section-title"><span class="sec-icon i-favors"></span> Favors Completed</div>
             <div class="section-row"><span class="label">Completed</span><span class="value">5</span></div>
+            <div class="section-row"><span class="label">Est. Value</span><span class="value gold">~400g</span></div>
           </div>
           <div class="section-card" onclick="selectCard(this,'sc-materials')" data-section="sc-materials">
             <span class="node-tag">MaterialsCard</span>
@@ -1583,9 +1585,7 @@
             <span class="node-tag">GuildProgressCard</span>
             <div class="section-title"><span class="sec-icon i-guild"></span> Guild Progress</div>
             <div class="section-row"><span class="label">Rank XP Gained</span><span class="value">+120</span></div>
-            <div class="bar-wrap">
-              <div class="bar-track"><div class="bar-fill" style="width:68%"></div></div>
-            </div>
+            <div class="bar-wrap"><div class="bar-track"><div class="bar-fill" style="width:68%"></div></div></div>
           </div>
           <div class="section-card" onclick="selectCard(this,'sc-bests')" data-section="sc-bests">
             <span class="node-tag">AllTimeBestsCard</span>
@@ -1593,38 +1593,37 @@
             <div class="section-row"><span class="label">Best Gold Day</span><span class="value gold">4,820g (Day 43)</span></div>
             <div class="section-row"><span class="label">Most Dungeons</span><span class="value">3 (Day 43)</span></div>
             <div class="section-row"><span class="label">Best Sale</span><span class="value gold">Shadowfang — 950g</span></div>
-            <div class="section-row"><span class="label">Deathless Record</span><span class="value">4 days</span></div>
+            <div class="section-row"><span class="label">Deathless Record</span><span class="value">4 days (ended)</span></div>
           </div>
         </div><!-- /panel-column right -->
       </div><!-- /panel-content -->
 
-      <!-- King's Vault — full width bottom row -->
       <div class="vault-full-row">
-      <div class="vault-section" onclick="selectCard(this,'sc-vault')" data-section="sc-vault">
-                  <span class="node-tag">VaultProgressCard</span>
-                  <div class="vault-title"><span class="sec-icon i-crown"></span> King's Vault</div>
-                  <div class="vault-token-row">
-                    <span class="vault-token-label">Tokens This Week</span>
-                    <span class="vault-token-val">8 / 26</span>
-                  </div>
-                  <div class="vault-cats">
-                    <div class="vault-cat"><div class="vault-cat-name">Combatant</div><div class="vault-cat-bar-track"><div class="vault-cat-bar-fill" style="width:0%"></div></div><div class="vault-cat-tier">Tier 0/5</div></div>
-                    <div class="vault-cat"><div class="vault-cat-name">Ambassador</div><div class="vault-cat-bar-track"><div class="vault-cat-bar-fill" style="width:60%"></div></div><div class="vault-cat-tier">Tier 3/5</div></div>
-                    <div class="vault-cat"><div class="vault-cat-name">Mercantile</div><div class="vault-cat-bar-track"><div class="vault-cat-bar-fill" style="width:40%"></div></div><div class="vault-cat-tier">Tier 2/5</div></div>
-                    <div class="vault-cat"><div class="vault-cat-name">Craftsman</div><div class="vault-cat-bar-track"><div class="vault-cat-bar-fill" style="width:80%"></div></div><div class="vault-cat-tier">Tier 4/5</div></div>
-                    <div class="vault-cat" style="grid-column:1/-1"><div class="vault-cat-name">Director</div><div class="vault-cat-bar-track"><div class="vault-cat-bar-fill" style="width:20%"></div></div><div class="vault-cat-tier">Tier 1/5</div></div>
-                  </div>
-                </div>
-      </div><!-- /vault-full-row -->
+        <div class="vault-section" onclick="selectCard(this,'sc-vault')" data-section="sc-vault">
+          <span class="node-tag">VaultProgressCard</span>
+          <div class="vault-title"><span class="sec-icon i-crown"></span> King's Vault</div>
+          <div class="vault-token-row"><span class="vault-token-label">Tokens This Week</span><span class="vault-token-val">8 / 26</span></div>
+          <div class="vault-token-row"><span class="vault-token-label">Resets in</span><span class="vault-token-val" style="font-size:11px">2 days</span></div>
+          <div class="vault-cats">
+            <div class="vault-cat"><div class="vault-cat-name">Combatant</div><div class="vault-cat-bar-track"><div class="vault-cat-bar-fill" style="width:0%"></div></div><div class="vault-cat-tier">Tier 0/5</div></div>
+            <div class="vault-cat"><div class="vault-cat-name">Ambassador</div><div class="vault-cat-bar-track"><div class="vault-cat-bar-fill" style="width:60%"></div></div><div class="vault-cat-tier">Tier 3/5</div></div>
+            <div class="vault-cat"><div class="vault-cat-name">Mercantile</div><div class="vault-cat-bar-track"><div class="vault-cat-bar-fill" style="width:40%"></div></div><div class="vault-cat-tier">Tier 2/5</div></div>
+            <div class="vault-cat"><div class="vault-cat-name">Craftsman</div><div class="vault-cat-bar-track"><div class="vault-cat-bar-fill" style="width:80%"></div></div><div class="vault-cat-tier">Tier 4/5</div></div>
+            <div class="vault-cat" style="grid-column:1/-1"><div class="vault-cat-name">Director</div><div class="vault-cat-bar-track"><div class="vault-cat-bar-fill" style="width:20%"></div></div><div class="vault-cat-tier">Tier 1/5</div></div>
+          </div>
+        </div>
+      </div>
 
       <div class="panel-footer">
         <button class="nav-btn"><span>← Prev</span></button>
-        <span class="page-indicator">Day 44</span>
+        <span class="page-indicator">Day 44 of 44  ·  30-day hist</span>
         <button class="nav-btn"><span>Next →</span></button>
         <button class="close-btn"><span>✕</span></button>
       </div>
 
     </div><!-- /panel day44 -->
+
+<!-- /panel day44 -->
 
   </div>
       <div class="game-panel" id="panel-day44" style="display:none">
