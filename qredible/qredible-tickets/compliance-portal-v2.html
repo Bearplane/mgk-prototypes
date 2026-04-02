@@ -1326,7 +1326,8 @@ body { font-family: "Uber Move", system-ui, -apple-system, BlinkMacSystemFont, s
         </div>
 
         <div class="annotation">
-          <strong>CaseDraftDrawer</strong> is a shared component. itemType auto-detected: <code>COMPLIANCE_FINDING</code> from Q-ScanAI, <code>PRODUCT_MISSING_COA</code> / <code>COA_EXPIRED</code> / <code>COA_VIOLATIVE</code> from Product Compliance. <code>vaultCoaId</code> + <code>plProductId</code> both stored for COA items (preserving the specific COA link, not just the product).
+          <strong>CaseDraftDrawer</strong> is a shared component. itemType auto-detected: <code>COMPLIANCE_FINDING</code> from Q-ScanAI, <code>PRODUCT_MISSING_COA</code> / <code>COA_EXPIRED</code> / <code>COA_VIOLATIVE</code> from Product Compliance. <code>vaultCoaId</code> + <code>plProductId</code> both stored for COA items (preserving the specific COA link, not just the product).<br><br>
+          Each item has an <code>allowedResolutionTypes</code> array set from system defaults per itemType. An "Advanced" section per item (not shown here) lets the processor override defaults before sending — e.g. removing DISPUTE from a specific item. See <strong>QP-3593</strong> for the full mapping and configurability spec.
         </div>
       </div>
 
@@ -1987,8 +1988,9 @@ body { font-family: "Uber Move", system-ui, -apple-system, BlinkMacSystemFont, s
     <div class="ticket-context-bar" style="background:#F0FDF4;border-bottom:2px solid #BBF7D0;padding:8px 24px;display:flex;align-items:center;justify-content:space-between;">
       <div style="display:flex;align-items:center;gap:12px;">
         <span style="font-size:11px;font-weight:700;background:#16a34a;color:white;padding:2px 8px;border-radius:4px;">QP-3586</span>
-        <span style="font-size:13px;color:#166534;font-weight:500;">Merchant Response Flow — inline response form per item type</span>
-        <span style="font-size:12px;color:#6B7280;">File upload for COAs · URL input for website · Radio for dispute/extension</span>
+        <span style="font-size:11px;font-weight:700;background:#7C3AED;color:white;padding:2px 8px;border-radius:4px;">QP-3593</span>
+        <span style="font-size:13px;color:#166634;font-weight:500;">Merchant Response Flow — inline response form per item type</span>
+        <span style="font-size:12px;color:#6B7280;">File upload for COAs · URL input for website · Radio for dispute/extension · Resolution types configurable per item</span>
       </div>
       <a href="https://qredible.atlassian.net/browse/QP-3586" target="_blank" style="font-size:12px;color:#2563eb;text-decoration:none;">View Jira ticket →</a>
     </div>
@@ -2117,6 +2119,43 @@ body { font-family: "Uber Move", system-ui, -apple-system, BlinkMacSystemFont, s
         📱 <strong>Mobile-first:</strong> On phones, each item is a full-screen expandable card. File upload uses iOS/Android camera or gallery. Built with MUI v5 responsive breakpoints.
       </div>
     </div>
+
+      <div class="annotation mt-16" style="border-color:#DDD6FE;background:#F5F3FF;color:#5B21B6;">
+        <strong>📋 itemType → Resolution Type Mapping (defaults)</strong><br>
+        The merchant response form renders <em>only</em> the controls matching the item's <code style="background:#EDE9FE;border-radius:3px;padding:1px 4px;">allowedResolutionTypes</code> array.<br>
+        <table style="margin-top:10px;border-collapse:collapse;width:100%;font-size:12px;">
+          <thead>
+            <tr style="background:#EDE9FE;">
+              <th style="padding:6px 10px;text-align:left;border:1px solid #DDD6FE;color:#5B21B6;">itemType</th>
+              <th style="padding:6px 10px;text-align:left;border:1px solid #DDD6FE;color:#5B21B6;">Default allowedResolutionTypes</th>
+              <th style="padding:6px 10px;text-align:left;border:1px solid #DDD6FE;color:#5B21B6;">UI rendered</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="padding:5px 10px;border:1px solid #DDD6FE;"><code>PRODUCT_MISSING_COA</code></td><td style="padding:5px 10px;border:1px solid #DDD6FE;"><code>UPLOAD_FILE</code></td><td style="padding:5px 10px;border:1px solid #DDD6FE;">File upload zone + notes</td></tr>
+            <tr style="background:#F5F3FF;"><td style="padding:5px 10px;border:1px solid #DDD6FE;"><code>COA_EXPIRED</code></td><td style="padding:5px 10px;border:1px solid #DDD6FE;"><code>UPLOAD_FILE</code></td><td style="padding:5px 10px;border:1px solid #DDD6FE;">File upload zone + notes</td></tr>
+            <tr><td style="padding:5px 10px;border:1px solid #DDD6FE;"><code>COA_VIOLATIVE</code></td><td style="padding:5px 10px;border:1px solid #DDD6FE;"><code>UPLOAD_FILE, DISPUTE</code></td><td style="padding:5px 10px;border:1px solid #DDD6FE;">File upload + dispute option</td></tr>
+            <tr style="background:#F5F3FF;"><td style="padding:5px 10px;border:1px solid #DDD6FE;"><code>COMPLIANCE_FINDING</code></td><td style="padding:5px 10px;border:1px solid #DDD6FE;"><code>PROVIDE_URL, REQUEST_EXTENSION, DISPUTE</code></td><td style="padding:5px 10px;border:1px solid #DDD6FE;">URL input + extension request + dispute</td></tr>
+            <tr><td style="padding:5px 10px;border:1px solid #DDD6FE;"><code>LICENSE_ISSUE</code></td><td style="padding:5px 10px;border:1px solid #DDD6FE;"><code>UPLOAD_FILE, REQUEST_EXTENSION, DISPUTE</code></td><td style="padding:5px 10px;border:1px solid #DDD6FE;">File upload + extension + dispute</td></tr>
+            <tr style="background:#F5F3FF;"><td style="padding:5px 10px;border:1px solid #DDD6FE;"><code>KYC_DOCUMENT_MISSING</code></td><td style="padding:5px 10px;border:1px solid #DDD6FE;"><code>UPLOAD_FILE, REQUEST_EXTENSION</code></td><td style="padding:5px 10px;border:1px solid #DDD6FE;">File upload + extension (no dispute)</td></tr>
+            <tr><td style="padding:5px 10px;border:1px solid #DDD6FE;"><code>MANUAL</code></td><td style="padding:5px 10px;border:1px solid #DDD6FE;">All types (processor configures)</td><td style="padding:5px 10px;border:1px solid #DDD6FE;">Processor sets at item creation</td></tr>
+          </tbody>
+        </table>
+        <div style="margin-top:10px;"><strong>⚠ Open Questions — Product decision required before dev:</strong></div>
+        <ul style="margin-top:6px;padding-left:18px;line-height:1.8;">
+          <li><strong>Config scope:</strong> Per-item override at case creation only, or processor-level account defaults?</li>
+          <li><strong>Dispute as merchant right:</strong> Should <code>DISPUTE</code> always be available regardless of processor settings?</li>
+          <li><strong>Post-send restriction:</strong> Can a processor remove an allowed resolution type after a case has been sent?</li>
+          <li><strong>PROVIDE_TEXT:</strong> Should freeform notes always be available as a supplementary option regardless of other types?</li>
+          <li><strong>SLA default:</strong> Is the SLA deadline configured at processor level, per priority, per itemType, or manually set per case?</li>
+          <li><strong>Request Extension:</strong> Does it pause SLA countdown? Who approves the extension? What notification is fired?</li>
+          <li><strong>Force Close:</strong> Permission-gated? What happens to open/disputed items — waived? archived as-is?</li>
+          <li><strong>Case number format:</strong> CR-YYYY-XXXX — auto-generated? Tenant-scoped sequence or global?</li>
+          <li><strong>ARCHIVED state:</strong> Is 90-day auto-purge configurable per processor/tenant?</li>
+          <li><strong>Priority auto-assignment:</strong> Rule-based from source data (e.g. HIGH finding → HIGH priority) or always manual at case creation?</li>
+        </ul>
+        <div style="margin-top:8px;font-size:11px;color:#7C3AED;">Spec formalized in <strong>QP-3593</strong> — Configurable Resolution Types per Case Item</div>
+      </div>
 
     <div class="screen-nav">
       <button class="btn-secondary" onclick="showScreen(7)">← Back to Case List</button>
