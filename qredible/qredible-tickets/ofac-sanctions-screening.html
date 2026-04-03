@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>OFAC Status & Sanctions Screening — Qredible</title>
+  <title>Merchant Risk Intelligence (MRI) — Qredible</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -114,6 +114,58 @@
       line-height: 1.6;
     }
     .annotation strong { color: #F5D050; }
+
+    /* ── MRI Architecture Cards ── */
+    .mri-arch-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .mri-arch-card {
+      background: #FFFFFF;
+      border: 2px solid #CBD5E1;
+      border-radius: 10px;
+      padding: 20px 18px;
+      position: relative;
+    }
+    .mri-arch-card.active { border-color: #16A34A; }
+    .mri-arch-card.activating { border-color: #3B82F6; }
+    .mri-arch-card.planned { border-color: #CBD5E1; opacity: 0.8; }
+    .mri-arch-badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 4px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .badge-active { background: #DCFCE7; color: #166534; }
+    .badge-activating { background: #DBEAFE; color: #1D4ED8; }
+    .badge-planned { background: #F1F5F9; color: #64748B; }
+    .mri-arch-icon { font-size: 28px; margin-bottom: 10px; }
+    .mri-arch-label {
+      font-size: 14px;
+      font-weight: 700;
+      color: #0F172A;
+      margin-bottom: 4px;
+    }
+    .mri-arch-status {
+      font-size: 11.5px;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+    .mri-arch-card.active .mri-arch-status { color: #16A34A; }
+    .mri-arch-card.activating .mri-arch-status { color: #2563EB; }
+    .mri-arch-card.planned .mri-arch-status { color: #94A3B8; }
+    .mri-arch-text {
+      font-size: 12px;
+      color: #475569;
+      line-height: 1.55;
+    }
 
     /* ── We Monitor Shell ── */
     .we-monitor-shell {
@@ -984,18 +1036,66 @@
 <nav class="proto-nav">
   <a href="../">← All Mockups</a>
   <span class="nav-divider">/</span>
-  <span class="nav-current">OFAC Status &amp; Sanctions Screening</span>
+  <span class="nav-current">Merchant Risk Intelligence — MRI Column &amp; Sanctions Screening</span>
   <span class="ticket-badge"><a href="https://qredible.atlassian.net/browse/QP-3601" target="_blank" style="color:#93C5FD;text-decoration:none;">QP-3601</a> · <a href="https://qredible.atlassian.net/browse/QP-3602" target="_blank" style="color:#93C5FD;text-decoration:none;">QP-3602</a></span>
 </nav>
 
 <div class="page-content">
 
   <!-- ═══════════════════════════════════════════════════════
-       SECTION 1: WE MONITOR TABLE WITH OFAC STATUS COLUMN
+       SECTION 0: MRI ARCHITECTURE OVERVIEW
   ══════════════════════════════════════════════════════════ -->
   <div>
-    <div class="section-label">Section 1 — We Monitor Table · OFAC Status Column</div>
-    <div class="section-desc">The We Monitor table gains an <strong style="color:#93C5FD">OFAC Status</strong> column showing aggregate screening results for each company. The column is highlighted in the table header. Each status is derived from the worst-case across all contacts (owners + control persons) for that company.</div>
+    <div class="section-label">Section 0 — Merchant Risk Intelligence Architecture</div>
+    <div class="section-desc">MRI is the strategic umbrella column in We Monitor. Four risk factors roll up into a single aggregate status — the column shows the worst-case signal across all active factors, just like Website Compliance and Product Compliance already do.</div>
+
+    <div class="mri-arch-grid">
+      <!-- Card 1: Sanctions Screening -->
+      <div class="mri-arch-card active">
+        <span class="mri-arch-badge badge-active">✓ Built</span>
+        <div class="mri-arch-icon">🛡️</div>
+        <div class="mri-arch-label">Sanctions Screening</div>
+        <div class="mri-arch-status">Built — QP-3602</div>
+        <div class="mri-arch-text">OFAC SDN list, sanctions databases, regulatory blocked persons. Contacts screened against federal sanctions lists.</div>
+      </div>
+      <!-- Card 2: Reputation Intelligence -->
+      <div class="mri-arch-card activating">
+        <span class="mri-arch-badge badge-activating">Activating</span>
+        <div class="mri-arch-icon">⭐</div>
+        <div class="mri-arch-label">Reputation Intelligence</div>
+        <div class="mri-arch-status">Activating — Findings Tab</div>
+        <div class="mri-arch-text">BBB ratings, Google Reviews, Trustpilot, Yelp. Reputation data is already collected — being exposed in the Findings tab.</div>
+      </div>
+      <!-- Card 3: Legal & Regulatory -->
+      <div class="mri-arch-card planned">
+        <span class="mri-arch-badge badge-planned">Planned</span>
+        <div class="mri-arch-icon">⚖️</div>
+        <div class="mri-arch-label">Legal &amp; Regulatory</div>
+        <div class="mri-arch-status">Planned</div>
+        <div class="mri-arch-text">FDA warning letters, FTC enforcement actions, state regulatory violations, court judgments.</div>
+      </div>
+      <!-- Card 4: Business Risk -->
+      <div class="mri-arch-card planned">
+        <span class="mri-arch-badge badge-planned">Planned</span>
+        <div class="mri-arch-icon">📊</div>
+        <div class="mri-arch-label">Business Risk</div>
+        <div class="mri-arch-status">Planned</div>
+        <div class="mri-arch-text">MCC code risk signals, domain age/tech stack analysis, business registration verification, chargeback history signals.</div>
+      </div>
+    </div>
+
+    <div class="annotation">
+      <strong>MRI is the strategic umbrella.</strong> Brian Fitzpatrick's direction (Apr 3, 2026): <em>"OFAC is a subset of reputation management... we need to be able to move the other areas of screening... reviews and those types of things."</em> Final name: <strong>Merchant Risk Intelligence (MRI)</strong>. The We Monitor column aggregates all active MRI factors into a single risk signal.
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════════
+       SECTION 1: WE MONITOR TABLE WITH MRI COLUMN
+  ══════════════════════════════════════════════════════════ -->
+  <div>
+    <div class="section-label">Section 1 — We Monitor Table · MRI Column</div>
+    <div class="section-desc">The We Monitor table gains a <strong style="color:#93C5FD">Merchant Risk Intelligence (MRI)</strong> column — an aggregate risk signal that rolls up multiple screening factors into a single status, just like Website Compliance and Product Compliance. OFAC/sanctions screening is one factor within MRI. The column shows the worst-case status across all active risk signals. Clicking the status badge opens the MRI modal.</div>
 
     <div class="we-monitor-shell">
       <!-- App Bar -->
@@ -1034,7 +1134,7 @@
               <th>Website</th>
               <th>Team<br>Members</th>
               <th>Scans</th>
-              <th class="ofac-header">OFAC Status</th>
+              <th class="ofac-header" title="Merchant Risk Intelligence">MRI</th>
               <th>Cases</th>
               <th>Actions</th>
             </tr>
@@ -1067,7 +1167,7 @@
               <td class="text-center"><span class="member-count">3</span></td>
               <td class="text-center" style="font-size:12px;color:#475569;">14</td>
               <td class="ofac-cell">
-                <span class="ofac-badge ofac-clear">
+                <span class="ofac-badge ofac-clear" title="MRI: All signals clear">
                   <svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="6.5" cy="6.5" r="6" stroke="#16A34A" stroke-width="1.5"/><path d="M4 6.5L5.8 8.5L9 5" stroke="#16A34A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
                   Clear
                 </span>
@@ -1076,7 +1176,7 @@
               <td class="text-center"><span class="cases-count">0</span></td>
               <td><button class="chevron-btn">⌄</button></td>
             </tr>
-            <!-- Row 2: Match -->
+            <!-- Row 2: Risk Signals -->
             <tr>
               <td><input type="checkbox" /></td>
               <td>
@@ -1103,7 +1203,7 @@
               <td class="text-center" style="font-size:12px;color:#475569;">28</td>
               <td class="ofac-cell">
                 <button class="ofac-badge ofac-match" onclick="document.getElementById('modal-overview').style.display='flex'; void(0)">
-                  ⚠ Review Required (2)
+                  ⚠ Risk Signals (2)
                 </button>
                 <div style="font-size:10.5px;color:#94A3B8;margin-top:3px;">2 contacts require review</div>
               </td>
@@ -1144,7 +1244,7 @@
               <td class="text-center"><span class="cases-count">0</span></td>
               <td><button class="chevron-btn">⌄</button></td>
             </tr>
-            <!-- Row 4: Not Screened -->
+            <!-- Row 4: Not Assessed -->
             <tr>
               <td><input type="checkbox" /></td>
               <td>
@@ -1170,11 +1270,12 @@
               <td class="text-center"><span class="member-count">1</span></td>
               <td class="text-center" style="font-size:12px;color:#475569;">7</td>
               <td class="ofac-cell">
-                <span class="ofac-badge ofac-unscreened">— Not Screened</span>
+                <span class="ofac-badge ofac-unscreened">— Not Assessed</span>
                 <div style="font-size:10.5px;color:#94A3B8;margin-top:3px;">Missing required fields</div>
               </td>
               <td class="text-center"><span class="cases-count">1</span></td>
               <td><button class="chevron-btn">⌄</button></td>
+            </tr>
             <!-- Row 5: Escalated -->
             <tr>
               <td><input type="checkbox" /></td>
@@ -1244,18 +1345,17 @@
     </div>
 
     <div class="annotation">
-      <strong>📐 Design Note — OFAC Status Column:</strong> The OFAC Status column aggregates screening results across <em>all contacts</em> (owners, control persons) associated with a company. The column reflects <strong>worst-case status</strong> across 6 states (priority highest→lowest): <strong>🔴 Escalated</strong> → <strong>📋 Case Open</strong> → <strong>⚠ Review Required</strong> → <strong>⊙ Pending</strong> → <strong>✓ Clear</strong> → <strong>— Not Screened</strong>.<br><br>
-      <strong>State definitions:</strong> <strong>"⚠ Review Required"</strong> = potential match detected — processor must decide: Clear (false positive) or Escalate to Qredible compliance. <strong>"🔴 Escalated"</strong> = processor flagged the match; Qredible internal compliance team is now investigating. <strong>"📋 Case Open"</strong> = escalation resulted in a KYC documentation request case being sent to the merchant. Clicking <strong>"⚠ Review Required (N)"</strong> opens the Sanctions Screening Modal where contacts can be reviewed, cleared, or escalated. "Not Screened" indicates missing required fields (DL, DOB, or name) needed for sanctions screening.
+      <strong>MRI (Merchant Risk Intelligence)</strong> is the umbrella column. OFAC sanctions screening is one factor. Future factors include: Reputation (BBB, Google Reviews, Trustpilot, Yelp, FDA warnings), Legal/Regulatory actions, and Business Risk signals. The column shows the aggregate worst-case status — if any factor has a match or issue, MRI shows the elevated status.
     </div>
   </div>
 
 
   <!-- ═══════════════════════════════════════════════════════
-       SECTION 2: SANCTIONS SCREENING MODAL — OVERVIEW STATE
+       SECTION 2: MRI MODAL — SANCTIONS TAB (OVERVIEW)
   ══════════════════════════════════════════════════════════ -->
   <div>
-    <div class="section-label">Section 2 — Sanctions Screening Modal · Overview State</div>
-    <div class="section-desc">Opened by clicking the company-level OFAC status badge. Shows all contacts for the selected company with their individual OFAC screening results, summary counts, and bulk actions.</div>
+    <div class="section-label">Section 2 — MRI Modal · Sanctions Tab (Overview)</div>
+    <div class="section-desc">Opened by clicking the company-level MRI status badge. Shows all contacts for the selected company with their individual sanctions screening results, summary counts, and bulk actions. The modal is the MRI hub — tabbed sections cover each active risk factor.</div>
 
     <div class="modal-sim" id="modal-overview" style="display:flex;">
       <!-- Header -->
@@ -1263,8 +1363,8 @@
         <div class="modal-header-left">
           <div class="shield-icon">🛡️</div>
           <div>
-            <div class="modal-title">Sanctions Screening</div>
-            <div class="modal-subtitle">OFAC &amp; Regulatory Compliance Check</div>
+            <div class="modal-title">Merchant Risk Intelligence</div>
+            <div class="modal-subtitle">Sanctions · Reputation · Legal · Business Risk</div>
           </div>
         </div>
         <div class="modal-header-right">
@@ -1279,6 +1379,18 @@
         <button class="close-btn">✕</button>
       </div>
 
+      <!-- MRI Tabs -->
+      <div style="background:#F7F5FF;border-bottom:1px solid #EDE9FE;padding:0 20px;display:flex;align-items:center;gap:0;flex-shrink:0;">
+        <div style="padding:10px 16px;font-size:13px;font-weight:600;color:#4338CA;border-bottom:2px solid #4338CA;cursor:pointer;">Sanctions</div>
+        <div style="padding:10px 16px;font-size:13px;font-weight:500;color:#94A3B8;border-bottom:2px solid transparent;cursor:pointer;">Reputation</div>
+        <div style="padding:10px 16px;font-size:13px;font-weight:500;color:#94A3B8;border-bottom:2px solid transparent;cursor:pointer;">Legal</div>
+        <div style="padding:10px 16px;font-size:13px;font-weight:500;color:#94A3B8;border-bottom:2px solid transparent;cursor:pointer;">Business Risk</div>
+      </div>
+      <!-- Sanctions Tab Info Bar -->
+      <div style="background:#EFF6FF;border-bottom:1px solid #BFDBFE;padding:10px 20px;font-size:12.5px;color:#1D4ED8;flex-shrink:0;">
+        <strong>Showing: Sanctions Screening</strong> — OFAC &amp; regulatory sanctions checks. Click other tabs to view additional risk factors <em>(coming soon)</em>.
+      </div>
+
       <!-- Summary Cards -->
       <div class="summary-cards">
         <div class="summary-card card-total">
@@ -1291,7 +1403,7 @@
         </div>
         <div class="summary-card card-match">
           <div class="summary-card-value">2</div>
-          <div class="summary-card-label">Review Required</div>
+          <div class="summary-card-label">Pending Review</div>
         </div>
         <div class="summary-card card-unscreened">
           <div class="summary-card-value">0</div>
@@ -1310,7 +1422,7 @@
                 <th>Beneficial Owner</th>
                 <th>Control Person</th>
                 <th>DL on File</th>
-                <th>OFAC Status</th>
+                <th>Sanctions Status</th>
                 <th>Last Screened</th>
                 <th>Actions</th>
               </tr>
@@ -1408,10 +1520,10 @@
 
 
   <!-- ═══════════════════════════════════════════════════════
-       SECTION 3: SANCTIONS SCREENING MODAL — MATCH DETAIL
+       SECTION 3: MRI MODAL — SANCTIONS TAB (MATCH DETAIL)
   ══════════════════════════════════════════════════════════ -->
   <div>
-    <div class="section-label">Section 3 — Sanctions Screening Modal · Match Detail View</div>
+    <div class="section-label">Section 3 — MRI Modal · Sanctions Tab (Match Detail)</div>
     <div class="section-desc">Opened by clicking "View Details" on a contact with a potential match. Shows side-by-side comparison of contact record vs. SDN list match, with confidence score, review actions, and screening history timeline.</div>
 
     <div class="modal-sim" id="modal-detail" style="display:flex;">
@@ -1420,8 +1532,8 @@
         <div class="modal-header-left">
           <div class="shield-icon">🛡️</div>
           <div>
-            <div class="modal-title">Sanctions Screening</div>
-            <div class="modal-subtitle">OFAC &amp; Regulatory Compliance Check</div>
+            <div class="modal-title">Merchant Risk Intelligence</div>
+            <div class="modal-subtitle">Sanctions · Reputation · Legal · Business Risk</div>
           </div>
         </div>
         <div class="modal-header-right">
@@ -1442,7 +1554,7 @@
           ← Back to All Contacts
         </a>
         <span class="breadcrumb-sep">/</span>
-        <span class="breadcrumb-current">Michael Johnson — OFAC Match Detail</span>
+        <span class="breadcrumb-current">Michael Johnson — Sanctions Match Detail</span>
       </div>
 
       <!-- Body -->
@@ -1451,6 +1563,7 @@
         <!-- Contact Info Card -->
         <div class="contact-info-card">
           <h3>Michael Johnson</h3>
+
           <div class="contact-info-role">Owner / CEO &nbsp;·&nbsp; <span class="status-pill pill-match" style="font-size:11px;">⚠ 2 Potential Matches</span></div>
           <div class="contact-info-grid">
             <div class="contact-info-item">
@@ -1482,7 +1595,7 @@
 
         <!-- Match Results -->
         <div class="match-section-title">
-          OFAC Screening Results
+          Sanctions Screening Results
           <span class="match-count-badge">2 Potential Matches</span>
         </div>
 
@@ -1656,7 +1769,7 @@
 
     <div class="annotation">
       <strong>📐 Design Note — Match Confidence &amp; Actions:</strong> The sanctions screening API returns fuzzy match scores using phonetic algorithms (Soundex, Metaphone), Levenshtein distance, and field cross-referencing. <strong>≥95% → HIGH confidence</strong>, flagged and shown first. <strong>80–94% → MEDIUM confidence</strong>. <strong>&lt;80% → filtered out</strong> (not surfaced to reviewers). <br><br>
-      <strong>"✓ Clear — False Positive"</strong> marks the specific match as reviewed and confirmed not a true SDN hit. This creates an immutable audit trail entry with the reviewer's name, timestamp, and rationale (via note). The contact's overall OFAC status remains "Review Required" until ALL flagged matches on that contact are cleared or escalated. <br><br>
+      <strong>"✓ Clear — False Positive"</strong> marks the specific match as reviewed and confirmed not a true SDN hit. This creates an immutable audit trail entry with the reviewer's name, timestamp, and rationale (via note). The contact's overall sanctions status remains "Review Required" until ALL flagged matches on that contact are cleared or escalated. <br><br>
       <strong>"🚨 Escalate to Compliance Review"</strong>: (1) Contact status → ESCALATED (red badge). (2) An internal Qredible compliance task is created — not visible to the merchant. (3) Qredible compliance team reviews the match. (4) Outcome: <em>Clear</em> (false positive confirmed → status returns to Clear), <em>Request Documents</em> (creates KYC compliance case sent to merchant → status → Case Open), or <em>Confirmed Match</em> (processor alerted, merchant suspended). Once escalated, the match is locked from further edits by the processor pending compliance resolution.
     </div>
   </div>
