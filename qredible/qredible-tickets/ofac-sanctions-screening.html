@@ -931,6 +931,48 @@
       line-height: 1.5;
     }
 
+    .ofac-escalated {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #7F1D1D;
+      background: #FEE2E2;
+      padding: 4px 10px;
+      border-radius: 5px;
+      border: 1px solid #FCA5A5;
+      white-space: nowrap;
+    }
+    .ofac-case-open {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #1D4ED8;
+      background: #DBEAFE;
+      padding: 4px 10px;
+      border-radius: 5px;
+      border: 1px solid #93C5FD;
+      white-space: nowrap;
+    }
+    .escalate-callout {
+      background: #FFFBEB;
+      border: 1px solid #FDE68A;
+      border-radius: 6px;
+      padding: 12px 14px;
+      margin: 8px 14px 10px;
+      font-size: 12px;
+      color: #78350F;
+      line-height: 1.6;
+    }
+    .escalate-callout strong { color: #92400E; font-size: 12px; }
+    .escalate-callout ol { margin: 6px 0 0 16px; }
+    .escalate-callout li { margin-bottom: 3px; }
+    .escalate-callout ul { margin: 4px 0 0 16px; list-style: disc; }
+    .escalate-callout ul li { margin-bottom: 2px; }
+
     /* Utility */
     .text-center { text-align: center; }
     .font-mono { font-family: var(--font-mono); }
@@ -1061,7 +1103,7 @@
               <td class="text-center" style="font-size:12px;color:#475569;">28</td>
               <td class="ofac-cell">
                 <button class="ofac-badge ofac-match" onclick="document.getElementById('modal-overview').style.display='flex'; void(0)">
-                  ⚠ Match (2)
+                  ⚠ Review Required (2)
                 </button>
                 <div style="font-size:10.5px;color:#94A3B8;margin-top:3px;">2 contacts require review</div>
               </td>
@@ -1133,14 +1175,77 @@
               </td>
               <td class="text-center"><span class="cases-count">1</span></td>
               <td><button class="chevron-btn">⌄</button></td>
+            <!-- Row 5: Escalated -->
+            <tr>
+              <td><input type="checkbox" /></td>
+              <td>
+                <div class="company-name">Sunset Wellness LLC</div>
+                <div class="pill-row">
+                  <span class="pill pill-state">NV</span>
+                  <span class="pill pill-industry">Dispensary</span>
+                  <span class="pill pill-hemp">Hemp/CBD</span>
+                </div>
+                <div class="pill-row" style="margin-top:5px;">
+                  <span class="pill pill-portal-active">● Portal Active</span>
+                </div>
+              </td>
+              <td>
+                <div class="pill-row">
+                  <span class="pill" style="background:#F1F5F9;color:#475569;">Sunset Wellness</span>
+                </div>
+              </td>
+              <td><span class="lic-active">✓ Active</span><br><span style="font-size:11px;color:#94A3B8;">Exp 03/2027</span></td>
+              <td class="text-center"><span class="compliance-chip chip-red">⚠ 2</span></td>
+              <td class="text-center"><span class="compliance-chip chip-gray">19</span></td>
+              <td><a class="site-link" href="#">sunsetwellness.com</a></td>
+              <td class="text-center"><span class="member-count">3</span></td>
+              <td class="text-center" style="font-size:12px;color:#475569;">11</td>
+              <td class="ofac-cell">
+                <span class="ofac-escalated">🔴 Escalated</span>
+                <div style="font-size:10.5px;color:#94A3B8;margin-top:3px;">Qredible compliance reviewing</div>
+              </td>
+              <td class="text-center"><span class="cases-count">1</span></td>
+              <td><button class="chevron-btn">⌄</button></td>
             </tr>
-          </tbody>
+            <!-- Row 6: Case Open -->
+            <tr>
+              <td><input type="checkbox" /></td>
+              <td>
+                <div class="company-name">Green Valley Farms</div>
+                <div class="pill-row">
+                  <span class="pill pill-state">OR</span>
+                  <span class="pill pill-industry">Retailer</span>
+                </div>
+                <div class="pill-row" style="margin-top:5px;">
+                  <span class="pill pill-portal-active">● Portal Active</span>
+                </div>
+              </td>
+              <td>
+                <div class="pill-row">
+                  <span class="pill" style="background:#F1F5F9;color:#475569;">GVF</span>
+                </div>
+              </td>
+              <td><span class="lic-active">✓ Active</span><br><span style="font-size:11px;color:#94A3B8;">Exp 09/2026</span></td>
+              <td class="text-center"><span class="compliance-chip chip-gray">1</span></td>
+              <td class="text-center"><span class="compliance-chip chip-gray">24</span></td>
+              <td><a class="site-link" href="#">greenvalleyfarms.com</a></td>
+              <td class="text-center"><span class="member-count">2</span></td>
+              <td class="text-center" style="font-size:12px;color:#475569;">9</td>
+              <td class="ofac-cell">
+                <span class="ofac-case-open">📋 Case Open</span>
+                <div style="font-size:10.5px;color:#94A3B8;margin-top:3px;">KYC docs requested from merchant</div>
+              </td>
+              <td class="text-center"><span class="cases-count" style="color:#1D4ED8;font-weight:600;">1</span></td>
+              <td><button class="chevron-btn">⌄</button></td>
+            </tr>
+            </tbody>
         </table>
       </div>
     </div>
 
     <div class="annotation">
-      <strong>📐 Design Note — OFAC Status Column:</strong> The OFAC Status column aggregates screening results across <em>all contacts</em> (owners, control persons) associated with a company. The column reflects <strong>worst-case status</strong>: if any contact has a potential match, the entire company row shows "Match". Status values follow a priority hierarchy: <strong>Match</strong> &gt; <strong>Pending</strong> &gt; <strong>Clear</strong> &gt; <strong>Not Screened</strong>. Clicking the <strong>"⚠ Match (N)"</strong> badge opens the Sanctions Screening Modal where individual contact results can be reviewed, cleared as false positives, or escalated. "Not Screened" indicates missing required fields (DL, DOB, or name) needed for the Vital4 API call.
+      <strong>📐 Design Note — OFAC Status Column:</strong> The OFAC Status column aggregates screening results across <em>all contacts</em> (owners, control persons) associated with a company. The column reflects <strong>worst-case status</strong> across 6 states (priority highest→lowest): <strong>🔴 Escalated</strong> → <strong>📋 Case Open</strong> → <strong>⚠ Review Required</strong> → <strong>⊙ Pending</strong> → <strong>✓ Clear</strong> → <strong>— Not Screened</strong>.<br><br>
+      <strong>State definitions:</strong> <strong>"⚠ Review Required"</strong> = potential match detected — processor must decide: Clear (false positive) or Escalate to Qredible compliance. <strong>"🔴 Escalated"</strong> = processor flagged the match; Qredible internal compliance team is now investigating. <strong>"📋 Case Open"</strong> = escalation resulted in a KYC documentation request case being sent to the merchant. Clicking <strong>"⚠ Review Required (N)"</strong> opens the Sanctions Screening Modal where contacts can be reviewed, cleared, or escalated. "Not Screened" indicates missing required fields (DL, DOB, or name) needed for sanctions screening.
     </div>
   </div>
 
@@ -1186,7 +1291,7 @@
         </div>
         <div class="summary-card card-match">
           <div class="summary-card-value">2</div>
-          <div class="summary-card-label">Pending Review</div>
+          <div class="summary-card-label">Review Required</div>
         </div>
         <div class="summary-card card-unscreened">
           <div class="summary-card-value">0</div>
@@ -1292,12 +1397,12 @@
       <div class="modal-footer">
         <button class="btn-primary">🛡️ Screen All Contacts</button>
         <button class="btn-secondary">↓ Export Report</button>
-        <div class="footer-meta">Last full screening: <strong>Apr 1, 2026</strong> &nbsp;·&nbsp; Powered by Vital4</div>
+        <div class="footer-meta">Last full screening: <strong>Apr 1, 2026</strong> &nbsp;·&nbsp; Powered by sanctions screening API</div>
       </div>
     </div>
 
     <div class="annotation">
-      <strong>📐 Design Note — Contacts Table:</strong> Contacts are sourced from the <em>Company Team</em> section. <strong>Beneficial Owner</strong> = 25%+ ownership or direct/indirect control of the entity (per FinCEN definitions). <strong>Control Person</strong> = individual with significant responsibility to control, manage, or direct the company (e.g., CEO, CFO, COO, General Partner). <strong>DL on File</strong> indicates whether driver's license data (state, number, expiry) is available — this significantly improves Vital4 matching accuracy by enabling fuzzy name + DOB + ID cross-matching. Missing DL data may reduce confidence levels. "View Details" is only shown for contacts with potential matches; "Re-screen" triggers a fresh Vital4 API call for that individual.
+      <strong>📐 Design Note — Contacts Table:</strong> Contacts are sourced from the <em>Company Team</em> section. <strong>Beneficial Owner</strong> = 25%+ ownership or direct/indirect control of the entity (per FinCEN definitions). <strong>Control Person</strong> = individual with significant responsibility to control, manage, or direct the company (e.g., CEO, CFO, COO, General Partner). <strong>DL on File</strong> indicates whether driver's license data (state, number, expiry) is available — this significantly improves enhanced identity matching accuracy by enabling fuzzy name + DOB + ID cross-matching. Missing DL data may reduce confidence levels. "View Details" is only shown for contacts with potential matches; "Re-screen" triggers a fresh sanctions screening API call for that individual.
     </div>
   </div>
 
@@ -1426,8 +1531,23 @@
           </table>
           <div class="match-actions">
             <button class="btn-clear-fp">✓ Clear — False Positive</button>
-            <button class="btn-escalate">⚠ Escalate</button>
+            <button class="btn-escalate">🚨 Escalate to Compliance Review</button>
             <button class="btn-note">✏ Add Note</button>
+          </div>
+          <div class="escalate-callout">
+            <strong>What happens when you escalate:</strong>
+            <ol>
+              <li>Contact status → <strong>ESCALATED</strong> (red badge)</li>
+              <li>Internal Qredible compliance task created — not visible to merchant</li>
+              <li>Qredible compliance team reviews the match</li>
+              <li>Outcome options:
+                <ul>
+                  <li><strong>Clear</strong> — team confirms false positive → status returns to Clear</li>
+                  <li><strong>Request Documents</strong> — creates a KYC compliance case and sends to merchant</li>
+                  <li><strong>Confirmed Match</strong> — processor alerted to take action (suspend merchant)</li>
+                </ul>
+              </li>
+            </ol>
           </div>
         </div>
 
@@ -1476,8 +1596,23 @@
           </table>
           <div class="match-actions">
             <button class="btn-clear-fp">✓ Clear — False Positive</button>
-            <button class="btn-escalate">⚠ Escalate</button>
+            <button class="btn-escalate">🚨 Escalate to Compliance Review</button>
             <button class="btn-note">✏ Add Note</button>
+          </div>
+          <div class="escalate-callout">
+            <strong>What happens when you escalate:</strong>
+            <ol>
+              <li>Contact status → <strong>ESCALATED</strong> (red badge)</li>
+              <li>Internal Qredible compliance task created — not visible to merchant</li>
+              <li>Qredible compliance team reviews the match</li>
+              <li>Outcome options:
+                <ul>
+                  <li><strong>Clear</strong> — team confirms false positive → status returns to Clear</li>
+                  <li><strong>Request Documents</strong> — creates a KYC compliance case and sends to merchant</li>
+                  <li><strong>Confirmed Match</strong> — processor alerted to take action (suspend merchant)</li>
+                </ul>
+              </li>
+            </ol>
           </div>
         </div>
 
@@ -1515,13 +1650,14 @@
       <div class="modal-footer">
         <button class="btn-primary">🛡️ Re-screen Contact</button>
         <button class="btn-secondary">↓ Export Contact Report</button>
-        <div class="footer-meta">Vital4 API &nbsp;·&nbsp; Screened Apr 1, 2026 09:14 UTC</div>
+        <div class="footer-meta">sanctions screening API &nbsp;·&nbsp; Screened Apr 1, 2026 09:14 UTC</div>
       </div>
     </div>
 
     <div class="annotation">
-      <strong>📐 Design Note — Match Confidence &amp; Actions:</strong> Vital4 returns fuzzy match scores using phonetic algorithms (Soundex, Metaphone), Levenshtein distance, and field cross-referencing. <strong>≥95% → HIGH confidence</strong>, flagged and shown first. <strong>80–94% → MEDIUM confidence</strong>. <strong>&lt;80% → filtered out</strong> (not surfaced to reviewers). <br><br>
-      <strong>"✓ Clear — False Positive"</strong> marks the specific match as reviewed and confirmed not a true SDN hit. This creates an immutable audit trail entry with the reviewer's name, timestamp, and rationale (via note). The contact's overall OFAC status remains "Potential Match" until ALL flagged matches on that contact are cleared. <strong>"⚠ Escalate"</strong> routes the case to the compliance team queue with high priority. Once escalated, the match is locked from further edits pending compliance resolution.
+      <strong>📐 Design Note — Match Confidence &amp; Actions:</strong> The sanctions screening API returns fuzzy match scores using phonetic algorithms (Soundex, Metaphone), Levenshtein distance, and field cross-referencing. <strong>≥95% → HIGH confidence</strong>, flagged and shown first. <strong>80–94% → MEDIUM confidence</strong>. <strong>&lt;80% → filtered out</strong> (not surfaced to reviewers). <br><br>
+      <strong>"✓ Clear — False Positive"</strong> marks the specific match as reviewed and confirmed not a true SDN hit. This creates an immutable audit trail entry with the reviewer's name, timestamp, and rationale (via note). The contact's overall OFAC status remains "Review Required" until ALL flagged matches on that contact are cleared or escalated. <br><br>
+      <strong>"🚨 Escalate to Compliance Review"</strong>: (1) Contact status → ESCALATED (red badge). (2) An internal Qredible compliance task is created — not visible to the merchant. (3) Qredible compliance team reviews the match. (4) Outcome: <em>Clear</em> (false positive confirmed → status returns to Clear), <em>Request Documents</em> (creates KYC compliance case sent to merchant → status → Case Open), or <em>Confirmed Match</em> (processor alerted, merchant suspended). Once escalated, the match is locked from further edits by the processor pending compliance resolution.
     </div>
   </div>
 
@@ -1531,7 +1667,7 @@
   ══════════════════════════════════════════════════════════ -->
   <div>
     <div class="section-label">Section 4 — Updated Contacts &amp; Referrals Template</div>
-    <div class="section-desc">The contacts upload template has been updated with OFAC-required fields. The comparison below highlights fields removed (left) vs. added (right). New fields support company linking, OFAC screening categorization, and enhanced Vital4 matching accuracy.</div>
+    <div class="section-desc">The contacts upload template has been updated with OFAC-required fields. The comparison below highlights fields removed (left) vs. added (right). New fields support company linking, OFAC screening categorization, and enhanced identity matching accuracy.</div>
 
     <div class="template-compare">
       <!-- Current Template -->
@@ -1558,6 +1694,17 @@
             <tr><td class="field-missing">Owner #2 Phone</td></tr>
             <tr><td class="field-missing">Owner #2 Beneficial Owner (Y/N)</td></tr>
             <tr><td class="field-missing">Owner #2 Control Person (Y/N)</td></tr>
+            <tr><td class="field-missing">Owner #2 DL State</td></tr>
+            <tr><td class="field-missing">Owner #2 DL Number</td></tr>
+            <tr><td class="field-missing">Owner #2 DL Expiry</td></tr>
+            <tr><td class="field-missing">Compliance Contact Name</td></tr>
+            <tr><td class="field-missing">Compliance Contact Email</td></tr>
+            <tr><td class="field-missing">Compliance Contact Phone</td></tr>
+            <tr><td class="field-missing">Compliance Contact DL</td></tr>
+            <tr><td class="field-missing">Primary Contact Name</td></tr>
+            <tr><td class="field-missing">Primary Contact Email</td></tr>
+            <tr><td class="field-missing">Primary Contact Phone</td></tr>
+            <tr><td class="field-missing">Primary Contact DL</td></tr>
             <tr><td class="field-existing">Contact First Name</td></tr>
             <tr><td class="field-existing">Contact Last Name</td></tr>
             <tr><td class="field-existing">Contact Email</td></tr>
@@ -1595,6 +1742,23 @@
             <tr><td class="field-new">Owner #2 Phone <span class="field-new-badge">NEW</span></td></tr>
             <tr><td class="field-new">Owner #2 Beneficial Owner (Y/N) <span class="field-new-badge">NEW</span></td></tr>
             <tr><td class="field-new">Owner #2 Control Person (Y/N) <span class="field-new-badge">NEW</span></td></tr>
+            <tr><td class="field-new">Owner #2 DL Number <span class="field-new-badge">NEW</span></td></tr>
+            <tr><td class="field-new">Owner #2 DL State <span class="field-new-badge">NEW</span></td></tr>
+            <tr><td class="field-new">Owner #2 DL Expiry <span class="field-new-badge">NEW</span></td></tr>
+            <tr><td class="field-existing">Compliance Contact Name</td></tr>
+            <tr><td class="field-existing">Compliance Contact Email</td></tr>
+            <tr><td class="field-existing">Compliance Contact Phone</td></tr>
+            <tr><td class="field-existing">Compliance Contact Role/Title</td></tr>
+            <tr><td class="field-new">Compliance Contact DL Number <span class="field-new-badge">NEW</span></td></tr>
+            <tr><td class="field-new">Compliance Contact DL State <span class="field-new-badge">NEW</span></td></tr>
+            <tr><td class="field-new">Compliance Contact DL Expiry <span class="field-new-badge">NEW</span></td></tr>
+            <tr><td class="field-existing">Primary Contact Name</td></tr>
+            <tr><td class="field-existing">Primary Contact Email</td></tr>
+            <tr><td class="field-existing">Primary Contact Phone</td></tr>
+            <tr><td class="field-existing">Primary Contact Role/Title</td></tr>
+            <tr><td class="field-new">Primary Contact DL Number <span class="field-new-badge">NEW</span></td></tr>
+            <tr><td class="field-new">Primary Contact DL State <span class="field-new-badge">NEW</span></td></tr>
+            <tr><td class="field-new">Primary Contact DL Expiry <span class="field-new-badge">NEW</span></td></tr>
             <tr><td class="field-existing">Contact First Name</td></tr>
             <tr><td class="field-existing">Contact Last Name</td></tr>
             <tr><td class="field-existing">Contact Email</td></tr>
@@ -1625,7 +1789,7 @@
           </tr>
           <tr>
             <td>Owner #1–2 Phone</td>
-            <td>Phone number provides an additional identity signal for Vital4 screening. Also required for direct outreach during compliance review or escalation.</td>
+            <td>Phone number provides an additional identity signal for sanctions screening. Also required for direct outreach during compliance review or escalation.</td>
           </tr>
           <tr>
             <td>Owner #1 Role / Title</td>
@@ -1641,7 +1805,7 @@
           </tr>
           <tr>
             <td>Owner #1 DL State / Number / Expiry</td>
-            <td>Driver's license data dramatically improves Vital4 fuzzy match accuracy. Name + DOB alone produces high false-positive rates for common names (e.g., "Michael Johnson"). Adding state-issued ID cross-reference reduces false positives by ~40% and increases match confidence scores.</td>
+            <td>Driver's license data dramatically improves enhanced identity matching accuracy. Name + DOB alone produces high false-positive rates for common names (e.g., "Michael Johnson"). Adding state-issued ID cross-reference reduces false positives by ~40% and increases match confidence scores.</td>
           </tr>
           <tr>
             <td>Contact Phone / Role</td>
