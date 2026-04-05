@@ -1125,86 +1125,93 @@
   </div>
 
   <!-- ═══════════════════════════════════════════════════════════ -->
-  <!-- SECTION 2: COA LINK STRATEGY                                -->
+    <!-- SECTION 2: URL CONFIGURATION                                -->
   <!-- ═══════════════════════════════════════════════════════════ -->
   <div class="card">
     <div class="card-header">
-      COA Link Strategy
+      URL Configuration
       <span class="badge-new">New</span>
     </div>
     <div class="card-body">
 
-      <div class="link-cards-grid">
+      <p style="font-size:13px; color:var(--gray-600); margin-bottom:20px;">Every MyCOA page comes with two types of URLs — a <strong>listing URL</strong> (your full COA library with search) and <strong>direct COA links</strong> (unique URL for each individual COA). Both are always available. The choice below determines which domain they live on.</p>
 
-        <!-- Card 1: Dynamic Listing URL -->
-        <div class="link-card">
-          <div class="link-card-icon">🔗</div>
+      <div class="link-cards-grid" style="grid-template-columns: repeat(2, 1fr);">
+
+        <!-- Option 1: Default Qredible URL -->
+        <div class="link-card" style="border:2px solid var(--gray-300);">
+          <div class="link-card-icon">🌐</div>
           <div>
-            <div class="link-card-title">Dynamic Listing URL</div>
+            <div class="link-card-title">Default — Qredible Domain</div>
             <span class="link-card-badge badge-green-pill">Current Feature</span>
           </div>
-          <div class="link-card-desc">A single URL for your full COA library. Customers browse and search all published COAs.</div>
-          <div class="link-card-url">members.qredible.com/my-coa/<strong>black-bear-hemp-dispensary-164911</strong></div>
+          <div class="link-card-desc">Your MyCOA pages are hosted on the standard Qredible domain. No setup required — works out of the box.</div>
+
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <div style="font-size:11px; font-weight:600; color:var(--gray-500); text-transform:uppercase; letter-spacing:0.05em;">Listing URL</div>
+            <div class="link-card-url">members.qredible.com/my-coa/<strong>black-bear-hemp-dispensary-164911</strong></div>
+            <div style="font-size:11px; font-weight:600; color:var(--gray-500); text-transform:uppercase; letter-spacing:0.05em; margin-top:4px;">Direct COA Link</div>
+            <div class="link-card-url">members.qredible.com/my-coa/<strong>black-bear-hemp-dispensary-164911</strong>/coa/<strong>thca-live-rosin-sex-panther</strong>/<strong>02-18-2025-5853</strong></div>
+          </div>
+
           <div class="link-card-usecase">
-            <strong>Best for:</strong> Site header/footer link, "Lab Results" nav menu item
+            <strong>Pros:</strong> Zero setup. Instant. QR codes and direct links work immediately.
           </div>
         </div>
 
-        <!-- Card 2: Direct COA URL -->
-        <div class="link-card">
-          <div class="link-card-icon">📄</div>
+        <!-- Option 2: Custom Domain (CNAME) -->
+        <div class="link-card" style="border:2px solid var(--blue);">
+          <div class="link-card-icon">✨</div>
           <div>
-            <div class="link-card-title">Direct COA URL</div>
-            <span class="link-card-badge badge-orange-pill">Phase 1A — SSR</span>
+            <div class="link-card-title">Custom Domain — SEO Optimized</div>
+            <span class="link-card-badge" style="background:var(--blue-light); color:var(--blue);">Recommended</span>
           </div>
-          <div class="link-card-desc">Each COA gets a unique, shareable URL. Link directly from product pages.</div>
-          <div class="link-card-url">coa.blackbeardispensary.com/<strong>thca-live-rosin-sex-panther</strong>/<strong>02-18-2025-5853</strong></div>
-          <div class="link-card-usecase">
-            <strong>Best for:</strong> Product page links, QR codes on packaging
-          </div>
-        </div>
+          <div class="link-card-desc">Point your own subdomain to MyCOA via CNAME. Same content, your brand's domain. Better for SEO — search engines attribute authority to your domain.</div>
 
-        <!-- Card 3: QR Code -->
-        <div class="link-card">
-          <div class="link-card-icon">📱</div>
-          <div>
-            <div class="link-card-title">QR Code</div>
-            <span class="link-card-badge badge-green-pill">Current Feature</span>
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <div style="font-size:11px; font-weight:600; color:var(--gray-500); text-transform:uppercase; letter-spacing:0.05em;">Listing URL</div>
+            <div class="link-card-url">coa.<strong>blackbeardispensary</strong>.com</div>
+            <div style="font-size:11px; font-weight:600; color:var(--gray-500); text-transform:uppercase; letter-spacing:0.05em; margin-top:4px;">Direct COA Link</div>
+            <div class="link-card-url">coa.<strong>blackbeardispensary</strong>.com/<strong>thca-live-rosin-sex-panther</strong>/<strong>02-18-2025-5853</strong></div>
           </div>
-          <div class="link-card-desc">Scannable QR code printed on product labels. Links to the Direct COA URL.</div>
-          <div style="display:flex; align-items:center; gap:12px;">
-            <div class="qr-placeholder">
-              <!-- SVG QR placeholder -->
-              <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="4" y="4" width="22" height="22" rx="2" fill="#D1D5DB"/>
-                <rect x="8" y="8" width="14" height="14" rx="1" fill="#6B7280"/>
-                <rect x="38" y="4" width="22" height="22" rx="2" fill="#D1D5DB"/>
-                <rect x="42" y="8" width="14" height="14" rx="1" fill="#6B7280"/>
-                <rect x="4" y="38" width="22" height="22" rx="2" fill="#D1D5DB"/>
-                <rect x="8" y="42" width="14" height="14" rx="1" fill="#6B7280"/>
-                <rect x="38" y="38" width="6" height="6" fill="#9CA3AF"/>
-                <rect x="46" y="38" width="6" height="6" fill="#9CA3AF"/>
-                <rect x="54" y="38" width="6" height="6" fill="#9CA3AF"/>
-                <rect x="38" y="46" width="6" height="6" fill="#9CA3AF"/>
-                <rect x="50" y="46" width="10" height="6" fill="#9CA3AF"/>
-                <rect x="38" y="54" width="6" height="6" fill="#9CA3AF"/>
-                <rect x="46" y="54" width="14" height="6" fill="#9CA3AF"/>
-              </svg>
-            </div>
-            <div>
-              <button class="btn btn-ghost btn-sm" style="display:block; margin-bottom:6px;">Download QR</button>
-              <div style="font-size:10px; color:var(--gray-400);">PNG / SVG / PDF</div>
-            </div>
-          </div>
+
           <div class="link-card-usecase">
-            <strong>Best for:</strong> Physical product labels, in-store displays
+            <strong>Pros:</strong> Brand authority. SEO juice goes to your domain. Professional appearance. Custom SSL.
           </div>
         </div>
 
       </div>
 
-      <div class="info-box">
-        💡 <strong>For maximum SEO impact, use all three:</strong> listing URL in your navigation, direct URLs on product pages, and QR codes on packaging.
+      <!-- What's always available -->
+      <div style="margin-top:12px; padding:16px; background:var(--gray-50); border:1px solid var(--gray-200); border-radius:var(--radius-sm);">
+        <div style="font-size:13px; font-weight:600; color:var(--gray-800); margin-bottom:10px;">Always Available (Both Options)</div>
+        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px;">
+          <div style="display:flex; align-items:flex-start; gap:8px;">
+            <span style="font-size:16px;">🔗</span>
+            <div>
+              <div style="font-size:12px; font-weight:600; color:var(--gray-700);">Listing Page</div>
+              <div style="font-size:11px; color:var(--gray-500);">Full COA library with search &amp; dropdown</div>
+            </div>
+          </div>
+          <div style="display:flex; align-items:flex-start; gap:8px;">
+            <span style="font-size:16px;">📄</span>
+            <div>
+              <div style="font-size:12px; font-weight:600; color:var(--gray-700);">Direct COA Links</div>
+              <div style="font-size:11px; color:var(--gray-500);">Unique URL per COA — always in the COA URL column</div>
+            </div>
+          </div>
+          <div style="display:flex; align-items:flex-start; gap:8px;">
+            <span style="font-size:16px;">📱</span>
+            <div>
+              <div style="font-size:12px; font-weight:600; color:var(--gray-700);">QR Codes</div>
+              <div style="font-size:11px; color:var(--gray-500);">Scannable codes that resolve to the direct COA link</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-box" style="margin-top:12px;">
+        💡 <strong>Switching to a custom domain doesn't break anything.</strong> Existing <code>members.qredible.com</code> links continue to work via redirect. QR codes and bookmarks stay valid.
       </div>
 
     </div>
