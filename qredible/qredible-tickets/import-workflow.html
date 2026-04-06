@@ -514,7 +514,92 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#F1F5F9;color:#1E293B
   <div class="section-divider"></div>
 
   <!-- SECTION 4: STEP 3 VALIDATION -->
+  
+  <!-- Classification Auto-Classify Section -->
   <div class="section">
+    <div class="section-header">
+      <span class="badge badge-green">② Step 2b</span>
+      <h2>Auto-Classification — Controlled Values</h2>
+    </div>
+    <div class="section-body">
+      <p style="font-size:13px;color:#64748B;margin-bottom:4px;">Fields like <strong>Classification</strong>, <strong>Industry Type</strong>, and <strong>Type of Company</strong> are Qredible-controlled values — no user deviation allowed. The system auto-classifies using Q-Audit's keyword engine, then presents results for review.</p>
+      
+      <!-- Classification Auto-Classify Workflow -->
+      <div style="margin-top:20px;padding:16px;background:#F0F9FF;border:1px solid #BAE6FD;border-radius:10px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+          <span style="font-size:18px;">🏷️</span>
+          <div>
+            <div style="font-size:14px;font-weight:700;color:#1E3A5F;">Auto-Classification Engine</div>
+            <div style="font-size:12px;color:#64748B;">Products are auto-classified using Q-Audit keyword matching (primary keywords, exclusion keywords, priority sort order)</div>
+          </div>
+        </div>
+        
+        <div style="background:#fff;border:1px solid #E2E8F0;border-radius:6px;overflow:hidden;margin-bottom:12px;">
+          <table style="width:100%;border-collapse:collapse;font-size:12px;">
+            <thead>
+              <tr style="background:#1E3A5F;color:#fff;">
+                <th style="padding:8px 12px;text-align:left;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:0.05em;">Product Definition</th>
+                <th style="padding:8px 12px;text-align:left;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:0.05em;">Auto-Classified As</th>
+                <th style="padding:8px 12px;text-align:left;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:0.05em;">Matched Keywords</th>
+                <th style="padding:8px 12px;text-align:left;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:0.05em;">Confidence</th>
+                <th style="padding:8px 12px;text-align:left;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:0.05em;">Override</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-bottom:1px solid #F1F5F9;">
+                <td style="padding:8px 12px;color:#334155;">Full Spectrum <strong>Tincture</strong> 1000mg</td>
+                <td style="padding:8px 12px;"><span style="background:#DCFCE7;color:#15803D;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;">Tinctures</span></td>
+                <td style="padding:8px 12px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#3B82F6;">"tincture" → Tinctures (priority: 1)</td>
+                <td style="padding:8px 12px;"><span style="color:#16A34A;font-weight:700;">High</span></td>
+                <td style="padding:8px 12px;"><select style="padding:4px 8px;border:1px solid #E2E8F0;border-radius:4px;font-size:11px;font-family:'Plus Jakarta Sans',sans-serif;color:#334155;background:#fff;"><option selected>✅ Tinctures</option><option>Edibles</option><option>Topicals</option><option>Flower</option><option>Vape</option><option>Bath Bombs</option><option>Pets</option><option>Distillate</option><option>Dried Flower</option><option>Isolate</option></select></td>
+              </tr>
+              <tr style="border-bottom:1px solid #F1F5F9;">
+                <td style="padding:8px 12px;color:#334155;">Beach Break THC <strong>Seltzer</strong> 4-pack</td>
+                <td style="padding:8px 12px;"><span style="background:#DCFCE7;color:#15803D;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;">Edibles</span></td>
+                <td style="padding:8px 12px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#3B82F6;">"seltzer" → Edibles (priority: 3)</td>
+                <td style="padding:8px 12px;"><span style="color:#16A34A;font-weight:700;">High</span></td>
+                <td style="padding:8px 12px;"><select style="padding:4px 8px;border:1px solid #E2E8F0;border-radius:4px;font-size:11px;font-family:'Plus Jakarta Sans',sans-serif;color:#334155;background:#fff;"><option>Tinctures</option><option selected>✅ Edibles</option><option>Topicals</option><option>Flower</option><option>Vape</option><option>Bath Bombs</option><option>Pets</option><option>Distillate</option><option>Dried Flower</option><option>Isolate</option></select></td>
+              </tr>
+              <tr style="border-bottom:1px solid #F1F5F9;">
+                <td style="padding:8px 12px;color:#334155;">THC <strong>Gummies</strong> Passionfruit 15-Count</td>
+                <td style="padding:8px 12px;"><span style="background:#DCFCE7;color:#15803D;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;">Edibles</span></td>
+                <td style="padding:8px 12px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#3B82F6;">"gummies" → Edibles (priority: 2)</td>
+                <td style="padding:8px 12px;"><span style="color:#16A34A;font-weight:700;">High</span></td>
+                <td style="padding:8px 12px;"><select style="padding:4px 8px;border:1px solid #E2E8F0;border-radius:4px;font-size:11px;font-family:'Plus Jakarta Sans',sans-serif;color:#334155;background:#fff;"><option>Tinctures</option><option selected>✅ Edibles</option><option>Topicals</option><option>Flower</option><option>Vape</option><option>Bath Bombs</option><option>Pets</option><option>Distillate</option><option>Dried Flower</option><option>Isolate</option></select></td>
+              </tr>
+              <tr style="border-bottom:1px solid #F1F5F9;background:#FEF9C3;">
+                <td style="padding:8px 12px;color:#334155;">Premium Hemp <strong>Extract</strong> Capsules 50mg</td>
+                <td style="padding:8px 12px;"><span style="background:#FEF9C3;color:#D97706;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;">⚠️ Uncertain</span></td>
+                <td style="padding:8px 12px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#D97706;">"extract" → Tinctures? "capsules" → Edibles? (conflict)</td>
+                <td style="padding:8px 12px;"><span style="color:#D97706;font-weight:700;">Low</span></td>
+                <td style="padding:8px 12px;"><select style="padding:4px 8px;border:1px solid #FDE68A;border-radius:4px;font-size:11px;font-family:'Plus Jakarta Sans',sans-serif;color:#92400E;background:#FFFBEB;"><option>Tinctures</option><option>Edibles</option><option>Topicals</option><option>Flower</option><option>Vape</option><option>Bath Bombs</option><option>Pets</option><option>Distillate</option><option>Dried Flower</option><option>Isolate</option></select></td>
+              </tr>
+              <tr>
+                <td style="padding:8px 12px;color:#334155;">Artisan CBD <strong>Bath Bomb</strong> Lavender</td>
+                <td style="padding:8px 12px;"><span style="background:#DCFCE7;color:#15803D;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;">Bath Bombs</span></td>
+                <td style="padding:8px 12px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#3B82F6;">"bath bomb" → Bath Bombs (priority: 1)</td>
+                <td style="padding:8px 12px;"><span style="color:#16A34A;font-weight:700;">High</span></td>
+                <td style="padding:8px 12px;"><select style="padding:4px 8px;border:1px solid #E2E8F0;border-radius:4px;font-size:11px;font-family:'Plus Jakarta Sans',sans-serif;color:#334155;background:#fff;"><option>Tinctures</option><option>Edibles</option><option>Topicals</option><option>Flower</option><option>Vape</option><option selected>✅ Bath Bombs</option><option>Pets</option><option>Distillate</option><option>Dried Flower</option><option>Isolate</option></select></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        
+        <div style="display:flex;gap:8px;align-items:center;">
+          <span style="font-size:12px;color:#1E40AF;font-weight:600;">Summary:</span>
+          <span style="font-size:12px;color:#16A34A;">4 auto-classified (High confidence)</span>
+          <span style="color:#CBD5E1;">·</span>
+          <span style="font-size:12px;color:#D97706;">1 needs manual review (keyword conflict)</span>
+        </div>
+        
+        <div style="margin-top:10px;padding:8px 12px;background:#EFF6FF;border:1px solid #BFDBFE;border-radius:6px;font-size:11px;color:#1E40AF;">
+          💡 <strong>How it works:</strong> Q-Audit's keyword engine scans the Product Definition text against configured primary keywords and exclusion keywords with priority sort order. If multiple classifications match, the highest-priority keyword wins. Conflicts (equal priority) are flagged for manual review. Override dropdown lets you correct any misclassification before import.
+        </div>
+      </div>
+    </div>
+  </div>
+
+<div class="section">
     <div class="step-header">
       <span class="badge badge-green">② After</span>
       <div>
@@ -651,7 +736,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#F1F5F9;color:#1E293B
           <ul>
             <li>Filename similarity to product name / SKU</li>
             <li>Batch number extracted from filename</li>
-            <li>Aluma-extracted product name from COA PDF</li>
+            <li>Project Cambridge-extracted product name from COA PDF</li>
           </ul>
         </div>
         <table class="coa-table">
