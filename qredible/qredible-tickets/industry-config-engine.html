@@ -540,6 +540,154 @@ a:hover{text-decoration:underline}
     <div class="table-note mt8">
       <strong>ℹ️ How defaults apply:</strong> These defaults apply when a company with this Industry Type + Type of Company pair first gets a scan configured. Scan operators can always override per-company in the <strong>Q-ScanAI Scanner Configuration</strong> modal.
     </div>
+
+      <!-- Expanded Scan Check Detail — Privacy Policy for Hemp/CBD → Retailer -->
+      <div style="margin-top:20px;border:2px solid #3B82F6;border-radius:10px;overflow:hidden;">
+        <div style="background:#1E3A5F;padding:12px 16px;display:flex;align-items:center;gap:10px;">
+          <span style="color:#fff;font-size:14px;">🔍</span>
+          <span style="color:#fff;font-size:13px;font-weight:700;">Expanded View — Compliance Check Configuration</span>
+          <span style="margin-left:auto;color:#93C5FD;font-size:11px;">Click any check in the table to expand</span>
+        </div>
+
+        <!-- Scope selector -->
+        <div style="padding:12px 16px;background:#F8FAFC;border-bottom:1px solid #E2E8F0;display:flex;align-items:center;gap:10px;">
+          <span style="font-size:12px;font-weight:700;color:#334155;">Scope:</span>
+          <div style="display:flex;border:1px solid #E2E8F0;border-radius:6px;overflow:hidden;">
+            <div style="padding:6px 14px;font-size:12px;font-weight:600;color:#64748B;background:#fff;border-right:1px solid #E2E8F0;cursor:pointer;">Industry Type Only</div>
+            <div style="padding:6px 14px;font-size:12px;font-weight:600;color:#fff;background:#3B82F6;cursor:pointer;">IT + Type of Company</div>
+          </div>
+          <span style="font-size:11px;color:#64748B;">Industry-level rules apply to ALL types of company. IT+ToC rules override for specific types.</span>
+        </div>
+
+        <!-- Current context -->
+        <div style="padding:12px 16px;background:#EFF6FF;border-bottom:1px solid #BFDBFE;display:flex;align-items:center;gap:8px;">
+          <span style="padding:3px 10px;background:#1E3A5F;color:#fff;border-radius:4px;font-size:11px;font-weight:700;">Hemp / CBD</span>
+          <span style="color:#3B82F6;font-weight:700;">→</span>
+          <span style="padding:3px 10px;background:#3B82F6;color:#fff;border-radius:4px;font-size:11px;font-weight:700;">Retailer</span>
+          <span style="margin-left:auto;font-size:10px;color:#64748B;">Inherits from: Hemp / CBD (industry-level) + Retailer-specific overrides</span>
+        </div>
+
+        <!-- Privacy Policy check expanded -->
+        <div style="padding:16px;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;">
+            <span style="font-size:16px;">📋</span>
+            <div>
+              <div style="font-size:14px;font-weight:700;color:#1E3A5F;">Privacy Policy Compliance</div>
+              <div style="font-size:11px;color:#64748B;">Automated check · Scans website for privacy policy presence and required content</div>
+            </div>
+            <span style="margin-left:auto;padding:3px 10px;background:#DCFCE7;color:#166534;border-radius:20px;font-size:10px;font-weight:700;">✓ ON</span>
+          </div>
+
+          <!-- Industry-level requirements (Hemp/CBD) -->
+          <div style="margin-bottom:16px;">
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;">
+              <span style="font-size:11px;font-weight:700;color:#64748B;text-transform:uppercase;letter-spacing:0.06em;">Industry-Level Requirements</span>
+              <span style="padding:2px 6px;background:#F3F4F6;border-radius:4px;font-size:9px;font-weight:700;color:#64748B;">HEMP / CBD</span>
+              <span style="font-size:10px;color:#9CA3AF;">Applies to ALL types of company</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:4px;">
+              <div style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:#F0FDF4;border:1px solid #BBF7D0;border-radius:6px;">
+                <span style="color:#16A34A;font-size:12px;">✓</span>
+                <span style="font-size:12px;font-weight:600;color:#334155;">Privacy policy page exists</span>
+                <span style="margin-left:auto;padding:2px 6px;background:#FEF3C7;color:#D97706;border-radius:4px;font-size:9px;font-weight:700;">MEDIUM</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:#F0FDF4;border:1px solid #BBF7D0;border-radius:6px;">
+                <span style="color:#16A34A;font-size:12px;">✓</span>
+                <span style="font-size:12px;font-weight:600;color:#334155;">Data collection disclosure present</span>
+                <span style="margin-left:auto;padding:2px 6px;background:#FEF3C7;color:#D97706;border-radius:4px;font-size:9px;font-weight:700;">MEDIUM</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:#F0FDF4;border:1px solid #BBF7D0;border-radius:6px;">
+                <span style="color:#16A34A;font-size:12px;">✓</span>
+                <span style="font-size:12px;font-weight:600;color:#334155;">Consumer opt-out mechanism</span>
+                <span style="margin-left:auto;padding:2px 6px;background:#FEE2E2;color:#DC2626;border-radius:4px;font-size:9px;font-weight:700;">HIGH</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- IT+ToC specific requirements (Hemp/CBD → Retailer) -->
+          <div style="margin-bottom:16px;">
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;">
+              <span style="font-size:11px;font-weight:700;color:#1D4ED8;text-transform:uppercase;letter-spacing:0.06em;">Type-Specific Requirements</span>
+              <span style="padding:2px 6px;background:#DBEAFE;border-radius:4px;font-size:9px;font-weight:700;color:#1D4ED8;">HEMP / CBD → RETAILER</span>
+              <span style="font-size:10px;color:#9CA3AF;">Overrides / additions for this specific type</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:4px;">
+              <div style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:#EFF6FF;border:1px solid #BFDBFE;border-radius:6px;">
+                <span style="color:#3B82F6;font-size:12px;">✓</span>
+                <span style="font-size:12px;font-weight:600;color:#334155;">CBD-specific data collection disclosure</span>
+                <span style="font-size:10px;color:#64748B;margin-left:4px;">— mention of product usage data, COA sharing</span>
+                <span style="margin-left:auto;padding:2px 6px;background:#FEF3C7;color:#D97706;border-radius:4px;font-size:9px;font-weight:700;">MEDIUM</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:#EFF6FF;border:1px solid #BFDBFE;border-radius:6px;">
+                <span style="color:#3B82F6;font-size:12px;">✓</span>
+                <span style="font-size:12px;font-weight:600;color:#334155;">Age verification consent</span>
+                <span style="font-size:10px;color:#64748B;margin-left:4px;">— disclosure that age data is collected for 21+ verification</span>
+                <span style="margin-left:auto;padding:2px 6px;background:#FEE2E2;color:#DC2626;border-radius:4px;font-size:9px;font-weight:700;">HIGH</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:#EFF6FF;border:1px solid #BFDBFE;border-radius:6px;">
+                <span style="color:#3B82F6;font-size:12px;">✓</span>
+                <span style="font-size:12px;font-weight:600;color:#334155;">Third-party lab data sharing</span>
+                <span style="font-size:10px;color:#64748B;margin-left:4px;">— COA data from labs may be shared with consumers</span>
+                <span style="margin-left:auto;padding:2px 6px;background:#DCFCE7;color:#16A34A;border-radius:4px;font-size:9px;font-weight:700;">LOW</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Expected language patterns -->
+          <div style="margin-bottom:16px;">
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;">
+              <span style="font-size:11px;font-weight:700;color:#5B21B6;text-transform:uppercase;letter-spacing:0.06em;">Expected Language Patterns</span>
+              <span style="font-size:10px;color:#9CA3AF;">Keywords/phrases the scanner looks for to verify compliance</span>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:4px;">
+              <span style="padding:4px 10px;background:#F3E8FF;border:1px solid #DDD6FE;border-radius:20px;font-size:11px;font-weight:600;color:#5B21B6;">"personal information"</span>
+              <span style="padding:4px 10px;background:#F3E8FF;border:1px solid #DDD6FE;border-radius:20px;font-size:11px;font-weight:600;color:#5B21B6;">"data collection"</span>
+              <span style="padding:4px 10px;background:#F3E8FF;border:1px solid #DDD6FE;border-radius:20px;font-size:11px;font-weight:600;color:#5B21B6;">"opt-out"</span>
+              <span style="padding:4px 10px;background:#F3E8FF;border:1px solid #DDD6FE;border-radius:20px;font-size:11px;font-weight:600;color:#5B21B6;">"cookies"</span>
+              <span style="padding:4px 10px;background:#F3E8FF;border:1px solid #DDD6FE;border-radius:20px;font-size:11px;font-weight:600;color:#5B21B6;">"third-party"</span>
+              <span style="padding:4px 10px;background:#DBEAFE;border:1px solid #93C5FD;border-radius:20px;font-size:11px;font-weight:600;color:#1D4ED8;">"age verification"</span>
+              <span style="padding:4px 10px;background:#DBEAFE;border:1px solid #93C5FD;border-radius:20px;font-size:11px;font-weight:600;color:#1D4ED8;">"certificate of analysis"</span>
+              <span style="padding:4px 10px;background:#DBEAFE;border:1px solid #93C5FD;border-radius:20px;font-size:11px;font-weight:600;color:#1D4ED8;">"lab results"</span>
+            </div>
+            <div style="margin-top:6px;font-size:10px;color:#64748B;">
+              <span style="color:#5B21B6;">Purple</span> = industry-level patterns (all Hemp/CBD) · <span style="color:#1D4ED8;">Blue</span> = type-specific patterns (Retailer only)
+            </div>
+          </div>
+
+          <!-- Comparison: different IT+ToC -->
+          <div style="padding:12px;background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;">
+            <div style="font-size:11px;font-weight:700;color:#64748B;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">Same Check, Different Industry — Privacy Policy for Online Lending</div>
+            <div style="display:flex;flex-direction:column;gap:4px;">
+              <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:#fff;border:1px solid #E2E8F0;border-radius:4px;">
+                <span style="color:#D97706;font-size:11px;">✓</span>
+                <span style="font-size:11px;color:#334155;">FCRA rights disclosure (Fair Credit Reporting Act)</span>
+                <span style="margin-left:auto;padding:2px 6px;background:#FEE2E2;color:#DC2626;border-radius:4px;font-size:9px;font-weight:700;">HIGH</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:#fff;border:1px solid #E2E8F0;border-radius:4px;">
+                <span style="color:#D97706;font-size:11px;">✓</span>
+                <span style="font-size:11px;color:#334155;">CCPA compliance language (California Consumer Privacy Act)</span>
+                <span style="margin-left:auto;padding:2px 6px;background:#FEE2E2;color:#DC2626;border-radius:4px;font-size:9px;font-weight:700;">HIGH</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:#fff;border:1px solid #E2E8F0;border-radius:4px;">
+                <span style="color:#D97706;font-size:11px;">✓</span>
+                <span style="font-size:11px;color:#334155;">Data broker disclosure (state-specific data broker laws)</span>
+                <span style="margin-left:auto;padding:2px 6px;background:#FEF3C7;color:#D97706;border-radius:4px;font-size:9px;font-weight:700;">MEDIUM</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:#fff;border:1px solid #E2E8F0;border-radius:4px;">
+                <span style="color:#D97706;font-size:11px;">✓</span>
+                <span style="font-size:11px;color:#334155;">ACH authorization data handling disclosure</span>
+                <span style="margin-left:auto;padding:2px 6px;background:#FEF3C7;color:#D97706;border-radius:4px;font-size:9px;font-weight:700;">MEDIUM</span>
+              </div>
+            </div>
+            <div style="margin-top:8px;font-size:10px;color:#64748B;">Same "Privacy Policy" check — completely different requirements based on industry. This is why scan profiles are configured per IT+ToC pair.</div>
+          </div>
+        </div>
+
+        <!-- Inheritance summary -->
+        <div style="padding:10px 16px;background:#FFFBEB;border-top:1px solid #FDE68A;font-size:11px;color:#92400E;">
+          💡 <strong>Inheritance model:</strong> Industry-level requirements apply to all Types of Company under that industry. Type-specific requirements are additions or overrides for a particular IT+ToC pair. When evaluating, the system merges both levels — type-specific rules take precedence where they overlap.
+        </div>
+      </div>
   </div>
 
   <hr class="section-divider">
@@ -881,7 +1029,7 @@ a:hover{text-decoration:underline}
           <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:11px;color:#334155;">
             <span style="padding:3px 8px;background:#DBEAFE;border-radius:4px;font-weight:600;color:#1D4ED8;">COA: Delta-9 THC % > 0.3</span>
             <span style="color:#3B82F6;font-weight:700;">→ attribute:</span>
-            <span style="padding:3px 8px;background:#DBEAFE;border-radius:4px;font-weight:600;color:#1D4ED8;font-family:'IBM Plex Mono',monospace;font-size:10px;">THC_EXCEEDS_FEDERAL_LIMIT</span>
+            <span style="padding:3px 8px;background:#DBEAFE;border-radius:4px;font-weight:600;color:#1D4ED8;font-family:'IBM Plex Mono',monospace;font-size:10px;">DELTA_9_THC</span>
             <span style="color:#3B82F6;font-weight:700;">→ triggers rule:</span>
             <span style="padding:3px 8px;background:#FEF3C7;border-radius:4px;font-weight:600;color:#92400E;">"IF DELTA_9_THC > 0.3% → requires STATE_CANNABIS_LICENSE"</span>
           </div>
