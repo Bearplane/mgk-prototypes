@@ -671,7 +671,130 @@ a:hover{text-decoration:underline}
   <!-- ═══════════════════════════════════════════════════════ -->
   <!-- FLOW DIAGRAM: HOW EVERYTHING CONNECTS -->
   <!-- ═══════════════════════════════════════════════════════ -->
+  
+  <!-- SECTION: Regulatory Attributes — Connective Tissue -->
   <div class="section">
+    <div class="section-header">
+      <span class="badge" style="background:#FEF3C7;color:#92400E;border:1px solid #FDE68A;">🏷️ Deep Dive</span>
+      <h2>Regulatory Attributes — The Connective Tissue</h2>
+    </div>
+    <div class="section-body">
+      <p style="font-size:13px;color:#64748B;margin-bottom:16px;">Regulatory attributes aren't just tags — they're the <strong>connective tissue</strong> that links otherwise siloed data systems together. An attribute can be attached to <em>anything</em>: a product classification, a COA field, a website finding, an MCC code, a license type, or a company directly. This lets the compliance engine ask cross-system questions that were previously impossible.</p>
+
+      <!-- Cross-system connection examples -->
+      <div style="font-size:12px;font-weight:700;color:#1E3A5F;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.05em;">Real-World Examples — Attribute-Driven Connections</div>
+      
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px;">
+        
+        <!-- Example 1: ENDS Authorization -->
+        <div style="padding:12px 16px;background:#FEF2F2;border:1px solid #FECACA;border-radius:8px;border-left:4px solid #DC2626;">
+          <div style="font-size:12px;font-weight:700;color:#991B1B;margin-bottom:6px;">🚬 FDA ENDS Authorization Check</div>
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:11px;color:#334155;">
+            <span style="padding:3px 8px;background:#F3E8FF;border-radius:4px;font-weight:600;color:#5B21B6;">Classification: Vape/E-Cigarette</span>
+            <span style="color:#DC2626;font-weight:700;">→ attribute:</span>
+            <span style="padding:3px 8px;background:#FEE2E2;border-radius:4px;font-weight:600;color:#991B1B;font-family:'IBM Plex Mono',monospace;font-size:10px;">FDA_ENDS_AUTHORIZATION_REQUIRED</span>
+            <span style="color:#DC2626;font-weight:700;">→ triggers rule:</span>
+            <span style="padding:3px 8px;background:#FEF3C7;border-radius:4px;font-weight:600;color:#92400E;">"Check product against federal ENDS authorization list"</span>
+          </div>
+          <div style="font-size:10px;color:#64748B;margin-top:6px;">If product NOT on list → <span style="color:#DC2626;font-weight:600;">PROHIBITED</span>. If on list → <span style="color:#16A34A;font-weight:600;">COMPLIANT</span>.</div>
+        </div>
+
+        <!-- Example 2: COA Field → License Requirement -->
+        <div style="padding:12px 16px;background:#EFF6FF;border:1px solid #BFDBFE;border-radius:8px;border-left:4px solid #3B82F6;">
+          <div style="font-size:12px;font-weight:700;color:#1D4ED8;margin-bottom:6px;">🧪 COA Field → License Requirement</div>
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:11px;color:#334155;">
+            <span style="padding:3px 8px;background:#DBEAFE;border-radius:4px;font-weight:600;color:#1D4ED8;">COA: Delta-9 THC % > 0.3</span>
+            <span style="color:#3B82F6;font-weight:700;">→ attribute:</span>
+            <span style="padding:3px 8px;background:#DBEAFE;border-radius:4px;font-weight:600;color:#1D4ED8;font-family:'IBM Plex Mono',monospace;font-size:10px;">THC_EXCEEDS_FEDERAL_LIMIT</span>
+            <span style="color:#3B82F6;font-weight:700;">→ triggers rule:</span>
+            <span style="padding:3px 8px;background:#FEF3C7;border-radius:4px;font-weight:600;color:#92400E;">"Company MUST hold state cannabis license"</span>
+          </div>
+          <div style="font-size:10px;color:#64748B;margin-top:6px;">Links COA lab data to company licensing — if COA shows THC above hemp threshold, verify cannabis license exists.</div>
+        </div>
+
+        <!-- Example 3: MCC Code → Website Expectations -->
+        <div style="padding:12px 16px;background:#F0FDF4;border:1px solid #BBF7D0;border-radius:8px;border-left:4px solid #16A34A;">
+          <div style="font-size:12px;font-weight:700;color:#166534;margin-bottom:6px;">💳 MCC Code → Website Compliance Expectations</div>
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:11px;color:#334155;">
+            <span style="padding:3px 8px;background:#DCFCE7;border-radius:4px;font-weight:600;color:#166534;">MCC: 5912 (Drug Store)</span>
+            <span style="color:#16A34A;font-weight:700;">→ attribute:</span>
+            <span style="padding:3px 8px;background:#DCFCE7;border-radius:4px;font-weight:600;color:#166534;font-family:'IBM Plex Mono',monospace;font-size:10px;">REQUIRES_FDA_DISCLAIMER</span>
+            <span style="color:#16A34A;font-weight:700;">→ triggers scan check:</span>
+            <span style="padding:3px 8px;background:#FEF3C7;border-radius:4px;font-weight:600;color:#92400E;">"Website MUST have FDA disclaimer"</span>
+          </div>
+          <div style="font-size:10px;color:#64748B;margin-top:6px;">MCC code tells us what the company is — attributes tell us what their website SHOULD have. Missing elements = compliance finding.</div>
+        </div>
+
+        <!-- Example 4: Website Finding → Product Issue -->
+        <div style="padding:12px 16px;background:#F5F3FF;border:1px solid #DDD6FE;border-radius:8px;border-left:4px solid #7C3AED;">
+          <div style="font-size:12px;font-weight:700;color:#5B21B6;margin-bottom:6px;">🌐 Website Finding → Product Red Flag</div>
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:11px;color:#334155;">
+            <span style="padding:3px 8px;background:#F3E8FF;border-radius:4px;font-weight:600;color:#5B21B6;">Website scan: "Cures cancer" found</span>
+            <span style="color:#7C3AED;font-weight:700;">→ attribute:</span>
+            <span style="padding:3px 8px;background:#F3E8FF;border-radius:4px;font-weight:600;color:#5B21B6;font-family:'IBM Plex Mono',monospace;font-size:10px;">PROHIBITED_HEALTH_CLAIM</span>
+            <span style="color:#7C3AED;font-weight:700;">→ triggers:</span>
+            <span style="padding:3px 8px;background:#FEF3C7;border-radius:4px;font-weight:600;color:#92400E;">"Flag ALL products from this company for review"</span>
+          </div>
+          <div style="font-size:10px;color:#64748B;margin-top:6px;">Website violations can cascade to product compliance — if the company is making illegal health claims, their products need review too.</div>
+        </div>
+
+        <!-- Example 5: COA + Classification → Psilocybin check -->
+        <div style="padding:12px 16px;background:#FFFBEB;border:1px solid #FDE68A;border-radius:8px;border-left:4px solid #D97706;">
+          <div style="font-size:12px;font-weight:700;color:#92400E;margin-bottom:6px;">🍄 COA Field + Jurisdiction → Legality Check</div>
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:11px;color:#334155;">
+            <span style="padding:3px 8px;background:#FEF3C7;border-radius:4px;font-weight:600;color:#92400E;">COA: Psilocybin > 0</span>
+            <span style="color:#D97706;font-weight:700;">+</span>
+            <span style="padding:3px 8px;background:#FEF3C7;border-radius:4px;font-weight:600;color:#92400E;">Company state: TX</span>
+            <span style="color:#D97706;font-weight:700;">→ attribute:</span>
+            <span style="padding:3px 8px;background:#FEE2E2;border-radius:4px;font-weight:600;color:#991B1B;font-family:'IBM Plex Mono',monospace;font-size:10px;">PSILOCYBIN_PROHIBITED_JURISDICTION</span>
+          </div>
+          <div style="font-size:10px;color:#64748B;margin-top:6px;">Combines COA lab data + company jurisdiction to determine legality. Same COA in Oregon might be compliant — in Texas it's prohibited.</div>
+        </div>
+      </div>
+
+      <!-- Attribute binding types -->
+      <div style="font-size:12px;font-weight:700;color:#1E3A5F;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.05em;">What Attributes Can Bind To</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px;">
+        <div style="padding:10px;background:#F8FAFC;border:1px solid #E2E8F0;border-radius:6px;text-align:center;">
+          <div style="font-size:18px;margin-bottom:4px;">📦</div>
+          <div style="font-size:11px;font-weight:700;color:#334155;">Product Classification</div>
+          <div style="font-size:10px;color:#64748B;">Auto-inherits to all products in that class</div>
+        </div>
+        <div style="padding:10px;background:#F8FAFC;border:1px solid #E2E8F0;border-radius:6px;text-align:center;">
+          <div style="font-size:18px;margin-bottom:4px;">🧪</div>
+          <div style="font-size:11px;font-weight:700;color:#334155;">COA Field</div>
+          <div style="font-size:10px;color:#64748B;">Triggered when analyte meets condition</div>
+        </div>
+        <div style="padding:10px;background:#F8FAFC;border:1px solid #E2E8F0;border-radius:6px;text-align:center;">
+          <div style="font-size:18px;margin-bottom:4px;">🌐</div>
+          <div style="font-size:11px;font-weight:700;color:#334155;">Website Finding</div>
+          <div style="font-size:10px;color:#64748B;">Triggered by scan finding type</div>
+        </div>
+        <div style="padding:10px;background:#F8FAFC;border:1px solid #E2E8F0;border-radius:6px;text-align:center;">
+          <div style="font-size:18px;margin-bottom:4px;">💳</div>
+          <div style="font-size:11px;font-weight:700;color:#334155;">MCC Code</div>
+          <div style="font-size:10px;color:#64748B;">Tied to merchant category</div>
+        </div>
+        <div style="padding:10px;background:#F8FAFC;border:1px solid #E2E8F0;border-radius:6px;text-align:center;">
+          <div style="font-size:18px;margin-bottom:4px;">📋</div>
+          <div style="font-size:11px;font-weight:700;color:#334155;">License Type</div>
+          <div style="font-size:10px;color:#64748B;">Tied to license classification</div>
+        </div>
+        <div style="padding:10px;background:#F8FAFC;border:1px solid #E2E8F0;border-radius:6px;text-align:center;">
+          <div style="font-size:18px;margin-bottom:4px;">🏢</div>
+          <div style="font-size:11px;font-weight:700;color:#334155;">Company (Direct)</div>
+          <div style="font-size:10px;color:#64748B;">Manual assignment or override</div>
+        </div>
+      </div>
+
+      <div style="padding:12px 16px;background:#1E3A5F;border-radius:8px;color:#fff;">
+        <div style="font-size:13px;font-weight:700;margin-bottom:6px;">🔗 Why This Matters</div>
+        <div style="font-size:12px;line-height:1.6;color:#CBD5E1;">Attributes are the <strong style="color:#93C5FD;">query language</strong> of the compliance engine. They let you build rules like: <em>"If a company has products with attribute X, in jurisdiction Y, with MCC code Z — then they MUST have license type W and their website MUST show element V."</em> Without attributes as connective tissue, each system (scans, COAs, products, licenses, MCC codes) is an island. With them, the entire compliance dataset becomes queryable and interconnected.</div>
+      </div>
+    </div>
+  </div>
+
+<div class="section">
     <div class="section-header">
       <div class="section-title">How Everything Connects</div>
       <div class="section-sub">The Industry Configuration Engine feeds scan behavior, MRI behavior, and pipeline output columns</div>
