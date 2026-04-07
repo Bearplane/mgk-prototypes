@@ -417,7 +417,7 @@ a:hover{text-decoration:underline}
             </div>
             <div class="check-group-title mt12">COA Field Triggers</div>
             <div class="binding-list mt8">
-              <div class="binding-row"><span class="binding-source">Delta-9 THC % &gt; 0.3</span><span class="binding-arrow">→</span><span class="binding-target">THC_EXCEEDS_FEDERAL_LIMIT</span></div>
+              <div class="binding-row"><span class="binding-source">Delta-9 THC % &gt; 0.3</span><span class="binding-arrow">→</span><span class="binding-target">DELTA_9_THC</span></div>
               <div class="binding-row"><span class="binding-source">CBD % &lt; LOQ</span><span class="binding-arrow">→</span><span class="binding-target">COA_VALIDITY_FLAG</span></div>
             </div>
             <div class="binding-count-row mt12">
@@ -848,9 +848,9 @@ a:hover{text-decoration:underline}
           <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:11px;color:#334155;">
             <span style="padding:3px 8px;background:#F3E8FF;border-radius:4px;font-weight:600;color:#5B21B6;">Classification: Vape/E-Cigarette</span>
             <span style="color:#DC2626;font-weight:700;">→ attribute:</span>
-            <span style="padding:3px 8px;background:#FEE2E2;border-radius:4px;font-weight:600;color:#991B1B;font-family:'IBM Plex Mono',monospace;font-size:10px;">FDA_ENDS_AUTHORIZATION_REQUIRED</span>
+            <span style="padding:3px 8px;background:#FEE2E2;border-radius:4px;font-weight:600;color:#991B1B;font-family:'IBM Plex Mono',monospace;font-size:10px;">FDA_ENDS_PRODUCT</span>
             <span style="color:#DC2626;font-weight:700;">→ triggers rule:</span>
-            <span style="padding:3px 8px;background:#FEF3C7;border-radius:4px;font-weight:600;color:#92400E;">"Check product against federal ENDS authorization list"</span>
+            <span style="padding:3px 8px;background:#FEF3C7;border-radius:4px;font-weight:600;color:#92400E;">"IF has FDA_ENDS_PRODUCT AND NOT IN authorization_list → PROHIBITED"</span>
           </div>
           <div style="font-size:10px;color:#64748B;margin-top:6px;">If product NOT on list → <span style="color:#DC2626;font-weight:600;">PROHIBITED</span>. If on list → <span style="color:#16A34A;font-weight:600;">COMPLIANT</span>.</div>
         </div>
@@ -863,7 +863,7 @@ a:hover{text-decoration:underline}
             <span style="color:#3B82F6;font-weight:700;">→ attribute:</span>
             <span style="padding:3px 8px;background:#DBEAFE;border-radius:4px;font-weight:600;color:#1D4ED8;font-family:'IBM Plex Mono',monospace;font-size:10px;">THC_EXCEEDS_FEDERAL_LIMIT</span>
             <span style="color:#3B82F6;font-weight:700;">→ triggers rule:</span>
-            <span style="padding:3px 8px;background:#FEF3C7;border-radius:4px;font-weight:600;color:#92400E;">"Company MUST hold state cannabis license"</span>
+            <span style="padding:3px 8px;background:#FEF3C7;border-radius:4px;font-weight:600;color:#92400E;">"IF DELTA_9_THC > 0.3% → requires STATE_CANNABIS_LICENSE"</span>
           </div>
           <div style="font-size:10px;color:#64748B;margin-top:6px;">Links COA lab data to company licensing — if COA shows THC above hemp threshold, verify cannabis license exists.</div>
         </div>
@@ -874,9 +874,9 @@ a:hover{text-decoration:underline}
           <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:11px;color:#334155;">
             <span style="padding:3px 8px;background:#DCFCE7;border-radius:4px;font-weight:600;color:#166534;">MCC: 5912 (Drug Store)</span>
             <span style="color:#16A34A;font-weight:700;">→ attribute:</span>
-            <span style="padding:3px 8px;background:#DCFCE7;border-radius:4px;font-weight:600;color:#166534;font-family:'IBM Plex Mono',monospace;font-size:10px;">REQUIRES_FDA_DISCLAIMER</span>
+            <span style="padding:3px 8px;background:#DCFCE7;border-radius:4px;font-weight:600;color:#166534;font-family:'IBM Plex Mono',monospace;font-size:10px;">FDA_REGULATED_PRODUCT</span>
             <span style="color:#16A34A;font-weight:700;">→ triggers scan check:</span>
-            <span style="padding:3px 8px;background:#FEF3C7;border-radius:4px;font-weight:600;color:#92400E;">"Website MUST have FDA disclaimer"</span>
+            <span style="padding:3px 8px;background:#FEF3C7;border-radius:4px;font-weight:600;color:#92400E;">"IF FDA_REGULATED_PRODUCT AND website_missing(fda_disclaimer) → NON_COMPLIANT"</span>
           </div>
           <div style="font-size:10px;color:#64748B;margin-top:6px;">MCC code tells us what the company is — attributes tell us what their website SHOULD have. Missing elements = compliance finding.</div>
         </div>
@@ -887,9 +887,9 @@ a:hover{text-decoration:underline}
           <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:11px;color:#334155;">
             <span style="padding:3px 8px;background:#F3E8FF;border-radius:4px;font-weight:600;color:#5B21B6;">Website scan: "Cures cancer" found</span>
             <span style="color:#7C3AED;font-weight:700;">→ attribute:</span>
-            <span style="padding:3px 8px;background:#F3E8FF;border-radius:4px;font-weight:600;color:#5B21B6;font-family:'IBM Plex Mono',monospace;font-size:10px;">PROHIBITED_HEALTH_CLAIM</span>
+            <span style="padding:3px 8px;background:#F3E8FF;border-radius:4px;font-weight:600;color:#5B21B6;font-family:'IBM Plex Mono',monospace;font-size:10px;">HEALTH_CLAIM_DETECTED</span>
             <span style="color:#7C3AED;font-weight:700;">→ triggers:</span>
-            <span style="padding:3px 8px;background:#FEF3C7;border-radius:4px;font-weight:600;color:#92400E;">"Flag ALL products from this company for review"</span>
+            <span style="padding:3px 8px;background:#FEF3C7;border-radius:4px;font-weight:600;color:#92400E;">"IF HEALTH_CLAIM_DETECTED AND claim_type IN [cure, treat, prevent] → flag products for review"</span>
           </div>
           <div style="font-size:10px;color:#64748B;margin-top:6px;">Website violations can cascade to product compliance — if the company is making illegal health claims, their products need review too.</div>
         </div>
@@ -902,9 +902,9 @@ a:hover{text-decoration:underline}
             <span style="color:#D97706;font-weight:700;">+</span>
             <span style="padding:3px 8px;background:#FEF3C7;border-radius:4px;font-weight:600;color:#92400E;">Company state: TX</span>
             <span style="color:#D97706;font-weight:700;">→ attribute:</span>
-            <span style="padding:3px 8px;background:#FEE2E2;border-radius:4px;font-weight:600;color:#991B1B;font-family:'IBM Plex Mono',monospace;font-size:10px;">PSILOCYBIN_PROHIBITED_JURISDICTION</span>
+            <span style="padding:3px 8px;background:#FEE2E2;border-radius:4px;font-weight:600;color:#991B1B;font-family:'IBM Plex Mono',monospace;font-size:10px;">CONTAINS_PSILOCYBIN</span>
           </div>
-          <div style="font-size:10px;color:#64748B;margin-top:6px;">Combines COA lab data + company jurisdiction to determine legality. Same COA in Oregon might be compliant — in Texas it's prohibited.</div>
+          <div style="font-size:10px;color:#64748B;margin-top:6px;">Attribute says WHAT it is. Rule says what it MEANS in context. Same attribute, different jurisdictions, different outcomes.</div>
         </div>
       </div>
 
