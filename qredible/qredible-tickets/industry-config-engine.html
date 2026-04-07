@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Industry Configuration Engine — Q-Audit Global Settings</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:#F1F5F9;color:#1E293B;font-size:14px;line-height:1.5}
+a{color:#3B82F6;text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* NAV */
+.topnav{background:#1E3A5F;padding:0 24px;height:52px;display:flex;align-items:center;gap:8px;color:#CBD5E1;font-size:13px}
+.topnav .sep{color:#475569}
+.topnav .current{color:#fff;font-weight:600}
+.topnav .badge{background:#3B82F6;color:#fff;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;font-family:'IBM Plex Mono',monospace;margin-left:8px}
+.topnav a{color:#93C5FD}
+.topnav a:hover{color:#fff;text-decoration:none}
+
+/* PAGE */
+.page{max-width:1180px;margin:0 auto;padding:28px 24px 60px}
+
+/* SECTION HEADERS */
+.section{margin-bottom:40px}
+.section-header{margin-bottom:16px}
+.section-title{font-size:17px;font-weight:700;color:#1E3A5F;margin-bottom:4px}
+.section-sub{font-size:13px;color:#64748B}
+.section-divider{border:none;border-top:2px solid #E2E8F0;margin:32px 0}
+
+/* SETTINGS GRID */
+.settings-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.tile{background:#fff;border:1px solid #E2E8F0;border-radius:10px;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:box-shadow .15s,border-color .15s;position:relative}
+.tile:hover{box-shadow:0 2px 8px rgba(0,0,0,.08);border-color:#BAC8FF}
+.tile.new-tile{border-color:#BBF7D0;background:#F0FDF4}
+.tile.new-tile:hover{border-color:#4ADE80;box-shadow:0 2px 8px rgba(22,163,74,.12)}
+.tile-name{font-size:13px;font-weight:600;color:#1E3A5F;flex:1;padding-right:8px}
+.tile.new-tile .tile-name{color:#15803D}
+.tile-edit{color:#94A3B8;font-size:16px;flex-shrink:0}
+.tile:hover .tile-edit{color:#3B82F6}
+.new-badge{background:#16A34A;color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:3px;position:absolute;top:8px;right:8px;letter-spacing:.3px}
+
+/* EDIT VIEW */
+.edit-panel{background:#fff;border:1px solid #E2E8F0;border-radius:10px;overflow:hidden}
+.edit-panel-header{background:#1E3A5F;padding:16px 20px;color:#fff;display:flex;align-items:center;justify-content:space-between}
+.edit-panel-title{font-size:15px;font-weight:700}
+.edit-panel-sub{font-size:12px;color:#93C5FD;margin-top:2px}
+.edit-panel-body{padding:20px}
+
+.form-row{margin-bottom:16px}
+.form-label{font-size:12px;font-weight:600;color:#374151;margin-bottom:5px;display:block;text-transform:uppercase;letter-spacing:.4px}
+.form-input{width:100%;padding:8px 12px;border:1px solid #CBD5E1;border-radius:6px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;background:#EFF6FF;color:#1E293B;outline:none}
+.form-input:focus{border-color:#3B82F6;background:#fff}
+.form-textarea{resize:vertical;min-height:72px}
+
+/* ACCORDION */
+.accordion{border:1px solid #E2E8F0;border-radius:8px;margin-bottom:10px;overflow:hidden}
+.acc-header{padding:12px 16px;background:#F8FAFC;display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;transition:background .12s}
+.acc-header:hover{background:#EFF6FF}
+.acc-header.open{background:#EFF6FF;border-bottom:1px solid #E2E8F0}
+.acc-title{font-size:13px;font-weight:700;color:#1E3A5F;display:flex;align-items:center;gap:8px}
+.acc-meta{font-size:12px;color:#64748B;font-weight:400}
+.acc-arrow{color:#64748B;font-size:12px;transition:transform .2s}
+.acc-header.open .acc-arrow{transform:rotate(180deg)}
+.acc-body{padding:14px 16px;display:none}
+.acc-header.open+.acc-body{display:block}
+
+/* LINKED COMPANIES */
+.company-pills{display:flex;flex-wrap:wrap;gap:6px}
+.company-pill{background:#EFF6FF;color:#1E40AF;border:1px solid #BFDBFE;border-radius:20px;padding:3px 12px;font-size:12px;font-weight:600}
+.readonly-note{font-size:11px;color:#94A3B8;margin-top:8px;font-style:italic}
+
+/* SCAN PROFILE CARD */
+.scan-company-card{border:1px solid #E2E8F0;border-radius:8px;margin-bottom:8px;overflow:hidden}
+.scan-card-header{padding:10px 14px;background:#F8FAFC;display:flex;align-items:center;justify-content:space-between;cursor:pointer}
+.scan-card-header:hover{background:#EFF6FF}
+.scan-card-title{font-size:13px;font-weight:700;color:#1E3A5F}
+.scan-card-body{padding:14px;border-top:1px solid #F1F5F9}
+.check-group-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#64748B;margin-bottom:8px;margin-top:12px}
+.check-group-title:first-child{margin-top:0}
+.checks-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:4px 16px}
+.check-item{display:flex;align-items:center;gap:6px;font-size:13px;color:#374151;padding:3px 0}
+.check-item.off{color:#94A3B8}
+.check-cb{width:15px;height:15px;border-radius:3px;border:2px solid #CBD5E1;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;font-size:9px}
+.check-cb.on{background:#3B82F6;border-color:#3B82F6;color:#fff}
+.check-cb.locked{background:#94A3B8;border-color:#94A3B8;color:#fff}
+.kw-pills{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.kw-pill{background:#FEF3C7;color:#92400E;border:1px solid #FDE68A;border-radius:12px;padding:2px 10px;font-size:11px;font-weight:600}
+
+/* MRI SECTION */
+.mri-group{margin-bottom:12px}
+.mri-group-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#64748B;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.lock-icon{font-size:11px}
+.mri-checks{display:grid;grid-template-columns:repeat(2,1fr);gap:4px 16px}
+
+/* REG BINDINGS */
+.binding-list{display:flex;flex-direction:column;gap:6px}
+.binding-row{display:flex;align-items:center;gap:8px;font-size:13px;font-family:'IBM Plex Mono',monospace}
+.binding-source{color:#1E293B;background:#F1F5F9;padding:2px 8px;border-radius:4px;font-size:12px}
+.binding-arrow{color:#94A3B8;font-size:14px}
+.binding-target{color:#7C3AED;background:#F3F0FF;padding:2px 8px;border-radius:4px;font-size:12px}
+.binding-count-row{margin-top:10px;font-size:12px;color:#64748B;background:#F8FAFC;padding:8px 12px;border-radius:6px;border:1px solid #E2E8F0}
+
+/* MCC LIST */
+.mcc-list{display:flex;flex-direction:column;gap:6px}
+.mcc-row{display:flex;align-items:center;gap:12px;font-size:13px}
+.mcc-code{font-family:'IBM Plex Mono',monospace;font-weight:500;color:#1E3A5F;background:#EFF6FF;padding:2px 8px;border-radius:4px;font-size:12px;min-width:50px;text-align:center}
+.mcc-desc{color:#374151;flex:1}
+.add-link{color:#3B82F6;font-size:13px;font-weight:600;margin-top:8px;display:inline-flex;align-items:center;gap:4px}
+
+/* FORM ACTIONS */
+.form-actions{display:flex;gap:10px;margin-top:20px;padding-top:16px;border-top:1px solid #F1F5F9}
+.btn{padding:9px 20px;border-radius:6px;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:700;border:none;cursor:pointer;transition:opacity .15s}
+.btn-green{background:#16A34A;color:#fff}
+.btn-green:hover{background:#15803D}
+.btn-dark{background:#334155;color:#fff}
+.btn-dark:hover{background:#1E293B}
+.btn-outline{background:#fff;color:#374151;border:1px solid #CBD5E1}
+.btn-outline:hover{background:#F8FAFC}
+.btn-sm{padding:5px 12px;font-size:12px}
+.btn-icon{background:none;border:none;cursor:pointer;padding:4px 6px;border-radius:4px;color:#64748B;font-size:14px}
+.btn-icon:hover{background:#F1F5F9;color:#1E3A5F}
+.btn-icon.del:hover{color:#DC2626;background:#FEF2F2}
+
+/* DATA TABLE */
+.data-table{width:100%;border-collapse:collapse;font-size:13px}
+.data-table th{background:#1E3A5F;color:#fff;padding:10px 14px;text-align:left;font-size:12px;font-weight:600;letter-spacing:.3px}
+.data-table th:first-child{border-radius:8px 0 0 0}
+.data-table th:last-child{border-radius:0 8px 0 0}
+.data-table td{padding:10px 14px;border-bottom:1px solid #F1F5F9;vertical-align:middle}
+.data-table tr:hover td{background:#F8FAFC}
+.data-table tr:last-child td{border-bottom:none}
+.data-table-wrap{background:#fff;border:1px solid #E2E8F0;border-radius:10px;overflow:hidden}
+.table-actions{display:flex;gap:4px;align-items:center}
+.stat-pill{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600}
+.stat-green{background:#DCFCE7;color:#15803D}
+.stat-blue{background:#DBEAFE;color:#1D4ED8}
+.stat-gray{background:#F1F5F9;color:#475569}
+.stat-orange{background:#FEF3C7;color:#92400E}
+.stat-red{background:#FEE2E2;color:#991B1B}
+.locked-badge{display:inline-flex;align-items:center;gap:3px;background:#F1F5F9;color:#64748B;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600}
+
+/* TABLE ANNOTATION */
+.table-note{background:#EFF6FF;border:1px solid #BFDBFE;border-radius:8px;padding:10px 14px;font-size:12px;color:#1D4ED8;margin-top:10px;line-height:1.6}
+.table-note strong{color:#1E3A5F}
+
+/* RISK BADGE */
+.risk-high{background:#FEE2E2;color:#991B1B;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600}
+.risk-med{background:#FEF3C7;color:#92400E;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600}
+.risk-low{background:#DCFCE7;color:#15803D;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600}
+.ind-tag{background:#EFF6FF;color:#1D4ED8;border:1px solid #BFDBFE;border-radius:10px;padding:2px 7px;font-size:11px;font-weight:600;display:inline-block;margin:1px 2px}
+
+/* FLOW DIAGRAM */
+.flow-wrap{background:#fff;border:1px solid #E2E8F0;border-radius:10px;padding:24px;overflow-x:auto}
+.flow{display:flex;align-items:center;gap:0;flex-wrap:nowrap;min-width:600px}
+.flow-node{background:#EFF6FF;border:2px solid #BFDBFE;border-radius:10px;padding:12px 16px;text-align:center;min-width:140px;flex-shrink:0}
+.flow-node.dark{background:#1E3A5F;border-color:#1E3A5F;color:#fff}
+.flow-node.green{background:#F0FDF4;border-color:#BBF7D0}
+.flow-node.purple{background:#F3F0FF;border-color:#DDD6FE}
+.flow-node-title{font-size:12px;font-weight:700;color:#1E3A5F;line-height:1.3}
+.flow-node.dark .flow-node-title{color:#fff}
+.flow-node.green .flow-node-title{color:#15803D}
+.flow-node.purple .flow-node-title{color:#6D28D9}
+.flow-node-sub{font-size:10px;color:#64748B;margin-top:3px}
+.flow-node.dark .flow-node-sub{color:#93C5FD}
+.flow-arrow{font-size:22px;color:#94A3B8;padding:0 8px;flex-shrink:0}
+.flow-split{display:flex;flex-direction:column;gap:6px}
+
+/* ADD BUTTON */
+.add-btn{display:inline-flex;align-items:center;gap:6px;background:#EFF6FF;color:#1D4ED8;border:1px dashed #93C5FD;border-radius:6px;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer;transition:background .15s}
+.add-btn:hover{background:#DBEAFE;border-color:#3B82F6}
+
+/* UTILITY */
+.mt4{margin-top:4px}.mt8{margin-top:8px}.mt12{margin-top:12px}.mt16{margin-top:16px}
+.text-xs{font-size:11px}.text-sm{font-size:12px}.text-gray{color:#64748B}
+.bold{font-weight:700}.mono{font-family:'IBM Plex Mono',monospace}
+.flex{display:flex}.items-center{align-items:center}.gap-8{gap:8px}.gap-4{gap:4px}
+.justify-between{justify-content:space-between}
+
+@media(max-width:900px){.settings-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.settings-grid{grid-template-columns:repeat(1,1fr)}.checks-grid,.mri-checks{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="topnav">
+  <a href="#">← All Mockups</a>
+  <span class="sep">/</span>
+  <span class="current">Industry Configuration Engine</span>
+  <span class="badge">QP-3620</span>
+</nav>
+
+<div class="page">
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SECTION 1: GLOBAL SETTINGS GRID -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">Global Settings — Enhanced Grid</div>
+      <div class="section-sub">20 configuration areas — 3 new tiles support the Industry Configuration Engine</div>
+    </div>
+
+    <div class="settings-grid">
+      <!-- Existing tiles -->
+      <div class="tile"><span class="tile-name">Document Types</span><span class="tile-edit">✏️</span></div>
+      <div class="tile"><span class="tile-name">Rejection Reasons</span><span class="tile-edit">✏️</span></div>
+      <div class="tile"><span class="tile-name">Industry Types</span><span class="tile-edit">✏️</span></div>
+      <div class="tile"><span class="tile-name">Types of Company</span><span class="tile-edit">✏️</span></div>
+      <div class="tile"><span class="tile-name">Product Classification</span><span class="tile-edit">✏️</span></div>
+      <div class="tile"><span class="tile-name">Attestation Documents</span><span class="tile-edit">✏️</span></div>
+      <div class="tile"><span class="tile-name">Tiers</span><span class="tile-edit">✏️</span></div>
+      <div class="tile"><span class="tile-name">Expiration Timeframe</span><span class="tile-edit">✏️</span></div>
+      <div class="tile"><span class="tile-name">Alert Repetition Interval</span><span class="tile-edit">✏️</span></div>
+      <div class="tile"><span class="tile-name">Compliance Elements</span><span class="tile-edit">✏️</span></div>
+      <div class="tile"><span class="tile-name">COA Field Library</span><span class="tile-edit">✏️</span></div>
+      <div class="tile"><span class="tile-name">COA Detection Keywords</span><span class="tile-edit">✏️</span></div>
+      <div class="tile"><span class="tile-name">Financial Report</span><span class="tile-edit">✏️</span></div>
+      <div class="tile"><span class="tile-name">Contract Type</span><span class="tile-edit">✏️</span></div>
+      <div class="tile"><span class="tile-name">Policy</span><span class="tile-edit">✏️</span></div>
+      <div class="tile"><span class="tile-name">Alert Channel</span><span class="tile-edit">✏️</span></div>
+      <div class="tile"><span class="tile-name">Policy &amp; Procedure Applicability</span><span class="tile-edit">✏️</span></div>
+      <!-- NEW tiles -->
+      <div class="tile new-tile">
+        <span class="tile-name">Scan Profile Defaults</span>
+        <span class="tile-edit">✏️</span>
+        <span class="new-badge">NEW</span>
+      </div>
+      <div class="tile new-tile">
+        <span class="tile-name">MRI Check Profiles</span>
+        <span class="tile-edit">✏️</span>
+        <span class="new-badge">NEW</span>
+      </div>
+      <div class="tile new-tile">
+        <span class="tile-name">MCC Code Registry</span>
+        <span class="tile-edit">✏️</span>
+        <span class="new-badge">NEW</span>
+      </div>
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SECTION 2: INDUSTRY TYPE ENHANCED EDIT VIEW -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">Industry Types — Enhanced Edit View</div>
+      <div class="section-sub">Clicking Edit on "Hemp / CBD" now exposes linked scan profiles, MRI configuration, regulatory bindings, and MCC codes</div>
+    </div>
+
+    <div class="edit-panel">
+      <div class="edit-panel-header">
+        <div>
+          <div class="edit-panel-title">✏️ Edit Industry Type</div>
+          <div class="edit-panel-sub">Hemp / CBD</div>
+        </div>
+        <button class="btn btn-outline btn-sm" style="color:#93C5FD;border-color:#334155;background:transparent">Cancel</button>
+      </div>
+      <div class="edit-panel-body">
+
+        <!-- Base fields -->
+        <div class="form-row">
+          <label class="form-label">Industry Type Name</label>
+          <input class="form-input" type="text" value="Hemp / CBD">
+        </div>
+        <div class="form-row">
+          <label class="form-label">Description</label>
+          <textarea class="form-input form-textarea">Hemp-derived CBD products including tinctures, edibles, topicals, and capsules. Subject to FDA regulations on health claims and 0.3% THC federal limit.</textarea>
+        </div>
+
+        <!-- ── ACCORDION: Linked Types of Company ── -->
+        <div class="accordion">
+          <div class="acc-header open" onclick="toggleAcc(this)">
+            <div class="acc-title">🏢 Linked Types of Company <span class="acc-meta">5 linked</span></div>
+            <span class="acc-arrow">▼</span>
+          </div>
+          <div class="acc-body">
+            <div class="company-pills">
+              <span class="company-pill">Retailer</span>
+              <span class="company-pill">Distributor</span>
+              <span class="company-pill">Cultivator</span>
+              <span class="company-pill">Manufacturer</span>
+              <span class="company-pill">Laboratory</span>
+            </div>
+            <p class="readonly-note">Read-only here. Manage assignments in the Types of Company table.</p>
+          </div>
+        </div>
+
+        <!-- ── ACCORDION: Scan Profile Defaults ── -->
+        <div class="accordion">
+          <div class="acc-header open" onclick="toggleAcc(this)">
+            <div class="acc-title">🔍 Scan Profile Defaults <span class="acc-meta">5 profiles configured</span></div>
+            <span class="acc-arrow">▼</span>
+          </div>
+          <div class="acc-body">
+
+            <!-- Retailer card -->
+            <div class="scan-company-card">
+              <div class="scan-card-header" onclick="toggleCard(this)">
+                <span class="scan-card-title">Hemp / CBD → Retailer</span>
+                <div class="flex items-center gap-8">
+                  <span class="stat-pill stat-green">6/8 Compliance</span>
+                  <span class="stat-pill stat-blue">2/14 Analyst</span>
+                  <span style="font-size:12px;color:#94A3B8">▼</span>
+                </div>
+              </div>
+              <div class="scan-card-body">
+                <div class="check-group-title">Compliance Checks (Automated)</div>
+                <div class="checks-grid">
+                  <div class="check-item"><span class="check-cb on">✓</span> FDA Disclaimer</div>
+                  <div class="check-item"><span class="check-cb on">✓</span> Privacy Policy</div>
+                  <div class="check-item"><span class="check-cb on">✓</span> Terms of Use</div>
+                  <div class="check-item"><span class="check-cb on">✓</span> Contact Info</div>
+                  <div class="check-item"><span class="check-cb on">✓</span> SSL Check</div>
+                  <div class="check-item"><span class="check-cb on">✓</span> Age Controls</div>
+                  <div class="check-item off"><span class="check-cb">✗</span> Payment Methods</div>
+                  <div class="check-item off"><span class="check-cb">✗</span> Return Policy</div>
+                </div>
+                <div class="check-group-title">Analyst Review Checks</div>
+                <div class="checks-grid">
+                  <div class="check-item"><span class="check-cb on">✓</span> THC Disclaimer</div>
+                  <div class="check-item"><span class="check-cb on">✓</span> Prohibited Products Search</div>
+                  <div class="check-item off"><span class="check-cb">✗</span> GMP Certificate</div>
+                  <div class="check-item off"><span class="check-cb">✗</span> Price Points Match</div>
+                </div>
+                <div class="check-group-title">Active Compliance Element Sets</div>
+                <div class="kw-pills">
+                  <span class="kw-pill">CBD Health Claims (137 keywords)</span>
+                  <span class="kw-pill">THC Content (22 keywords)</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Distributor card (collapsed) -->
+            <div class="scan-company-card">
+              <div class="scan-card-header" onclick="toggleCard(this)">
+                <span class="scan-card-title">Hemp / CBD → Distributor</span>
+                <div class="flex items-center gap-8">
+                  <span class="stat-pill stat-green">5/8 Compliance</span>
+                  <span class="stat-pill stat-blue">1/14 Analyst</span>
+                  <span style="font-size:12px;color:#94A3B8">▶</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Cultivator card (collapsed) -->
+            <div class="scan-company-card">
+              <div class="scan-card-header" onclick="toggleCard(this)">
+                <span class="scan-card-title">Hemp / CBD → Cultivator</span>
+                <div class="flex items-center gap-8">
+                  <span class="stat-pill stat-green">4/8 Compliance</span>
+                  <span class="stat-pill stat-gray">0/14 Analyst</span>
+                  <span style="font-size:12px;color:#94A3B8">▶</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ── ACCORDION: MRI Check Profile ── -->
+        <div class="accordion">
+          <div class="acc-header open" onclick="toggleAcc(this)">
+            <div class="acc-title">🔬 MRI Check Profile <span class="acc-meta">6 universal + 5 industry-specific</span></div>
+            <span class="acc-arrow">▼</span>
+          </div>
+          <div class="acc-body">
+            <div class="mri-group">
+              <div class="mri-group-label"><span class="lock-icon">🔒</span> Universal Checks (always on — all merchants)</div>
+              <div class="mri-checks">
+                <div class="check-item"><span class="check-cb locked">🔒</span> OFAC Sanctions</div>
+                <div class="check-item"><span class="check-cb locked">🔒</span> PEP Screening</div>
+                <div class="check-item"><span class="check-cb locked">🔒</span> BBB Rating</div>
+                <div class="check-item"><span class="check-cb locked">🔒</span> Google Reviews</div>
+                <div class="check-item"><span class="check-cb locked">🔒</span> SOS Verification</div>
+                <div class="check-item"><span class="check-cb locked">🔒</span> WHOIS / Domain</div>
+              </div>
+            </div>
+            <div class="mri-group">
+              <div class="mri-group-label">⚙️ Industry-Specific Checks (configurable)</div>
+              <div class="mri-checks">
+                <div class="check-item"><span class="check-cb on">✓</span> FDA Warning Letters</div>
+                <div class="check-item"><span class="check-cb on">✓</span> FDA Product Recalls</div>
+                <div class="check-item"><span class="check-cb on">✓</span> FTC Complaints</div>
+                <div class="check-item off"><span class="check-cb">✗</span> NMLS License</div>
+                <div class="check-item off"><span class="check-cb">✗</span> ATF FFL Check</div>
+                <div class="check-item off"><span class="check-cb">✗</span> DEA Registration</div>
+              </div>
+            </div>
+            <div class="mri-group">
+              <div class="mri-group-label">📋 License Types to Verify</div>
+              <div class="kw-pills">
+                <span class="kw-pill" style="background:#EDE9FE;color:#5B21B6;border-color:#C4B5FD">State Hemp License</span>
+                <span class="kw-pill" style="background:#EDE9FE;color:#5B21B6;border-color:#C4B5FD">State Cannabis License</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── ACCORDION: Regulatory Attribute Bindings ── -->
+        <div class="accordion">
+          <div class="acc-header" onclick="toggleAcc(this)">
+            <div class="acc-title">⚖️ Regulatory Attribute Bindings <span class="acc-meta">4 classification · 2 COA · 1 finding</span></div>
+            <span class="acc-arrow">▼</span>
+          </div>
+          <div class="acc-body">
+            <div class="check-group-title">Product Classification Bindings</div>
+            <div class="binding-list mt8">
+              <div class="binding-row"><span class="binding-source">Tinctures</span><span class="binding-arrow">→</span><span class="binding-target">FDA_DISCLAIMER_REQUIRED</span></div>
+              <div class="binding-row"><span class="binding-source">Edibles</span><span class="binding-arrow">→</span><span class="binding-target">THC_LIMIT_0.3PCT</span></div>
+              <div class="binding-row"><span class="binding-source">Topicals</span><span class="binding-arrow">→</span><span class="binding-target">FDA_DISCLAIMER_REQUIRED</span></div>
+              <div class="binding-row"><span class="binding-source">Capsules</span><span class="binding-arrow">→</span><span class="binding-target">FDA_DISCLAIMER_REQUIRED</span></div>
+            </div>
+            <div class="check-group-title mt12">COA Field Triggers</div>
+            <div class="binding-list mt8">
+              <div class="binding-row"><span class="binding-source">Delta-9 THC % &gt; 0.3</span><span class="binding-arrow">→</span><span class="binding-target">THC_EXCEEDS_FEDERAL_LIMIT</span></div>
+              <div class="binding-row"><span class="binding-source">CBD % &lt; LOQ</span><span class="binding-arrow">→</span><span class="binding-target">COA_VALIDITY_FLAG</span></div>
+            </div>
+            <div class="binding-count-row mt12">
+              📊 <strong>4</strong> classification bindings &nbsp;·&nbsp; <strong>2</strong> COA field triggers &nbsp;·&nbsp; <strong>1</strong> website finding trigger
+            </div>
+          </div>
+        </div>
+
+        <!-- ── ACCORDION: MCC Codes ── -->
+        <div class="accordion">
+          <div class="acc-header" onclick="toggleAcc(this)">
+            <div class="acc-title">💳 MCC Codes <span class="acc-meta">2 associated</span></div>
+            <span class="acc-arrow">▼</span>
+          </div>
+          <div class="acc-body">
+            <div class="mcc-list">
+              <div class="mcc-row"><span class="mcc-code">5912</span><span class="mcc-desc">Drug Stores and Pharmacies</span><button class="btn-icon">✏️</button><button class="btn-icon del">🗑</button></div>
+              <div class="mcc-row"><span class="mcc-code">5499</span><span class="mcc-desc">Misc. Food Stores</span><button class="btn-icon">✏️</button><button class="btn-icon del">🗑</button></div>
+            </div>
+            <a href="#" class="add-link mt8">+ Add MCC Code</a>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn btn-green">💾 Save Changes</button>
+          <button class="btn btn-dark">Cancel</button>
+        </div>
+
+      </div><!-- /edit-panel-body -->
+    </div><!-- /edit-panel -->
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SECTION 3: SCAN PROFILE DEFAULTS — FULL VIEW -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-header flex justify-between items-center">
+      <div>
+        <div class="section-title">Scan Profile Defaults — Full View</div>
+        <div class="section-sub">Global Settings → Scan Profile Defaults tile → opens this management view</div>
+      </div>
+      <button class="add-btn">+ Add Profile</button>
+    </div>
+
+    <div class="data-table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Industry Type</th>
+            <th>Type of Company</th>
+            <th>Compliance Checks</th>
+            <th>Analyst Checks</th>
+            <th>Keyword Sets</th>
+            <th>Last Updated</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Hemp / CBD</strong></td>
+            <td>Retailer</td>
+            <td><span class="stat-pill stat-green">6 of 8 ON</span></td>
+            <td><span class="stat-pill stat-blue">2 of 14 ON</span></td>
+            <td><span class="stat-pill stat-orange">2 active (159 keywords)</span></td>
+            <td class="mono text-sm text-gray">Apr 6, 2026</td>
+            <td><div class="table-actions"><button class="btn-icon">✏️</button><button class="btn-icon del">🗑</button></div></td>
+          </tr>
+          <tr>
+            <td><strong>Hemp / CBD</strong></td>
+            <td>Distributor</td>
+            <td><span class="stat-pill stat-green">5 of 8 ON</span></td>
+            <td><span class="stat-pill stat-blue">1 of 14 ON</span></td>
+            <td><span class="stat-pill stat-orange">2 active (159 keywords)</span></td>
+            <td class="mono text-sm text-gray">Apr 6, 2026</td>
+            <td><div class="table-actions"><button class="btn-icon">✏️</button><button class="btn-icon del">🗑</button></div></td>
+          </tr>
+          <tr>
+            <td><strong>Cannabis / CBD</strong></td>
+            <td>Retailer</td>
+            <td><span class="stat-pill stat-green">7 of 8 ON</span></td>
+            <td><span class="stat-pill stat-blue">4 of 14 ON</span></td>
+            <td><span class="stat-pill stat-orange">3 active (204 keywords)</span></td>
+            <td class="mono text-sm text-gray">Apr 6, 2026</td>
+            <td><div class="table-actions"><button class="btn-icon">✏️</button><button class="btn-icon del">🗑</button></div></td>
+          </tr>
+          <tr>
+            <td><strong>Guns and Ammunition</strong></td>
+            <td>Retailer</td>
+            <td><span class="stat-pill stat-green">4 of 8 ON</span></td>
+            <td><span class="stat-pill stat-gray">0 of 14 ON</span></td>
+            <td><span class="stat-pill stat-orange">1 active (45 keywords)</span></td>
+            <td class="mono text-sm text-gray">Apr 6, 2026</td>
+            <td><div class="table-actions"><button class="btn-icon">✏️</button><button class="btn-icon del">🗑</button></div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="table-note mt8">
+      <strong>ℹ️ How defaults apply:</strong> These defaults apply when a company with this Industry Type + Type of Company pair first gets a scan configured. Scan operators can always override per-company in the <strong>Q-ScanAI Scanner Configuration</strong> modal.
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SECTION 4: MRI CHECK PROFILES — FULL VIEW -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-header flex justify-between items-center">
+      <div>
+        <div class="section-title">MRI Check Profiles — Full View</div>
+        <div class="section-sub">Global Settings → MRI Check Profiles tile → configures which MRI checks run per industry pair</div>
+      </div>
+      <button class="add-btn">+ Add Profile</button>
+    </div>
+
+    <div class="data-table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Industry Type</th>
+            <th>Type of Company</th>
+            <th>Universal Checks</th>
+            <th>Industry Checks</th>
+            <th>License Checks</th>
+            <th>Data Sources</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Hemp / CBD</strong></td>
+            <td>Retailer</td>
+            <td><span class="locked-badge">🔒 6 locked</span></td>
+            <td><span class="stat-pill stat-green">4 active</span></td>
+            <td><span class="stat-pill stat-blue">2 types</span></td>
+            <td class="text-sm">FDA, FTC</td>
+            <td><div class="table-actions"><button class="btn-icon">✏️</button></div></td>
+          </tr>
+          <tr>
+            <td><strong>Cannabis / CBD</strong></td>
+            <td>Retailer</td>
+            <td><span class="locked-badge">🔒 6 locked</span></td>
+            <td><span class="stat-pill stat-green">4 active</span></td>
+            <td><span class="stat-pill stat-blue">3 types</span></td>
+            <td class="text-sm">FDA, FTC, State Cannabis</td>
+            <td><div class="table-actions"><button class="btn-icon">✏️</button></div></td>
+          </tr>
+          <tr>
+            <td><strong>Online Lending</strong></td>
+            <td>All</td>
+            <td><span class="locked-badge">🔒 6 locked</span></td>
+            <td><span class="stat-pill stat-green">6 active</span></td>
+            <td><span class="stat-pill stat-blue">2 types</span></td>
+            <td class="text-sm">CFPB, NMLS, State AG</td>
+            <td><div class="table-actions"><button class="btn-icon">✏️</button></div></td>
+          </tr>
+          <tr>
+            <td><strong>Firearms</strong></td>
+            <td>Retailer</td>
+            <td><span class="locked-badge">🔒 6 locked</span></td>
+            <td><span class="stat-pill stat-green">3 active</span></td>
+            <td><span class="stat-pill stat-blue">2 types</span></td>
+            <td class="text-sm">ATF FFL, State Firearms</td>
+            <td><div class="table-actions"><button class="btn-icon">✏️</button></div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="table-note mt8">
+      <strong>🔒 Universal MRI checks</strong> (OFAC, PEP, BBB, Google, SOS, WHOIS) always run for all merchants — these cannot be disabled. Industry checks and license verification types are configurable per pair. The <strong>MRI column</strong> in the Pipeline shows worst-case aggregate score across all active checks.
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SECTION 5: MCC CODE REGISTRY -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-header flex justify-between items-center">
+      <div>
+        <div class="section-title">MCC Code Registry</div>
+        <div class="section-sub">Global Settings → MCC Code Registry tile → map Merchant Category Codes to Industry Types</div>
+      </div>
+      <button class="add-btn">+ Add MCC Code</button>
+    </div>
+
+    <div class="data-table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>MCC Code</th>
+            <th>Description</th>
+            <th>Linked Industry Types</th>
+            <th>Risk Level</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="mono bold" style="color:#1E3A5F">5912</span></td>
+            <td>Drug Stores and Pharmacies</td>
+            <td>
+              <span class="ind-tag">Hemp / CBD</span>
+              <span class="ind-tag">Cannabis / CBD</span>
+            </td>
+            <td><span class="risk-med">Medium</span></td>
+            <td><div class="table-actions"><button class="btn-icon">✏️</button><button class="btn-icon del">🗑</button></div></td>
+          </tr>
+          <tr>
+            <td><span class="mono bold" style="color:#1E3A5F">5499</span></td>
+            <td>Misc. Food Stores</td>
+            <td>
+              <span class="ind-tag">Hemp / CBD</span>
+              <span class="ind-tag">Nutraceuticals</span>
+            </td>
+            <td><span class="risk-low">Low</span></td>
+            <td><div class="table-actions"><button class="btn-icon">✏️</button><button class="btn-icon del">🗑</button></div></td>
+          </tr>
+          <tr>
+            <td><span class="mono bold" style="color:#1E3A5F">6010</span></td>
+            <td>Financial Institution</td>
+            <td>
+              <span class="ind-tag">Online Lending</span>
+            </td>
+            <td><span class="risk-high">High</span></td>
+            <td><div class="table-actions"><button class="btn-icon">✏️</button><button class="btn-icon del">🗑</button></div></td>
+          </tr>
+          <tr>
+            <td><span class="mono bold" style="color:#1E3A5F">5941</span></td>
+            <td>Sporting Goods</td>
+            <td>
+              <span class="ind-tag">Firearms</span>
+            </td>
+            <td><span class="risk-med">Medium</span></td>
+            <td><div class="table-actions"><button class="btn-icon">✏️</button><button class="btn-icon del">🗑</button></div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="table-note mt8">
+      <strong>💡 How MCC codes are used:</strong> MCC codes enable rule-based Industry Type auto-assignment when a merchant's MCC is known at onboarding. They also contribute to the <strong>MRI Business Risk factor</strong> scoring model.
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- FLOW DIAGRAM: HOW EVERYTHING CONNECTS -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">How Everything Connects</div>
+      <div class="section-sub">The Industry Configuration Engine feeds scan behavior, MRI behavior, and pipeline output columns</div>
+    </div>
+
+    <div class="flow-wrap">
+      <div class="flow">
+        <!-- Input node -->
+        <div class="flow-node dark">
+          <div class="flow-node-title">Industry Type<br>+ Type of Company</div>
+          <div class="flow-node-sub">e.g. Hemp/CBD + Retailer</div>
+        </div>
+
+        <div class="flow-arrow">→</div>
+
+        <!-- Configures node -->
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div class="flow-node" style="min-width:160px">
+            <div class="flow-node-title" style="font-size:11px">🔍 Scan Profile Defaults</div>
+            <div class="flow-node-sub">Compliance + Analyst checks, keyword sets</div>
+          </div>
+          <div class="flow-node" style="min-width:160px">
+            <div class="flow-node-title" style="font-size:11px">🔬 MRI Check Profiles</div>
+            <div class="flow-node-sub">Universal + industry-specific MRI checks</div>
+          </div>
+          <div class="flow-node" style="min-width:160px">
+            <div class="flow-node-title" style="font-size:11px">⚖️ Regulatory Attributes</div>
+            <div class="flow-node-sub">Classification &amp; COA field bindings</div>
+          </div>
+          <div class="flow-node" style="min-width:160px">
+            <div class="flow-node-title" style="font-size:11px">💳 MCC Codes</div>
+            <div class="flow-node-sub">Auto-assignment + business risk</div>
+          </div>
+        </div>
+
+        <div class="flow-arrow">→</div>
+
+        <!-- Pipeline output -->
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div class="flow-node green" style="min-width:170px">
+            <div class="flow-node-title" style="font-size:11px">✅ Website Compliance</div>
+            <div class="flow-node-sub">Pipeline column — automated scan results</div>
+          </div>
+          <div class="flow-node green" style="min-width:170px">
+            <div class="flow-node-title" style="font-size:11px">📦 Product Compliance</div>
+            <div class="flow-node-sub">Pipeline column — COA &amp; product checks</div>
+          </div>
+          <div class="flow-node green" style="min-width:170px">
+            <div class="flow-node-title" style="font-size:11px">🔬 MRI Score</div>
+            <div class="flow-node-sub">Pipeline column — merchant risk score</div>
+          </div>
+        </div>
+      </div>
+      <p style="font-size:12px;color:#94A3B8;margin-top:16px;text-align:center">Scan operators can override Scan Profile Defaults per-company in the Q-ScanAI Scanner Configuration modal. MRI profiles are admin-only.</p>
+    </div>
+  </div>
+
+</div><!-- /page -->
+
+<script>
+function toggleAcc(header) {
+  header.classList.toggle('open');
+  const body = header.nextElementSibling;
+  if (body && body.classList.contains('acc-body')) {
+    body.style.display = body.style.display === 'none' || body.style.display === '' ? 'block' : 'none';
+    // sync with open class
+    if (header.classList.contains('open')) body.style.display = 'block';
+    else body.style.display = 'none';
+  }
+}
+
+function toggleCard(header) {
+  const body = header.nextElementSibling;
+  if (!body || !body.classList.contains('scan-card-body')) return;
+  const isOpen = body.style.display === 'block';
+  body.style.display = isOpen ? 'none' : 'block';
+  const arrow = header.querySelector('span:last-child');
+  if (arrow) arrow.textContent = isOpen ? '▶' : '▼';
+}
+
+// Init: make open accordions visible, closed ones hidden
+document.querySelectorAll('.acc-body').forEach(body => {
+  const header = body.previousElementSibling;
+  if (header && header.classList.contains('open')) {
+    body.style.display = 'block';
+  } else {
+    body.style.display = 'none';
+  }
+});
+
+// Init scan card bodies — first one open
+document.querySelectorAll('.scan-card-body').forEach((body, i) => {
+  body.style.display = i === 0 ? 'block' : 'none';
+});
+</script>
+</body>
+</html>
