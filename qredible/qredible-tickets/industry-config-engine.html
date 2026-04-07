@@ -404,24 +404,44 @@ a:hover{text-decoration:underline}
         <!-- ── ACCORDION: Regulatory Attribute Bindings ── -->
         <div class="accordion">
           <div class="acc-header" onclick="toggleAcc(this)">
-            <div class="acc-title">⚖️ Regulatory Attribute Bindings <span class="acc-meta">4 classification · 2 COA · 1 finding</span></div>
+            <div class="acc-title">🏷️ Industry Attributes <span class="acc-meta">5 attributes assigned</span></div>
             <span class="acc-arrow">▼</span>
           </div>
           <div class="acc-body">
-            <div class="check-group-title">Product Classification Bindings</div>
-            <div class="binding-list mt8">
-              <div class="binding-row"><span class="binding-source">Tinctures</span><span class="binding-arrow">→</span><span class="binding-target">FDA_DISCLAIMER_REQUIRED</span></div>
-              <div class="binding-row"><span class="binding-source">Edibles</span><span class="binding-arrow">→</span><span class="binding-target">THC_LIMIT_0.3PCT</span></div>
-              <div class="binding-row"><span class="binding-source">Topicals</span><span class="binding-arrow">→</span><span class="binding-target">FDA_DISCLAIMER_REQUIRED</span></div>
-              <div class="binding-row"><span class="binding-source">Capsules</span><span class="binding-arrow">→</span><span class="binding-target">FDA_DISCLAIMER_REQUIRED</span></div>
+            <div style="font-size:11px;color:#64748B;margin-bottom:10px;">Attributes directly assigned to <strong>Hemp / CBD</strong>. Apply to all companies and products in this industry. Rules (QP-3604) define what each attribute means.</div>
+            <div class="binding-list" style="gap:6px;">
+              <div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:#F8FAFC;border:1px solid #E2E8F0;border-radius:6px;">
+                <span class="binding-target" style="min-width:200px;">DELTA_9_THC</span>
+                <span style="font-size:10px;color:#64748B;">Products contain Delta-9 THC — subject to federal/state limits</span>
+                <span style="margin-left:auto;cursor:pointer;color:#DC2626;font-size:12px;" title="Remove">×</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:#F8FAFC;border:1px solid #E2E8F0;border-radius:6px;">
+                <span class="binding-target" style="min-width:200px;">FDA_REGULATED_PRODUCT</span>
+                <span style="font-size:10px;color:#64748B;">Requires FDA disclaimer on website and packaging</span>
+                <span style="margin-left:auto;cursor:pointer;color:#DC2626;font-size:12px;" title="Remove">×</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:#F8FAFC;border:1px solid #E2E8F0;border-radius:6px;">
+                <span class="binding-target" style="min-width:200px;">COA_REQUIRED</span>
+                <span style="font-size:10px;color:#64748B;">Certificate of Analysis required for product compliance</span>
+                <span style="margin-left:auto;cursor:pointer;color:#DC2626;font-size:12px;" title="Remove">×</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:#F8FAFC;border:1px solid #E2E8F0;border-radius:6px;">
+                <span class="binding-target" style="min-width:200px;">STATE_LICENSE_REQUIRED</span>
+                <span style="font-size:10px;color:#64748B;">Company must hold state-level hemp/cannabis license</span>
+                <span style="margin-left:auto;cursor:pointer;color:#DC2626;font-size:12px;" title="Remove">×</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:#F8FAFC;border:1px solid #E2E8F0;border-radius:6px;">
+                <span class="binding-target" style="min-width:200px;">AGE_VERIFICATION_REQUIRED</span>
+                <span style="font-size:10px;color:#64748B;">Website must have age gate (21+ for cannabis, varies for hemp)</span>
+                <span style="margin-left:auto;cursor:pointer;color:#DC2626;font-size:12px;" title="Remove">×</span>
+              </div>
             </div>
-            <div class="check-group-title mt12">COA Field Triggers</div>
-            <div class="binding-list mt8">
-              <div class="binding-row"><span class="binding-source">Delta-9 THC % &gt; 0.3</span><span class="binding-arrow">→</span><span class="binding-target">DELTA_9_THC</span></div>
-              <div class="binding-row"><span class="binding-source">CBD % &lt; LOQ</span><span class="binding-arrow">→</span><span class="binding-target">COA_VALIDITY_FLAG</span></div>
+            <div style="display:flex;align-items:center;gap:8px;margin-top:10px;">
+              <button style="padding:4px 10px;background:#F3E8FF;color:#5B21B6;border:1px dashed #C4B5FD;border-radius:4px;font-size:10px;font-weight:600;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;">+ Add Attribute</button>
+              <span style="font-size:10px;color:#64748B;">Select from the Regulatory Attributes library</span>
             </div>
-            <div class="binding-count-row mt12">
-              📊 <strong>4</strong> classification bindings &nbsp;·&nbsp; <strong>2</strong> COA field triggers &nbsp;·&nbsp; <strong>1</strong> website finding trigger
+            <div style="margin-top:10px;padding:6px 10px;background:#EFF6FF;border:1px solid #BFDBFE;border-radius:4px;font-size:10px;color:#1D4ED8;">
+              💡 Attributes identify WHAT applies to this industry. Compliance Rules define what each attribute MEANS (thresholds, actions, jurisdiction logic). Attributes bind. Rules evaluate.
             </div>
           </div>
         </div>
