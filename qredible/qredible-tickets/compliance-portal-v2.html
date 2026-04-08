@@ -2068,7 +2068,7 @@ body { font-family: "Uber Move", system-ui, -apple-system, BlinkMacSystemFont, s
         <span style="font-size:11px;font-weight:700;background:#16a34a;color:white;padding:2px 8px;border-radius:4px;">QP-3586</span>
         <span style="font-size:11px;font-weight:700;background:#7C3AED;color:white;padding:2px 8px;border-radius:4px;">QP-3593</span>
         <span style="font-size:13px;color:#166634;font-weight:500;">Merchant Response Flow — inline response form per item type</span>
-        <span style="font-size:12px;color:#6B7280;">File upload, MyCOA upload + auto-link, product URL, COA URL, or combined evidence paths · Request extension and dispute available on every item</span>
+        <span style="font-size:12px;color:#6B7280;">Merchant view — only the resolution path selected by the processor is shown per item · Request extension and dispute remain available on every item</span>
       </div>
       <a href="https://qredible.atlassian.net/browse/QP-3586" target="_blank" style="font-size:12px;color:#2563eb;text-decoration:none;">View Jira ticket →</a>
     </div>
@@ -2105,7 +2105,11 @@ body { font-family: "Uber Move", system-ui, -apple-system, BlinkMacSystemFont, s
 
       <!-- Summary box -->
       <div class="info-bar mb-16" style="background:#EFF6FF;border-color:#BFDBFE;">
-        FLEX Payment Solutions has identified <strong>3 compliance items</strong> requiring your response. Please address each item below. Your responses are reviewed by your compliance analyst.
+        FLEX Payment Solutions has identified <strong>3 compliance items</strong> requiring your response. Please address each item below. <strong>The requested response type for each item has already been selected by your compliance analyst</strong>, so you only see the evidence path they are asking you to complete.
+      </div>
+
+      <div class="annotation" style="margin-bottom:16px;">
+        <strong>Merchant-facing rule:</strong> this screen does <em>not</em> expose processor configuration choices. Resolution types are configured earlier by the payment processor / monitoring entity during case creation. The merchant only sees the specific evidence request that was selected for that item.
       </div>
 
       <!-- ITEM 1 -->
@@ -2122,55 +2126,25 @@ body { font-family: "Uber Move", system-ui, -apple-system, BlinkMacSystemFont, s
           <div class="item-desc">
             A Certificate of Analysis (COA) is required for this product to verify cannabinoid content and confirm product safety. Depending on merchant type, FLEX may require a direct COA upload, the product page URL where the COA appears, the exact COA URL, or both website URLs for evidence.
           </div>
-          <div class="item-field-label">Required evidence type</div>
-          <div class="radio-group mt-8">
-            <label class="radio-item">
-              <input type="radio" name="item1-evidence" checked>
-              Upload COA file
-            </label>
-            <label class="radio-item">
-              <input type="radio" name="item1-evidence">
-              Upload to MyCOA and return published COA URL automatically
-            </label>
-            <label class="radio-item">
-              <input type="radio" name="item1-evidence">
-              Provide product page URL where COA is shown
-            </label>
-            <label class="radio-item">
-              <input type="radio" name="item1-evidence">
-              Provide direct COA URL
-            </label>
-            <label class="radio-item">
-              <input type="radio" name="item1-evidence">
-              Provide both product page URL and direct COA URL
-            </label>
+          <div class="item-field-label">Requested Resolution Type</div>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;">
+            <span class="pill pill-open" style="background:#EFF6FF;color:#1D4ED8;">Selected by FLEX Payment Solutions</span>
+            <span class="pill pill-medium" style="background:#F5F3FF;color:#6D28D9;">Upload to MyCOA + return live COA URL</span>
           </div>
 
           <div class="info-bar mt-12" style="background:#FFFBEB;border-color:#FDE68A;color:#92400E;">
-            <strong>Why this is flexible:</strong> card-present / retail merchants may only upload a COA file, while online merchants and lenders may be required to prove the COA is actually present on the website. If the merchant uses <strong>MyCOA</strong>, they can upload a compliant replacement there and Qredible will receive back the published COA URL automatically.
+            <strong>Requested by the processor:</strong> FLEX has chosen the MyCOA resolution path for this item. Upload a compliant replacement COA into MyCOA, publish it, and the live MyCOA URL will be returned into this case automatically.
           </div>
 
-          <div class="item-field-label mt-12">Upload COA file (if required)</div>
-          <div class="upload-zone">
-            <div class="upload-zone-icon">📄</div>
-            Drop COA PDF here or click to browse · Max 25MB · PDF only
-          </div>
-
-          <div class="item-field-label mt-12">Upload to MyCOA (recommended if merchant uses MyCOA)</div>
+          <div class="item-field-label mt-12">Upload to MyCOA</div>
           <div class="upload-zone" style="border-color:#BFDBFE;background:#EFF6FF;">
             <div class="upload-zone-icon">🔗</div>
             Upload a replacement COA into MyCOA → publish → return the live MyCOA URL back into this case automatically
           </div>
           <div class="text-xs" style="color:#1D4ED8;margin-top:8px;">Best for merchants already managing published COAs through MyCOA. Resolves both the document requirement and the live URL evidence path.</div>
 
-          <div class="item-field-label mt-12">Product Page URL (if required)</div>
-          <input class="drawer-input" placeholder="https://merchant.com/products/gummy-bears-500mg">
-
-          <div class="item-field-label mt-12">Direct COA URL (if required)</div>
-          <input class="drawer-input" placeholder="https://merchant.com/products/gummy-bears-500mg/coa.pdf">
-
           <div class="item-field-label mt-12">Notes</div>
-          <textarea class="form-textarea" placeholder="Explain what you're providing, where the COA appears, or any special handling needed..."></textarea>
+          <textarea class="form-textarea" placeholder="Add context for the analyst (lab name, publish timing, or anything they should know)..."></textarea>
           <div class="radio-group mt-12">
             <label class="radio-item">
               <input type="radio" name="item1-secondary-action">
@@ -2200,19 +2174,19 @@ body { font-family: "Uber Move", system-ui, -apple-system, BlinkMacSystemFont, s
           <div class="item-desc">
             The COA currently on file for this product expired on January 15, 2026. Please provide updated evidence. For online merchants, FLEX may require the live website location in addition to the replacement COA.
           </div>
-          <div class="item-field-label">Upload Replacement COA</div>
+          <div class="item-field-label">Requested Resolution Type</div>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;">
+            <span class="pill pill-open" style="background:#EFF6FF;color:#1D4ED8;">Selected by FLEX Payment Solutions</span>
+            <span class="pill pill-medium" style="background:#FEF3C7;color:#92400E;">Upload replacement COA + provide live product URL</span>
+          </div>
+          <div class="item-field-label mt-12">Upload Replacement COA</div>
           <div class="upload-zone">
             <div class="upload-zone-icon">📄</div>
             Drop replacement COA PDF here or click to browse · Max 25MB · PDF only
           </div>
-          <div class="item-field-label mt-12">Upload to MyCOA and return URL</div>
-          <div class="upload-zone" style="border-color:#BFDBFE;background:#EFF6FF;">
-            <div class="upload-zone-icon">🔗</div>
-            Replace the expired COA in MyCOA and send the new published URL back into this case automatically
-          </div>
-          <div class="item-field-label mt-12">Live Product Page URL (optional / if requested)</div>
+          <div class="item-field-label mt-12">Live Product Page URL</div>
           <input class="drawer-input" placeholder="https://merchant.com/products/tincture-1000mg">
-          <textarea class="form-textarea" placeholder="Describe what you're uploading (lab name, test date, etc.)..."></textarea>
+          <textarea class="form-textarea" placeholder="Describe the replacement COA and where it is now visible on the live site..."></textarea>
           <div class="radio-group mt-12">
             <label class="radio-item">
               <input type="radio" name="item2-secondary-action">
@@ -2241,7 +2215,12 @@ body { font-family: "Uber Move", system-ui, -apple-system, BlinkMacSystemFont, s
           <div class="item-desc">
             A privacy policy must be accessible at a discoverable URL on your website.
           </div>
-          <div class="item-field-label">Response</div>
+          <div class="item-field-label">Requested Resolution Type</div>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;">
+            <span class="pill pill-open" style="background:#EFF6FF;color:#1D4ED8;">Selected by FLEX Payment Solutions</span>
+            <span class="pill pill-medium" style="background:#DBEAFE;color:#1E40AF;">Provide privacy policy URL</span>
+          </div>
+          <div class="item-field-label mt-12">Response</div>
           <div class="radio-group mt-8">
             <label class="radio-item">
               <input type="radio" name="item3-radio">
@@ -2270,7 +2249,7 @@ body { font-family: "Uber Move", system-ui, -apple-system, BlinkMacSystemFont, s
     </div>
 
       <div class="annotation mt-16" style="border-color:#DDD6FE;background:#F5F3FF;color:#5B21B6;">
-        <strong>📋 itemType → Resolution Type Mapping (defaults)</strong><br>
+        <strong>📋 itemType → Resolution Type Mapping (processor-side defaults)</strong><br>
         The merchant response form renders <em>only</em> the controls matching the item's <code style="background:#EDE9FE;border-radius:3px;padding:1px 4px;">allowedResolutionTypes</code> array.<br>
         <table style="margin-top:10px;border-collapse:collapse;width:100%;font-size:12px;">
           <thead>
@@ -2291,6 +2270,7 @@ body { font-family: "Uber Move", system-ui, -apple-system, BlinkMacSystemFont, s
             <tr><td style="padding:5px 10px;border:1px solid #DDD6FE;"><code>MANUAL</code></td><td style="padding:5px 10px;border:1px solid #DDD6FE;">All types (processor configures)</td><td style="padding:5px 10px;border:1px solid #DDD6FE;">Processor sets at item creation</td></tr>
           </tbody>
         </table>
+        <div style="margin-top:10px;font-size:12px;color:#5B21B6;"><strong>Important:</strong> the table above is internal product logic for processors / case creators. Merchants do <em>not</em> see this menu of choices — they only see the already-selected resolution path on each case item.</div>
         <div style="margin-top:10px;"><strong>⚠ Open Questions — Product decision required before dev:</strong></div>
         <ul style="margin-top:6px;padding-left:18px;line-height:1.8;">
           <li><strong>Flexible missing-COA resolution:</strong> Can a processor require upload only, URL only, MyCOA upload only, or both depending on merchant type (retail/card-present vs online)?</li>
