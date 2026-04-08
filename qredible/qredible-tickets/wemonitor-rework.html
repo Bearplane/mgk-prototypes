@@ -51,20 +51,20 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#F1F5F9;color:#1E293B
 .pill-x:hover{color:#3B82F6}
 .clear-all{font-size:12px;color:#3B82F6;cursor:pointer;font-weight:600;margin-left:4px;white-space:nowrap}
 /* PRIMARY ACTIONS */
-.primary-actions{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 20px;border-bottom:1px solid #E2E8F0;background:#FCFDFE;overflow-x:auto}
-.action-cluster{display:flex;gap:8px;flex-wrap:nowrap;align-items:center;flex:1;min-width:max-content}
+.primary-actions{display:flex;align-items:center;gap:8px;padding:10px 20px;border-bottom:1px solid #E2E8F0;background:#FCFDFE;overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch}
+.action-cluster{display:flex;gap:8px;flex-wrap:nowrap;align-items:center;min-width:max-content}
 .action-card{display:flex;align-items:center;gap:0;min-width:auto;background:transparent;border:none;border-radius:0;padding:0}
 .action-card-meta{display:none}
 .action-card-title{font-size:11px;font-weight:800;color:#1E293B;line-height:1.1;text-transform:uppercase;letter-spacing:.04em}
 .action-card-desc{font-size:11px;color:#64748B;line-height:1.35}
-.action-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:8px 12px;border-radius:999px;border:1px solid #CBD5E1;background:#fff;color:#1E3A5F;font-size:12px;font-weight:700;white-space:nowrap;box-shadow:0 1px 0 rgba(15,23,42,.03)}
+.action-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:7px 11px;border-radius:999px;border:1px solid #CBD5E1;background:#fff;color:#1E3A5F;font-size:11px;font-weight:700;white-space:nowrap;box-shadow:0 1px 0 rgba(15,23,42,.03);line-height:1}
 .action-btn.primary{background:#1E3A5F;border-color:#1E3A5F;color:#fff}
 .action-btn.blue{background:#EFF6FF;border-color:#BFDBFE;color:#1D4ED8}
 .action-btn.green{background:#F0FDF4;border-color:#BBF7D0;color:#166534}
 .action-btn.amber{background:#FFFBEB;border-color:#FDE68A;color:#92400E}
 .action-btn.purple{background:#F5F3FF;border-color:#DDD6FE;color:#6D28D9}
-.actions-export{display:flex;align-items:center;justify-content:flex-end;padding-left:12px;border-left:1px solid #E2E8F0;min-width:max-content}
-.toolbar-label{font-size:11px;font-weight:800;color:#64748B;text-transform:uppercase;letter-spacing:.08em;margin-right:8px}
+.actions-export{display:flex;align-items:center;min-width:max-content}
+.toolbar-label{display:none}
 /* BULK BAR */
 .bulk-bar{display:flex;align-items:center;gap:10px;padding:10px 20px;background:#EFF6FF;border-bottom:1px solid #BFDBFE}
 .bulk-count{font-size:13px;font-weight:700;color:#1D4ED8}
@@ -177,8 +177,7 @@ tbody td:first-child{text-align:center}
     .pill-pair .pill-type { border-radius: 0 12px 12px 0; padding-left: 4px; }
 
 @media (max-width: 900px) {
-  .primary-actions{padding:10px 16px;gap:10px}
-  .actions-export{padding-left:10px}
+  .primary-actions{padding:10px 16px;gap:8px}
   .search-input{max-width:none}
 }
   </style>
@@ -335,8 +334,6 @@ tbody td:first-child{text-align:center}
         <div class="action-card">
           <button class="action-btn amber">⇪ Upload Contacts &amp; Referrals</button>
         </div>
-      </div>
-      <div class="actions-export">
         <div class="action-card">
           <button class="action-btn purple">⤓ Export List of Companies</button>
         </div>
@@ -527,8 +524,6 @@ tbody td:first-child{text-align:center}
         <div class="action-card">
           <button class="action-btn amber">⇪ Upload Contacts &amp; Referrals</button>
         </div>
-      </div>
-      <div class="actions-export">
         <div class="action-card">
           <button class="action-btn purple">⤓ Export Pending Queue</button>
         </div>
