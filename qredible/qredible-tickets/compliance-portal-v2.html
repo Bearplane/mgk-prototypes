@@ -190,7 +190,7 @@ body { font-family: "Uber Move", system-ui, -apple-system, BlinkMacSystemFont, s
 .side-panel {
   position: fixed;
   top: 40px; right: 0;
-  width: 42%;
+  width: min(860px, 58vw);
   height: calc(100vh - 40px);
   background: white;
   box-shadow: -4px 0 24px rgba(0,0,0,0.12);
@@ -216,7 +216,7 @@ body { font-family: "Uber Move", system-ui, -apple-system, BlinkMacSystemFont, s
 .case-drawer {
   position: fixed;
   top: 0; right: 0;
-  width: 440px;
+  width: min(980px, 70vw);
   height: 100vh;
   background: white;
   box-shadow: -4px 0 24px rgba(0,0,0,0.15);
@@ -254,6 +254,14 @@ body { font-family: "Uber Move", system-ui, -apple-system, BlinkMacSystemFont, s
 .case-item-remove { background: none; border: none; cursor: pointer; color: #9CA3AF; font-size: 16px; }
 .case-item-remove:hover { color: #374151; }
 .add-items-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+.drawer-bulk-bar { background:#EFF6FF; border:1px solid #BFDBFE; border-radius:8px; padding:10px 12px; display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:14px; font-size:12px; color:#1E40AF; }
+.drawer-bulk-bar .bulk-label { font-weight:600; margin-right:auto; }
+.case-item-list { display:flex; flex-direction:column; gap:10px; }
+.case-item-row { border:1px solid #E5E7EB; border-radius:10px; background:white; padding:12px 14px; }
+.case-item-top { display:grid; grid-template-columns:minmax(0,1.5fr) minmax(180px,0.9fr) auto; gap:12px; align-items:start; }
+.resolution-chip { display:inline-flex; align-items:center; gap:6px; border-radius:999px; padding:4px 10px; font-size:11px; font-weight:700; background:#EFF6FF; color:#1E40AF; border:1px solid #BFDBFE; }
+.case-item-controls { display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+.dense-note { font-size:11px; color:#6B7280; line-height:1.5; }
 .drawer-footer {
   padding: 16px 20px;
   border-top: 1px solid #E5E7EB;
@@ -1337,43 +1345,84 @@ body { font-family: "Uber Move", system-ui, -apple-system, BlinkMacSystemFont, s
         <div class="section-header">
           <div>
             <div class="section-title">Case Items (3)</div>
-            <div style="font-size:11px;color:#6B7280;margin-top:4px;margin-bottom:12px;">2 existing items + 1 being added</div>
+            <div style="font-size:11px;color:#6B7280;margin-top:4px;margin-bottom:12px;">2 existing items + 1 being added · dense processor-side case builder for large item counts</div>
           </div>
           <button class="btn-secondary btn-sm">+ Add Item</button>
         </div>
 
-        <!-- Item 1 -->
-        <div class="case-item-card" style="border-left:3px solid #EF4444;">
-          <div class="case-item-type red">🔴 PRODUCT_MISSING_COA</div>
-          <div class="case-item-product">Product: Gummy Bears 500mg (GB-500)</div>
-          <div class="case-item-desc">COA required — none on file</div>
-          <div class="case-item-footer">
-            <button class="btn-secondary btn-sm btn-with-chevron">Upload COA <svg width="10" height="6" viewBox="0 0 10 6"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></button>
-            <button class="case-item-remove">×</button>
-          </div>
+        <div class="drawer-bulk-bar">
+          <span class="bulk-label">3 items selected</span>
+          <button class="btn-secondary btn-sm">Set resolution type</button>
+          <button class="btn-secondary btn-sm">Set priority</button>
+          <button class="btn-secondary btn-sm">Set SLA</button>
+          <button class="btn-secondary btn-sm">Request docs from merchant</button>
+          <button class="btn-secondary btn-sm">Remove selected</button>
         </div>
 
-        <!-- Item 2 -->
-        <div class="case-item-card" style="border-left:3px solid #F59E0B;">
-          <div class="case-item-type amber">🟡 COA_EXPIRED</div>
-          <div class="case-item-product">Product: Tincture 1000mg (TIN-1000)</div>
-          <div class="case-item-coa">COA: #VCO-847 · CannTest · expired Jan 2026</div>
-          <div class="case-item-desc">Expired COA must be replaced</div>
-          <div class="case-item-footer">
-            <button class="btn-secondary btn-sm btn-with-chevron">Upload COA <svg width="10" height="6" viewBox="0 0 10 6"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></button>
-            <button class="case-item-remove">×</button>
+        <div class="case-item-list">
+          <div class="case-item-row" style="border-left:3px solid #EF4444;">
+            <div class="case-item-top">
+              <div>
+                <div class="case-item-type red">🔴 PRODUCT_MISSING_COA</div>
+                <div class="case-item-product">Product: Gummy Bears 500mg (GB-500)</div>
+                <div class="case-item-desc">COA required — none on file. Merchant will see only the selected requested resolution.</div>
+              </div>
+              <div>
+                <div class="dense-note">Requested resolution</div>
+                <div class="resolution-chip" style="margin-top:4px;">Upload to MyCOA + return live URL</div>
+              </div>
+              <button class="case-item-remove">×</button>
+            </div>
+            <div class="case-item-controls">
+              <button class="btn-secondary btn-sm">Change Resolution</button>
+              <button class="btn-secondary btn-sm">Extension Allowed</button>
+              <button class="btn-secondary btn-sm">Dispute Allowed</button>
+              <button class="btn-secondary btn-sm">Priority: High</button>
+            </div>
           </div>
-        </div>
 
-        <!-- Item 3 -->
-        <div class="case-item-card" style="border-left:3px solid #EF4444;">
-          <div class="case-item-type red">🔴 COMPLIANCE_FINDING <span style="background:#DCFCE7;color:#166534;font-size:10px;font-weight:700;padding:1px 6px;border-radius:4px;margin-left:6px;">NEW</span></div>
-          <div class="case-item-product">Website: blackbeardispens.com</div>
-          <div class="case-item-coa">Finding: Privacy Policy Missing (HIGH)</div>
-          <div class="case-item-desc">Privacy policy page required</div>
-          <div class="case-item-footer">
-            <button class="btn-secondary btn-sm btn-with-chevron">Correct Website <svg width="10" height="6" viewBox="0 0 10 6"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></button>
-            <button class="case-item-remove">×</button>
+          <div class="case-item-row" style="border-left:3px solid #F59E0B;">
+            <div class="case-item-top">
+              <div>
+                <div class="case-item-type amber">🟡 COA_EXPIRED</div>
+                <div class="case-item-product">Product: Tincture 1000mg (TIN-1000)</div>
+                <div class="case-item-coa">COA: #VCO-847 · CannTest · expired Jan 2026</div>
+                <div class="case-item-desc">Expired COA must be replaced. Processor can require both replacement upload and website proof.</div>
+              </div>
+              <div>
+                <div class="dense-note">Requested resolution</div>
+                <div class="resolution-chip" style="margin-top:4px;">Upload COA + product URL</div>
+              </div>
+              <button class="case-item-remove">×</button>
+            </div>
+            <div class="case-item-controls">
+              <button class="btn-secondary btn-sm">Change Resolution</button>
+              <button class="btn-secondary btn-sm">Extension Allowed</button>
+              <button class="btn-secondary btn-sm">Dispute Allowed</button>
+              <button class="btn-secondary btn-sm">Priority: Medium</button>
+            </div>
+          </div>
+
+          <div class="case-item-row" style="border-left:3px solid #EF4444;">
+            <div class="case-item-top">
+              <div>
+                <div class="case-item-type red">🔴 COMPLIANCE_FINDING <span style="background:#DCFCE7;color:#166534;font-size:10px;font-weight:700;padding:1px 6px;border-radius:4px;margin-left:6px;">NEW</span></div>
+                <div class="case-item-product">Website: blackbeardispens.com</div>
+                <div class="case-item-coa">Finding: Privacy Policy Missing (HIGH)</div>
+                <div class="case-item-desc">Merchant should be asked only for the website URL correction path selected by the processor.</div>
+              </div>
+              <div>
+                <div class="dense-note">Requested resolution</div>
+                <div class="resolution-chip" style="margin-top:4px;">Provide corrected URL</div>
+              </div>
+              <button class="case-item-remove">×</button>
+            </div>
+            <div class="case-item-controls">
+              <button class="btn-secondary btn-sm">Change Resolution</button>
+              <button class="btn-secondary btn-sm">Extension Allowed</button>
+              <button class="btn-secondary btn-sm">Dispute Allowed</button>
+              <button class="btn-secondary btn-sm">Priority: High</button>
+            </div>
           </div>
         </div>
 
