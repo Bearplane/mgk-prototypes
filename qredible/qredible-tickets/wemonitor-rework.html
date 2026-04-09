@@ -77,7 +77,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#F1F5F9;color:#1E293B
 .btn-bulk.promote{color:#16A34A;border-color:#BBF7D0}
 .future-tag{font-size:10px;color:#94A3B8;font-style:italic}
 /* TABLE */
-.table-wrap{overflow-x:auto}
+.table-wrap{overflow-x:auto}.table-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 14px;border-top:1px solid #E2E8F0;background:#fff;flex-wrap:wrap}.table-summary{font-size:12px;color:#64748B}.table-pagination{display:flex;align-items:center;gap:14px;flex-wrap:wrap}.rows-per-page{display:flex;align-items:center;gap:6px;font-size:12px;color:#64748B}.rows-select{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border:1px solid #CBD5E1;border-radius:8px;background:#fff;color:#1E293B;font-size:12px;font-weight:600}.pager{display:flex;align-items:center;gap:4px}.page-btn{min-width:28px;height:28px;border:1px solid #CBD5E1;border-radius:6px;background:#fff;color:#475569;font-size:12px;font-weight:600;display:inline-flex;align-items:center;justify-content:center}.page-btn.active{background:#3B82F6;border-color:#3B82F6;color:#fff}.page-btn.ghost{border-color:transparent;background:transparent;color:#64748B;min-width:auto;padding:0 4px}
 table{width:100%;border-collapse:collapse;min-width:900px}
 thead tr{background:#1E3A5F}
 thead th{color:#fff;font-size:12px;font-weight:600;padding:10px 14px;text-align:left;white-space:nowrap;letter-spacing:.02em}
@@ -489,12 +489,14 @@ tbody td:first-child{text-align:center}
       </table>
     </div>
 
-    <div style="padding:10px 20px;border-top:1px solid #F1F5F9;display:flex;align-items:center;justify-content:space-between">
-      <span style="font-size:12px;color:#64748B">Showing <strong>5</strong> of <strong>1,204</strong> companies</span>
-      <div style="display:flex;gap:6px">
-        <span style="font-size:12px;color:#64748B">MRI = Merchant Risk Indicator (aggregated risk score per Brian's BRD — replaces standalone OFAC/license columns)</span>
+    <div class="table-footer">
+      <div class="table-summary">Showing 1 to 5 of 1,204 companies</div>
+      <div class="table-pagination">
+        <div class="rows-per-page">Rows per page <span class="rows-select">25 ▾</span></div>
+        <div class="pager"><span class="page-btn">‹</span><span class="page-btn active">1</span><span class="page-btn">2</span><span class="page-btn">3</span><span class="page-btn ghost">…</span><span class="page-btn">49</span><span class="page-btn">›</span></div>
       </div>
     </div>
+    <div style="padding:8px 20px 0;font-size:12px;color:#64748B">MRI = Merchant Risk Indicator (aggregated risk score per Brian's BRD — replaces standalone OFAC/license columns)</div>
   </div>
 
   <!-- ═══════════════════════════════════════════════
@@ -683,6 +685,13 @@ tbody td:first-child{text-align:center}
         </tbody>
       </table>
     </div>
+    <div class="table-footer">
+      <div class="table-summary">Showing 1 to 4 of 47 pending companies</div>
+      <div class="table-pagination">
+        <div class="rows-per-page">Rows per page <span class="rows-select">25 ▾</span></div>
+        <div class="pager"><span class="page-btn">‹</span><span class="page-btn active">1</span><span class="page-btn">2</span><span class="page-btn">›</span></div>
+      </div>
+    </div>
 
     <div class="annotation">
       <strong>Pending tab = Underwriting Queue.</strong> Pending should mirror the Active Companies table structure more closely so analysts can scan both tabs the same way. Keep Legal Name + DBA + Actions consistent, add MID into the Legal Name cell, and use the middle columns to show underwriting progress (Date Added, Website Scan, Product Scan, License Check) before the company is moved to <strong>Active</strong>.
@@ -763,6 +772,13 @@ tbody td:first-child{text-align:center}
             </tbody>
           </table>
         </div>
+        <div class="table-footer" style="margin-top:-1px">
+          <div class="table-summary">Showing 1 to 3 of 847 companies</div>
+          <div class="table-pagination">
+            <div class="rows-per-page">Rows per page <span class="rows-select">25 ▾</span></div>
+            <div class="pager"><span class="page-btn">‹</span><span class="page-btn active">1</span><span class="page-btn">2</span><span class="page-btn">3</span><span class="page-btn ghost">…</span><span class="page-btn">34</span><span class="page-btn">›</span></div>
+          </div>
+        </div>
       </div>
 
       <!-- View B: Team Member filter -->
@@ -813,6 +829,13 @@ tbody td:first-child{text-align:center}
               </tr>
             </tbody>
           </table>
+        </div>
+        <div class="table-footer" style="margin-top:-1px">
+          <div class="table-summary">Showing 1 to 2 of 23 team-assigned companies</div>
+          <div class="table-pagination">
+            <div class="rows-per-page">Rows per page <span class="rows-select">25 ▾</span></div>
+            <div class="pager"><span class="page-btn">‹</span><span class="page-btn active">1</span><span class="page-btn">›</span></div>
+          </div>
         </div>
       </div>
 
@@ -878,6 +901,13 @@ tbody td:first-child{text-align:center}
           </tr>
         </tbody>
       </table>
+    </div>
+    <div class="table-footer" style="margin-top:-1px">
+      <div class="table-summary">Showing 1 to 5 of 1,204 companies</div>
+      <div class="table-pagination">
+        <div class="rows-per-page">Rows per page <span class="rows-select">25 ▾</span></div>
+        <div class="pager"><span class="page-btn">‹</span><span class="page-btn active">1</span><span class="page-btn">2</span><span class="page-btn">3</span><span class="page-btn ghost">…</span><span class="page-btn">49</span><span class="page-btn">›</span></div>
+      </div>
     </div>
   </div>
 
