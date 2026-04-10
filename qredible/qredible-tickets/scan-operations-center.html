@@ -34,7 +34,7 @@ a{color:#3B82F6;text-decoration:none}a:hover{text-decoration:underline}
 <div class="page">
   <div class="page-header">
     <h1>Centralized Scan Operations Center</h1>
-    <p>Replace one-toast-per-company scan spam with a single operations surface next to notifications. Users should be able to monitor active jobs, review outcomes, archive old items intentionally, and understand what each scan actually produced without dismissing endless popups or permanently clearing records too early.</p>
+    <p>Replace one-toast-per-company scan spam with a single operations surface next to notifications. Users should be able to monitor active jobs, review outcomes, personally clear items from their own drawer when they are done with them, and understand what each scan actually produced without affecting the underlying company scan history.</p>
   </div>
 
   <div class="section">
@@ -135,6 +135,7 @@ a{color:#3B82F6;text-decoration:none}a:hover{text-decoration:underline}
               <div class="status-filter-row">
                 <button class="btn btn-secondary">Cancel Selected</button>
                 <button class="btn btn-secondary">Retry Failed</button>
+                <button class="btn btn-danger">Clear Completed</button>
               </div>
             </div>
 
@@ -147,6 +148,7 @@ a{color:#3B82F6;text-decoration:none}a:hover{text-decoration:underline}
                   </div>
                   <div class="op-right">
                     <span class="status-pill status-running">Running</span>
+                    <button class="clear-x">×</button>
                   </div>
                 </div>
                 <div class="op-tags">
@@ -167,14 +169,12 @@ a{color:#3B82F6;text-decoration:none}a:hover{text-decoration:underline}
                   </div>
                   <div class="op-right">
                     <span class="status-pill status-completed">Completed</span>
+                    <button class="clear-x">×</button>
                   </div>
                 </div>
                 <div class="op-stats-inline">
                   <span class="op-stat-pill">📦 173 products · +22 new</span>
                   <span class="op-stat-pill">🧪 30 COAs · +8 new</span>
-                </div>
-                <div class="op-actions">
-                  <button class="btn btn-ghost">Archive</button>
                 </div>
                 <div class="op-meta" style="margin-top:8px"><a href="#">Open Product Compliance ↗</a></div>
               </div>
@@ -187,6 +187,7 @@ a{color:#3B82F6;text-decoration:none}a:hover{text-decoration:underline}
                   </div>
                   <div class="op-right">
                     <span class="status-pill status-completed">Completed</span>
+                    <button class="clear-x">×</button>
                   </div>
                 </div>
                 <div class="op-stats-inline">
@@ -194,9 +195,6 @@ a{color:#3B82F6;text-decoration:none}a:hover{text-decoration:underline}
                   <span class="op-stat-pill">🔴 3 high</span>
                   <span class="op-stat-pill">🟠 5 medium</span>
                   <span class="op-stat-pill">🟢 9 low</span>
-                </div>
-                <div class="op-actions">
-                  <button class="btn btn-ghost">Archive</button>
                 </div>
                 <div class="op-meta" style="margin-top:8px"><a href="#">Open Q-ScanAI Findings ↗</a></div>
               </div>
@@ -209,6 +207,7 @@ a{color:#3B82F6;text-decoration:none}a:hover{text-decoration:underline}
                   </div>
                   <div class="op-right">
                     <span class="status-pill status-failed">Failed</span>
+                    <button class="clear-x">×</button>
                   </div>
                 </div>
                 <div class="op-progress"><div class="progress"><span class="progress-red" style="width:18%"></span></div></div>
@@ -219,11 +218,11 @@ a{color:#3B82F6;text-decoration:none}a:hover{text-decoration:underline}
               </div>
             </div>
 
-            <div class="mini">Compact by design so operators can manage hundreds of jobs without losing the thread. Completed jobs remain visible for 48 hours, failed jobs remain until actioned, and archived jobs move to a separate archive view instead of being manually cleared away.</div>
+            <div class="mini">Completed jobs remain visible for up to 48 hours by default, but a user can clear items from their own Active Operations drawer sooner. Clearing is user-specific only — the underlying scan record still exists in We Monitor or Product Compliance for the company.</div>
           </aside>
         </div>
       </div>
-      <div class="annotation green"><strong>Optimization:</strong> replace per-company popups with one durable operations center. Keep this ticket focused on the icon + expandable panel only.</div>
+      <div class="annotation green"><strong>Optimization:</strong> replace per-company popups with one durable operations center. Keep this ticket focused on the icon + expandable panel only. <strong>Clear</strong> in this surface means a user-specific dismiss from the drawer, not a destructive removal of the company scan result.</div>
     </div>
   </div>
 
