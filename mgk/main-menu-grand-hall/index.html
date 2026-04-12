@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MGK — Main Menu Grand Hall</title>
+  <title>MGK — Main Menu</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800&family=Marcellus&display=swap" rel="stylesheet">
@@ -12,731 +12,293 @@
       --bg: #070806;
       --ink: #f3e7c7;
       --gold: #debf78;
-      --gold-2: #9c7538;
       --gold-line: rgba(222,191,120,0.28);
       --muted: rgba(243,231,199,0.68);
       --teal: #84d4c6;
       --danger: #d46b62;
-      --panel: rgba(10, 13, 12, 0.78);
-      --panel-strong: rgba(9, 11, 10, 0.92);
-      --panel-soft: rgba(255,255,255,0.03);
-      --shadow: 0 30px 80px rgba(0,0,0,0.45);
-      --radius-xl: 28px;
-      --radius-lg: 20px;
-      --radius-md: 16px;
+      --panel: rgba(10, 13, 12, 0.72);
+      --panel-strong: rgba(9, 11, 10, 0.9);
+      --shadow: 0 28px 90px rgba(0,0,0,0.46);
       --ease: 220ms cubic-bezier(.2,.8,.2,1);
     }
-
     * { box-sizing: border-box; }
     html, body { margin: 0; min-height: 100%; background: var(--bg); color: var(--ink); }
     body {
       font-family: 'Marcellus', serif;
-      background:
-        radial-gradient(circle at 14% 20%, rgba(90,125,90,0.22), transparent 22%),
-        radial-gradient(circle at 80% 12%, rgba(83,126,137,0.16), transparent 20%),
-        radial-gradient(circle at 50% 100%, rgba(0,0,0,0.6), transparent 50%),
-        #060706;
       overflow-x: hidden;
+      background: #060706;
     }
-
     button, select { font: inherit; }
-
     .shell {
       position: relative;
       min-height: 100vh;
       isolation: isolate;
       background:
-        linear-gradient(90deg, rgba(5,7,6,0.92) 0%, rgba(5,7,6,0.74) 24%, rgba(5,7,6,0.18) 54%, rgba(5,7,6,0.58) 100%),
-        radial-gradient(circle at 18% 24%, rgba(91, 126, 85, 0.55), transparent 18%),
-        radial-gradient(circle at 74% 34%, rgba(164, 179, 143, 0.20), transparent 20%),
-        radial-gradient(circle at 72% 76%, rgba(67, 125, 138, 0.35), transparent 18%),
+        linear-gradient(90deg, rgba(5,7,6,0.9) 0%, rgba(5,7,6,0.72) 23%, rgba(5,7,6,0.16) 56%, rgba(5,7,6,0.54) 100%),
+        radial-gradient(circle at 72% 28%, rgba(255,244,214,0.16), transparent 16%),
+        radial-gradient(circle at 18% 74%, rgba(222,191,120,0.08), transparent 24%),
         linear-gradient(135deg, #314133 0%, #263029 18%, #7a7159 40%, #7db3ba 55%, #c7c4ac 67%, #2c3a38 100%);
     }
-
-    .grain,
-    .vignette,
-    .glow {
+    .shell::after {
+      content: '';
       position: absolute;
       inset: 0;
+      background: radial-gradient(circle at center, transparent 42%, rgba(0,0,0,0.5) 100%);
       pointer-events: none;
     }
-
-    .vignette {
-      background: radial-gradient(circle at center, transparent 45%, rgba(0,0,0,0.46) 100%);
-      z-index: -1;
-    }
-
-    .grain {
-      opacity: 0.16;
-      mix-blend-mode: soft-light;
-      background-image:
-        linear-gradient(rgba(255,255,255,0.03), rgba(255,255,255,0.03)),
-        repeating-linear-gradient(90deg, transparent 0 130px, rgba(255,255,255,0.02) 130px 131px);
-    }
-
-    .glow {
-      background:
-        radial-gradient(circle at 68% 44%, rgba(255,243,201,0.18), transparent 18%),
-        radial-gradient(circle at 28% 72%, rgba(222,191,120,0.08), transparent 22%);
-      animation: breathe 5s ease-in-out infinite;
-    }
-
     .top-bar {
       position: absolute;
       inset: 18px 28px auto;
       display: flex;
-      align-items: center;
       justify-content: space-between;
+      align-items: center;
       gap: 16px;
-      z-index: 3;
       color: var(--muted);
       font-size: 11px;
+      letter-spacing: 0.24em;
       text-transform: uppercase;
-      letter-spacing: 0.28em;
+      z-index: 3;
     }
-
-    .top-bar .center-rule {
-      flex: 1;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, var(--gold-line), transparent);
-    }
-
+    .top-bar .rule { flex: 1; height: 1px; margin: 0 14px; background: linear-gradient(90deg, transparent, var(--gold-line), transparent); }
     .layout {
       position: relative;
-      min-height: 100vh;
-      padding: 76px 28px 24px;
-      display: grid;
-      grid-template-columns: 360px 1fr;
-      gap: 24px;
       z-index: 2;
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 24px;
+      padding: 74px 28px 24px;
     }
-
-    .rail {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      gap: 18px;
-    }
-
-    .brand-card,
-    .rail-card,
-    .hero-card,
-    .panel {
+    .nav-panel, .hero-card, .realm-strip, .overlay {
       border: 1px solid var(--gold-line);
       background: var(--panel);
       backdrop-filter: blur(14px);
       box-shadow: var(--shadow);
     }
-
-    .brand-card {
-      border-radius: var(--radius-xl);
-      padding: 22px 22px 20px;
-      animation: rise 800ms var(--ease) both;
+    .nav-panel {
+      border-radius: 26px;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
-
     .crest {
       display: inline-flex;
-      align-items: center;
-      gap: 10px;
       padding: 7px 12px;
       border-radius: 999px;
       border: 1px solid var(--gold-line);
       color: var(--gold);
       font-size: 11px;
+      letter-spacing: 0.22em;
       text-transform: uppercase;
-      letter-spacing: 0.28em;
-      background: rgba(255,255,255,0.02);
+      margin-bottom: 16px;
     }
-
-    .brand-title {
-      margin: 18px 0 10px;
+    .brand {
       font-family: 'Cinzel', serif;
-      font-size: clamp(46px, 4vw, 72px);
+      font-size: clamp(48px, 4vw, 68px);
       line-height: 0.92;
       letter-spacing: 0.03em;
-      text-shadow: 0 6px 24px rgba(0,0,0,0.45);
+      margin-bottom: 14px;
     }
-
-    .brand-sub {
-      margin: 0;
-      color: var(--muted);
-      font-size: 15px;
-      line-height: 1.6;
-      max-width: 28ch;
-    }
-
-    .menu-nav {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-top: 18px;
-    }
-
+    .menu-list { display: flex; flex-direction: column; gap: 10px; margin-top: 18px; }
     .menu-btn {
-      position: relative;
       width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      border-radius: 18px;
       border: 1px solid transparent;
-      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-      color: var(--ink);
-      padding: 15px 18px 15px 20px;
-      cursor: pointer;
-      transition: transform var(--ease), border-color var(--ease), background var(--ease), box-shadow var(--ease);
-      text-align: left;
-    }
-
-    .menu-btn:hover,
-    .menu-btn.active {
-      transform: translateX(6px);
-      border-color: var(--gold-line);
-      background: linear-gradient(180deg, rgba(222,191,120,0.14), rgba(16,20,18,0.82));
-      box-shadow: 0 16px 30px rgba(0,0,0,0.22);
-    }
-
-    .menu-btn .title {
-      display: block;
-      font-family: 'Cinzel', serif;
-      font-size: 24px;
-      letter-spacing: 0.02em;
-    }
-
-    .menu-btn .sub {
-      display: block;
-      margin-top: 4px;
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.18em;
-      color: var(--muted);
-    }
-
-    .rail-card {
-      border-radius: 20px;
-      padding: 18px 20px;
-      animation: rise 980ms var(--ease) both;
-    }
-
-    .rail-card h3 {
-      margin: 0 0 8px;
-      font-family: 'Cinzel', serif;
-      font-size: 18px;
-    }
-
-    .rail-card p {
-      margin: 0;
-      color: var(--muted);
-      font-size: 14px;
-      line-height: 1.55;
-    }
-
-    .right-stage {
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
-      min-width: 0;
-    }
-
-    .hero-card {
-      border-radius: 32px;
-      overflow: hidden;
-      animation: driftIn 920ms var(--ease) 90ms both;
-    }
-
-    .hero-top {
-      padding: 26px 28px 18px;
-      display: flex;
-      justify-content: space-between;
-      gap: 18px;
-      border-bottom: 1px solid rgba(222,191,120,0.14);
-    }
-
-    .eyebrow {
-      margin-bottom: 10px;
-      color: var(--gold);
-      font-size: 11px;
-      letter-spacing: 0.28em;
-      text-transform: uppercase;
-    }
-
-    .hero-top h2 {
-      margin: 0;
-      font-family: 'Cinzel', serif;
-      font-size: clamp(34px, 3vw, 52px);
-      line-height: 1;
-    }
-
-    .hero-top p {
-      margin: 8px 0 0;
-      max-width: 58ch;
-      color: var(--muted);
-      line-height: 1.6;
-      font-size: 16px;
-    }
-
-    .hero-badge {
-      align-self: flex-start;
-      padding: 13px 16px;
-      border-radius: 16px;
-      color: var(--teal);
-      border: 1px solid rgba(132,212,198,0.28);
-      background: rgba(132,212,198,0.08);
-      font-size: 12px;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-    }
-
-    .hero-body {
-      padding: 24px 28px 28px;
-      display: grid;
-      grid-template-columns: 1.1fr 0.9fr;
-      gap: 18px;
-    }
-
-    .stack {
-      display: grid;
-      gap: 14px;
-    }
-
-    .panel {
-      border-radius: 22px;
-      padding: 18px;
-    }
-
-    .panel h3,
-    .panel h4 {
-      margin: 0 0 12px;
-      font-family: 'Cinzel', serif;
-    }
-
-    .section-kicker {
-      margin-bottom: 12px;
-      color: var(--muted);
-      font-size: 11px;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-    }
-
-    .primary-actions {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0,1fr));
-      gap: 12px;
-    }
-
-    .action-card {
-      border-radius: 18px;
-      padding: 16px;
-      border: 1px solid rgba(222,191,120,0.14);
-      background: var(--panel-soft);
-    }
-
-    .action-card strong {
-      display: block;
-      font-family: 'Cinzel', serif;
-      font-size: 20px;
-      margin-bottom: 6px;
-    }
-
-    .action-card p {
-      margin: 0;
-      color: var(--muted);
-      font-size: 14px;
-      line-height: 1.5;
-    }
-
-    .save-list { display: grid; gap: 12px; }
-
-    .save-card {
-      border-radius: 18px;
-      padding: 16px 18px;
-      border: 1px solid rgba(222,191,120,0.14);
       background: rgba(255,255,255,0.02);
-      transition: border-color var(--ease), transform var(--ease), background var(--ease);
-    }
-
-    .save-card.active {
-      border-color: rgba(132,212,198,0.36);
-      background: linear-gradient(180deg, rgba(132,212,198,0.08), rgba(255,255,255,0.02));
-      transform: translateY(-2px);
-    }
-
-    .save-top {
+      color: var(--ink);
+      border-radius: 18px;
+      padding: 15px 18px;
+      text-align: left;
       display: flex;
       justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 10px;
-      align-items: baseline;
+      align-items: center;
+      cursor: pointer;
+      transition: transform var(--ease), border-color var(--ease), background var(--ease);
     }
-
-    .save-title { font-family: 'Cinzel', serif; font-size: 21px; }
-    .save-time { font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
-
-    .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
-
-    .chip {
-      padding: 6px 10px;
-      border-radius: 999px;
+    .menu-btn.active, .menu-btn:hover {
+      transform: translateX(5px);
+      border-color: var(--gold-line);
+      background: linear-gradient(180deg, rgba(222,191,120,0.12), rgba(255,255,255,0.02));
+    }
+    .menu-btn .title { font-family: 'Cinzel', serif; font-size: 23px; }
+    .menu-btn .sub { display: block; margin-top: 4px; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+    .music-tag {
+      padding: 12px 14px;
+      border-radius: 16px;
       border: 1px solid rgba(222,191,120,0.14);
+      background: rgba(255,255,255,0.03);
+      color: var(--muted);
       font-size: 12px;
       letter-spacing: 0.08em;
       text-transform: uppercase;
-      color: var(--muted);
     }
-
-    .btn-row { display: flex; flex-wrap: wrap; gap: 10px; }
-
+    .main-stage {
+      display: grid;
+      grid-template-rows: 1fr auto;
+      gap: 18px;
+      min-width: 0;
+    }
+    .hero-card {
+      border-radius: 30px;
+      padding: 28px;
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 18px;
+      align-items: end;
+      min-height: 520px;
+    }
+    .eyebrow {
+      color: var(--gold);
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .realm-name {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(36px, 3vw, 52px);
+      line-height: 0.98;
+      margin-bottom: 10px;
+    }
+    .realm-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+    .chip {
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(222,191,120,0.16);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      background: rgba(255,255,255,0.03);
+    }
+    .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
     .btn {
       border: none;
       cursor: pointer;
       border-radius: 14px;
-      padding: 13px 16px;
-      transition: transform var(--ease), box-shadow var(--ease), background var(--ease), opacity var(--ease);
+      padding: 14px 18px;
+      transition: transform var(--ease), background var(--ease);
       font-size: 16px;
     }
-
     .btn:hover { transform: translateY(-1px); }
-    .btn.primary {
-      font-family: 'Cinzel', serif;
-      background: linear-gradient(180deg, #efd79a, #c79c4e);
-      color: #17120a;
-      box-shadow: 0 12px 26px rgba(199,156,78,0.24);
+    .btn.primary { background: linear-gradient(180deg, #efd79a, #c79c4e); color: #17120a; font-family: 'Cinzel', serif; }
+    .btn.secondary { background: rgba(255,255,255,0.04); border: 1px solid rgba(222,191,120,0.18); color: var(--ink); }
+    .hero-side {
+      justify-self: end;
+      width: min(360px, 100%);
+      border-radius: 22px;
+      padding: 18px;
+      border: 1px solid rgba(132,212,198,0.24);
+      background: linear-gradient(180deg, rgba(132,212,198,0.08), rgba(255,255,255,0.02));
     }
-    .btn.secondary {
-      color: var(--ink);
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(222,191,120,0.18);
+    .hero-side h3 { font-family: 'Cinzel', serif; font-size: 24px; margin: 0 0 10px; }
+    .hero-side p { margin: 0; color: var(--muted); line-height: 1.6; font-size: 14px; }
+    .realm-strip {
+      border-radius: 24px;
+      padding: 18px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap: 12px;
     }
-    .btn.ghost {
-      color: var(--muted);
-      background: transparent;
-      border: 1px dashed rgba(222,191,120,0.18);
+    .realm-card {
+      border-radius: 18px;
+      padding: 16px;
+      border: 1px solid rgba(222,191,120,0.14);
+      background: rgba(255,255,255,0.02);
+      cursor: pointer;
+      transition: border-color var(--ease), transform var(--ease), background var(--ease);
     }
-    .btn.danger {
-      color: #fff;
-      background: rgba(212,107,98,0.18);
-      border: 1px solid rgba(212,107,98,0.28);
+    .realm-card:hover, .realm-card.active {
+      border-color: rgba(132,212,198,0.34);
+      background: linear-gradient(180deg, rgba(132,212,198,0.08), rgba(255,255,255,0.02));
+      transform: translateY(-2px);
     }
-
-    .footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 18px;
-      padding: 4px 6px 0;
-      color: var(--muted);
-      font-size: 12px;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      animation: rise 1200ms var(--ease) both;
-    }
-
-    .music-pill {
-      padding: 12px 16px;
-      border: 1px solid rgba(222,191,120,0.16);
-      border-radius: 999px;
-      background: rgba(8,10,9,0.46);
-    }
-
+    .realm-card-title { font-family: 'Cinzel', serif; font-size: 21px; margin-bottom: 8px; }
+    .realm-card small { display: block; color: var(--muted); text-transform: uppercase; letter-spacing: 0.12em; font-size: 11px; margin-bottom: 10px; }
     .overlay {
       position: fixed;
       inset: 0;
       display: none;
       align-items: center;
       justify-content: center;
-      padding: 28px;
-      background: rgba(4,5,5,0.68);
-      backdrop-filter: blur(10px);
-      z-index: 30;
+      background: rgba(4,5,5,0.66);
+      backdrop-filter: blur(8px);
+      padding: 26px;
+      z-index: 20;
     }
-
     .overlay.active { display: flex; }
-
     .dialog {
-      width: min(1120px, 100%);
-      max-height: min(88vh, 980px);
+      width: min(1040px, 100%);
+      max-height: 88vh;
       overflow: auto;
-      border-radius: 30px;
+      border-radius: 28px;
       border: 1px solid var(--gold-line);
-      background: linear-gradient(180deg, rgba(11,14,13,0.98), rgba(8,10,9,0.97));
-      box-shadow: 0 30px 100px rgba(0,0,0,0.55);
+      background: linear-gradient(180deg, rgba(11,14,13,0.98), rgba(8,10,9,0.96));
+      box-shadow: 0 28px 100px rgba(0,0,0,0.55);
     }
-
     .dialog-header {
-      position: sticky;
-      top: 0;
-      z-index: 2;
-      padding: 22px 24px 16px;
-      background: linear-gradient(180deg, rgba(11,14,13,0.98), rgba(11,14,13,0.88));
-      border-bottom: 1px solid rgba(222,191,120,0.14);
+      padding: 20px 22px 14px;
+      border-bottom: 1px solid rgba(222,191,120,0.12);
       display: flex;
       justify-content: space-between;
       gap: 16px;
       align-items: start;
     }
-
-    .dialog-title {
-      margin: 0;
-      font-family: 'Cinzel', serif;
-      font-size: 34px;
-      line-height: 1;
-    }
-
-    .dialog-sub {
-      margin: 8px 0 0;
-      color: var(--muted);
-      line-height: 1.5;
-    }
-
+    .dialog-title { font-family: 'Cinzel', serif; font-size: 34px; line-height: 1; }
+    .dialog-sub { margin-top: 8px; color: var(--muted); }
     .close-btn {
-      width: 44px;
-      height: 44px;
-      border-radius: 14px;
-      border: 1px solid rgba(222,191,120,0.18);
-      background: rgba(255,255,255,0.03);
-      color: var(--ink);
-      cursor: pointer;
-      font-size: 22px;
+      width: 42px; height: 42px; border-radius: 14px; border: 1px solid rgba(222,191,120,0.18); background: rgba(255,255,255,0.04); color: var(--ink); font-size: 22px; cursor: pointer;
     }
-
-    .dialog-body {
-      padding: 22px 24px 24px;
-      display: grid;
-      gap: 16px;
+    .dialog-body { padding: 20px 22px 22px; }
+    .settings-layout { display: grid; grid-template-columns: 210px 1fr; gap: 14px; }
+    .tab-list, .settings-panel, .flow-panel, .loading-panel, .confirm-panel {
+      border-radius: 20px; border: 1px solid rgba(222,191,120,0.14); background: rgba(255,255,255,0.03);
     }
-
-    .settings-layout {
-      display: grid;
-      grid-template-columns: 220px 1fr;
-      gap: 16px;
-    }
-
-    .settings-tabs,
-    .settings-panel,
-    .newgame-layout,
-    .loading-view,
-    .delete-view,
-    .exit-view {
-      border-radius: 22px;
-      border: 1px solid rgba(222,191,120,0.14);
-      background: rgba(255,255,255,0.02);
-    }
-
-    .settings-tabs {
-      padding: 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
+    .tab-list { padding: 10px; display: flex; flex-direction: column; gap: 8px; }
     .tab-btn {
-      width: 100%;
-      text-align: left;
-      border-radius: 16px;
-      border: 1px solid transparent;
-      background: transparent;
-      color: var(--ink);
-      padding: 13px 14px;
-      cursor: pointer;
-      transition: background var(--ease), border-color var(--ease), transform var(--ease);
+      width: 100%; text-align: left; padding: 13px 14px; border-radius: 14px; border: 1px solid transparent; background: transparent; color: var(--ink); cursor: pointer;
     }
-
-    .tab-btn.active {
-      background: linear-gradient(180deg, rgba(222,191,120,0.12), rgba(255,255,255,0.02));
-      border-color: rgba(222,191,120,0.16);
-      transform: translateX(4px);
+    .tab-btn.active { border-color: rgba(222,191,120,0.16); background: linear-gradient(180deg, rgba(222,191,120,0.10), rgba(255,255,255,0.02)); }
+    .tab-btn strong { display: block; font-family: 'Cinzel', serif; font-size: 18px; margin-bottom: 4px; }
+    .tab-btn span { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; }
+    .settings-panel, .flow-panel, .loading-panel, .confirm-panel { padding: 18px; }
+    .section-title { font-family: 'Cinzel', serif; font-size: 28px; margin-bottom: 14px; }
+    .option-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; }
+    .option {
+      border-radius: 16px; border: 1px solid rgba(222,191,120,0.14); background: rgba(8,10,9,0.82); padding: 14px;
     }
-
-    .tab-btn strong {
-      display: block;
-      font-family: 'Cinzel', serif;
-      font-size: 18px;
-      margin-bottom: 4px;
+    .option label { display: block; color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 8px; }
+    .fake-select, .toggle-row, .slider-wrap {
+      border-radius: 14px; border: 1px solid rgba(222,191,120,0.16); background: rgba(255,255,255,0.03); padding: 12px 14px;
     }
-
-    .tab-btn span { color: var(--muted); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; }
-
-    .settings-panel { padding: 18px; }
-    .settings-page { display: none; }
-    .settings-page.active { display: block; }
-
-    .option-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0,1fr));
-      gap: 12px;
-    }
-
-    .option-card {
-      padding: 14px;
-      border-radius: 18px;
-      border: 1px solid rgba(222,191,120,0.14);
-      background: rgba(255,255,255,0.02);
-    }
-
-    .option-card label {
-      display: block;
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      color: var(--muted);
-      margin-bottom: 8px;
-    }
-
-    .select,
-    .slider,
-    .toggle-row {
-      width: 100%;
-      border-radius: 14px;
-      border: 1px solid rgba(222,191,120,0.16);
-      background: rgba(7,10,9,0.85);
-      color: var(--ink);
-    }
-
-    .select {
-      padding: 12px 14px;
-      appearance: none;
-    }
-
-    .slider-wrap {
-      display: grid;
-      gap: 8px;
-    }
-
-    .slider {
-      appearance: none;
-      height: 10px;
-      background: linear-gradient(90deg, rgba(222,191,120,0.5), rgba(132,212,198,0.7));
-      outline: none;
-    }
-
-    .slider::-webkit-slider-thumb {
-      appearance: none;
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      background: var(--ink);
-      border: 2px solid var(--gold-2);
-      cursor: pointer;
-    }
-
-    .toggle-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      padding: 12px 14px;
-    }
-
-    .toggle {
-      width: 46px;
-      height: 26px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.14);
-      position: relative;
-      flex-shrink: 0;
-    }
-
-    .toggle::after {
-      content: '';
-      position: absolute;
-      top: 3px;
-      left: 3px;
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      background: white;
-      transition: transform var(--ease);
-    }
-
-    .toggle.on { background: rgba(132,212,198,0.45); }
-    .toggle.on::after { transform: translateX(20px); }
-
-    .loading-view,
-    .delete-view,
-    .exit-view,
-    .newgame-layout {
-      padding: 18px;
-    }
-
-    .loading-view {
-      text-align: center;
-      padding: 42px 18px;
-    }
-
-    .loading-ring {
-      width: 84px;
-      height: 84px;
-      margin: 0 auto 18px;
-      border-radius: 50%;
-      border: 3px solid rgba(222,191,120,0.18);
-      border-top-color: var(--gold);
-      animation: spin 1.2s linear infinite;
-    }
-
-    .progress-bar {
-      height: 12px;
-      border-radius: 999px;
-      overflow: hidden;
-      border: 1px solid rgba(222,191,120,0.14);
-      background: rgba(255,255,255,0.04);
-      margin-top: 18px;
-    }
-
-    .progress-bar > span {
-      display: block;
-      width: 72%;
-      height: 100%;
-      background: linear-gradient(90deg, var(--gold), var(--teal));
-      box-shadow: 0 0 22px rgba(132,212,198,0.24);
-    }
-
-    .newgame-layout {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-    }
-
-    .summary-box {
-      padding: 14px;
-      border-radius: 18px;
-      border: 1px solid rgba(132,212,198,0.2);
-      background: rgba(132,212,198,0.06);
-    }
-
-    .summary-box h4 { margin: 0 0 8px; font-family: 'Cinzel', serif; }
-    .summary-box p { margin: 0; color: var(--muted); line-height: 1.55; }
-
-    .danger-copy { color: var(--muted); line-height: 1.65; }
-
-    @keyframes rise {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes driftIn {
-      from { opacity: 0; transform: translateX(24px) scale(0.985); }
-      to { opacity: 1; transform: translateX(0) scale(1); }
-    }
-
+    .fake-select { display: flex; justify-content: space-between; }
+    .toggle-row { display: flex; justify-content: space-between; align-items: center; }
+    .toggle { width: 46px; height: 26px; border-radius: 999px; background: rgba(132,212,198,0.42); position: relative; }
+    .toggle::after { content: ''; position: absolute; top: 3px; left: 23px; width: 20px; height: 20px; border-radius: 50%; background: white; }
+    .slider-track { height: 10px; border-radius: 999px; background: rgba(255,255,255,0.08); overflow: hidden; margin-bottom: 8px; }
+    .slider-fill { height: 100%; background: linear-gradient(90deg, var(--gold), var(--teal)); }
+    .slider-val { color: var(--muted); font-size: 12px; }
+    .loading-panel, .confirm-panel { text-align: center; }
+    .ring { width: 74px; height: 74px; border-radius: 50%; border: 3px solid rgba(222,191,120,0.14); border-top-color: var(--gold); margin: 0 auto 16px; animation: spin 1.2s linear infinite; }
+    .progress { height: 12px; border-radius: 999px; overflow: hidden; background: rgba(255,255,255,0.05); border: 1px solid rgba(222,191,120,0.12); margin-top: 16px; }
+    .progress > div { width: 74%; height: 100%; background: linear-gradient(90deg, var(--gold), var(--teal)); }
+    .newgame-grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
+    .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+    .btn.danger { background: rgba(212,107,98,0.16); border: 1px solid rgba(212,107,98,0.26); color: #fff; }
     @keyframes spin { to { transform: rotate(360deg); } }
-    @keyframes breathe {
-      0%, 100% { opacity: 0.9; }
-      50% { opacity: 1; }
-    }
-
     @media (max-width: 1180px) {
       .layout { grid-template-columns: 1fr; }
-      .hero-body, .settings-layout, .newgame-layout { grid-template-columns: 1fr; }
+      .hero-card, .realm-strip, .settings-layout, .option-grid { grid-template-columns: 1fr; }
     }
-
     @media (max-width: 760px) {
       .layout { padding: 74px 16px 20px; }
-      .top-bar { inset: 16px; font-size: 10px; }
-      .hero-top, .hero-body, .dialog-body, .dialog-header { padding-left: 18px; padding-right: 18px; }
-      .primary-actions, .option-grid { grid-template-columns: 1fr; }
-      .brand-title { font-size: 44px; }
-      .menu-btn .title { font-size: 22px; }
+      .top-bar { inset: 14px 16px auto; font-size: 10px; }
+      .realm-strip { grid-template-columns: 1fr; }
       .btn-row { flex-direction: column; }
       .btn-row .btn { width: 100%; }
     }
@@ -744,317 +306,147 @@
 </head>
 <body>
   <main class="shell">
-    <div class="vignette"></div>
-    <div class="grain"></div>
-    <div class="glow"></div>
-
     <div class="top-bar">
       <span>Merchant's Guide to the Kingdom</span>
-      <span class="center-rule"></span>
-      <span>Interactive main menu prototype</span>
+      <span class="rule"></span>
+      <span>Main Menu</span>
     </div>
 
     <div class="layout">
-      <aside class="rail">
-        <div class="brand-card">
-          <div class="crest">✦ Grand Hall Menu ✦</div>
-          <h1 class="brand-title">Enter the<br>Kingdom</h1>
-          <p class="brand-sub">
-            A polished first-time player experience that preserves the current menu functionality, but makes it feel ceremonial, premium, and deeply tied to the world of MGK.
-          </p>
-
-          <nav class="menu-nav" aria-label="Main menu actions">
-            <button class="menu-btn active" data-open="continue">
-              <span><span class="title">Continue</span><span class="sub">Resume active realm</span></span>
-              <span>→</span>
-            </button>
-            <button class="menu-btn" data-open="new-game">
-              <span><span class="title">New Game</span><span class="sub">Create a fresh realm</span></span>
-              <span>✦</span>
-            </button>
-            <button class="menu-btn" data-open="load-game">
-              <span><span class="title">Load Game</span><span class="sub">Choose from saved realms</span></span>
-              <span>↗</span>
-            </button>
-            <button class="menu-btn" data-open="settings">
-              <span><span class="title">Settings</span><span class="sub">Video, audio, controls</span></span>
-              <span>⚙</span>
-            </button>
-            <button class="menu-btn" data-open="exit-game">
-              <span><span class="title">Exit</span><span class="sub">Leave the kingdom</span></span>
-              <span>×</span>
-            </button>
-          </nav>
+      <aside class="nav-panel">
+        <div>
+          <div class="crest">✦ Main Menu ✦</div>
+          <div class="brand">Merchant's Guide<br>to the Kingdom</div>
+          <div class="menu-list">
+            <button class="menu-btn active" data-open="continue"><span><span class="title">Continue</span><span class="sub">Resume selected realm</span></span><span>→</span></button>
+            <button class="menu-btn" data-open="newgame"><span><span class="title">New Game</span><span class="sub">Create a new realm</span></span><span>✦</span></button>
+            <button class="menu-btn" data-open="loadgame"><span><span class="title">Load Game</span><span class="sub">Select a realm</span></span><span>↗</span></button>
+            <button class="menu-btn" data-open="settings"><span><span class="title">Settings</span><span class="sub">Video, audio, gameplay</span></span><span>⚙</span></button>
+            <button class="menu-btn" data-open="exit"><span><span class="title">Exit</span><span class="sub">Leave the game</span></span><span>×</span></button>
+          </div>
         </div>
-
-        <div class="rail-card">
-          <h3>What this prototype includes</h3>
-          <p>
-            Continue flow, new-game setup, saved realms, loading state, exit confirmation, and a settings structure with video/audio/gameplay tabs so the whole UX can be visualized before Unity implementation.
-          </p>
-        </div>
+        <div class="music-tag">Music by Matt Warren</div>
       </aside>
 
-      <section class="right-stage">
-        <div class="hero-card">
-          <div class="hero-top">
-            <div>
-              <div class="eyebrow">Current featured realm</div>
-              <h2>The Shaded Coast</h2>
-              <p>
-                The opening state frames the player’s current realm as something worth returning to. The menu feels less like a temporary overlay and more like a proper command table for the kingdom.
-              </p>
+      <section class="main-stage">
+        <section class="hero-card">
+          <div>
+            <div class="eyebrow">Selected Realm</div>
+            <div class="realm-name" id="heroRealmName">Eastmire</div>
+            <div class="realm-meta" id="heroRealmMeta">
+              <span class="chip">Day 9</span>
+              <span class="chip">Guild Level 5</span>
+              <span class="chip">Standard</span>
+              <span class="chip">Normal</span>
             </div>
-            <div class="hero-badge">Functionally faithful redesign</div>
-          </div>
-
-          <div class="hero-body">
-            <div class="stack">
-              <section class="panel">
-                <div class="section-kicker">Primary flow</div>
-                <h3>Main action framing</h3>
-                <div class="primary-actions">
-                  <article class="action-card">
-                    <strong>Continue instantly</strong>
-                    <p>Prominent resume path with the currently active realm surfaced immediately.</p>
-                  </article>
-                  <article class="action-card">
-                    <strong>Settings without clutter</strong>
-                    <p>Settings move into a premium modal with clear categories and room for advanced controls.</p>
-                  </article>
-                  <article class="action-card">
-                    <strong>Better save-slot UX</strong>
-                    <p>Realms become understandable at a glance: mode, difficulty, day, guild progress, and status.</p>
-                  </article>
-                  <article class="action-card">
-                    <strong>Stronger onboarding feel</strong>
-                    <p>Motion, hierarchy, and storytelling make the first screen feel special instead of purely mechanical.</p>
-                  </article>
-                </div>
-              </section>
-
-              <section class="panel">
-                <div class="section-kicker">Scene behavior retained</div>
-                <h3>Existing UIMenu functionality still represented</h3>
-                <div class="chips">
-                  <span class="chip">Background / video layer</span>
-                  <span class="chip">Main buttons</span>
-                  <span class="chip">Settings panel</span>
-                  <span class="chip">Video settings</span>
-                  <span class="chip">Audio settings</span>
-                  <span class="chip">Back navigation</span>
-                  <span class="chip">Loading state</span>
-                  <span class="chip">Exit flow</span>
-                </div>
-              </section>
+            <div class="hero-actions">
+              <button class="btn primary" data-open="continue">Continue</button>
+              <button class="btn secondary" data-open="loadgame">Change Realm</button>
             </div>
-
-            <aside class="panel">
-              <div class="section-kicker">Saved realms</div>
-              <h3>Continue / load presentation</h3>
-              <div class="save-list">
-                <article class="save-card active">
-                  <div class="save-top">
-                    <div class="save-title">Realm I · Eastmire</div>
-                    <div class="save-time">Last played today</div>
-                  </div>
-                  <div class="chips">
-                    <span class="chip">Day 9</span>
-                    <span class="chip">Lv 5 Guild</span>
-                    <span class="chip">Standard</span>
-                    <span class="chip">Normal</span>
-                  </div>
-                  <div class="btn-row">
-                    <button class="btn primary" data-open="continue">Continue Journey</button>
-                    <button class="btn secondary" data-open="load-game">View Realms</button>
-                  </div>
-                </article>
-
-                <article class="save-card">
-                  <div class="save-top">
-                    <div class="save-title">Realm II · Zar Coast</div>
-                    <div class="save-time">Yesterday</div>
-                  </div>
-                  <div class="chips">
-                    <span class="chip">Day 1</span>
-                    <span class="chip">Lv 1 Guild</span>
-                    <span class="chip">Hardcore</span>
-                    <span class="chip">Hard</span>
-                  </div>
-                  <div class="btn-row">
-                    <button class="btn secondary" data-open="load-game">Load Realm</button>
-                  </div>
-                </article>
-
-                <article class="save-card">
-                  <div class="save-top">
-                    <div class="save-title">Empty Seat</div>
-                    <div class="save-time">Available</div>
-                  </div>
-                  <div class="chips">
-                    <span class="chip">Create new campaign</span>
-                  </div>
-                  <div class="btn-row">
-                    <button class="btn primary" data-open="new-game">Create New Realm</button>
-                  </div>
-                </article>
-              </div>
-            </aside>
           </div>
-        </div>
+          <aside class="hero-side">
+            <h3 id="heroSideTitle">Last Played</h3>
+            <p id="heroSideCopy">Today · Eastmire Camp · 4h 12m total playtime</p>
+          </aside>
+        </section>
 
-        <div class="footer">
-          <div class="music-pill">♫ Music by Matt Warren</div>
-          <div>Prototype · click the menu items to explore the full flow</div>
-        </div>
+        <section class="realm-strip" id="realmStrip">
+          <article class="realm-card active" data-realm="eastmire" data-name="Eastmire" data-side="Today · Eastmire Camp · 4h 12m total playtime" data-meta='["Day 9","Guild Level 5","Standard","Normal"]'>
+            <div class="realm-card-title">Eastmire</div>
+            <small>Last played today</small>
+            <div class="chip">Day 9</div>
+          </article>
+          <article class="realm-card" data-realm="zar" data-name="Zar Coast" data-side="Yesterday · Zar Harbor · 1h 06m total playtime" data-meta='["Day 1","Guild Level 1","Hardcore","Hard"]'>
+            <div class="realm-card-title">Zar Coast</div>
+            <small>Last played yesterday</small>
+            <div class="chip">Day 1</div>
+          </article>
+          <article class="realm-card" data-realm="empty" data-name="New Realm" data-side="Available slot" data-meta='["Empty Slot","Create New Journey"]'>
+            <div class="realm-card-title">New Realm</div>
+            <small>Available slot</small>
+            <div class="chip">Empty Slot</div>
+          </article>
+        </section>
       </section>
     </div>
   </main>
 
   <div class="overlay" id="overlay">
-    <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="dialogTitle">
+    <div class="dialog">
       <div class="dialog-header">
         <div>
-          <h2 class="dialog-title" id="dialogTitle">Panel Title</h2>
-          <p class="dialog-sub" id="dialogSub">Panel subtitle</p>
+          <div class="dialog-title" id="dialogTitle">Panel</div>
+          <div class="dialog-sub" id="dialogSub"></div>
         </div>
-        <button class="close-btn" id="closeOverlay" aria-label="Close">×</button>
+        <button class="close-btn" id="closeBtn">×</button>
       </div>
       <div class="dialog-body" id="dialogBody"></div>
     </div>
   </div>
 
   <template id="tpl-continue">
-    <section class="loading-view">
-      <div class="loading-ring"></div>
-      <h3 style="font-family:'Cinzel',serif;font-size:30px;margin:0 0 8px;">Resuming The Shaded Coast</h3>
-      <p style="max-width:52ch;margin:0 auto;color:var(--muted);line-height:1.6;">This visualizes the loading/continue state as a premium handoff instead of a plain static label. The player sees that they are returning to a specific living realm.</p>
-      <div class="progress-bar"><span></span></div>
-      <p style="margin-top:12px;color:var(--muted);text-transform:uppercase;letter-spacing:0.18em;font-size:11px;">Streaming world state · loading guild data · preparing scene</p>
-    </section>
+    <div class="loading-panel">
+      <div class="ring"></div>
+      <div class="section-title">Loading Realm</div>
+      <div style="color:var(--muted);">Preparing save data, world state, guild progress, and current scene...</div>
+      <div class="progress"><div></div></div>
+    </div>
   </template>
 
-  <template id="tpl-load-game">
-    <section class="panel">
-      <div class="section-kicker">Load Game</div>
-      <h3>Choose a realm</h3>
-      <div class="save-list">
-        <article class="save-card active">
-          <div class="save-top"><div class="save-title">Realm I · Eastmire</div><div class="save-time">Today</div></div>
-          <div class="chips"><span class="chip">Day 9</span><span class="chip">Lv 5 Guild</span><span class="chip">Standard</span></div>
-          <div class="btn-row"><button class="btn primary">Continue Journey</button><button class="btn secondary">Rename Realm</button><button class="btn danger" data-open="delete-confirm">Delete</button></div>
-        </article>
-        <article class="save-card">
-          <div class="save-top"><div class="save-title">Realm II · Zar Coast</div><div class="save-time">Yesterday</div></div>
-          <div class="chips"><span class="chip">Day 1</span><span class="chip">Lv 1 Guild</span><span class="chip">Hardcore</span><span class="chip">Hard</span></div>
-          <div class="btn-row"><button class="btn secondary">Load Realm</button><button class="btn secondary">Duplicate</button><button class="btn danger" data-open="delete-confirm">Delete</button></div>
-        </article>
-        <article class="save-card">
-          <div class="save-top"><div class="save-title">Realm III · Empty Seat</div><div class="save-time">Available</div></div>
-          <div class="btn-row"><button class="btn primary" data-open="new-game">Create New Realm</button></div>
-        </article>
+  <template id="tpl-loadgame">
+    <div class="flow-panel">
+      <div class="section-title">Load Game</div>
+      <div class="realm-strip" style="padding:0;border:none;background:none;box-shadow:none;grid-template-columns:1fr;gap:12px;">
+        <article class="realm-card active"><div class="realm-card-title">Eastmire</div><small>Last played today</small><div class="chip-row"><span class="chip">Day 9</span><span class="chip">Guild Level 5</span><span class="chip">Standard</span><span class="chip">Normal</span></div><div class="btn-row"><button class="btn primary">Continue</button><button class="btn secondary">Select</button><button class="btn danger">Delete</button></div></article>
+        <article class="realm-card"><div class="realm-card-title">Zar Coast</div><small>Last played yesterday</small><div class="chip-row"><span class="chip">Day 1</span><span class="chip">Guild Level 1</span><span class="chip">Hardcore</span><span class="chip">Hard</span></div><div class="btn-row"><button class="btn secondary">Select</button><button class="btn danger">Delete</button></div></article>
+        <article class="realm-card"><div class="realm-card-title">New Realm</div><small>Available slot</small><div class="btn-row"><button class="btn primary" data-open="newgame">Create New Realm</button></div></article>
       </div>
-    </section>
+    </div>
   </template>
 
-  <template id="tpl-new-game">
-    <div class="newgame-layout">
-      <section class="panel">
-        <div class="section-kicker">New Game Setup</div>
-        <h3>Found a new kingdom</h3>
+  <template id="tpl-newgame">
+    <div class="flow-panel">
+      <div class="section-title">New Game</div>
+      <div class="newgame-grid">
         <div class="option-grid">
-          <div class="option-card">
-            <label>Realm Name</label>
-            <select class="select"><option>The Ember Ledger</option><option>The Shaded Coast</option><option>New Realm</option></select>
-          </div>
-          <div class="option-card">
-            <label>Starting Region</label>
-            <select class="select"><option>Eastmire</option><option>Zar</option><option>Terafell</option></select>
-          </div>
-          <div class="option-card">
-            <label>Mode</label>
-            <select class="select"><option>Standard</option><option>Hardcore</option><option>Iron Merchant</option></select>
-          </div>
-          <div class="option-card">
-            <label>Difficulty</label>
-            <select class="select"><option>Normal</option><option>Hard</option><option>Merciless</option></select>
-          </div>
+          <div class="option"><label>Mode</label><div class="fake-select"><span>Standard</span><span>⌄</span></div></div>
+          <div class="option"><label>Difficulty</label><div class="fake-select"><span>Normal</span><span>⌄</span></div></div>
+          <div class="option"><label>Tutorial Hints</label><div class="toggle-row"><span>Enabled</span><div class="toggle"></div></div></div>
+          <div class="option"><label>Starting Path</label><div class="fake-select"><span>Default</span><span>✓</span></div></div>
         </div>
-        <div class="btn-row" style="margin-top:14px;">
-          <button class="btn primary">Begin Campaign</button>
-          <button class="btn secondary">Preview Starting Loadout</button>
-        </div>
-      </section>
-      <aside class="summary-box">
-        <h4>Why this is better than a raw setup form</h4>
-        <p>
-          The setup still performs the same job, but now it feels like the opening chapter of a campaign. This is where the player emotionally commits.
-        </p>
-      </aside>
+        <div class="btn-row"><button class="btn primary">Begin Journey</button><button class="btn secondary">Back</button></div>
+      </div>
     </div>
   </template>
 
   <template id="tpl-settings">
     <div class="settings-layout">
-      <aside class="settings-tabs">
-        <button class="tab-btn active" data-tab="video"><strong>Video</strong><span>Display · quality · fullscreen</span></button>
-        <button class="tab-btn" data-tab="audio"><strong>Audio</strong><span>Master · music · ambience</span></button>
-        <button class="tab-btn" data-tab="gameplay"><strong>Gameplay</strong><span>Tutorials · camera · comfort</span></button>
+      <aside class="tab-list">
+        <button class="tab-btn active"><strong>Video</strong><span>Display & Quality</span></button>
+        <button class="tab-btn"><strong>Audio</strong><span>Volume & Music</span></button>
+        <button class="tab-btn"><strong>Gameplay</strong><span>Comfort & Hints</span></button>
       </aside>
       <section class="settings-panel">
-        <div class="settings-page active" data-page="video">
-          <div class="section-kicker">Video settings</div>
-          <h3>Display & quality</h3>
-          <div class="option-grid">
-            <div class="option-card"><label>Display Mode</label><select class="select"><option>Fullscreen</option><option>Borderless Window</option><option>Windowed</option></select></div>
-            <div class="option-card"><label>Resolution</label><select class="select"><option>1920 × 1080</option><option>2560 × 1440</option><option>3840 × 2160</option></select></div>
-            <div class="option-card"><label>Quality Preset</label><select class="select"><option>Ultra</option><option>High</option><option>Medium</option></select></div>
-            <div class="option-card"><label>VSync</label><div class="toggle-row"><span>Reduce tearing</span><div class="toggle on"></div></div></div>
-            <div class="option-card"><label>Brightness</label><div class="slider-wrap"><input class="slider" type="range" value="62" /><span style="color:var(--muted);font-size:13px;">62%</span></div></div>
-            <div class="option-card"><label>UI Scale</label><div class="slider-wrap"><input class="slider" type="range" value="90" /><span style="color:var(--muted);font-size:13px;">90%</span></div></div>
-          </div>
+        <div class="section-title">Video</div>
+        <div class="option-grid">
+          <div class="option"><label>Quality Preset</label><div class="fake-select"><span>Ultra</span><span>⌄</span></div></div>
+          <div class="option"><label>Resolution</label><div class="fake-select"><span>1920 × 1080</span><span>⌄</span></div></div>
+          <div class="option"><label>Display Mode</label><div class="fake-select"><span>Fullscreen</span><span>⌄</span></div></div>
+          <div class="option"><label>VSync</label><div class="toggle-row"><span>On</span><div class="toggle"></div></div></div>
+          <div class="option"><label>Brightness</label><div class="slider-wrap"><div class="slider-track"><div class="slider-fill" style="width:62%"></div></div><div class="slider-val">62%</div></div></div>
+          <div class="option"><label>UI Scale</label><div class="slider-wrap"><div class="slider-track"><div class="slider-fill" style="width:90%"></div></div><div class="slider-val">90%</div></div></div>
         </div>
-        <div class="settings-page" data-page="audio">
-          <div class="section-kicker">Audio settings</div>
-          <h3>Mix the hall</h3>
-          <div class="option-grid">
-            <div class="option-card"><label>Master Volume</label><div class="slider-wrap"><input class="slider" type="range" value="82" /><span style="color:var(--muted);font-size:13px;">82%</span></div></div>
-            <div class="option-card"><label>Music Volume</label><div class="slider-wrap"><input class="slider" type="range" value="74" /><span style="color:var(--muted);font-size:13px;">74%</span></div></div>
-            <div class="option-card"><label>Ambient Volume</label><div class="slider-wrap"><input class="slider" type="range" value="68" /><span style="color:var(--muted);font-size:13px;">68%</span></div></div>
-            <div class="option-card"><label>UI Sounds</label><div class="toggle-row"><span>Enable menu feedback</span><div class="toggle on"></div></div></div>
-          </div>
-        </div>
-        <div class="settings-page" data-page="gameplay">
-          <div class="section-kicker">Gameplay settings</div>
-          <h3>Comfort & onboarding</h3>
-          <div class="option-grid">
-            <div class="option-card"><label>Tutorial Hints</label><div class="toggle-row"><span>Show contextual guidance</span><div class="toggle on"></div></div></div>
-            <div class="option-card"><label>Camera Sway</label><div class="toggle-row"><span>Extra environmental motion</span><div class="toggle"></div></div></div>
-            <div class="option-card"><label>Text Speed</label><select class="select"><option>Normal</option><option>Fast</option><option>Instant</option></select></div>
-            <div class="option-card"><label>Input Style</label><select class="select"><option>Mouse + Keyboard</option><option>Controller</option></select></div>
-          </div>
-        </div>
-        <div class="btn-row" style="margin-top:16px;"><button class="btn primary">Apply Changes</button><button class="btn secondary">Restore Defaults</button></div>
+        <div class="btn-row"><button class="btn primary">Apply</button><button class="btn secondary">Defaults</button></div>
       </section>
     </div>
   </template>
 
-  <template id="tpl-delete-confirm">
-    <section class="delete-view">
-      <div class="section-kicker">Delete realm</div>
-      <h3 style="font-family:'Cinzel',serif;font-size:30px;margin:0 0 12px;">Delete “Realm II · Zar Coast”?</h3>
-      <p class="danger-copy">This should remain a deliberate action with clear friction. The polished UX doesn’t remove seriousness; it makes the decision clearer.</p>
-      <div class="btn-row" style="margin-top:16px;"><button class="btn danger">Delete Permanently</button><button class="btn secondary" data-close>Cancel</button></div>
-    </section>
-  </template>
-
-  <template id="tpl-exit-game">
-    <section class="exit-view">
-      <div class="section-kicker">Exit game</div>
-      <h3 style="font-family:'Cinzel',serif;font-size:30px;margin:0 0 12px;">Leave the kingdom?</h3>
-      <p class="danger-copy">Exit remains available and simple, but the confirmation can feel consistent with the world and the tone of the UI.</p>
-      <div class="btn-row" style="margin-top:16px;"><button class="btn danger">Exit Game</button><button class="btn secondary" data-close>Stay</button></div>
-    </section>
+  <template id="tpl-exit">
+    <div class="confirm-panel">
+      <div class="section-title">Exit Game</div>
+      <div style="color:var(--muted);">Are you sure you want to exit?</div>
+      <div class="btn-row" style="justify-content:center;"><button class="btn danger">Exit</button><button class="btn secondary">Cancel</button></div>
+    </div>
   </template>
 
   <script>
@@ -1062,91 +454,40 @@
     const dialogTitle = document.getElementById('dialogTitle');
     const dialogSub = document.getElementById('dialogSub');
     const dialogBody = document.getElementById('dialogBody');
-    const closeOverlay = document.getElementById('closeOverlay');
-    const menuButtons = [...document.querySelectorAll('.menu-btn')];
-
-    const panels = {
-      'continue': {
-        title: 'Continue Journey',
-        sub: 'Loading-state concept for returning to your active realm.',
-        template: 'tpl-continue'
-      },
-      'new-game': {
-        title: 'Create a New Realm',
-        sub: 'Visualize the opening setup flow with stronger fantasy framing.',
-        template: 'tpl-new-game'
-      },
-      'load-game': {
-        title: 'Load Game',
-        sub: 'Saved-realm browsing, loading, and delete/management behaviors.',
-        template: 'tpl-load-game'
-      },
-      'settings': {
-        title: 'Settings',
-        sub: 'A polished modal structure for video, audio, and gameplay configuration.',
-        template: 'tpl-settings'
-      },
-      'delete-confirm': {
-        title: 'Delete Realm',
-        sub: 'Confirmation flow for destructive actions.',
-        template: 'tpl-delete-confirm'
-      },
-      'exit-game': {
-        title: 'Exit Game',
-        sub: 'Leave the game with a confirmation state that still feels premium.',
-        template: 'tpl-exit-game'
-      }
+    const closeBtn = document.getElementById('closeBtn');
+    const configs = {
+      continue: { title: 'Continue', sub: 'Resume selected realm', tpl: 'tpl-continue' },
+      loadgame: { title: 'Load Game', sub: 'Select a realm', tpl: 'tpl-loadgame' },
+      newgame: { title: 'New Game', sub: 'Create a new realm', tpl: 'tpl-newgame' },
+      settings: { title: 'Settings', sub: 'Video, audio, gameplay', tpl: 'tpl-settings' },
+      exit: { title: 'Exit', sub: 'Leave the game', tpl: 'tpl-exit' }
     };
-
-    function setActiveButton(key) {
-      menuButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.open === key));
-    }
-
     function openPanel(key) {
-      const config = panels[key];
-      if (!config) return;
-      dialogTitle.textContent = config.title;
-      dialogSub.textContent = config.sub;
-      dialogBody.innerHTML = document.getElementById(config.template).innerHTML;
+      const cfg = configs[key];
+      if (!cfg) return;
+      dialogTitle.textContent = cfg.title;
+      dialogSub.textContent = cfg.sub;
+      dialogBody.innerHTML = document.getElementById(cfg.tpl).innerHTML;
       overlay.classList.add('active');
-      if (key === 'settings') wireSettingsTabs();
-      wireInlineActions();
-      if (['continue','new-game','load-game','settings','exit-game'].includes(key)) setActiveButton(key);
+      dialogBody.querySelectorAll('[data-open]').forEach(btn => btn.addEventListener('click', () => openPanel(btn.dataset.open)));
     }
-
-    function closePanel() {
-      overlay.classList.remove('active');
-    }
-
-    function wireSettingsTabs() {
-      const tabs = [...dialogBody.querySelectorAll('.tab-btn')];
-      const pages = [...dialogBody.querySelectorAll('.settings-page')];
-      tabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-          tabs.forEach(t => t.classList.remove('active'));
-          pages.forEach(p => p.classList.remove('active'));
-          tab.classList.add('active');
-          const target = tab.dataset.tab;
-          const page = dialogBody.querySelector(`[data-page="${target}"]`);
-          if (page) page.classList.add('active');
-        });
-      });
-    }
-
-    function wireInlineActions() {
-      dialogBody.querySelectorAll('[data-open]').forEach(btn => {
-        btn.addEventListener('click', () => openPanel(btn.dataset.open));
-      });
-      dialogBody.querySelectorAll('[data-close]').forEach(btn => {
-        btn.addEventListener('click', closePanel);
-      });
-    }
-
-    menuButtons.forEach(btn => btn.addEventListener('click', () => openPanel(btn.dataset.open)));
     document.querySelectorAll('[data-open]').forEach(btn => btn.addEventListener('click', () => openPanel(btn.dataset.open)));
-    closeOverlay.addEventListener('click', closePanel);
-    overlay.addEventListener('click', (e) => { if (e.target === overlay) closePanel(); });
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closePanel(); });
+    closeBtn.addEventListener('click', () => overlay.classList.remove('active'));
+    overlay.addEventListener('click', e => { if (e.target === overlay) overlay.classList.remove('active'); });
+
+    const heroRealmName = document.getElementById('heroRealmName');
+    const heroRealmMeta = document.getElementById('heroRealmMeta');
+    const heroSideCopy = document.getElementById('heroSideCopy');
+    document.querySelectorAll('.realm-card').forEach(card => {
+      card.addEventListener('click', () => {
+        document.querySelectorAll('.realm-card').forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+        heroRealmName.textContent = card.dataset.name;
+        heroSideCopy.textContent = card.dataset.side;
+        const meta = JSON.parse(card.dataset.meta);
+        heroRealmMeta.innerHTML = meta.map(m => `<span class="chip">${m}</span>`).join('');
+      });
+    });
   </script>
 </body>
 </html>
