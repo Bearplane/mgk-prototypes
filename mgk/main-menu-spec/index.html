@@ -381,28 +381,50 @@
       color: var(--muted);
     }
 
-    .nav-note {
-      border-radius: 18px;
-      padding: 16px;
-      background: rgba(255,255,255,0.03);
-      color: var(--muted);
-      font-size: 14px;
-      line-height: 1.55;
-    }
-
     .main-column {
       display: grid;
-      grid-template-rows: auto 1fr;
+      grid-template-rows: 1fr auto;
       gap: 16px;
       min-width: 0;
     }
 
     .hero-panel {
       border-radius: 26px;
-      padding: 24px;
+      padding: 0;
+      overflow: hidden;
+      position: relative;
+      min-height: 520px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.18)), rgba(10,13,12,0.28);
+    }
+
+    .hero-panel::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0.22) 56%, rgba(0,0,0,0.48) 100%);
+      pointer-events: none;
+    }
+
+    .hero-panel-inner {
+      position: relative;
+      z-index: 1;
+      min-height: 520px;
       display: grid;
-      grid-template-columns: 1.1fr 0.9fr;
+      grid-template-columns: 1fr 320px;
+      align-items: end;
       gap: 16px;
+      padding: 24px;
+    }
+
+    .selected-realm-card {
+      align-self: center;
+      max-width: 520px;
+      padding: 22px 24px;
+      border-radius: 24px;
+      background: linear-gradient(180deg, rgba(9,12,11,0.66), rgba(9,12,11,0.54));
+      border: 1px solid rgba(223,193,120,0.18);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.28);
+      backdrop-filter: blur(10px);
     }
 
     .eyebrow {
@@ -415,49 +437,47 @@
 
     .hero-title {
       font-family: 'Cinzel', serif;
-      font-size: 42px;
+      font-size: 48px;
       line-height: 0.98;
     }
 
-    .hero-copy {
-      margin-top: 10px;
-      color: var(--muted);
-      line-height: 1.65;
-      max-width: 56ch;
-      font-size: 15px;
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 14px 0 18px;
     }
 
-    .hero-points {
-      display: grid;
+    .hero-actions {
+      display: flex;
       gap: 10px;
-      align-content: start;
+      flex-wrap: wrap;
     }
 
-    .point-card {
-      border-radius: 18px;
+    .hero-side-card {
+      align-self: end;
+      border-radius: 22px;
       padding: 14px;
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(223,193,120,0.12);
+      background: linear-gradient(180deg, rgba(8,11,10,0.72), rgba(8,11,10,0.56));
+      border: 1px solid rgba(131,216,198,0.24);
     }
 
-    .point-card h4 {
+    .hero-side-card h4 {
       font-family: 'Cinzel', serif;
-      font-size: 18px;
-      margin-bottom: 6px;
+      font-size: 22px;
+      margin-bottom: 8px;
     }
 
-    .point-card p {
+    .hero-side-card p {
       color: var(--muted);
-      line-height: 1.55;
-      font-size: 13px;
+      line-height: 1.6;
+      font-size: 14px;
     }
 
     .save-panel {
       border-radius: 24px;
       padding: 20px;
-      display: grid;
-      grid-template-columns: 1.05fr 0.95fr;
-      gap: 14px;
+      display: block;
     }
 
     .panel-title {
@@ -548,31 +568,6 @@
       background: rgba(221,127,120,0.14);
       border: 1px solid rgba(221,127,120,0.24);
       color: #fff;
-    }
-
-    .right-info {
-      display: grid;
-      gap: 12px;
-      align-content: start;
-    }
-
-    .info-card {
-      border-radius: 18px;
-      padding: 14px;
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(223,193,120,0.12);
-    }
-
-    .info-card h4 {
-      font-family: 'Cinzel', serif;
-      font-size: 18px;
-      margin-bottom: 6px;
-    }
-
-    .info-card p {
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.6;
     }
 
     .overlay-card {
@@ -1016,29 +1011,28 @@
             <div class="menu-layout">
               <div class="nav-panel selectable selected" data-inspector="menu-root">
                 <div>
-                  <div class="crest">✦ Grand Hall Menu ✦</div>
-                  <div class="brand-title">Enter the<br>Kingdom</div>
-                  <div class="brand-copy">A redesigned main menu that preserves real functionality while elevating the emotional first impression.</div>
+                  <div class="crest">✦ Main Menu ✦</div>
+                  <div class="brand-title">Merchant's Guide<br>to the Kingdom</div>
 
                   <div class="menu-list">
                     <div class="menu-item active selectable" data-inspector="continue-btn">
                       <div>
                         <div class="title">Continue</div>
-                        <div class="sub">Resume active world</div>
+                        <div class="sub">Resume selected realm</div>
                       </div>
                       <div>→</div>
                     </div>
                     <div class="menu-item selectable" data-inspector="newgame-btn">
                       <div>
                         <div class="title">New Game</div>
-                        <div class="sub">Current realistic path</div>
+                        <div class="sub">Create a new realm</div>
                       </div>
                       <div>✦</div>
                     </div>
                     <div class="menu-item selectable" data-inspector="load-btn">
                       <div>
                         <div class="title">Load Game</div>
-                        <div class="sub">Saved worlds / continue</div>
+                        <div class="sub">Select a realm</div>
                       </div>
                       <div>↗</div>
                     </div>
@@ -1059,84 +1053,67 @@
                   </div>
                 </div>
 
-                <div class="nav-note selectable" data-inspector="nav-note">
-                  The left rail becomes the stable action spine. Players always know where they are, and overlays never fully detach from the world backdrop.
-                </div>
+                <div class="nav-note selectable" data-inspector="nav-note" style="display:none"></div>
               </div>
 
               <div class="main-column">
                 <div class="hero-panel selectable" data-inspector="hero-panel">
-                  <div>
-                    <div class="eyebrow">Current featured realm</div>
-                    <div class="hero-title">The Shaded Coast</div>
-                    <div class="hero-copy">The opening composition gives the player a reason to linger: atmosphere, clear hierarchy, and a stronger sense that they are stepping into a living world instead of a plain launcher panel.</div>
-                  </div>
-                  <div class="hero-points">
-                    <div class="point-card selectable" data-inspector="point-atmo">
-                      <h4>Atmospheric first impression</h4>
-                      <p>Stronger title presence, mood lighting, and premium framing around the world background.</p>
+                  <div class="hero-panel-inner">
+                    <div class="selected-realm-card">
+                      <div class="eyebrow">Selected Realm</div>
+                      <div class="hero-title">Eastmire</div>
+                      <div class="hero-meta">
+                        <div class="chip">Day 9</div>
+                        <div class="chip">Guild Level 5</div>
+                        <div class="chip">Standard</div>
+                        <div class="chip">Normal</div>
+                      </div>
+                      <div class="hero-actions">
+                        <button class="btn btn-primary">Continue</button>
+                        <button class="btn btn-secondary">Change Realm</button>
+                      </div>
                     </div>
-                    <div class="point-card selectable" data-inspector="point-functional">
-                      <h4>Function remains honest</h4>
-                      <p>No fake unsupported systems — the redesign respects current game constraints.</p>
-                    </div>
-                    <div class="point-card selectable" data-inspector="point-ux">
-                      <h4>Better menu comprehension</h4>
-                      <p>Each action has context, and the player can predict what happens before clicking.</p>
+                    <div class="hero-side-card selectable" data-inspector="point-ux">
+                      <h4>Last Played</h4>
+                      <p>Today · Eastmire Camp · 4h 12m total playtime</p>
                     </div>
                   </div>
                 </div>
 
                 <div class="save-panel selectable" data-inspector="save-panel">
-                  <div>
-                    <div class="panel-title">
-                      <h3>Continue / Load Worlds</h3>
-                      <small>same system, better framing</small>
-                    </div>
-                    <div class="realm-list">
-                      <div class="realm-card active selectable" data-inspector="realm-1">
-                        <div class="realm-top">
-                          <div class="realm-name">Realm I · Eastmire</div>
-                          <div class="realm-time">Last played today</div>
-                        </div>
-                        <div class="chip-row">
-                          <div class="chip">Day 9</div>
-                          <div class="chip">Lv 5 Guild</div>
-                          <div class="chip">Standard</div>
-                          <div class="chip">Normal</div>
-                        </div>
-                        <div class="btn-row">
-                          <button class="btn btn-primary">Continue Journey</button>
-                          <button class="btn btn-secondary">Manage</button>
-                        </div>
-                      </div>
-                      <div class="realm-card selectable" data-inspector="realm-empty">
-                        <div class="realm-top">
-                          <div class="realm-name">New Campaign Slot</div>
-                          <div class="realm-time">Available</div>
-                        </div>
-                        <div class="chip-row">
-                          <div class="chip">single start path</div>
-                          <div class="chip">difficulty choice</div>
-                        </div>
-                        <div class="btn-row">
-                          <button class="btn btn-primary">Begin New Journey</button>
-                        </div>
-                      </div>
-                    </div>
+                  <div class="panel-title">
+                    <h3>Realms</h3>
+                    <small>Up to 3</small>
                   </div>
-                  <div class="right-info">
-                    <div class="info-card selectable" data-inspector="info-newgame">
-                      <h4>New Game constraint</h4>
-                      <p>Current game does not support realm naming or start-region selection. The spec should reflect a single canonical start path.</p>
+                  <div class="realm-list" style="grid-template-columns:repeat(3,minmax(0,1fr));display:grid;gap:12px;">
+                    <div class="realm-card active selectable" data-inspector="realm-1">
+                      <div class="realm-top">
+                        <div class="realm-name">Eastmire</div>
+                        <div class="realm-time">Today</div>
+                      </div>
+                      <div class="chip-row">
+                        <div class="chip">Day 9</div>
+                        <div class="chip">Guild Level 5</div>
+                      </div>
                     </div>
-                    <div class="info-card selectable" data-inspector="info-settings">
-                      <h4>Settings structure</h4>
-                      <p>Existing options panel becomes a premium overlay while preserving category structure and current configuration areas.</p>
+                    <div class="realm-card selectable" data-inspector="info-loading">
+                      <div class="realm-top">
+                        <div class="realm-name">Zar Coast</div>
+                        <div class="realm-time">Yesterday</div>
+                      </div>
+                      <div class="chip-row">
+                        <div class="chip">Day 1</div>
+                        <div class="chip">Guild Level 1</div>
+                      </div>
                     </div>
-                    <div class="info-card selectable" data-inspector="info-loading">
-                      <h4>State coverage</h4>
-                      <p>Loading, confirm, and settings states are shown as alternate overlays of the same menu shell.</p>
+                    <div class="realm-card selectable" data-inspector="realm-empty">
+                      <div class="realm-top">
+                        <div class="realm-name">New Realm</div>
+                        <div class="realm-time">Available</div>
+                      </div>
+                      <div class="chip-row">
+                        <div class="chip">Empty Slot</div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1147,7 +1124,7 @@
               <div class="overlay-header">
                 <div>
                   <div class="overlay-title">Settings</div>
-                  <div class="overlay-sub">Preserves the existing options functionality while presenting it as a cleaner premium modal with clearer category switching.</div>
+                  <div class="overlay-sub">Video, audio, and gameplay settings.</div>
                 </div>
                 <div class="close-x">×</div>
               </div>
@@ -1178,7 +1155,7 @@
               <div class="overlay-header">
                 <div>
                   <div class="overlay-title">Begin a New Journey</div>
-                  <div class="overlay-sub">No realm naming, no starting region selection — just honest current constraints presented with better ceremony.</div>
+                  <div class="overlay-sub">Create a new realm using current supported options only.</div>
                 </div>
                 <div class="close-x">×</div>
               </div>
@@ -1209,8 +1186,8 @@
             <div class="overlay-card" id="overlay-loading">
               <div class="overlay-header">
                 <div>
-                  <div class="overlay-title">Resuming The Shaded Coast</div>
-                  <div class="overlay-sub">Loading should feel like a premium transition, not a dead stop.</div>
+                  <div class="overlay-title">Loading Realm</div>
+                  <div class="overlay-sub">Preparing selected realm.</div>
                 </div>
                 <div class="close-x">×</div>
               </div>
@@ -1227,8 +1204,8 @@
             <div class="overlay-card" id="overlay-confirm">
               <div class="overlay-header">
                 <div>
-                  <div class="overlay-title">Leave the Kingdom?</div>
-                  <div class="overlay-sub">Exit and destructive flows should remain deliberate, clear, and visually consistent.</div>
+                  <div class="overlay-title">Exit Game</div>
+                  <div class="overlay-sub">Leave the game.</div>
                 </div>
                 <div class="close-x">×</div>
               </div>
