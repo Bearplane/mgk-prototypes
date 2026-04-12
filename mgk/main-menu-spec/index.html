@@ -1,0 +1,1444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UIMenu — Grand Hall Spec</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800&family=Marcellus&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #090a08;
+      --panel: #0f1312;
+      --panel-2: #141a18;
+      --card: rgba(20, 25, 23, 0.92);
+      --line: rgba(223, 193, 120, 0.26);
+      --line-strong: rgba(223, 193, 120, 0.46);
+      --gold: #dfc178;
+      --gold-soft: rgba(223, 193, 120, 0.14);
+      --text: #f2e7c8;
+      --muted: rgba(242, 231, 200, 0.68);
+      --teal: #83d8c6;
+      --warn: #ffb977;
+      --ok: #77d58c;
+      --danger: #dd7f78;
+      --shadow: 0 24px 72px rgba(0,0,0,0.48);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { min-height: 100%; background: var(--bg); color: var(--text); }
+    body {
+      font-family: 'Marcellus', serif;
+      font-size: 13px;
+      height: 100vh;
+      overflow: hidden;
+      display: grid;
+      grid-template-rows: auto auto 1fr;
+      background:
+        radial-gradient(circle at 15% 20%, rgba(92, 118, 78, 0.18), transparent 20%),
+        radial-gradient(circle at 80% 22%, rgba(89, 130, 140, 0.12), transparent 18%),
+        #080907;
+    }
+
+    .top-bar {
+      background: #080604;
+      border-bottom: 1px solid rgba(223,193,120,0.12);
+      padding: 10px 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .back-link {
+      color: rgba(242,231,200,0.6);
+      text-decoration: none;
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      border: 1px solid rgba(223,193,120,0.18);
+      border-radius: 4px;
+      padding: 5px 10px;
+    }
+
+    .top-bar h1 {
+      font-family: 'Cinzel', serif;
+      font-size: 14px;
+      letter-spacing: 0.05em;
+      color: var(--gold);
+    }
+
+    .badge {
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .badge-real { border-color: var(--ok); color: var(--ok); background: rgba(119,213,140,0.08); }
+    .badge-spec { border-color: var(--warn); color: var(--warn); background: rgba(255,185,119,0.08); }
+    .badge-new { border-color: var(--teal); color: var(--teal); background: rgba(131,216,198,0.08); }
+
+    .legend {
+      margin-left: auto;
+      display: flex;
+      gap: 10px;
+      color: rgba(242,231,200,0.42);
+      font-size: 10px;
+      align-items: center;
+    }
+
+    .checklist-panel {
+      height: 220px;
+      border-bottom: 1px solid rgba(223,193,120,0.12);
+      background: #090d0c;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .checklist-header {
+      background: #101513;
+      border-bottom: 1px solid rgba(223,193,120,0.12);
+      padding: 8px 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .checklist-header h2 {
+      font-size: 11px;
+      font-family: 'Cinzel', serif;
+      letter-spacing: 0.05em;
+      color: var(--gold);
+    }
+
+    .checklist-header .subtitle {
+      margin-left: auto;
+      color: var(--muted);
+      font-size: 10px;
+    }
+
+    .checklist-body {
+      display: flex;
+      flex: 1;
+      overflow: auto;
+    }
+
+    .check-col {
+      flex: 1;
+      min-width: 0;
+      padding: 10px 14px;
+      border-right: 1px solid rgba(223,193,120,0.08);
+    }
+    .check-col:last-child { border-right: none; }
+
+    .check-col-title {
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: rgba(242,231,200,0.58);
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+
+    .check-item {
+      display: flex;
+      gap: 8px;
+      padding: 4px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      font-size: 10px;
+      line-height: 1.45;
+    }
+
+    .check-num {
+      color: rgba(242,231,200,0.4);
+      width: 16px;
+      flex-shrink: 0;
+      text-align: right;
+      font-family: ui-monospace, monospace;
+    }
+
+    .check-text { color: var(--text); }
+    .mono { font-family: ui-monospace, monospace; color: #8ec8ff; font-size: 9px; }
+    .val { font-family: ui-monospace, monospace; color: var(--warn); font-size: 9px; }
+
+    .main { min-height: 0; }
+    .content-row { position: relative; height: 100%; }
+
+    .preview-side {
+      position: absolute;
+      inset: 0 450px 0 0;
+      overflow: auto;
+      padding: 14px 18px 18px;
+      background:
+        radial-gradient(circle at 64% 32%, rgba(255,245,214,0.12), transparent 14%),
+        radial-gradient(circle at 16% 72%, rgba(223,193,120,0.08), transparent 20%),
+        #070806;
+    }
+
+    .drag-divider {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      right: 445px;
+      width: 5px;
+      background: #202523;
+      cursor: col-resize;
+    }
+
+    .dev-panel {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      right: 0;
+      width: 445px;
+      display: flex;
+      flex-direction: column;
+      border-left: 1px solid rgba(223,193,120,0.12);
+      background: #0d1110;
+      overflow: auto;
+    }
+
+    .preview-col {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .preview-col-label {
+      width: 100%;
+      max-width: 1180px;
+      color: rgba(242,231,200,0.28);
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+    }
+
+    .state-selector {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      max-width: 1180px;
+    }
+
+    .state-btn {
+      background: #171c1a;
+      color: var(--text);
+      border: 1px solid rgba(223,193,120,0.22);
+      border-radius: 999px;
+      padding: 6px 14px;
+      font-size: 11px;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+    }
+    .state-btn.active { border-color: var(--gold); color: var(--gold); }
+
+    .menu-frame {
+      width: 100%;
+      max-width: 1180px;
+      min-height: 680px;
+      position: relative;
+      border-radius: 28px;
+      overflow: hidden;
+      border: 1px solid rgba(223,193,120,0.34);
+      box-shadow: var(--shadow);
+      background:
+        linear-gradient(90deg, rgba(6,8,7,0.92) 0%, rgba(6,8,7,0.76) 28%, rgba(6,8,7,0.16) 58%, rgba(6,8,7,0.56) 100%),
+        radial-gradient(circle at 76% 30%, rgba(255,244,214,0.18), transparent 15%),
+        linear-gradient(135deg, #314133 0%, #263029 18%, #7a7159 40%, #7db3ba 55%, #c7c4ac 67%, #2c3a38 100%);
+    }
+
+    .menu-frame::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at center, transparent 46%, rgba(0,0,0,0.46) 100%);
+      pointer-events: none;
+    }
+
+    .frame-top {
+      position: absolute;
+      top: 18px;
+      left: 22px;
+      right: 22px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: rgba(242,231,200,0.58);
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      z-index: 2;
+    }
+
+    .frame-rule {
+      flex: 1;
+      height: 1px;
+      margin: 0 14px;
+      background: linear-gradient(90deg, transparent, rgba(223,193,120,0.24), transparent);
+    }
+
+    .menu-layout {
+      position: relative;
+      z-index: 1;
+      min-height: 680px;
+      display: grid;
+      grid-template-columns: 350px 1fr;
+      gap: 20px;
+      padding: 62px 24px 24px;
+    }
+
+    .nav-panel,
+    .hero-panel,
+    .save-panel,
+    .overlay-card,
+    .settings-shell,
+    .tab-shell,
+    .settings-content,
+    .option-card,
+    .confirm-card,
+    .loading-card {
+      background: rgba(12,16,15,0.84);
+      border: 1px solid rgba(223,193,120,0.18);
+      backdrop-filter: blur(10px);
+    }
+
+    .nav-panel {
+      border-radius: 24px;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .crest {
+      display: inline-flex;
+      padding: 7px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(223,193,120,0.22);
+      color: var(--gold);
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+    }
+
+    .brand-title {
+      margin-top: 16px;
+      font-family: 'Cinzel', serif;
+      font-size: 54px;
+      line-height: 0.92;
+      letter-spacing: 0.03em;
+    }
+
+    .brand-copy {
+      margin-top: 10px;
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 15px;
+    }
+
+    .menu-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .menu-item {
+      position: relative;
+      padding: 14px 16px 14px 18px;
+      border-radius: 18px;
+      border: 1px solid transparent;
+      background: rgba(255,255,255,0.02);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      cursor: pointer;
+    }
+
+    .menu-item.active {
+      border-color: rgba(223,193,120,0.28);
+      background: linear-gradient(180deg, rgba(223,193,120,0.12), rgba(255,255,255,0.02));
+      transform: translateX(4px);
+    }
+
+    .menu-item .title {
+      font-family: 'Cinzel', serif;
+      font-size: 23px;
+    }
+
+    .menu-item .sub {
+      margin-top: 4px;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .nav-note {
+      border-radius: 18px;
+      padding: 16px;
+      background: rgba(255,255,255,0.03);
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .main-column {
+      display: grid;
+      grid-template-rows: auto 1fr;
+      gap: 16px;
+      min-width: 0;
+    }
+
+    .hero-panel {
+      border-radius: 26px;
+      padding: 24px;
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 16px;
+    }
+
+    .eyebrow {
+      color: var(--gold);
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .hero-title {
+      font-family: 'Cinzel', serif;
+      font-size: 42px;
+      line-height: 0.98;
+    }
+
+    .hero-copy {
+      margin-top: 10px;
+      color: var(--muted);
+      line-height: 1.65;
+      max-width: 56ch;
+      font-size: 15px;
+    }
+
+    .hero-points {
+      display: grid;
+      gap: 10px;
+      align-content: start;
+    }
+
+    .point-card {
+      border-radius: 18px;
+      padding: 14px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(223,193,120,0.12);
+    }
+
+    .point-card h4 {
+      font-family: 'Cinzel', serif;
+      font-size: 18px;
+      margin-bottom: 6px;
+    }
+
+    .point-card p {
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 13px;
+    }
+
+    .save-panel {
+      border-radius: 24px;
+      padding: 20px;
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 14px;
+    }
+
+    .panel-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 12px;
+      gap: 12px;
+    }
+
+    .panel-title h3 {
+      font-family: 'Cinzel', serif;
+      font-size: 24px;
+    }
+
+    .panel-title small {
+      color: var(--muted);
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .realm-list { display: grid; gap: 12px; }
+
+    .realm-card {
+      border-radius: 18px;
+      padding: 16px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(223,193,120,0.12);
+    }
+
+    .realm-card.active {
+      border-color: rgba(131,216,198,0.34);
+      background: linear-gradient(180deg, rgba(131,216,198,0.09), rgba(255,255,255,0.02));
+    }
+
+    .realm-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 8px;
+      align-items: baseline;
+    }
+
+    .realm-name { font-family: 'Cinzel', serif; font-size: 21px; }
+    .realm-time { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em; }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .chip {
+      border-radius: 999px;
+      padding: 6px 10px;
+      border: 1px solid rgba(223,193,120,0.12);
+      color: var(--muted);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .btn-row { display: flex; gap: 10px; flex-wrap: wrap; }
+
+    .btn {
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: none;
+      cursor: pointer;
+      font-size: 15px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(180deg, #edd79d, #c69c50);
+      color: #17120a;
+      font-family: 'Cinzel', serif;
+    }
+
+    .btn-secondary {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(223,193,120,0.16);
+      color: var(--text);
+    }
+
+    .btn-danger {
+      background: rgba(221,127,120,0.14);
+      border: 1px solid rgba(221,127,120,0.24);
+      color: #fff;
+    }
+
+    .right-info {
+      display: grid;
+      gap: 12px;
+      align-content: start;
+    }
+
+    .info-card {
+      border-radius: 18px;
+      padding: 14px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(223,193,120,0.12);
+    }
+
+    .info-card h4 {
+      font-family: 'Cinzel', serif;
+      font-size: 18px;
+      margin-bottom: 6px;
+    }
+
+    .info-card p {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .overlay-card {
+      position: absolute;
+      inset: 88px 34px 34px 420px;
+      border-radius: 28px;
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 22px 74px rgba(0,0,0,0.52);
+    }
+
+    .overlay-card.active { display: flex; }
+
+    .overlay-header {
+      padding: 18px 22px 14px;
+      border-bottom: 1px solid rgba(223,193,120,0.12);
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: start;
+      background: rgba(15,19,18,0.96);
+    }
+
+    .overlay-title {
+      font-family: 'Cinzel', serif;
+      font-size: 32px;
+      line-height: 1;
+    }
+
+    .overlay-sub {
+      margin-top: 8px;
+      color: var(--muted);
+      line-height: 1.55;
+      max-width: 64ch;
+    }
+
+    .close-x {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      border: 1px solid rgba(223,193,120,0.18);
+      background: rgba(255,255,255,0.04);
+      color: var(--text);
+      display: grid;
+      place-items: center;
+      font-size: 22px;
+    }
+
+    .overlay-body {
+      padding: 20px 22px 22px;
+      overflow: auto;
+      display: grid;
+      gap: 16px;
+      background: rgba(12,16,15,0.98);
+    }
+
+    .settings-shell {
+      display: grid;
+      grid-template-columns: 210px 1fr;
+      gap: 14px;
+      border-radius: 22px;
+      padding: 16px;
+    }
+
+    .tab-shell {
+      border-radius: 18px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .tab-btn {
+      padding: 12px 13px;
+      border-radius: 14px;
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text);
+      text-align: left;
+    }
+
+    .tab-btn.active {
+      border-color: rgba(223,193,120,0.16);
+      background: linear-gradient(180deg, rgba(223,193,120,0.10), rgba(255,255,255,0.02));
+    }
+
+    .tab-btn strong {
+      display: block;
+      font-family: 'Cinzel', serif;
+      font-size: 18px;
+      margin-bottom: 3px;
+    }
+
+    .tab-btn span {
+      color: var(--muted);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .settings-content {
+      border-radius: 18px;
+      padding: 16px;
+    }
+
+    .settings-page { display: none; }
+    .settings-page.active { display: block; }
+
+    .option-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .option-card {
+      border-radius: 16px;
+      padding: 14px;
+    }
+
+    .option-card label {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .fake-select,
+    .toggle-row,
+    .slider-wrap {
+      border-radius: 14px;
+      border: 1px solid rgba(223,193,120,0.16);
+      background: rgba(8,10,9,0.82);
+      padding: 12px 14px;
+    }
+
+    .fake-select {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--text);
+    }
+
+    .toggle-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+
+    .toggle {
+      width: 46px;
+      height: 26px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.14);
+      position: relative;
+    }
+
+    .toggle::after {
+      content: '';
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #fff;
+    }
+
+    .toggle.on { background: rgba(131,216,198,0.42); }
+    .toggle.on::after { left: 23px; }
+
+    .slider-track {
+      position: relative;
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.08);
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+
+    .slider-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--gold), var(--teal));
+    }
+
+    .slider-val { color: var(--muted); font-size: 12px; }
+
+    .loading-card,
+    .confirm-card {
+      border-radius: 22px;
+      padding: 26px;
+    }
+
+    .loading-card { text-align: center; }
+
+    .ring {
+      width: 76px;
+      height: 76px;
+      border-radius: 50%;
+      border: 3px solid rgba(223,193,120,0.14);
+      border-top-color: var(--gold);
+      margin: 0 auto 16px;
+      animation: spin 1.2s linear infinite;
+    }
+
+    .loading-card h3,
+    .confirm-card h3 {
+      font-family: 'Cinzel', serif;
+      font-size: 30px;
+      margin-bottom: 8px;
+    }
+
+    .loading-card p,
+    .confirm-card p { color: var(--muted); line-height: 1.65; }
+
+    .progress {
+      margin-top: 16px;
+      height: 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.06);
+      overflow: hidden;
+      border: 1px solid rgba(223,193,120,0.12);
+    }
+
+    .progress > div {
+      width: 74%;
+      height: 100%;
+      background: linear-gradient(90deg, var(--gold), var(--teal));
+    }
+
+    .newgame-grid {
+      display: grid;
+      grid-template-columns: 1fr 0.9fr;
+      gap: 14px;
+    }
+
+    .summary-box {
+      border-radius: 18px;
+      padding: 16px;
+      border: 1px solid rgba(131,216,198,0.18);
+      background: rgba(131,216,198,0.06);
+    }
+
+    .summary-box h4 { font-family: 'Cinzel', serif; font-size: 20px; margin-bottom: 8px; }
+    .summary-box p { color: var(--muted); line-height: 1.6; }
+
+    .hierarchy-col {
+      height: 36%;
+      display: flex;
+      flex-direction: column;
+      border-bottom: 1px solid rgba(223,193,120,0.08);
+      min-height: 140px;
+      overflow: hidden;
+      background: #0c100f;
+    }
+
+    .hierarchy-header,
+    .inspector-header {
+      background: #121715;
+      border-bottom: 1px solid rgba(223,193,120,0.08);
+      padding: 8px 12px;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: rgba(242,231,200,0.54);
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .tree { flex: 1; overflow: auto; padding: 8px 0; }
+
+    .tree-node {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 8px;
+      font-family: ui-monospace, monospace;
+      font-size: 11px;
+      color: #d7ddd4;
+      border-left: 2px solid transparent;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .tree-node.selected {
+      background: rgba(94, 142, 255, 0.14);
+      border-left-color: #77aaff;
+    }
+
+    .tree-node.scene-root { color: var(--warn); font-weight: 700; }
+    .tree-node.canvas-node { color: #8ec8ff; }
+    .tree-node.script-node { color: #f0e3c4; }
+
+    .inspector-col { flex: 1; display: flex; flex-direction: column; min-height: 0; background: #0f1312; }
+    .inspector-content { flex: 1; overflow: auto; }
+
+    .inspector-go-header {
+      padding: 10px 12px 8px;
+      border-bottom: 1px solid rgba(223,193,120,0.08);
+    }
+
+    .go-name { font-family: ui-monospace, monospace; font-size: 13px; font-weight: 700; }
+    .go-meta { display: flex; gap: 12px; margin-top: 4px; color: rgba(242,231,200,0.6); font-size: 10px; }
+
+    .component-block { border-bottom: 1px solid rgba(223,193,120,0.08); }
+    .comp-header {
+      padding: 7px 12px;
+      background: rgba(255,255,255,0.03);
+      color: #f3caa0;
+      font-size: 10px;
+      letter-spacing: 0.05em;
+      font-weight: 600;
+    }
+
+    .comp-body { padding: 8px 12px 12px; }
+
+    .prop-row {
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      gap: 6px;
+      padding: 2px 0;
+      font-size: 10px;
+      align-items: baseline;
+      font-family: ui-monospace, monospace;
+    }
+
+    .prop-key { color: rgba(242,231,200,0.52); }
+    .prop-val { color: #e7ecdf; word-break: break-word; }
+    .prop-val.real { color: var(--ok); }
+    .prop-val.est { color: var(--warn); }
+    .prop-val.path { color: #8ec8ff; font-size: 9px; }
+
+    .sf-block {
+      background: rgba(255,185,119,0.06);
+      border: 1px solid rgba(255,185,119,0.14);
+      border-radius: 10px;
+      padding: 6px 8px;
+      margin: 6px 0;
+    }
+
+    .sf-title {
+      color: var(--warn);
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 4px;
+    }
+
+    .sf-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 6px;
+      padding: 2px 0;
+      font-family: ui-monospace, monospace;
+      font-size: 10px;
+      color: #e7ecdf;
+    }
+
+    .sf-field { color: var(--warn); }
+    .sf-target { color: #8ec8ff; }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media (max-width: 1280px) {
+      .preview-side { inset: 0; }
+      .dev-panel, .drag-divider { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="top-bar">
+    <a href="/mgk/" class="back-link">← All Mockups</a>
+    <h1>🏰 UIMenu — Grand Hall Implementation Spec</h1>
+    <span class="badge badge-real">JSON INPUT</span>
+    <span class="badge badge-spec">SPEC</span>
+    <span class="badge badge-new">REDESIGN</span>
+    <div class="legend">
+      <span>green = current scene data</span>
+      <span>orange = proposed structure/update</span>
+      <span>teal = enhanced UX layer</span>
+    </div>
+  </div>
+
+  <div class="checklist-panel">
+    <div class="checklist-header">
+      <h2>🛠 UIMenu Grand Hall — Implementation Checklist</h2>
+      <span class="subtitle">Preserve functionality · improve hierarchy · drive from exported scene JSON</span>
+    </div>
+    <div class="checklist-body">
+      <div class="check-col">
+        <div class="check-col-title">Current Scene Truth</div>
+        <div class="check-item"><div class="check-num">1</div><div class="check-text"><span class="mono">WindowCanvas (2)</span> is root overlay canvas at <span class="val">1920×1080</span></div></div>
+        <div class="check-item"><div class="check-num">2</div><div class="check-text"><span class="mono">MenuPanel</span> fills screen and currently uses <span class="mono">RaidersCoveStill.png</span></div></div>
+        <div class="check-item"><div class="check-num">3</div><div class="check-text">Current primary actions: <span class="mono">ExitButton</span>, <span class="mono">OptionsButton</span>, plus logo/loading/options children from scene JSON</div></div>
+        <div class="check-item"><div class="check-num">4</div><div class="check-text"><span class="mono">OptionsPanel</span> already exists with back arrow, category buttons, and nested settings content</div></div>
+        <div class="check-item"><div class="check-num">5</div><div class="check-text"><span class="mono">VideoOptionsPanel</span> already exists and should remain functionally represented</div></div>
+        <div class="check-item"><div class="check-num">6</div><div class="check-text">Scene JSON export becomes the source for hierarchy names, existing component refs, anchors, sprites, and active states</div></div>
+      </div>
+      <div class="check-col">
+        <div class="check-col-title">UX Direction</div>
+        <div class="check-item"><div class="check-num">7</div><div class="check-text">Main menu should feel like a <span class="val">ceremonial entry point</span>, not plain text over art</div></div>
+        <div class="check-item"><div class="check-num">8</div><div class="check-text">Keep current functionality but reframe it through a <span class="val">left navigation rail + hero content + contextual overlays</span></div></div>
+        <div class="check-item"><div class="check-num">9</div><div class="check-text">Do <span class="val">not</span> suggest unsupported systems like realm naming or starting region selection</div></div>
+        <div class="check-item"><div class="check-num">10</div><div class="check-text">New Game flow should focus on current-realistic choices: difficulty, mode flags, onboarding toggles, begin journey</div></div>
+        <div class="check-item"><div class="check-num">11</div><div class="check-text">Settings should become a premium modal while still reflecting Video / Audio / Gameplay structure</div></div>
+        <div class="check-item"><div class="check-num">12</div><div class="check-text">Loading, delete, and exit states should feel polished and consistent with the rest of the menu</div></div>
+      </div>
+      <div class="check-col">
+        <div class="check-col-title">JSON-Driven Spec Pattern</div>
+        <div class="check-item"><div class="check-num">13</div><div class="check-text">Accept scene export JSON and map <span class="mono">rootObjects → hierarchy tree</span></div></div>
+        <div class="check-item"><div class="check-num">14</div><div class="check-text">Selected preview element highlights the matching hierarchy node and inspector payload</div></div>
+        <div class="check-item"><div class="check-num">15</div><div class="check-text">Inspector distinguishes <span class="prop real">current data</span> vs <span class="prop est">proposed redesign specs</span></div></div>
+        <div class="check-item"><div class="check-num">16</div><div class="check-text">Add implementation notes for CanvasGroup states, active/inactive flows, sprite replacements, and TMP style rules</div></div>
+        <div class="check-item"><div class="check-num">17</div><div class="check-text">Use multiple preview states: default menu, settings, loading, confirm, new game</div></div>
+        <div class="check-item"><div class="check-num">18</div><div class="check-text">Future update path: re-export scene JSON → refresh bindings/spec without rebuilding entire mockup by hand</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="content-row">
+      <div class="preview-side">
+        <div class="preview-col">
+          <div class="preview-col-label">interactive spec preview — click states and elements, inspector updates on right</div>
+
+          <div class="state-selector">
+            <button class="state-btn active" data-state="default">Default Menu</button>
+            <button class="state-btn" data-state="settings">Settings Open</button>
+            <button class="state-btn" data-state="newgame">New Game Flow</button>
+            <button class="state-btn" data-state="loading">Loading State</button>
+            <button class="state-btn" data-state="confirm">Exit / Confirm</button>
+          </div>
+
+          <div class="menu-frame" id="menu-frame">
+            <div class="frame-top">
+              <span>Merchant's Guide to the Kingdom</span>
+              <span class="frame-rule"></span>
+              <span>UIMenu preview</span>
+            </div>
+
+            <div class="menu-layout">
+              <div class="nav-panel selectable selected" data-inspector="menu-root">
+                <div>
+                  <div class="crest">✦ Grand Hall Menu ✦</div>
+                  <div class="brand-title">Enter the<br>Kingdom</div>
+                  <div class="brand-copy">A redesigned main menu that preserves real functionality while elevating the emotional first impression.</div>
+
+                  <div class="menu-list">
+                    <div class="menu-item active selectable" data-inspector="continue-btn">
+                      <div>
+                        <div class="title">Continue</div>
+                        <div class="sub">Resume active world</div>
+                      </div>
+                      <div>→</div>
+                    </div>
+                    <div class="menu-item selectable" data-inspector="newgame-btn">
+                      <div>
+                        <div class="title">New Game</div>
+                        <div class="sub">Current realistic path</div>
+                      </div>
+                      <div>✦</div>
+                    </div>
+                    <div class="menu-item selectable" data-inspector="load-btn">
+                      <div>
+                        <div class="title">Load Game</div>
+                        <div class="sub">Saved worlds / continue</div>
+                      </div>
+                      <div>↗</div>
+                    </div>
+                    <div class="menu-item selectable" data-inspector="settings-btn">
+                      <div>
+                        <div class="title">Settings</div>
+                        <div class="sub">Video · audio · gameplay</div>
+                      </div>
+                      <div>⚙</div>
+                    </div>
+                    <div class="menu-item selectable" data-inspector="exit-btn">
+                      <div>
+                        <div class="title">Exit</div>
+                        <div class="sub">Leave the kingdom</div>
+                      </div>
+                      <div>×</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="nav-note selectable" data-inspector="nav-note">
+                  The left rail becomes the stable action spine. Players always know where they are, and overlays never fully detach from the world backdrop.
+                </div>
+              </div>
+
+              <div class="main-column">
+                <div class="hero-panel selectable" data-inspector="hero-panel">
+                  <div>
+                    <div class="eyebrow">Current featured realm</div>
+                    <div class="hero-title">The Shaded Coast</div>
+                    <div class="hero-copy">The opening composition gives the player a reason to linger: atmosphere, clear hierarchy, and a stronger sense that they are stepping into a living world instead of a plain launcher panel.</div>
+                  </div>
+                  <div class="hero-points">
+                    <div class="point-card selectable" data-inspector="point-atmo">
+                      <h4>Atmospheric first impression</h4>
+                      <p>Stronger title presence, mood lighting, and premium framing around the world background.</p>
+                    </div>
+                    <div class="point-card selectable" data-inspector="point-functional">
+                      <h4>Function remains honest</h4>
+                      <p>No fake unsupported systems — the redesign respects current game constraints.</p>
+                    </div>
+                    <div class="point-card selectable" data-inspector="point-ux">
+                      <h4>Better menu comprehension</h4>
+                      <p>Each action has context, and the player can predict what happens before clicking.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="save-panel selectable" data-inspector="save-panel">
+                  <div>
+                    <div class="panel-title">
+                      <h3>Continue / Load Worlds</h3>
+                      <small>same system, better framing</small>
+                    </div>
+                    <div class="realm-list">
+                      <div class="realm-card active selectable" data-inspector="realm-1">
+                        <div class="realm-top">
+                          <div class="realm-name">Realm I · Eastmire</div>
+                          <div class="realm-time">Last played today</div>
+                        </div>
+                        <div class="chip-row">
+                          <div class="chip">Day 9</div>
+                          <div class="chip">Lv 5 Guild</div>
+                          <div class="chip">Standard</div>
+                          <div class="chip">Normal</div>
+                        </div>
+                        <div class="btn-row">
+                          <button class="btn btn-primary">Continue Journey</button>
+                          <button class="btn btn-secondary">Manage</button>
+                        </div>
+                      </div>
+                      <div class="realm-card selectable" data-inspector="realm-empty">
+                        <div class="realm-top">
+                          <div class="realm-name">New Campaign Slot</div>
+                          <div class="realm-time">Available</div>
+                        </div>
+                        <div class="chip-row">
+                          <div class="chip">single start path</div>
+                          <div class="chip">difficulty choice</div>
+                        </div>
+                        <div class="btn-row">
+                          <button class="btn btn-primary">Begin New Journey</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="right-info">
+                    <div class="info-card selectable" data-inspector="info-newgame">
+                      <h4>New Game constraint</h4>
+                      <p>Current game does not support realm naming or start-region selection. The spec should reflect a single canonical start path.</p>
+                    </div>
+                    <div class="info-card selectable" data-inspector="info-settings">
+                      <h4>Settings structure</h4>
+                      <p>Existing options panel becomes a premium overlay while preserving category structure and current configuration areas.</p>
+                    </div>
+                    <div class="info-card selectable" data-inspector="info-loading">
+                      <h4>State coverage</h4>
+                      <p>Loading, confirm, and settings states are shown as alternate overlays of the same menu shell.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="overlay-card" id="overlay-settings">
+              <div class="overlay-header">
+                <div>
+                  <div class="overlay-title">Settings</div>
+                  <div class="overlay-sub">Preserves the existing options functionality while presenting it as a cleaner premium modal with clearer category switching.</div>
+                </div>
+                <div class="close-x">×</div>
+              </div>
+              <div class="overlay-body">
+                <div class="settings-shell selectable" data-inspector="settings-shell">
+                  <div class="tab-shell selectable" data-inspector="settings-tabs">
+                    <button class="tab-btn active"><strong>Video</strong><span>Display & quality</span></button>
+                    <button class="tab-btn"><strong>Audio</strong><span>Mix & ambience</span></button>
+                    <button class="tab-btn"><strong>Gameplay</strong><span>Comfort & onboarding</span></button>
+                  </div>
+                  <div class="settings-content selectable" data-inspector="settings-video-page">
+                    <div class="eyebrow">Video Settings</div>
+                    <div class="hero-title" style="font-size:28px;">Display & Quality</div>
+                    <div class="option-grid">
+                      <div class="option-card selectable" data-inspector="opt-quality"><label>Quality Preset</label><div class="fake-select"><span>Ultra</span><span>⌄</span></div></div>
+                      <div class="option-card selectable" data-inspector="opt-resolution"><label>Resolution</label><div class="fake-select"><span>1920 × 1080</span><span>⌄</span></div></div>
+                      <div class="option-card selectable" data-inspector="opt-display"><label>Display Mode</label><div class="fake-select"><span>Fullscreen</span><span>⌄</span></div></div>
+                      <div class="option-card selectable" data-inspector="opt-vsync"><label>VSync</label><div class="toggle-row"><span>Reduce tearing</span><div class="toggle on"></div></div></div>
+                      <div class="option-card selectable" data-inspector="opt-brightness"><label>Brightness</label><div class="slider-wrap"><div class="slider-track"><div class="slider-fill" style="width:62%"></div></div><div class="slider-val">62%</div></div></div>
+                      <div class="option-card selectable" data-inspector="opt-uiscale"><label>UI Scale</label><div class="slider-wrap"><div class="slider-track"><div class="slider-fill" style="width:90%"></div></div><div class="slider-val">90%</div></div></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="overlay-card" id="overlay-newgame">
+              <div class="overlay-header">
+                <div>
+                  <div class="overlay-title">Begin a New Journey</div>
+                  <div class="overlay-sub">No realm naming, no starting region selection — just honest current constraints presented with better ceremony.</div>
+                </div>
+                <div class="close-x">×</div>
+              </div>
+              <div class="overlay-body">
+                <div class="newgame-grid selectable" data-inspector="newgame-panel">
+                  <div class="settings-content">
+                    <div class="eyebrow">New Game Setup</div>
+                    <div class="hero-title" style="font-size:28px;">Current-Scope Campaign Setup</div>
+                    <div class="option-grid">
+                      <div class="option-card selectable" data-inspector="ng-mode"><label>Mode</label><div class="fake-select"><span>Standard</span><span>⌄</span></div></div>
+                      <div class="option-card selectable" data-inspector="ng-difficulty"><label>Difficulty</label><div class="fake-select"><span>Normal</span><span>⌄</span></div></div>
+                      <div class="option-card selectable" data-inspector="ng-tutorial"><label>Tutorial Hints</label><div class="toggle-row"><span>Onboarding enabled</span><div class="toggle on"></div></div></div>
+                      <div class="option-card selectable" data-inspector="ng-confirm"><label>Start Path</label><div class="fake-select"><span>Default world entry</span><span>✓</span></div></div>
+                    </div>
+                    <div class="btn-row" style="margin-top:14px;">
+                      <button class="btn btn-primary">Begin Journey</button>
+                      <button class="btn btn-secondary">View Intro Notes</button>
+                    </div>
+                  </div>
+                  <div class="summary-box selectable" data-inspector="newgame-summary">
+                    <h4>Why this is the correct scope</h4>
+                    <p>This keeps the menu honest. If alternate starts ever become real, the structure can expand later. Right now the UX should reinforce what the game actually supports.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="overlay-card" id="overlay-loading">
+              <div class="overlay-header">
+                <div>
+                  <div class="overlay-title">Resuming The Shaded Coast</div>
+                  <div class="overlay-sub">Loading should feel like a premium transition, not a dead stop.</div>
+                </div>
+                <div class="close-x">×</div>
+              </div>
+              <div class="overlay-body">
+                <div class="loading-card selectable" data-inspector="loading-card">
+                  <div class="ring"></div>
+                  <h3>Preparing the Realm</h3>
+                  <p>Streaming world state, save metadata, guild progression, and current menu context before the player enters the live game scene.</p>
+                  <div class="progress"><div></div></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="overlay-card" id="overlay-confirm">
+              <div class="overlay-header">
+                <div>
+                  <div class="overlay-title">Leave the Kingdom?</div>
+                  <div class="overlay-sub">Exit and destructive flows should remain deliberate, clear, and visually consistent.</div>
+                </div>
+                <div class="close-x">×</div>
+              </div>
+              <div class="overlay-body">
+                <div class="confirm-card selectable" data-inspector="confirm-card">
+                  <h3>Exit Game</h3>
+                  <p>This confirm state can also map to delete-realm behavior with a different title, copy, and action emphasis.</p>
+                  <div class="btn-row" style="margin-top:14px;">
+                    <button class="btn btn-danger">Exit Game</button>
+                    <button class="btn btn-secondary">Stay</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="drag-divider"></div>
+
+      <div class="dev-panel">
+        <div class="hierarchy-col">
+          <div class="hierarchy-header">☰ Hierarchy — UIMenu Grand Hall Spec</div>
+          <div class="tree">
+            <div class="tree-node scene-root"><span>🎮</span><span>UIMenu (Scene Root)</span></div>
+            <div class="tree-node canvas-node"><span style="display:inline-block;width:14px"></span><span>🖼</span><span>WindowCanvas (2)</span></div>
+            <div class="tree-node"><span style="display:inline-block;width:28px"></span><span>📦</span><span>MenuPanel</span></div>
+            <div class="tree-node"><span style="display:inline-block;width:42px"></span><span>🖼</span><span>VideoBackground</span></div>
+            <div class="tree-node"><span style="display:inline-block;width:42px"></span><span>▶</span><span>Video Player</span></div>
+            <div class="tree-node"><span style="display:inline-block;width:42px"></span><span>T</span><span>MusicByText</span></div>
+            <div class="tree-node"><span style="display:inline-block;width:42px"></span><span>👑</span><span>MGKMainLogo</span></div>
+            <div class="tree-node script-node selected" data-inspector-link="menu-root"><span style="display:inline-block;width:42px"></span><span>📋</span><span>GrandHallNavShell</span></div>
+            <div class="tree-node script-node" data-inspector-link="continue-btn"><span style="display:inline-block;width:56px"></span><span>➡</span><span>ContinueButton</span></div>
+            <div class="tree-node script-node" data-inspector-link="newgame-btn"><span style="display:inline-block;width:56px"></span><span>✦</span><span>NewGameButton</span></div>
+            <div class="tree-node script-node" data-inspector-link="load-btn"><span style="display:inline-block;width:56px"></span><span>↗</span><span>LoadGameButton</span></div>
+            <div class="tree-node script-node" data-inspector-link="settings-btn"><span style="display:inline-block;width:56px"></span><span>⚙</span><span>OptionsButton</span></div>
+            <div class="tree-node script-node" data-inspector-link="exit-btn"><span style="display:inline-block;width:56px"></span><span>×</span><span>ExitButton</span></div>
+            <div class="tree-node script-node" data-inspector-link="save-panel"><span style="display:inline-block;width:42px"></span><span>💾</span><span>SaveWorldsPanel</span></div>
+            <div class="tree-node script-node" data-inspector-link="settings-shell"><span style="display:inline-block;width:42px"></span><span>🧩</span><span>OptionsPanel / PremiumOverlay</span></div>
+            <div class="tree-node"><span style="display:inline-block;width:56px"></span><span>◀</span><span>SettingsMainBackArrow</span></div>
+            <div class="tree-node"><span style="display:inline-block;width:56px"></span><span>📺</span><span>OptionsPanelVideoButton</span></div>
+            <div class="tree-node"><span style="display:inline-block;width:56px"></span><span>🔊</span><span>OptionsPanelAudioButton</span></div>
+            <div class="tree-node"><span style="display:inline-block;width:56px"></span><span>┃</span><span>OptionsPanelLineSeparator</span></div>
+            <div class="tree-node script-node" data-inspector-link="settings-video-page"><span style="display:inline-block;width:56px"></span><span>📺</span><span>VideoOptionsPanel</span></div>
+            <div class="tree-node script-node" data-inspector-link="loading-card"><span style="display:inline-block;width:42px"></span><span>⟳</span><span>LoadingStateOverlay</span></div>
+            <div class="tree-node script-node" data-inspector-link="confirm-card"><span style="display:inline-block;width:42px"></span><span>!</span><span>ConfirmOverlay</span></div>
+          </div>
+        </div>
+
+        <div class="inspector-col">
+          <div class="inspector-header">🔍 Inspector — selected element</div>
+          <div class="inspector-content" id="inspector-content">
+            <div id="inspector-menu-root" class="inspector-page">
+              <div class="inspector-go-header">
+                <div class="go-name">GrandHallNavShell</div>
+                <div class="go-meta"><div>Tag: UI</div><div>Layer: UI</div><div style="color:var(--ok)">✔ Active</div></div>
+              </div>
+              <div class="component-block">
+                <div class="comp-header">📦 RectTransform</div>
+                <div class="comp-body">
+                  <div class="prop-row"><div class="prop-key">anchors</div><div class="prop-val real">Derived from WindowCanvas + full-screen menu presentation</div></div>
+                  <div class="prop-row"><div class="prop-key">layout</div><div class="prop-val est">New shell: left rail (350px) + main content column</div></div>
+                </div>
+              </div>
+              <div class="component-block">
+                <div class="comp-header">📋 Menu Architecture <span style="color:var(--warn)">SPEC</span></div>
+                <div class="comp-body">
+                  <div class="prop-row"><div class="prop-key">purpose</div><div class="prop-val est">Premium main menu wrapper for all existing flows</div></div>
+                  <div class="prop-row"><div class="prop-key">preserves</div><div class="prop-val real">Continue / Settings / Exit / Loading / existing menu logic</div></div>
+                  <div class="prop-row"><div class="prop-key">adds</div><div class="prop-val est">Hero composition, saved-world framing, richer hierarchy</div></div>
+                  <div class="sf-block">
+                    <div class="sf-title">JSON Bindings</div>
+                    <div class="sf-row"><span class="sf-field">root canvas</span><span class="sf-target">scene.rootObjects[0] = WindowCanvas (2)</span></div>
+                    <div class="sf-row"><span class="sf-field">menu panel</span><span class="sf-target">children.MenuPanel</span></div>
+                    <div class="sf-row"><span class="sf-field">logo asset</span><span class="sf-target">MGKMainLogo.image.spritePath</span></div>
+                    <div class="sf-row"><span class="sf-field">options tree</span><span class="sf-target">OptionsPanel + VideoOptionsPanel existing export</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div id="inspector-continue-btn" class="inspector-page" style="display:none">
+              <div class="inspector-go-header"><div class="go-name">ContinueButton</div><div class="go-meta"><div>Tag: Untagged</div><div>Layer: UI</div><div style="color:var(--ok)">✔ Active</div></div></div>
+              <div class="component-block"><div class="comp-header">🔘 Action Role</div><div class="comp-body">
+                <div class="prop-row"><div class="prop-key">current scene ref</div><div class="prop-val real">No dedicated Continue button present in provided JSON export</div></div>
+                <div class="prop-row"><div class="prop-key">spec role</div><div class="prop-val est">Top priority entry action on left rail</div></div>
+                <div class="prop-row"><div class="prop-key">interaction</div><div class="prop-val est">Transitions into loading overlay / resume scene</div></div>
+              </div></div>
+            </div>
+
+            <div id="inspector-newgame-btn" class="inspector-page" style="display:none">
+              <div class="inspector-go-header"><div class="go-name">NewGameButton</div><div class="go-meta"><div>Proposed</div><div>Layer: UI</div><div style="color:var(--warn)">SPEC</div></div></div>
+              <div class="component-block"><div class="comp-header">✦ New Game Flow</div><div class="comp-body">
+                <div class="prop-row"><div class="prop-key">supported scope</div><div class="prop-val real">No realm naming, no starting region selection</div></div>
+                <div class="prop-row"><div class="prop-key">fields</div><div class="prop-val est">Difficulty, mode flags, tutorial/onboarding toggles</div></div>
+                <div class="prop-row"><div class="prop-key">avoid</div><div class="prop-val est">Fake unsupported branching start-path UX</div></div>
+              </div></div>
+            </div>
+
+            <div id="inspector-load-btn" class="inspector-page" style="display:none">
+              <div class="inspector-go-header"><div class="go-name">LoadGameButton</div><div class="go-meta"><div>Proposed</div><div>Layer: UI</div><div style="color:var(--warn)">SPEC</div></div></div>
+              <div class="component-block"><div class="comp-header">💾 Load Game UX</div><div class="comp-body">
+                <div class="prop-row"><div class="prop-key">presentation</div><div class="prop-val est">Saved worlds as cards with clearer metadata</div></div>
+                <div class="prop-row"><div class="prop-key">actions</div><div class="prop-val est">Load, manage, delete confirmation</div></div>
+                <div class="prop-row"><div class="prop-key">goal</div><div class="prop-val est">Make save state feel legible and valuable</div></div>
+              </div></div>
+            </div>
+
+            <div id="inspector-settings-btn" class="inspector-page" style="display:none">
+              <div class="inspector-go-header"><div class="go-name">OptionsButton</div><div class="go-meta"><div>Exists in JSON</div><div>Layer: UI</div><div style="color:var(--ok)">✔ Current + redesign</div></div></div>
+              <div class="component-block"><div class="comp-header">⚙ Current Scene Reference</div><div class="comp-body">
+                <div class="prop-row"><div class="prop-key">name</div><div class="prop-val real">OptionsButton</div></div>
+                <div class="prop-row"><div class="prop-key">text</div><div class="prop-val real">Settings</div></div>
+                <div class="prop-row"><div class="prop-key">font</div><div class="prop-val path">Assets/Resources/Font/BAHNSCHRIFT 1 SDF.asset</div></div>
+                <div class="prop-row"><div class="prop-key">transition</div><div class="prop-val real">Button / None</div></div>
+              </div></div>
+              <div class="component-block"><div class="comp-header">🧩 Redesign Intent</div><div class="comp-body">
+                <div class="prop-row"><div class="prop-key">structure</div><div class="prop-val est">Opens premium centered modal instead of flat panel block</div></div>
+                <div class="prop-row"><div class="prop-key">categories</div><div class="prop-val real">Video / Audio / Gameplay retained</div></div>
+                <div class="prop-row"><div class="prop-key">close/back</div><div class="prop-val est">Dedicated close button + category tabs + back arrow support</div></div>
+              </div></div>
+            </div>
+
+            <div id="inspector-exit-btn" class="inspector-page" style="display:none">
+              <div class="inspector-go-header"><div class="go-name">ExitButton</div><div class="go-meta"><div>Exists in JSON</div><div>Layer: UI</div><div style="color:var(--ok)">✔ Current + redesign</div></div></div>
+              <div class="component-block"><div class="comp-header">🚪 Current Scene Reference</div><div class="comp-body">
+                <div class="prop-row"><div class="prop-key">text</div><div class="prop-val real">Exit</div></div>
+                <div class="prop-row"><div class="prop-key">font size</div><div class="prop-val real">36</div></div>
+                <div class="prop-row"><div class="prop-key">transition</div><div class="prop-val real">Button / None</div></div>
+              </div></div>
+              <div class="component-block"><div class="comp-header">❗ Confirm State</div><div class="comp-body">
+                <div class="prop-row"><div class="prop-key">behavior</div><div class="prop-val est">Opens confirm overlay before quitting</div></div>
+                <div class="prop-row"><div class="prop-key">visual tone</div><div class="prop-val est">Serious but consistent with the rest of the menu</div></div>
+              </div></div>
+            </div>
+
+            <div id="inspector-nav-note" class="inspector-page" style="display:none"><div class="inspector-go-header"><div class="go-name">Navigation Note Card</div><div class="go-meta"><div>Spec Helper</div></div></div><div class="component-block"><div class="comp-header">📝 UX Intent</div><div class="comp-body"><div class="prop-row"><div class="prop-key">purpose</div><div class="prop-val est">Explain stable left-rail action model</div></div><div class="prop-row"><div class="prop-key">why</div><div class="prop-val est">Keep top-level actions always visible even when overlays appear</div></div></div></div></div>
+            <div id="inspector-hero-panel" class="inspector-page" style="display:none"><div class="inspector-go-header"><div class="go-name">HeroPanel</div><div class="go-meta"><div>Redesign Layer</div></div></div><div class="component-block"><div class="comp-header">🌄 Main Hero Composition</div><div class="comp-body"><div class="prop-row"><div class="prop-key">function</div><div class="prop-val est">Transform static background into strong narrative first impression</div></div><div class="prop-row"><div class="prop-key">content</div><div class="prop-val est">Current realm, descriptive copy, design rationale callouts</div></div></div></div></div>
+            <div id="inspector-point-atmo" class="inspector-page" style="display:none"><div class="inspector-go-header"><div class="go-name">AtmosphericFirstImpressionCard</div></div><div class="component-block"><div class="comp-header">✨ Design Value</div><div class="comp-body"><div class="prop-row"><div class="prop-key">goal</div><div class="prop-val est">Increase perceived production value on first contact</div></div></div></div></div>
+            <div id="inspector-point-functional" class="inspector-page" style="display:none"><div class="inspector-go-header"><div class="go-name">FunctionHonestyCard</div></div><div class="component-block"><div class="comp-header">🧭 Scope Guardrail</div><div class="comp-body"><div class="prop-row"><div class="prop-key">rule</div><div class="prop-val real">Do not imply unsupported start-region / naming systems</div></div></div></div></div>
+            <div id="inspector-point-ux" class="inspector-page" style="display:none"><div class="inspector-go-header"><div class="go-name">ComprehensionCard</div></div><div class="component-block"><div class="comp-header">🧠 Usability Rationale</div><div class="comp-body"><div class="prop-row"><div class="prop-key">goal</div><div class="prop-val est">Every major action has context, copy, and visual weight</div></div></div></div></div>
+            <div id="inspector-save-panel" class="inspector-page" style="display:none"><div class="inspector-go-header"><div class="go-name">SaveWorldsPanel</div></div><div class="component-block"><div class="comp-header">💾 Continue/Load Presentation</div><div class="comp-body"><div class="prop-row"><div class="prop-key">current system</div><div class="prop-val real">Load/continue functionality concept preserved</div></div><div class="prop-row"><div class="prop-key">new framing</div><div class="prop-val est">Card-based saved world presentation with clearer metadata</div></div></div></div></div>
+            <div id="inspector-realm-1" class="inspector-page" style="display:none"><div class="inspector-go-header"><div class="go-name">RealmCard.Active</div></div><div class="component-block"><div class="comp-header">🏷 Example Save Slot</div><div class="comp-body"><div class="prop-row"><div class="prop-key">fields</div><div class="prop-val est">realm label, last played, day, guild level, mode, difficulty</div></div></div></div></div>
+            <div id="inspector-realm-empty" class="inspector-page" style="display:none"><div class="inspector-go-header"><div class="go-name">RealmCard.EmptySlot</div></div><div class="component-block"><div class="comp-header">➕ New Campaign Slot</div><div class="comp-body"><div class="prop-row"><div class="prop-key">cta</div><div class="prop-val est">Begin New Journey</div></div><div class="prop-row"><div class="prop-key">scope</div><div class="prop-val real">single start path only</div></div></div></div></div>
+            <div id="inspector-info-newgame" class="inspector-page" style="display:none"><div class="inspector-go-header"><div class="go-name">InfoCard.NewGameConstraint</div></div><div class="component-block"><div class="comp-header">📌 Constraint Reminder</div><div class="comp-body"><div class="prop-row"><div class="prop-key">durable rule</div><div class="prop-val real">No realm naming or start-region picking in current implementation</div></div></div></div></div>
+            <div id="inspector-info-settings" class="inspector-page" style="display:none"><div class="inspector-go-header"><div class="go-name">InfoCard.Settings</div></div><div class="component-block"><div class="comp-header">⚙ Settings Philosophy</div><div class="comp-body"><div class="prop-row"><div class="prop-key">approach</div><div class="prop-val est">Reframe current settings into premium modal, do not reinvent system scope</div></div></div></div></div>
+            <div id="inspector-info-loading" class="inspector-page" style="display:none"><div class="inspector-go-header"><div class="go-name">InfoCard.StateCoverage</div></div><div class="component-block"><div class="comp-header">⟳ Alternate States</div><div class="comp-body"><div class="prop-row"><div class="prop-key">states</div><div class="prop-val est">default / settings / new game / loading / exit confirm</div></div></div></div></div>
+            <div id="inspector-settings-shell" class="inspector-page" style="display:none"><div class="inspector-go-header"><div class="go-name">OptionsPanel / PremiumOverlay</div></div><div class="component-block"><div class="comp-header">🪟 Overlay Architecture</div><div class="comp-body"><div class="prop-row"><div class="prop-key">base source</div><div class="prop-val real">OptionsPanel + MenuOptionsPanel from JSON export</div></div><div class="prop-row"><div class="prop-key">new shell</div><div class="prop-val est">centered overlay card with sticky header and internal tabs</div></div></div></div></div>
+            <div id="inspector-settings-tabs" class="inspector-page" style="display:none"><div class="inspector-go-header"><div class="go-name">SettingsTabs</div></div><div class="component-block"><div class="comp-header">🗂 Category Navigation</div><div class="comp-body"><div class="prop-row"><div class="prop-key">categories</div><div class="prop-val real">Video / Audio + added gameplay grouping</div></div><div class="prop-row"><div class="prop-key">behavior</div><div class="prop-val est">tab switch without leaving overlay</div></div></div></div></div>
+            <div id="inspector-settings-video-page" class="inspector-page" style="display:none"><div class="inspector-go-header"><div class="go-name">VideoOptionsPanel</div></div><div class="component-block"><div class="comp-header">📺 Existing + Proposed</div><div class="comp-body"><div class="prop-row"><div class="prop-key">source</div><div class="prop-val real">VideoOptionsPanel exists in scene export</div></div><div class="prop-row"><div class="prop-key">controls shown</div><div class="prop-val est">quality preset, resolution, display mode, vsync, brightness, UI scale</div></div></div></div></div>
+            <div id="inspector-opt-quality" class="inspector-page" style="display:none"><div class="inspector-go-header"><div class="go-name">QualityPresetDropdown</div></div><div class="component-block"><div class="comp-header">🎚 Video Control</div><div class="comp-body"><div class="prop-row"><div class="prop-key">maps to</div><div class="prop-val real">Current quality dropdown concept from VideoOptionsPanel</div></div></div></div></div>
+            <div id="inspector-opt-resolution" class="inspector-page" style="display:none"><div class="inspector-go-header"><div class="go-name">ResolutionDropdown</div></div><div class="component-block"><div class="comp-header">🖥 Display Control</div><div class="comp-body"><div class="prop-row"><div class="prop-key">maps to</div><div class="prop-val est">resolution list / monitor options</div></div></div></div></div>
+            <div id="inspector-opt-display" class="inspector-page" style="display:none"><div class="inspector-go-header"><div class="go-name">DisplayModeDropdown</div></div><div class="component-block"><div class="comp-header">🪟 Display Mode</div><div class="comp-body"><div class="prop-row"><div class="prop-key">options</div><div class="prop-val est">Fullscreen / Borderless / Windowed</div></div></div></div></div>
+            <div id="inspector-opt-vsync" class="inspector-page" style="display:none"><div class="inspector-go-header"><div class="go-name">VSyncToggle</div></div><div class="component-block"><div class="comp-header">🔁 Toggle Control</div><div class="comp-body"><div class="prop-row"><div class="prop-key">style</div><div class="prop-val est">Modern toggle replacing plain checkbox framing</div></div></div></div></div>
+            <div id="inspector-opt-brightness" class="inspector-page" style="display:none"><div class="inspector-go-header"><div class="go-name">BrightnessSlider</div></div><div class="component-block"><div class="comp-header">☀ Slider Control</div><div class="comp-body"><div class="prop-row"><div class="prop-key">ui style</div><div class="prop-val est">Gold-to-teal fill for premium feedback</div></div></div></div></div>
+            <div id="inspector-opt-uiscale" class="inspector-page" style="display:none"><div class="inspector-go-header"><div class="go-name">UIScaleSlider</div></div><div class="component-block"><div class="comp-header">🔎 Accessibility / UX</div><div class="comp-body"><div class="prop-row"><div class="prop-key">goal</div><div class="prop-val est">Make scaling feel like a first-class option in the menu spec</div></div></div></div></div>
+            <div id="inspector-newgame-panel" class="inspector-page" style="display:none"><div class="inspector-go-header"><div class="go-name">NewGameOverlayPanel</div></div><div class="component-block"><div class="comp-header">✦ New Campaign Setup</div><div class="comp-body"><div class="prop-row"><div class="prop-key">required change</div><div class="prop-val real">Remove unsupported realm name / region start concepts</div></div><div class="prop-row"><div class="prop-key">current-scope fields</div><div class="prop-val est">mode, difficulty, tutorial toggles, begin journey</div></div></div></div></div>
+            <div id="inspector-ng-mode" class="inspector-page" style="display:none"><div class="inspector-go-header"><div class="go-name">ModeDropdown</div></div><div class="component-block"><div class="comp-header">🎮 Run Mode</div><div class="comp-body"><div class="prop-row"><div class="prop-key">examples</div><div class="prop-val est">Standard / Hardcore / future flags</div></div></div></div></div>
+            <div id="inspector-ng-difficulty" class="inspector-page" style="display:none"><div class="inspector-go-header"><div class="go-name">DifficultyDropdown</div></div><div class="component-block"><div class="comp-header">⚔ Challenge Setting</div><div class="comp-body"><div class="prop-row"><div class="prop-key">importance</div><div class="prop-val real">Current-realistic setup dimension for New Game</div></div></div></div></div>
+            <div id="inspector-ng-tutorial" class="inspector-page" style="display:none"><div class="inspector-go-header"><div class="go-name">TutorialHintsToggle</div></div><div class="component-block"><div class="comp-header">🧭 Onboarding</div><div class="comp-body"><div class="prop-row"><div class="prop-key">goal</div><div class="prop-val est">Make onboarding feel intentional at campaign start</div></div></div></div></div>
+            <div id="inspector-ng-confirm" class="inspector-page" style="display:none"><div class="inspector-go-header"><div class="go-name">StartPathNotice</div></div><div class="component-block"><div class="comp-header">🛣 Start Path Rule</div><div class="comp-body"><div class="prop-row"><div class="prop-key">status</div><div class="prop-val real">Single canonical start path only</div></div></div></div></div>
+            <div id="inspector-newgame-summary" class="inspector-page" style="display:none"><div class="inspector-go-header"><div class="go-name">SummaryScopeBox</div></div><div class="component-block"><div class="comp-header">📘 UX Rationale</div><div class="comp-body"><div class="prop-row"><div class="prop-key">purpose</div><div class="prop-val est">Explain why honest scope is better than fake flexibility</div></div></div></div></div>
+            <div id="inspector-loading-card" class="inspector-page" style="display:none"><div class="inspector-go-header"><div class="go-name">LoadingStateOverlay</div></div><div class="component-block"><div class="comp-header">⟳ Transition State</div><div class="comp-body"><div class="prop-row"><div class="prop-key">current source</div><div class="prop-val real">LoadingText exists in scene export</div></div><div class="prop-row"><div class="prop-key">upgrade</div><div class="prop-val est">Full loading card with ring + progress + state copy</div></div></div></div></div>
+            <div id="inspector-confirm-card" class="inspector-page" style="display:none"><div class="inspector-go-header"><div class="go-name">ConfirmOverlay</div></div><div class="component-block"><div class="comp-header">❗ Exit / Delete Confirmation</div><div class="comp-body"><div class="prop-row"><div class="prop-key">reuse</div><div class="prop-val est">Shared confirm shell for exit and destructive realm actions</div></div></div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const stateButtons = document.querySelectorAll('.state-btn');
+    const overlays = {
+      default: null,
+      settings: document.getElementById('overlay-settings'),
+      newgame: document.getElementById('overlay-newgame'),
+      loading: document.getElementById('overlay-loading'),
+      confirm: document.getElementById('overlay-confirm')
+    };
+
+    function setState(state) {
+      stateButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.state === state));
+      Object.entries(overlays).forEach(([key, el]) => {
+        if (!el) return;
+        el.classList.toggle('active', key === state);
+      });
+    }
+
+    stateButtons.forEach(btn => btn.addEventListener('click', () => setState(btn.dataset.state)));
+
+    const previewSelectables = document.querySelectorAll('.selectable');
+    const treeLinks = document.querySelectorAll('[data-inspector-link]');
+    const inspectorPages = document.querySelectorAll('.inspector-page');
+
+    function showInspector(id) {
+      inspectorPages.forEach(p => p.style.display = 'none');
+      const page = document.getElementById(`inspector-${id}`);
+      if (page) page.style.display = 'block';
+      previewSelectables.forEach(el => el.classList.toggle('selected', el.dataset.inspector === id));
+      treeLinks.forEach(el => el.classList.toggle('selected', el.dataset.inspectorLink === id));
+    }
+
+    previewSelectables.forEach(el => el.addEventListener('click', e => {
+      e.stopPropagation();
+      showInspector(el.dataset.inspector);
+    }));
+
+    treeLinks.forEach(el => el.addEventListener('click', () => showInspector(el.dataset.inspectorLink)));
+
+    showInspector('menu-root');
+  </script>
+</body>
+</html>
