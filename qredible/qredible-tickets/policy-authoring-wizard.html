@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Policy Authoring Wizard — Qredible Ticket</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:#F1F5F9;color:#0F172A;font-size:14px;line-height:1.5}
+a{color:#3B82F6;text-decoration:none}a:hover{text-decoration:underline}
+code,.mono{font-family:'IBM Plex Mono',monospace}
+
+/* NAV */
+.topnav{background:#1E3A5F;padding:12px 24px;display:flex;align-items:center;gap:8px;font-size:13px;color:#94A3B8}
+.topnav a{color:#93C5FD}
+.topnav .sep{color:#475569}
+.topnav .ticket-badge{background:#3B82F6;color:#fff;font-size:11px;font-weight:600;padding:2px 8px;border-radius:4px;font-family:'IBM Plex Mono',monospace}
+.topnav .title{color:#fff;font-weight:600}
+
+/* BANNER */
+.banner{background:#EFF6FF;border-bottom:3px solid #3B82F6;padding:14px 24px;font-size:13px;color:#1E3A5F;line-height:1.55}
+.banner strong{color:#1E3A5F}
+.banner code{background:#DBEAFE;padding:1px 5px;border-radius:3px;font-size:12px}
+
+/* PAGE */
+.page{max-width:1200px;margin:0 auto;padding:32px 24px}
+.page-header{margin-bottom:28px}
+.page-header h1{font-size:22px;font-weight:700;color:#1E3A5F;margin-bottom:6px}
+.page-header p{color:#64748B;font-size:13px}
+
+/* SECTION */
+.section{margin-bottom:40px}
+.section-label{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:700;padding:4px 12px;border-radius:20px;margin-bottom:12px;letter-spacing:.4px;text-transform:uppercase;background:#EDE9FE;color:#4C1D95}
+.section-label.blue{background:#DBEAFE;color:#1E40AF}
+.section-label.green{background:#DCFCE7;color:#166534}
+.section-label.amber{background:#FEF3C7;color:#92400E}
+.section-label.cyan{background:#E0F2FE;color:#075985}
+.section-label.red{background:#FEE2E2;color:#991B1B}
+.section-label.slate{background:#F1F5F9;color:#334155}
+.section-title{font-size:16px;font-weight:700;color:#1E3A5F;margin-bottom:16px}
+
+/* CARD */
+.card{background:#fff;border:1px solid #E2E8F0;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.08);padding:20px 24px}
+
+/* NOTES / CALLOUTS */
+.note{border-radius:8px;padding:12px 16px;font-size:12px;line-height:1.65;margin-top:14px}
+.note-amber{background:#FFFBEB;border:1px solid #FDE68A;border-left:4px solid #F59E0B;color:#78350F}
+.note-blue{background:#EFF6FF;border:1px solid #BFDBFE;border-left:4px solid #3B82F6;color:#1E40AF}
+.note-green{background:#F0FDF4;border:1px solid #BBF7D0;border-left:4px solid #16A34A;color:#14532D}
+
+/* PILLS */
+.pill{display:inline-flex;align-items:center;border-radius:9999px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.4px;padding:2px 9px}
+.pill-blue{background:#DBEAFE;color:#1E40AF}
+.pill-green{background:#DCFCE7;color:#166534}
+.pill-amber{background:#FEF3C7;color:#92400E}
+.pill-slate{background:#F1F5F9;color:#475569;border:1px solid #E2E8F0}
+
+/* BUTTONS */
+.btn{padding:8px 18px;border-radius:8px;font-size:13px;font-weight:600;border:none;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;display:inline-flex;align-items:center;gap:6px}
+.btn-primary{background:#3B82F6;color:#fff}
+.btn-ghost{background:#F1F5F9;color:#475569;border:1px solid #E2E8F0}
+.btn-sm{padding:5px 12px;font-size:12px;border-radius:6px}
+
+/* UTILITY */
+.divider{height:1px;background:#E2E8F0;margin:36px 0}
+.caption{font-size:12px;color:#64748B;font-style:italic;margin-top:10px;line-height:1.55}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+
+/* OPEN QUESTIONS */
+.oq-item{background:#fff;border:1px solid #E2E8F0;border-left:4px solid #F59E0B;border-radius:8px;padding:12px 16px;margin-bottom:10px}
+.oq-head{font-size:13px;font-weight:600;color:#1E3A5F;margin-bottom:4px}
+.oq-head .oq-n{color:#F59E0B;margin-right:6px}
+.oq-body{font-size:12px;color:#64748B;line-height:1.55}
+
+/* COMPONENT TYPE TILES */
+.tile-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+.comp-tile{background:#fff;border:2px solid #E2E8F0;border-radius:12px;padding:18px 20px;cursor:pointer;transition:border-color .15s}
+.comp-tile:hover{border-color:#3B82F6}
+.comp-tile.active{border-color:#3B82F6;background:#EFF6FF}
+.comp-tile .ct-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:10px}
+.comp-tile .ct-name{font-size:14px;font-weight:700;color:#1E3A5F;margin-bottom:4px}
+.comp-tile .ct-desc{font-size:12px;color:#64748B;line-height:1.5}
+.comp-tile .ct-badge{font-size:10px;font-weight:700;color:#1E40AF;background:#DBEAFE;padding:2px 8px;border-radius:10px;display:inline-block;margin-top:8px}
+
+/* STEPPER */
+.stepper{display:flex;align-items:center;gap:0;margin-bottom:28px}
+.step-item{display:flex;align-items:center;gap:0;flex:1}
+.step-bubble{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+.step-bubble.done{background:#10B981;color:#fff}
+.step-bubble.active{background:#3B82F6;color:#fff}
+.step-bubble.pending{background:#E2E8F0;color:#94A3B8}
+.step-label{font-size:11px;font-weight:600;margin-left:6px;white-space:nowrap}
+.step-label.done{color:#10B981}
+.step-label.active{color:#3B82F6}
+.step-label.pending{color:#94A3B8}
+.step-connector{flex:1;height:2px;margin:0 8px}
+.step-connector.done{background:#10B981}
+.step-connector.pending{background:#E2E8F0}
+
+/* FORM ELEMENTS */
+.form-group{margin-bottom:18px}
+.form-label{font-size:12px;font-weight:600;color:#334155;margin-bottom:6px;display:block}
+.form-input{width:100%;border:1px solid #E2E8F0;border-radius:8px;padding:9px 12px;font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;color:#1E293B;background:#fff;outline:none}
+.form-input:focus{border-color:#3B82F6;box-shadow:0 0 0 3px #DBEAFE}
+.form-select{width:100%;border:1px solid #E2E8F0;border-radius:8px;padding:9px 12px;font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;color:#1E293B;background:#fff}
+.form-textarea{width:100%;border:1px solid #E2E8F0;border-radius:8px;padding:9px 12px;font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;color:#1E293B;resize:vertical;min-height:72px;background:#fff}
+
+/* RADIO / CHECKBOX */
+.radio-group,.check-group{display:flex;flex-direction:column;gap:10px}
+.radio-row,.check-row{display:flex;align-items:center;gap:10px;font-size:13px;color:#1E293B;cursor:pointer}
+.radio-row input,.check-row input{accent-color:#3B82F6;width:15px;height:15px}
+.radio-row.selected,.check-row.checked{font-weight:600;color:#1E3A5F}
+
+/* RADIO HORIZONTAL */
+.radio-h{display:flex;gap:12px;flex-wrap:wrap}
+.radio-h-item{background:#F8FAFC;border:2px solid #E2E8F0;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:600;color:#64748B;cursor:pointer}
+.radio-h-item.sel{border-color:#3B82F6;background:#EFF6FF;color:#1E40AF}
+
+/* JSON PREVIEW */
+.json-block{background:#0F172A;border-radius:10px;padding:18px 20px;font-family:'IBM Plex Mono',monospace;font-size:12px;line-height:1.7;color:#E2E8F0;overflow-x:auto}
+.json-key{color:#93C5FD}
+.json-str{color:#86EFAC}
+.json-num{color:#FCA5A5}
+.json-bool{color:#FCD34D}
+.json-arr{color:#C4B5FD}
+
+/* TWO-LAYER MODEL */
+.layer-tabs{display:flex;gap:0;border-bottom:2px solid #E2E8F0;margin-bottom:16px}
+.layer-tab{padding:8px 18px;font-size:13px;font-weight:600;color:#64748B;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px}
+.layer-tab.active{color:#3B82F6;border-bottom-color:#3B82F6}
+.narrative-block{background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;padding:16px 18px;font-size:13px;line-height:1.8;color:#1E293B}
+
+/* QUICK-START CARDS */
+.qs-card{background:#fff;border:1px solid #E2E8F0;border-radius:10px;padding:14px 18px;display:flex;align-items:flex-start;gap:14px}
+.qs-icon{width:32px;height:32px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+
+/* EXPERT MODE CALLOUT */
+.expert-callout{background:#F8FAFC;border:1px solid #E2E8F0;border-radius:10px;padding:16px 20px;display:flex;align-items:flex-start;gap:14px}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="topnav">
+  <a href="https://jfloyd-qredible.netlify.app/">← All Mockups</a>
+  <span class="sep">/</span>
+  <span class="title">Policy Authoring Wizard</span>
+  <span class="sep">/</span>
+  <span class="ticket-badge">QP-3703 · NEW</span>
+</nav>
+
+<!-- BANNER -->
+<div class="banner">
+  🧙 <strong>GUIDED MODE — build policy components without writing JSON</strong> — Noah's dials-and-levers wizard. Sits alongside Expert JSON mode in the Policy Editor. Compliance staff step through a form; the wizard assembles the component JSON and appends it to <code>checklist[]</code> or <code>mri_configuration[]</code>. The two-layer model (narrative + machine-readable JSON) is demonstrated on the final step.
+</div>
+
+<!-- PAGE -->
+<div class="page">
+
+  <div class="page-header">
+    <h1>Policy Authoring Wizard — Guided Component Builder</h1>
+    <p>Step-by-step form that builds policy components without requiring JSON knowledge. Resulting JSON is appended to the policy's <code>checklist[]</code> or <code>mri_configuration[]</code> array. Walks through a complete License Verification component as the worked example.</p>
+  </div>
+
+  <!-- ① CONTEXT -->
+  <div class="section">
+    <div class="section-label blue">① Context</div>
+    <div class="section-title">Two modes in the Policy Editor</div>
+    <div style="background:#EFF6FF;border:2px solid #3B82F6;border-radius:14px;padding:24px 28px;">
+      <div class="grid-2">
+        <div>
+          <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:#64748B;margin-bottom:10px">Expert JSON Mode <span style="background:#E2E8F0;color:#475569;font-size:10px;padding:1px 6px;border-radius:4px;margin-left:4px">EXISTING</span></div>
+          <div style="background:#fff;border:1px solid #E2E8F0;border-radius:8px;padding:14px 16px;font-size:12px;line-height:1.65;color:#475569">
+            Staff hand-edit the raw policy JSON document directly. Full flexibility — any valid policy shape is accepted. Requires understanding of the policy schema. Used by platform engineers and advanced compliance architects.
+          </div>
+          <div style="margin-top:10px;font-size:12px;color:#64748B">Accessed via: <code style="background:#DBEAFE;padding:1px 5px;border-radius:3px;font-size:11px">policy-editor.html</code> → JSON tab</div>
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:#64748B;margin-bottom:10px">Guided Mode (this wizard) <span style="background:#DCFCE7;color:#166534;font-size:10px;padding:1px 6px;border-radius:4px;margin-left:4px">NEW · QP-3703</span></div>
+          <div style="background:#fff;border:1px solid #E2E8F0;border-radius:8px;padding:14px 16px;font-size:12px;line-height:1.65;color:#475569">
+            A step-by-step form wizard that builds the same JSON without requiring JSON knowledge. Compliance staff answer questions about what they need; the wizard assembles the component. After completing all steps, the resulting JSON component is appended to <code style="background:#DBEAFE;padding:1px 4px;border-radius:3px">checklist[]</code> or <code style="background:#DBEAFE;padding:1px 4px;border-radius:3px">mri_configuration[]</code>.
+          </div>
+          <div style="margin-top:10px;font-size:12px;color:#64748B">Accessed via: Policy Editor → "Add Component" → "Use wizard"</div>
+        </div>
+      </div>
+      <div class="note-blue note" style="margin-top:20px">
+        <strong>Key principle:</strong> Both modes produce identical output. Editing a component in the wizard and editing it in JSON mode are equivalent operations. The wizard is a UX affordance — not a separate data model.
+      </div>
+    </div>
+  </div>
+
+  <!-- ② COMPONENT TYPE SELECTOR -->
+  <div class="section">
+    <div class="section-label blue">② Component Type Selector</div>
+    <div class="section-title">What kind of policy component are you adding?</div>
+    <div class="card">
+      <p style="font-size:13px;color:#64748B;margin-bottom:20px">Choose a component type to begin. Each type has a tailored set of configuration steps.</p>
+      <div class="tile-grid">
+
+        <!-- License Verification — ACTIVE -->
+        <div class="comp-tile active">
+          <div class="ct-icon" style="background:#DBEAFE;">🏛️</div>
+          <div class="ct-name">License Verification</div>
+          <div class="ct-desc">Verify state or federal licenses are current, active, and in good standing. Configures the issuing regulator, required fields, and refresh frequency.</div>
+          <div class="ct-badge">Selected — walkthrough below</div>
+        </div>
+
+        <!-- Payment Rail Check -->
+        <div class="comp-tile">
+          <div class="ct-icon" style="background:#DCFCE7;">💳</div>
+          <div class="ct-name">Payment Rail Check</div>
+          <div class="ct-desc">Verify merchant agreement status with a specific payment network (MasterCard, Visa, etc.). Checks agreement currency and program-level flags.</div>
+        </div>
+
+        <!-- Product Classification Rule -->
+        <div class="comp-tile">
+          <div class="ct-icon" style="background:#FEF3C7;">🏷️</div>
+          <div class="ct-name">Product Classification Rule</div>
+          <div class="ct-desc">Define a rule that flags or blocks products based on classification attributes — e.g., THC delta-9 threshold, product category, or label compliance.</div>
+        </div>
+
+        <!-- MRI Check Wiring -->
+        <div class="comp-tile">
+          <div class="ct-icon" style="background:#EDE9FE;">🔍</div>
+          <div class="ct-name">MRI Check Wiring</div>
+          <div class="ct-desc">Wire a third-party MRI data enrichment check (e.g., Vital4, OFAC) into this policy. Sets tier eligibility, confidence threshold, and failure action.</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ③ WIZARD WALKTHROUGH -->
+  <div class="section">
+    <div class="section-label blue">③ Wizard — "ABC License Verification" Walkthrough</div>
+    <div class="section-title">Building a License Verification component</div>
+    <div class="card">
+
+      <!-- STEPPER -->
+      <div class="stepper">
+        <div class="step-item">
+          <div class="step-bubble done">✓</div>
+          <div class="step-label done">Basic Info</div>
+        </div>
+        <div class="step-connector done"></div>
+        <div class="step-item">
+          <div class="step-bubble done">✓</div>
+          <div class="step-label done">Jurisdiction</div>
+        </div>
+        <div class="step-connector done"></div>
+        <div class="step-item">
+          <div class="step-bubble done">✓</div>
+          <div class="step-label done">Requirements</div>
+        </div>
+        <div class="step-connector done"></div>
+        <div class="step-item">
+          <div class="step-bubble done">✓</div>
+          <div class="step-label done">Operational</div>
+        </div>
+        <div class="step-connector pending"></div>
+        <div class="step-item">
+          <div class="step-bubble active">5</div>
+          <div class="step-label active">Review &amp; Save</div>
+        </div>
+      </div>
+
+      <!-- STEP 1 -->
+      <div style="border:1px solid #E2E8F0;border-radius:10px;overflow:hidden;margin-bottom:20px">
+        <div style="background:#F0FDF4;border-bottom:1px solid #BBF7D0;padding:10px 16px;display:flex;align-items:center;gap:8px">
+          <div style="width:22px;height:22px;border-radius:50%;background:#10B981;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;">✓</div>
+          <span style="font-size:13px;font-weight:700;color:#166534">Step 1: Basic Info</span>
+          <span style="font-size:11px;color:#64748B;margin-left:auto">Completed</span>
+        </div>
+        <div style="padding:18px 20px;display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <div class="form-group" style="margin-bottom:0">
+            <label class="form-label">Component name</label>
+            <input class="form-input" type="text" value="ABC License Verification" readonly>
+          </div>
+          <div class="form-group" style="margin-bottom:0">
+            <label class="form-label">Component type</label>
+            <input class="form-input" type="text" value="License · Verification" readonly>
+          </div>
+          <div class="form-group" style="margin-bottom:0;grid-column:1/-1">
+            <label class="form-label">Description</label>
+            <textarea class="form-textarea" readonly>Verify state cultivation license is current and in good standing</textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 2 -->
+      <div style="border:1px solid #E2E8F0;border-radius:10px;overflow:hidden;margin-bottom:20px">
+        <div style="background:#F0FDF4;border-bottom:1px solid #BBF7D0;padding:10px 16px;display:flex;align-items:center;gap:8px">
+          <div style="width:22px;height:22px;border-radius:50%;background:#10B981;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;">✓</div>
+          <span style="font-size:13px;font-weight:700;color:#166534">Step 2: Jurisdiction</span>
+          <span style="font-size:11px;color:#64748B;margin-left:auto">Completed</span>
+        </div>
+        <div style="padding:18px 20px">
+          <div class="form-group">
+            <label class="form-label">Jurisdiction level</label>
+            <div class="radio-h">
+              <div class="radio-h-item">Federal</div>
+              <div class="radio-h-item sel">State</div>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+            <div class="form-group" style="margin-bottom:0">
+              <label class="form-label">State</label>
+              <select class="form-select">
+                <option selected>California</option>
+              </select>
+            </div>
+            <div class="form-group" style="margin-bottom:0">
+              <label class="form-label">Regulator / issuing authority</label>
+              <input class="form-input" type="text" value="California Department of Food and Agriculture (CDFA)" readonly>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 3 -->
+      <div style="border:1px solid #E2E8F0;border-radius:10px;overflow:hidden;margin-bottom:20px">
+        <div style="background:#F0FDF4;border-bottom:1px solid #BBF7D0;padding:10px 16px;display:flex;align-items:center;gap:8px">
+          <div style="width:22px;height:22px;border-radius:50%;background:#10B981;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;">✓</div>
+          <span style="font-size:13px;font-weight:700;color:#166534">Step 3: Verification Requirements</span>
+          <span style="font-size:11px;color:#64748B;margin-left:auto">Completed</span>
+        </div>
+        <div style="padding:18px 20px">
+          <p style="font-size:12px;color:#64748B;margin-bottom:14px">Select the fields that must be captured and verified from the license document.</p>
+          <div class="check-group">
+            <label class="check-row checked"><input type="checkbox" checked> <strong>Issue Date</strong></label>
+            <label class="check-row checked"><input type="checkbox" checked> <strong>Expiration Date</strong></label>
+            <label class="check-row checked"><input type="checkbox" checked> <strong>License Number</strong></label>
+            <label class="check-row checked"><input type="checkbox" checked> <strong>Active Status</strong> (good standing)</label>
+            <label class="check-row checked"><input type="checkbox" checked> <strong>Verification Source URL</strong> (evidence link)</label>
+            <label class="check-row"><input type="checkbox"> Restrictions / Conditions</label>
+            <label class="check-row"><input type="checkbox"> License Category / Tier</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 4 -->
+      <div style="border:1px solid #E2E8F0;border-radius:10px;overflow:hidden;margin-bottom:20px">
+        <div style="background:#F0FDF4;border-bottom:1px solid #BBF7D0;padding:10px 16px;display:flex;align-items:center;gap:8px">
+          <div style="width:22px;height:22px;border-radius:50%;background:#10B981;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;">✓</div>
+          <span style="font-size:13px;font-weight:700;color:#166534">Step 4: Operational Config</span>
+          <span style="font-size:11px;color:#64748B;margin-left:auto">Completed</span>
+        </div>
+        <div style="padding:18px 20px;display:grid;grid-template-columns:1fr 1fr;gap:24px">
+          <div>
+            <div class="form-group">
+              <label class="form-label">Refresh frequency</label>
+              <div class="radio-h" style="gap:8px;flex-wrap:wrap">
+                <div class="radio-h-item" style="padding:6px 12px">Daily</div>
+                <div class="radio-h-item" style="padding:6px 12px">Weekly</div>
+                <div class="radio-h-item sel" style="padding:6px 12px">Monthly</div>
+                <div class="radio-h-item" style="padding:6px 12px">On-change</div>
+              </div>
+            </div>
+            <div class="form-group" style="margin-bottom:0">
+              <label class="form-label">Required for tiers</label>
+              <div style="display:flex;gap:16px">
+                <label class="check-row checked"><input type="checkbox" checked> <strong>Tier 1</strong></label>
+                <label class="check-row checked"><input type="checkbox" checked> <strong>Tier 2</strong></label>
+                <label class="check-row checked"><input type="checkbox" checked> <strong>Tier 3</strong></label>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="form-group">
+              <label class="form-label">Failure action</label>
+              <select class="form-select">
+                <option selected>Flag for manual review</option>
+                <option>Block merchant</option>
+                <option>Send alert only</option>
+              </select>
+            </div>
+            <div class="form-group" style="margin-bottom:0">
+              <label class="form-label">Severity</label>
+              <select class="form-select">
+                <option selected>HIGH (S3)</option>
+                <option>CRITICAL (S1)</option>
+                <option>HIGH (S2)</option>
+                <option>MEDIUM (S4)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 5 — ACTIVE -->
+      <div style="border:2px solid #3B82F6;border-radius:10px;overflow:hidden;box-shadow:0 0 0 4px #DBEAFE">
+        <div style="background:#EFF6FF;border-bottom:1px solid #BFDBFE;padding:10px 16px;display:flex;align-items:center;gap:8px">
+          <div style="width:22px;height:22px;border-radius:50%;background:#3B82F6;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;">5</div>
+          <span style="font-size:13px;font-weight:700;color:#1E40AF">Step 5: Review &amp; Save</span>
+          <span style="font-size:11px;background:#DBEAFE;color:#1E40AF;padding:1px 8px;border-radius:10px;font-weight:600;margin-left:auto">Current step</span>
+        </div>
+        <div style="padding:20px 24px">
+          <p style="font-size:13px;color:#475569;margin-bottom:16px">Review the component JSON that will be appended to <code style="background:#DBEAFE;padding:1px 5px;border-radius:3px;font-size:11px">checklist[]</code> in the active policy document.</p>
+
+          <div class="json-block">
+{<br>
+&nbsp;&nbsp;<span class="json-key">"id"</span>: <span class="json-str">"license.ca_cultivation_cdfa"</span>,<br>
+&nbsp;&nbsp;<span class="json-key">"type"</span>: <span class="json-str">"license_verification"</span>,<br>
+&nbsp;&nbsp;<span class="json-key">"label"</span>: <span class="json-str">"ABC License Verification"</span>,<br>
+&nbsp;&nbsp;<span class="json-key">"description"</span>: <span class="json-str">"Verify state cultivation license is current and in good standing"</span>,<br>
+&nbsp;&nbsp;<span class="json-key">"jurisdiction"</span>: {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="json-key">"level"</span>: <span class="json-str">"state"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="json-key">"state"</span>: <span class="json-str">"CA"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="json-key">"regulator"</span>: <span class="json-str">"California Department of Food and Agriculture (CDFA)"</span><br>
+&nbsp;&nbsp;},<br>
+&nbsp;&nbsp;<span class="json-key">"verification_requirements"</span>: <span class="json-arr">[</span><span class="json-str">"issue_date"</span>, <span class="json-str">"expiration_date"</span>, <span class="json-str">"license_number"</span>, <span class="json-str">"active_status"</span>, <span class="json-str">"evidence_link"</span><span class="json-arr">]</span>,<br>
+&nbsp;&nbsp;<span class="json-key">"refresh_frequency"</span>: <span class="json-str">"monthly"</span>,<br>
+&nbsp;&nbsp;<span class="json-key">"required_for_tiers"</span>: <span class="json-arr">[</span><span class="json-num">1</span>, <span class="json-num">2</span>, <span class="json-num">3</span><span class="json-arr">]</span>,<br>
+&nbsp;&nbsp;<span class="json-key">"failure_action"</span>: <span class="json-str">"flag_manual_review"</span>,<br>
+&nbsp;&nbsp;<span class="json-key">"severity"</span>: <span class="json-str">"S3"</span><br>
+}
+          </div>
+
+          <div style="display:flex;align-items:center;gap:12px;margin-top:20px;padding-top:18px;border-top:1px solid #E2E8F0">
+            <button class="btn btn-primary">Save Component →</button>
+            <a href="policy-editor.html" style="font-size:13px;color:#3B82F6">Switch to expert JSON mode</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ④ AFTER SAVE: TWO-LAYER MODEL -->
+  <div class="section">
+    <div class="section-label green">④ After Save — Two-Layer Model</div>
+    <div class="section-title">Narrative view vs. machine-readable JSON</div>
+    <div class="card">
+
+      <div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:10px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:flex-start;gap:12px">
+        <span style="font-size:18px">✅</span>
+        <div>
+          <div style="font-size:13px;font-weight:700;color:#166534;margin-bottom:2px">Component saved successfully</div>
+          <div style="font-size:12px;color:#166534">ABC License Verification has been appended to <code style="background:#DCFCE7;padding:1px 4px;border-radius:3px">checklist[]</code> in policy <code style="background:#DCFCE7;padding:1px 4px;border-radius:3px">hemp-cbd-base-v3</code>. Next scan will include this component.</div>
+        </div>
+      </div>
+
+      <!-- TABS -->
+      <div class="layer-tabs">
+        <div class="layer-tab active">Narrative</div>
+        <div class="layer-tab">JSON</div>
+      </div>
+
+      <!-- NARRATIVE VIEW (active) -->
+      <div class="narrative-block">
+        <strong>ABC License Verification</strong> — California state cultivation license issued by the California Department of Food and Agriculture (CDFA).<br><br>
+        Verification requires: issue date, expiration date, license number, active/good-standing status, and an evidence source URL. Refreshed <strong>monthly</strong>. Required for all tiers (Tier 1, 2, 3).<br><br>
+        On failure: <strong>flag for manual review</strong> at severity <strong>HIGH (S3)</strong>.
+      </div>
+
+      <!-- JSON VIEW (inactive / shown for illustration) -->
+      <div style="margin-top:16px">
+        <div style="font-size:12px;font-weight:600;color:#64748B;margin-bottom:8px">JSON (machine-readable — same data, evaluator format):</div>
+        <div class="json-block" style="font-size:11px">
+{<span class="json-key">"id"</span>:<span class="json-str">"license.ca_cultivation_cdfa"</span>,<span class="json-key">"type"</span>:<span class="json-str">"license_verification"</span>,<span class="json-key">"label"</span>:<span class="json-str">"ABC License Verification"</span>, ...}
+        </div>
+      </div>
+
+      <div class="note-blue note" style="margin-top:18px">
+        <strong>This is the two-layer policy model.</strong> The narrative is what compliance staff read and review. The JSON is what the evaluator runs during a scan. Both are authoritative — editing either view updates the other. The narrative is auto-generated from the JSON on save; manual edits to the narrative are diffed and synced back to the JSON on next save.
+      </div>
+    </div>
+  </div>
+
+  <!-- ⑤ QUICK-START TEMPLATES -->
+  <div class="section">
+    <div class="section-label">⑤ Other Component Templates</div>
+    <div class="section-title">Quick-start from a pre-built template</div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+
+      <div class="qs-card">
+        <div class="qs-icon" style="background:#DCFCE7;">💳</div>
+        <div style="flex:1">
+          <div style="font-size:14px;font-weight:700;color:#1E3A5F;margin-bottom:3px">Payment Rail Check</div>
+          <div style="font-size:12px;color:#64748B;line-height:1.5">Verify MasterCard merchant agreement is current and the merchant's MID is active on the network.</div>
+        </div>
+        <a href="#" style="font-size:12px;font-weight:600;color:#3B82F6;white-space:nowrap;align-self:center">Use this template →</a>
+      </div>
+
+      <div class="qs-card">
+        <div class="qs-icon" style="background:#FEF3C7;">🏷️</div>
+        <div style="flex:1">
+          <div style="font-size:14px;font-weight:700;color:#1E3A5F;margin-bottom:3px">Product Classification Rule</div>
+          <div style="font-size:12px;color:#64748B;line-height:1.5">Flag products where THC delta-9 concentration exceeds 0.3% — applies to all product catalog entries for this merchant.</div>
+        </div>
+        <a href="#" style="font-size:12px;font-weight:600;color:#3B82F6;white-space:nowrap;align-self:center">Use this template →</a>
+      </div>
+
+      <div class="qs-card">
+        <div class="qs-icon" style="background:#EDE9FE;">🔍</div>
+        <div style="flex:1">
+          <div style="font-size:14px;font-weight:700;color:#1E3A5F;margin-bottom:3px">MRI Check Wiring — Vital4</div>
+          <div style="font-size:12px;color:#64748B;line-height:1.5">Run Vital4 enhanced background check against beneficial owners and registered agents. Required for Tier 1 merchants.</div>
+        </div>
+        <a href="mri-marketplace.html" style="font-size:12px;font-weight:600;color:#3B82F6;white-space:nowrap;align-self:center">Use this template →</a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ⑥ EXPERT MODE AFFORDANCE -->
+  <div class="section">
+    <div class="section-label slate">⑥ Expert JSON Mode</div>
+    <div class="expert-callout">
+      <div style="font-size:24px;flex-shrink:0">⌨️</div>
+      <div style="flex:1">
+        <div style="font-size:14px;font-weight:700;color:#1E3A5F;margin-bottom:6px">Prefer to edit raw JSON?</div>
+        <div style="font-size:13px;color:#475569;line-height:1.65;margin-bottom:12px">The full policy document is always editable in expert mode. Any component built by the wizard can be opened in the JSON editor — and vice versa. Changes in either mode sync automatically; the wizard re-parses the JSON on open to pre-populate its form fields.</div>
+        <a href="policy-editor.html" style="font-size:13px;font-weight:600;color:#3B82F6">Open in JSON editor →</a>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page -->
+</body>
+</html>

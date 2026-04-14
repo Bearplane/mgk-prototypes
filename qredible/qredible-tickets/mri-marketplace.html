@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MRI Marketplace — Qredible Ticket</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:#F1F5F9;color:#0F172A;font-size:14px;line-height:1.5}
+a{color:#3B82F6;text-decoration:none}a:hover{text-decoration:underline}
+code,.mono{font-family:'IBM Plex Mono',monospace}
+
+/* NAV */
+.topnav{background:#1E3A5F;padding:12px 24px;display:flex;align-items:center;gap:8px;font-size:13px;color:#94A3B8}
+.topnav a{color:#93C5FD}
+.topnav .sep{color:#475569}
+.topnav .ticket-badge{background:#3B82F6;color:#fff;font-size:11px;font-weight:600;padding:2px 8px;border-radius:4px;font-family:'IBM Plex Mono',monospace}
+.topnav .title{color:#fff;font-weight:600}
+
+/* BANNER */
+.banner{background:#EFF6FF;border-bottom:3px solid #3B82F6;padding:14px 24px;font-size:13px;color:#1E3A5F;line-height:1.55}
+.banner strong{color:#1E3A5F}
+.banner code{background:#DBEAFE;padding:1px 5px;border-radius:3px;font-size:12px}
+
+/* PAGE */
+.page{max-width:1200px;margin:0 auto;padding:32px 24px}
+.page-header{margin-bottom:28px}
+.page-header h1{font-size:22px;font-weight:700;color:#1E3A5F;margin-bottom:6px}
+.page-header p{color:#64748B;font-size:13px}
+
+/* SECTION */
+.section{margin-bottom:40px}
+.section-label{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:700;padding:4px 12px;border-radius:20px;margin-bottom:12px;letter-spacing:.4px;text-transform:uppercase;background:#EDE9FE;color:#4C1D95}
+.section-label.blue{background:#DBEAFE;color:#1E40AF}
+.section-label.green{background:#DCFCE7;color:#166534}
+.section-label.amber{background:#FEF3C7;color:#92400E}
+.section-label.red{background:#FEE2E2;color:#991B1B}
+.section-label.slate{background:#F1F5F9;color:#334155}
+.section-title{font-size:16px;font-weight:700;color:#1E3A5F;margin-bottom:16px}
+
+/* CARD */
+.card{background:#fff;border:1px solid #E2E8F0;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.08);padding:20px 24px}
+
+/* NOTES */
+.note{border-radius:8px;padding:12px 16px;font-size:12px;line-height:1.65;margin-top:14px}
+.note-amber{background:#FFFBEB;border:1px solid #FDE68A;border-left:4px solid #F59E0B;color:#78350F}
+.note-blue{background:#EFF6FF;border:1px solid #BFDBFE;border-left:4px solid #3B82F6;color:#1E40AF}
+.note-green{background:#F0FDF4;border:1px solid #BBF7D0;border-left:4px solid #16A34A;color:#14532D}
+.note-red{background:#FEF2F2;border:1px solid #FECACA;border-left:4px solid #EF4444;color:#991B1B}
+
+/* PILLS */
+.pill{display:inline-flex;align-items:center;border-radius:9999px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.4px;padding:2px 9px}
+.pill-blue{background:#DBEAFE;color:#1E40AF}
+.pill-purple{background:#EDE9FE;color:#4C1D95}
+.pill-green{background:#DCFCE7;color:#166534}
+.pill-amber{background:#FEF3C7;color:#92400E}
+.pill-red{background:#FEE2E2;color:#991B1B}
+.pill-slate{background:#F1F5F9;color:#475569;border:1px solid #E2E8F0}
+
+/* BUTTONS */
+.btn{padding:7px 16px;border-radius:8px;font-size:12px;font-weight:600;border:none;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;display:inline-flex;align-items:center;gap:6px}
+.btn-primary{background:#3B82F6;color:#fff}
+.btn-ghost{background:#F1F5F9;color:#475569;border:1px solid #E2E8F0}
+.btn-green{background:#10B981;color:#fff}
+.btn-sm{padding:5px 12px;font-size:11px;border-radius:6px}
+
+/* UTILITY */
+.divider{height:1px;background:#E2E8F0;margin:36px 0}
+.caption{font-size:12px;color:#64748B;font-style:italic;margin-top:10px;line-height:1.55}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+
+/* OPEN QUESTIONS */
+.oq-item{background:#fff;border:1px solid #E2E8F0;border-left:4px solid #F59E0B;border-radius:8px;padding:12px 16px;margin-bottom:10px}
+.oq-head{font-size:13px;font-weight:600;color:#1E3A5F;margin-bottom:4px}
+.oq-head .oq-n{color:#F59E0B;margin-right:6px}
+.oq-body{font-size:12px;color:#64748B;line-height:1.55}
+
+/* FILTERS */
+.filter-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.filter-btn{padding:5px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid #E2E8F0;background:#fff;color:#64748B}
+.filter-btn.active{background:#1E3A5F;color:#fff;border-color:#1E3A5F}
+.filter-label{font-size:12px;font-weight:600;color:#94A3B8;margin-right:4px}
+
+/* MRI CARD GRID */
+.mri-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:28px}
+.mri-card{background:#fff;border:1px solid #E2E8F0;border-radius:12px;padding:16px 18px;position:relative}
+.mri-card.featured{border:2px solid #3B82F6;background:#EFF6FF}
+.mri-card .featured-badge{position:absolute;top:-1px;right:14px;background:#3B82F6;color:#fff;font-size:10px;font-weight:700;padding:2px 10px;border-radius:0 0 6px 6px;letter-spacing:.4px;text-transform:uppercase}
+.mri-card-top{display:flex;align-items:flex-start;gap:10px;margin-bottom:12px}
+.mri-logo{width:32px;height:32px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0}
+.mri-card-name{font-size:14px;font-weight:700;color:#1E3A5F;margin-bottom:2px}
+.mri-provider{font-size:11px;color:#64748B}
+.mri-card-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px;font-size:11px;color:#64748B}
+.mri-card-footer{display:flex;align-items:center;gap:10px;padding-top:10px;border-top:1px solid #E2E8F0}
+.toggle-wrap{display:flex;align-items:center;gap:6px;margin-left:auto}
+.toggle{width:34px;height:18px;border-radius:9px;background:#10B981;position:relative;cursor:pointer;flex-shrink:0}
+.toggle::after{content:'';position:absolute;width:14px;height:14px;border-radius:50%;background:#fff;top:2px;right:2px;transition:.15s}
+.toggle.off{background:#E2E8F0}
+.toggle.off::after{right:auto;left:2px}
+.toggle-label{font-size:11px;font-weight:600;color:#10B981}
+.toggle-label.off{color:#94A3B8}
+
+/* CONFIDENCE SLIDER */
+.slider-wrap{position:relative;margin:20px 0 10px}
+.slider-track{height:10px;border-radius:5px;background:linear-gradient(to right,#EF4444 0%,#EF4444 40%,#F59E0B 40%,#F59E0B 70%,#10B981 70%,#10B981 100%);position:relative}
+.slider-thumb{position:absolute;top:50%;transform:translate(-50%,-50%);width:22px;height:22px;border-radius:50%;background:#fff;border:3px solid #3B82F6;box-shadow:0 2px 6px rgba(0,0,0,.2);left:72%}
+.slider-zones{display:flex;margin-top:8px;font-size:10px;font-weight:600}
+.slider-zone-red{flex:40%;color:#EF4444}
+.slider-zone-amber{flex:30%;color:#F59E0B;text-align:center}
+.slider-zone-green{flex:30%;color:#10B981;text-align:right}
+.slider-ticks{display:flex;justify-content:space-between;font-size:10px;color:#94A3B8;margin-top:2px}
+
+/* AUTO-DISMISS TABLE */
+.ad-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:12px}
+.ad-table th{background:#F8FAFC;padding:7px 12px;text-align:left;color:#64748B;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.3px;border:1px solid #E2E8F0}
+.ad-table td{padding:9px 12px;border-bottom:1px solid #F1F5F9;vertical-align:middle;color:#1E293B}
+.ad-table tr:last-child td{border-bottom:none}
+
+/* QUEUE ITEM PREVIEW */
+.queue-item{background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;padding:12px 16px;display:flex;align-items:flex-start;gap:12px}
+.queue-merchant{font-size:13px;font-weight:700;color:#1E3A5F;margin-bottom:2px}
+.queue-meta{font-size:11px;color:#64748B;line-height:1.5}
+.conf-badge{background:#FEF3C7;color:#92400E;font-size:11px;font-weight:700;padding:2px 8px;border-radius:6px;font-family:'IBM Plex Mono',monospace}
+
+/* EXPLAINABILITY PANEL */
+.explain-card{background:#F8FAFC;border:1px solid #E2E8F0;border-radius:10px;overflow:hidden}
+.explain-head{background:#1E3A5F;color:#fff;padding:10px 16px;font-size:12px;font-weight:700;display:flex;align-items:center;gap:8px}
+.explain-body{padding:16px 18px}
+.match-field{display:flex;justify-content:space-between;align-items:flex-start;padding:7px 0;border-bottom:1px solid #F1F5F9;font-size:12px}
+.match-field:last-child{border-bottom:none}
+.match-field .mf-label{color:#64748B;flex-shrink:0;width:160px}
+.match-field .mf-val{color:#1E293B;font-weight:500;flex:1}
+.reason-bar{background:#E2E8F0;border-radius:4px;height:6px;margin-top:4px;overflow:hidden}
+.reason-bar-fill{height:100%;border-radius:4px}
+
+/* TIER GRID */
+.tier-table{width:100%;border-collapse:collapse;font-size:13px}
+.tier-table th{background:#F8FAFC;padding:10px 14px;text-align:left;color:#64748B;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.3px;border:1px solid #E2E8F0}
+.tier-table td{padding:10px 14px;border-bottom:1px solid #F1F5F9;vertical-align:middle;color:#1E293B}
+.tier-table tr:last-child td{border-bottom:none}
+.check-yes{color:#10B981;font-size:16px;font-weight:700}
+.check-no{color:#CBD5E1;font-size:16px}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="topnav">
+  <a href="https://jfloyd-qredible.netlify.app/">← All Mockups</a>
+  <span class="sep">/</span>
+  <span class="title">MRI Marketplace</span>
+  <span class="sep">/</span>
+  <span class="ticket-badge">QP-3704 · NEW</span>
+</nav>
+
+<!-- BANNER -->
+<div class="banner">
+  🔍 <strong>MRI MARKETPLACE — third-party data enrichment checks with configurable confidence thresholds</strong> — Solves the "hundreds of false positives" UX problem. Staff configure per-check confidence thresholds, auto-dismiss rules, and SLA-bound human review queues. The Vital4 configuration panel is the primary UX demonstration. Mode: <code>policy_scored</code> vs <code>risk_intelligence</code>. Open questions for alignment flagged at the bottom.
+</div>
+
+<!-- PAGE -->
+<div class="page">
+
+  <div class="page-header">
+    <h1>MRI Check Marketplace — Merchant Risk Intelligence</h1>
+    <p>Browse, enable, and configure third-party data enrichment checks. Each check produces risk signals against your merchant portfolio. Configure confidence thresholds and auto-dismiss rules to eliminate false-positive noise — without losing genuine risk signals.</p>
+  </div>
+
+  <!-- ① CONTEXT -->
+  <div class="section">
+    <div class="section-label blue">① Context</div>
+    <div class="section-title">The false-positive problem — and how this UI solves it</div>
+    <div style="background:#FEF2F2;border:2px solid #EF4444;border-radius:14px;padding:24px 28px;margin-bottom:20px">
+      <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:#991B1B;margin-bottom:12px">The problem at scale</div>
+      <div class="grid-2">
+        <div>
+          <div style="font-size:13px;color:#1E293B;line-height:1.75">MRI checks run against <strong>thousands of merchants</strong>. At default sensitivity settings, a check like Vital4 will produce <strong>~340 flags per day</strong> — the vast majority of which are fuzzy name matches with no real risk. Without a confidence threshold and structured review workflow, compliance staff are buried in noise and cannot triage real risks.</div>
+        </div>
+        <div>
+          <div style="background:#fff;border:1px solid #FECACA;border-radius:8px;padding:14px 16px">
+            <div style="font-size:12px;font-weight:700;color:#991B1B;margin-bottom:8px">Without this UI:</div>
+            <div style="font-size:12px;color:#475569;line-height:1.65">• ~340 Vital4 flags/day at default threshold 0.3<br>• No way to auto-dismiss known-low-quality matches<br>• No SLA on human review — flags pile up<br>• No explainability — why did this merchant match?<br>• Staff disable checks entirely to cope with noise</div>
+          </div>
+          <div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:8px;padding:14px 16px;margin-top:10px">
+            <div style="font-size:12px;font-weight:700;color:#166534;margin-bottom:8px">With this UI (threshold 0.72):</div>
+            <div style="font-size:12px;color:#475569;line-height:1.65">• ~12 flags/day — 96% noise reduction<br>• Auto-dismiss rules handle 230 low-quality matches<br>• Remaining flags enter SLA-bound review queue<br>• Every flag includes "why this matched" breakdown<br>• Check stays on and catches real risk</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="note-blue note" style="margin-top:0">
+      <strong>Two MRI modes:</strong> <strong>policy_scored</strong> — check result contributes a score to the merchant's policy evaluation (pass/fail). <strong>risk_intelligence</strong> — check result is surfaced as an informational signal in the merchant risk view, does not directly drive policy outcome. Both modes support confidence thresholds and review queues.
+    </div>
+  </div>
+
+  <!-- ② MARKETPLACE GRID -->
+  <div class="section">
+    <div class="section-label blue">② MRI Check Marketplace</div>
+    <div class="section-title">Available checks for this policy</div>
+
+    <!-- FILTERS -->
+    <div class="filter-bar">
+      <span class="filter-label">Filter:</span>
+      <button class="filter-btn active">All checks</button>
+      <button class="filter-btn">By Provider</button>
+      <button class="filter-btn">policy_scored</button>
+      <button class="filter-btn">risk_intelligence</button>
+      <button class="filter-btn">Required</button>
+      <button class="filter-btn">Optional</button>
+      <span style="margin-left:auto;font-size:12px;color:#64748B">8 checks available · 6 enabled</span>
+    </div>
+
+    <div class="mri-grid">
+
+      <!-- 1: Vital4 — FEATURED -->
+      <div class="mri-card featured">
+        <div class="featured-badge">Featured · Expanded below</div>
+        <div class="mri-card-top">
+          <div class="mri-logo" style="background:#4F46E5">V4</div>
+          <div>
+            <div class="mri-card-name">Vital4 Enhanced Background</div>
+            <div class="mri-provider">Provider: Vital4</div>
+          </div>
+        </div>
+        <div class="mri-card-meta">
+          <span class="pill pill-blue">policy_scored</span>
+          <span>720h refresh</span>
+          <span style="color:#1E3A5F;font-weight:600">Required: Tier 1, 2</span>
+        </div>
+        <div style="font-size:11px;color:#64748B;margin-bottom:10px;line-height:1.5">Enhanced background check against beneficial owners, registered agents, and DBA names. High recall, requires confidence threshold tuning.</div>
+        <div class="mri-card-footer">
+          <a href="#vital4-config" style="font-size:12px;font-weight:600;color:#3B82F6">Configure ↓</a>
+          <div class="toggle-wrap">
+            <div class="toggle"></div>
+            <span class="toggle-label">Enabled</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2: OFAC -->
+      <div class="mri-card">
+        <div class="mri-card-top">
+          <div class="mri-logo" style="background:#EF4444">FC</div>
+          <div>
+            <div class="mri-card-name">OFAC Sanctions Screening</div>
+            <div class="mri-provider">Provider: FinCrime API</div>
+          </div>
+        </div>
+        <div class="mri-card-meta">
+          <span class="pill pill-blue">policy_scored</span>
+          <span>24h refresh</span>
+          <span style="color:#1E3A5F;font-weight:600">Required: Tier 1, 2, 3</span>
+        </div>
+        <div style="font-size:11px;color:#64748B;margin-bottom:10px;line-height:1.5">Real-time OFAC SDN and consolidated sanctions list screening. High-precision — low false-positive rate by design.</div>
+        <div class="mri-card-footer">
+          <a href="#" style="font-size:12px;font-weight:600;color:#3B82F6">Configure</a>
+          <div class="toggle-wrap">
+            <div class="toggle"></div>
+            <span class="toggle-label">Enabled</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3: PEP -->
+      <div class="mri-card">
+        <div class="mri-card-top">
+          <div class="mri-logo" style="background:#F59E0B">FC</div>
+          <div>
+            <div class="mri-card-name">PEP / Politically Exposed Persons</div>
+            <div class="mri-provider">Provider: FinCrime API</div>
+          </div>
+        </div>
+        <div class="mri-card-meta">
+          <span class="pill pill-purple">risk_intelligence</span>
+          <span>168h refresh</span>
+          <span style="color:#64748B">Optional: all tiers</span>
+        </div>
+        <div style="font-size:11px;color:#64748B;margin-bottom:10px;line-height:1.5">Screens principals for politically exposed person status. Surfaces as risk signal — does not directly block merchant.</div>
+        <div class="mri-card-footer">
+          <a href="#" style="font-size:12px;font-weight:600;color:#3B82F6">Configure</a>
+          <div class="toggle-wrap">
+            <div class="toggle"></div>
+            <span class="toggle-label">Enabled</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4: FDA Warning Letters -->
+      <div class="mri-card">
+        <div class="mri-card-top">
+          <div class="mri-logo" style="background:#10B981">FDA</div>
+          <div>
+            <div class="mri-card-name">FDA Warning Letters</div>
+            <div class="mri-provider">Provider: FDA.gov</div>
+          </div>
+        </div>
+        <div class="mri-card-meta">
+          <span class="pill pill-purple">risk_intelligence</span>
+          <span>24h refresh</span>
+          <span style="color:#1E3A5F;font-weight:600">Required: Tier 1, 2</span>
+        </div>
+        <div style="font-size:11px;color:#64748B;margin-bottom:10px;line-height:1.5">Checks FDA warning letter database for the merchant's business name and product lines. CBD/hemp processors often appear here.</div>
+        <div class="mri-card-footer">
+          <a href="#" style="font-size:12px;font-weight:600;color:#3B82F6">Configure</a>
+          <div class="toggle-wrap">
+            <div class="toggle"></div>
+            <span class="toggle-label">Enabled</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5: FTC Actions -->
+      <div class="mri-card">
+        <div class="mri-card-top">
+          <div class="mri-logo" style="background:#64748B">FTC</div>
+          <div>
+            <div class="mri-card-name">FTC Actions</div>
+            <div class="mri-provider">Provider: FTC.gov</div>
+          </div>
+        </div>
+        <div class="mri-card-meta">
+          <span class="pill pill-purple">risk_intelligence</span>
+          <span>720h refresh</span>
+          <span style="color:#64748B">Optional: Tier 1, 2</span>
+        </div>
+        <div style="font-size:11px;color:#64748B;margin-bottom:10px;line-height:1.5">Checks FTC enforcement action history. Lower frequency refresh — FTC actions are not real-time events.</div>
+        <div class="mri-card-footer">
+          <a href="#" style="font-size:12px;font-weight:600;color:#3B82F6">Configure</a>
+          <div class="toggle-wrap">
+            <div class="toggle off"></div>
+            <span class="toggle-label off">Disabled</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6: Adverse Media -->
+      <div class="mri-card">
+        <div class="mri-card-top">
+          <div class="mri-logo" style="background:#7C3AED">LN</div>
+          <div>
+            <div class="mri-card-name">Adverse Media Scan</div>
+            <div class="mri-provider">Provider: LexisNexis</div>
+          </div>
+        </div>
+        <div class="mri-card-meta">
+          <span class="pill pill-purple">risk_intelligence</span>
+          <span>24h refresh</span>
+          <span style="color:#64748B">Optional: all tiers</span>
+        </div>
+        <div style="font-size:11px;color:#64748B;margin-bottom:10px;line-height:1.5">Scans news and media sources for adverse mentions. High noise — confidence threshold configuration is essential.</div>
+        <div class="mri-card-footer">
+          <a href="#" style="font-size:12px;font-weight:600;color:#3B82F6">Configure</a>
+          <div class="toggle-wrap">
+            <div class="toggle"></div>
+            <span class="toggle-label">Enabled</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 7: Domain Age / WHOIS -->
+      <div class="mri-card">
+        <div class="mri-card-top">
+          <div class="mri-logo" style="background:#0EA5E9">WX</div>
+          <div>
+            <div class="mri-card-name">Domain Age &amp; WHOIS</div>
+            <div class="mri-provider">Provider: WhoisXML</div>
+          </div>
+        </div>
+        <div class="mri-card-meta">
+          <span class="pill pill-blue">policy_scored</span>
+          <span>720h refresh</span>
+          <span style="color:#64748B">Optional: all tiers</span>
+        </div>
+        <div style="font-size:11px;color:#64748B;margin-bottom:10px;line-height:1.5">Domain registration age, registrant info, and WHOIS privacy flags. Very new domains (&lt;90 days) are scored as elevated risk.</div>
+        <div class="mri-card-footer">
+          <a href="#" style="font-size:12px;font-weight:600;color:#3B82F6">Configure</a>
+          <div class="toggle-wrap">
+            <div class="toggle"></div>
+            <span class="toggle-label">Enabled</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 8: Chargeback Signal -->
+      <div class="mri-card">
+        <div class="mri-card-top">
+          <div class="mri-logo" style="background:#1A56DB">VR</div>
+          <div>
+            <div class="mri-card-name">Chargeback Signal</div>
+            <div class="mri-provider">Provider: Visa Risk Data</div>
+          </div>
+        </div>
+        <div class="mri-card-meta">
+          <span class="pill pill-blue">policy_scored</span>
+          <span>168h refresh</span>
+          <span style="color:#1E3A5F;font-weight:600">Required: Tier 1</span>
+        </div>
+        <div style="font-size:11px;color:#64748B;margin-bottom:10px;line-height:1.5">Chargeback ratio signal from Visa network data. Elevated ratios flag for enhanced due diligence. Tier 1 only due to data licensing costs.</div>
+        <div class="mri-card-footer">
+          <a href="#" style="font-size:12px;font-weight:600;color:#3B82F6">Configure</a>
+          <div class="toggle-wrap">
+            <div class="toggle"></div>
+            <span class="toggle-label">Enabled</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ③ VITAL4 CONFIG — THE FALSE-POSITIVE SOLVER -->
+  <div class="section" id="vital4-config">
+    <div class="section-label red">③ Vital4 Configuration — Solving the False-Positive Problem</div>
+    <div class="section-title">Vital4 Enhanced Background — Configuration Panel</div>
+
+    <div style="background:#FFF7ED;border:2px dashed #FB923C;border-radius:14px;padding:6px;margin-bottom:24px">
+      <div style="background:#fff;border-radius:10px;padding:20px 24px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+          <div class="mri-logo" style="background:#4F46E5;width:28px;height:28px;font-size:12px">V4</div>
+          <div style="font-size:16px;font-weight:700;color:#1E3A5F">Vital4 Enhanced Background</div>
+          <span class="pill pill-blue" style="margin-left:4px">policy_scored</span>
+          <span style="font-size:11px;background:#F0FDF4;color:#166534;border:1px solid #BBF7D0;padding:2px 8px;border-radius:10px;font-weight:600;margin-left:auto">Enabled</span>
+        </div>
+        <div style="font-size:12px;color:#64748B;margin-bottom:24px">Provider: Vital4 · Refresh: 720h · Required for Tier 1, 2</div>
+
+        <!-- ─── CONFIDENCE THRESHOLD ─── -->
+        <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:10px;padding:18px 20px;margin-bottom:20px">
+          <div style="font-size:13px;font-weight:700;color:#1E3A5F;margin-bottom:4px">Confidence Threshold</div>
+          <div style="font-size:12px;color:#64748B;margin-bottom:16px">Controls how confident Vital4 must be in a match before it's flagged. Lower threshold = more flags (higher recall, higher noise). Higher = fewer, higher-quality flags.</div>
+
+          <div style="display:flex;justify-content:space-between;font-size:11px;color:#64748B;margin-bottom:6px">
+            <span>Flag everything (max recall, max noise)</span>
+            <span>Flag only high-confidence matches only</span>
+          </div>
+
+          <!-- SLIDER -->
+          <div class="slider-wrap">
+            <div class="slider-track">
+              <div class="slider-thumb"></div>
+            </div>
+            <div class="slider-zones" style="margin-top:10px">
+              <div class="slider-zone-red">0.0 – 0.4<br><strong>High noise zone</strong></div>
+              <div class="slider-zone-amber">0.4 – 0.7<br><strong>Balanced</strong></div>
+              <div class="slider-zone-green">0.7 – 1.0<br><strong>High precision</strong></div>
+            </div>
+            <div class="slider-ticks">
+              <span>0.0</span>
+              <span>0.1</span>
+              <span>0.2</span>
+              <span>0.3</span>
+              <span>0.4</span>
+              <span>0.5</span>
+              <span>0.6</span>
+              <span>0.7</span>
+              <span>0.8</span>
+              <span>0.9</span>
+              <span>1.0</span>
+            </div>
+          </div>
+
+          <!-- THRESHOLD CALLOUT -->
+          <div style="background:#F0FDF4;border:2px solid #10B981;border-radius:10px;padding:14px 18px;display:flex;align-items:flex-start;gap:14px;margin-top:16px">
+            <div style="font-size:28px;font-weight:700;color:#10B981;font-family:'IBM Plex Mono',monospace;flex-shrink:0">0.72</div>
+            <div>
+              <div style="font-size:14px;font-weight:700;color:#166534;margin-bottom:4px">Current threshold — estimated 12 flags/day</div>
+              <div style="font-size:12px;color:#166534;line-height:1.6">At threshold <strong>0.72</strong>, Vital4 will flag approximately <strong>12 merchants/day</strong> from your portfolio — down from ~340 at the default threshold of 0.3. That's a <strong>96% reduction in noise</strong> while still catching high-confidence matches.</div>
+              <div style="display:flex;gap:16px;margin-top:8px;font-size:11px;color:#64748B">
+                <span>Default (0.3): <strong style="color:#EF4444">~340 flags/day</strong></span>
+                <span>Current (0.72): <strong style="color:#10B981">~12 flags/day</strong></span>
+                <span>Auto-dismissed: <strong style="color:#475569">~230/day</strong></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ─── AUTO-DISMISS RULES ─── -->
+        <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:10px;padding:18px 20px;margin-bottom:20px">
+          <div style="font-size:13px;font-weight:700;color:#1E3A5F;margin-bottom:4px">Auto-Dismiss Rules</div>
+          <div style="font-size:12px;color:#64748B;margin-bottom:12px">Flags matching these rules are automatically dismissed without entering the human review queue. Dismissed matches are still audited — they appear in the dismissal log with the rule that triggered.</div>
+
+          <table class="ad-table">
+            <thead>
+              <tr>
+                <th>Condition</th>
+                <th>Action</th>
+                <th>Applied (last 30d)</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code style="font-size:11px;background:#F1F5F9;padding:2px 6px;border-radius:4px">name_match_score &lt; 0.5 AND address_match = false</code></td>
+                <td><span class="pill pill-slate" style="font-size:10px">Auto-dismiss</span></td>
+                <td style="color:#10B981;font-weight:700">187 matches</td>
+                <td><a href="#" style="font-size:11px;color:#EF4444">Remove</a></td>
+              </tr>
+              <tr>
+                <td><code style="font-size:11px;background:#F1F5F9;padding:2px 6px;border-radius:4px">match_type = "Relative/Associate" AND no_other_signals = true</code></td>
+                <td><span class="pill pill-slate" style="font-size:10px">Auto-dismiss</span></td>
+                <td style="color:#10B981;font-weight:700">43 matches</td>
+                <td><a href="#" style="font-size:11px;color:#EF4444">Remove</a></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div style="margin-top:12px">
+            <button class="btn btn-ghost btn-sm">+ Add rule</button>
+          </div>
+        </div>
+
+        <!-- ─── HUMAN REVIEW QUEUE ─── -->
+        <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:10px;padding:18px 20px;margin-bottom:20px">
+          <div style="font-size:13px;font-weight:700;color:#1E3A5F;margin-bottom:12px">Human Review Queue Integration</div>
+
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+            <div class="toggle" style="width:40px;height:22px"></div>
+            <span style="font-size:13px;font-weight:600;color:#1E3A5F">Send remaining flags to human review queue</span>
+            <span style="font-size:11px;background:#DCFCE7;color:#166534;padding:2px 8px;border-radius:10px;font-weight:600">Enabled</span>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:16px">
+            <div>
+              <div style="font-size:11px;font-weight:600;color:#64748B;margin-bottom:5px">Assigned to</div>
+              <select style="width:100%;border:1px solid #E2E8F0;border-radius:6px;padding:7px 10px;font-size:12px;font-family:'Plus Jakarta Sans',sans-serif;color:#1E293B;background:#fff">
+                <option selected>Compliance Team</option>
+                <option>Risk Team</option>
+                <option>Underwriting</option>
+              </select>
+            </div>
+            <div>
+              <div style="font-size:11px;font-weight:600;color:#64748B;margin-bottom:5px">SLA</div>
+              <select style="width:100%;border:1px solid #E2E8F0;border-radius:6px;padding:7px 10px;font-size:12px;font-family:'Plus Jakarta Sans',sans-serif;color:#1E293B;background:#fff">
+                <option>Review within 24 hours</option>
+                <option selected>Review within 48 hours</option>
+                <option>Review within 5 business days</option>
+              </select>
+            </div>
+            <div>
+              <div style="font-size:11px;font-weight:600;color:#64748B;margin-bottom:5px">Escalation after SLA breach</div>
+              <select style="width:100%;border:1px solid #E2E8F0;border-radius:6px;padding:7px 10px;font-size:12px;font-family:'Plus Jakarta Sans',sans-serif;color:#1E293B;background:#fff">
+                <option selected>Notify Compliance Manager</option>
+                <option>Auto-flag merchant</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- QUEUE ITEM PREVIEW -->
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:#64748B;margin-bottom:8px">Preview — what a queued review item looks like</div>
+          <div class="queue-item">
+            <div style="flex:1">
+              <div class="queue-merchant">Green Leaf Collective LLC</div>
+              <div class="queue-meta">
+                MID: <code style="font-size:10px">MID_4829201</code> · Vital4 match flagged 2026-04-14 09:12 UTC<br>
+                Match: <strong>Gregory Leaf Collins</strong> (beneficial owner record) — fuzzy name match<br>
+                Match type: Name / entity · Fields: Business name, registered agent, DBA names
+              </div>
+            </div>
+            <div style="flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:8px">
+              <span class="conf-badge">0.78 confidence</span>
+              <div style="display:flex;gap:6px">
+                <button class="btn btn-sm" style="background:#F0FDF4;color:#166534;border:1px solid #BBF7D0">Review</button>
+                <button class="btn btn-sm" style="background:#FEF2F2;color:#991B1B;border:1px solid #FECACA">Dismiss</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ─── EXPLAINABILITY ─── -->
+        <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:10px;padding:18px 20px">
+          <div style="font-size:13px;font-weight:700;color:#1E3A5F;margin-bottom:4px">"Why this matched" — Explainability Panel</div>
+          <div style="font-size:12px;color:#64748B;margin-bottom:14px">Every flagged match includes a structured breakdown of why Vital4 matched this merchant, and which fields were examined. Staff can assess the match quality without pulling the full Vital4 report.</div>
+
+          <div class="explain-card">
+            <div class="explain-head">
+              <span>Match: Green Leaf Collective LLC → Gregory Leaf Collins</span>
+              <span class="conf-badge" style="margin-left:auto">0.78 confidence</span>
+            </div>
+            <div class="explain-body">
+
+              <div class="match-field">
+                <div class="mf-label">Merchant</div>
+                <div class="mf-val">Green Leaf Collective LLC</div>
+              </div>
+              <div class="match-field">
+                <div class="mf-label">Vital4 matched entity</div>
+                <div class="mf-val">Gregory Leaf Collins <span style="font-size:11px;color:#64748B">(beneficial owner record)</span></div>
+              </div>
+              <div class="match-field">
+                <div class="mf-label">Match type</div>
+                <div class="mf-val">Name — fuzzy match</div>
+              </div>
+              <div class="match-field">
+                <div class="mf-label">Overall confidence</div>
+                <div class="mf-val">
+                  <div style="display:flex;align-items:center;gap:10px">
+                    <div style="flex:1;background:#E2E8F0;border-radius:4px;height:8px;overflow:hidden"><div style="width:78%;height:100%;background:#F59E0B;border-radius:4px"></div></div>
+                    <span style="font-weight:700;color:#F59E0B;font-family:'IBM Plex Mono',monospace">0.78</span>
+                  </div>
+                </div>
+              </div>
+
+              <div style="margin:14px 0 10px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:#64748B">Reason breakdown</div>
+
+              <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px">
+                <div>
+                  <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">
+                    <span style="color:#475569">First name partial match <span style="color:#94A3B8">(Green / Gregory)</span></span>
+                    <span style="font-weight:600;color:#F59E0B;font-family:'IBM Plex Mono',monospace">0.41</span>
+                  </div>
+                  <div class="reason-bar"><div class="reason-bar-fill" style="width:41%;background:#F59E0B"></div></div>
+                </div>
+                <div>
+                  <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">
+                    <span style="color:#475569">Last name token match <span style="color:#94A3B8">(Leaf / Leaf — exact)</span></span>
+                    <span style="font-weight:600;color:#10B981;font-family:'IBM Plex Mono',monospace">0.95</span>
+                  </div>
+                  <div class="reason-bar"><div class="reason-bar-fill" style="width:95%;background:#10B981"></div></div>
+                </div>
+                <div>
+                  <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">
+                    <span style="color:#475569">Business keyword alignment <span style="color:#94A3B8">(Collective / cannabis entity type)</span></span>
+                    <span style="font-weight:600;color:#F59E0B;font-family:'IBM Plex Mono',monospace">0.62</span>
+                  </div>
+                  <div class="reason-bar"><div class="reason-bar-fill" style="width:62%;background:#F59E0B"></div></div>
+                </div>
+              </div>
+
+              <div class="match-field">
+                <div class="mf-label">Fields examined</div>
+                <div class="mf-val" style="font-size:11px">Business name, registered agent, beneficial owners, DBA names</div>
+              </div>
+              <div class="match-field" style="border:none;padding-bottom:0">
+                <div class="mf-label"></div>
+                <div class="mf-val">
+                  <a href="#" style="font-size:12px;font-weight:600;color:#3B82F6">View full Vital4 report →</a>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ④ TIER ELIGIBILITY -->
+  <div class="section">
+    <div class="section-label">④ Tier Eligibility Configuration</div>
+    <div class="section-title">Which checks run for which merchant tiers</div>
+    <div class="card">
+      <p style="font-size:12px;color:#64748B;margin-bottom:16px">Configure which merchant risk tiers each MRI check applies to. Unchecking a tier skips the check for merchants in that tier during scans. Per-merchant overrides are possible via <code style="background:#DBEAFE;padding:1px 5px;border-radius:3px;font-size:11px">pl_company_config_param</code>.</p>
+
+      <table class="tier-table">
+        <thead>
+          <tr>
+            <th style="width:220px">MRI Check</th>
+            <th style="width:80px">Provider</th>
+            <th style="width:90px;text-align:center">Tier 1<br><span style="font-size:10px;font-weight:400;color:#94A3B8">Highest risk</span></th>
+            <th style="width:90px;text-align:center">Tier 2</th>
+            <th style="width:90px;text-align:center">Tier 3<br><span style="font-size:10px;font-weight:400;color:#94A3B8">Lowest risk</span></th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="background:#EFF6FF">
+            <td style="font-weight:700;color:#1E3A5F">Vital4 Enhanced Background</td>
+            <td style="font-size:11px;color:#64748B">Vital4</td>
+            <td style="text-align:center"><input type="checkbox" checked style="accent-color:#3B82F6;width:15px;height:15px"> <span class="check-yes">✓</span></td>
+            <td style="text-align:center"><input type="checkbox" checked style="accent-color:#3B82F6;width:15px;height:15px"> <span class="check-yes">✓</span></td>
+            <td style="text-align:center"><input type="checkbox" style="accent-color:#3B82F6;width:15px;height:15px"> <span class="check-no">○</span></td>
+            <td style="font-size:11px;color:#64748B">Tier 3 skip by default — lower risk profile, cost management</td>
+          </tr>
+          <tr>
+            <td style="font-weight:600;color:#1E3A5F">OFAC Sanctions Screening</td>
+            <td style="font-size:11px;color:#64748B">FinCrime API</td>
+            <td style="text-align:center"><span class="check-yes">✓</span></td>
+            <td style="text-align:center"><span class="check-yes">✓</span></td>
+            <td style="text-align:center"><span class="check-yes">✓</span></td>
+            <td style="font-size:11px;color:#64748B">Required all tiers — regulatory compliance, cannot be disabled</td>
+          </tr>
+          <tr>
+            <td style="font-weight:600;color:#1E3A5F">PEP Screening</td>
+            <td style="font-size:11px;color:#64748B">FinCrime API</td>
+            <td style="text-align:center"><span class="check-yes">✓</span></td>
+            <td style="text-align:center"><span class="check-yes">✓</span></td>
+            <td style="text-align:center"><span class="check-yes">✓</span></td>
+            <td style="font-size:11px;color:#64748B">Optional — enabled all tiers in this policy</td>
+          </tr>
+          <tr>
+            <td style="font-weight:600;color:#1E3A5F">FDA Warning Letters</td>
+            <td style="font-size:11px;color:#64748B">FDA.gov</td>
+            <td style="text-align:center"><span class="check-yes">✓</span></td>
+            <td style="text-align:center"><span class="check-yes">✓</span></td>
+            <td style="text-align:center"><span class="check-no">○</span></td>
+            <td style="font-size:11px;color:#64748B">Tier 3 skip — FDA letters are rare at low-risk tier</td>
+          </tr>
+          <tr>
+            <td style="font-weight:600;color:#1E3A5F">Chargeback Signal</td>
+            <td style="font-size:11px;color:#64748B">Visa Risk Data</td>
+            <td style="text-align:center"><span class="check-yes">✓</span></td>
+            <td style="text-align:center"><span class="check-no">○</span></td>
+            <td style="text-align:center"><span class="check-no">○</span></td>
+            <td style="font-size:11px;color:#64748B">Tier 1 only — data licensing cost per check</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="note-amber note">
+        <strong>Tier 3 merchants skip Vital4 by default.</strong> Their lower-risk profile and the cost-per-API-call economics make blanket Vital4 checks economically unviable at scale. Override for specific Tier 3 merchants via <code style="background:#FEF3C7;padding:1px 5px;border-radius:3px;font-size:11px">pl_company_config_param.force_mri_checks = ["vital4"]</code> if needed.
+      </div>
+    </div>
+  </div>
+
+  <!-- ⑤ OPEN QUESTIONS -->
+  <div class="section">
+    <div class="section-label amber">⑤ Open Questions</div>
+    <div class="section-title">Items for Brian / Ronaldo alignment</div>
+
+    <div class="oq-item">
+      <div class="oq-head"><span class="oq-n">Q1</span> API call cost budget — who owns it?</div>
+      <div class="oq-body">Each MRI check has a per-call cost (e.g., Vital4 Enhanced Background is priced per lookup, Visa Chargeback Signal is volume-tiered). At scale across thousands of merchants with daily/weekly refreshes, API costs are significant. Q: Is there a per-policy or per-processor API cost budget? Should the marketplace show estimated monthly cost at current tier configuration? Who approves enabling a new check?</div>
+    </div>
+
+    <div class="oq-item">
+      <div class="oq-head"><span class="oq-n">Q2</span> Vital4 API outage during a scheduled scan</div>
+      <div class="oq-body">If Vital4's API is unavailable when a scan triggers (e.g., maintenance window, rate limit), what is the fallback behavior? Options: (a) skip Vital4 for this scan and mark as "check skipped — API unavailable", (b) retry up to N times then skip, (c) hold the scan incomplete until Vital4 responds. For <code>policy_scored</code> mode, skipping a required check could leave the policy evaluation undefined — this needs an explicit policy (pun intended).</div>
+    </div>
+
+    <div class="oq-item">
+      <div class="oq-head"><span class="oq-n">Q3</span> Are false-positive dismissals audited, and for how long?</div>
+      <div class="oq-body">Auto-dismissed matches (via rules) and manually dismissed queue items both remove a Vital4 flag from active consideration. Q: Are these dismissals written to an immutable audit log? What is the retention period (30 days? 7 years for BSA compliance)? Can a dismissed match be re-opened if new evidence emerges? The answer shapes whether this feature can be used in regulated processor workflows.</div>
+    </div>
+
+    <div class="oq-item">
+      <div class="oq-head"><span class="oq-n">Q4</span> MRI result caching strategy and staleness</div>
+      <div class="oq-body">MRI checks run on a <code>refresh_frequency_hours</code> schedule, but a scan may trigger mid-cycle. Q: Does a scan always use the most-recent cached MRI result, or does it trigger a fresh API call? If cached, what is the maximum acceptable staleness before a scan is considered "stale" for compliance purposes? For OFAC (24h refresh), using a 23-hour-old result on a scan should be fine — but using a 6-day-old result probably is not. This needs a defined staleness policy per check type.</div>
+    </div>
+
+  </div>
+
+</div><!-- /page -->
+</body>
+</html>
