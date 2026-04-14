@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Track B Catalog Upload — Qredible Ticket</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:#F1F5F9;color:#0F172A;font-size:14px;line-height:1.5}
+a{color:#3B82F6;text-decoration:none}a:hover{text-decoration:underline}
+code,.mono{font-family:'IBM Plex Mono',monospace}
+
+/* NAV */
+.topnav{background:#1E3A5F;padding:12px 24px;display:flex;align-items:center;gap:8px;font-size:13px;color:#94A3B8}
+.topnav a{color:#93C5FD}
+.topnav .sep{color:#475569}
+.topnav .ticket-badge{background:#3B82F6;color:#fff;font-size:11px;font-weight:600;padding:2px 8px;border-radius:4px;font-family:'IBM Plex Mono',monospace}
+.topnav .title{color:#fff;font-weight:600}
+
+/* BANNER */
+.banner{background:#EFF6FF;border-bottom:3px solid #3B82F6;padding:14px 24px;font-size:13px;color:#1E3A5F;line-height:1.55}
+.banner strong{color:#1E3A5F}
+.banner code{background:#DBEAFE;padding:1px 5px;border-radius:3px;font-size:12px}
+
+/* PAGE */
+.page{max-width:1200px;margin:0 auto;padding:32px 24px}
+.page-header{margin-bottom:28px}
+.page-header h1{font-size:22px;font-weight:700;color:#1E3A5F;margin-bottom:6px}
+.page-header p{color:#64748B;font-size:13px}
+
+/* SECTION */
+.section{margin-bottom:40px}
+.section-label{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:700;padding:4px 12px;border-radius:20px;margin-bottom:12px;letter-spacing:.4px;text-transform:uppercase;background:#EDE9FE;color:#4C1D95}
+.section-label.blue{background:#DBEAFE;color:#1E40AF}
+.section-label.green{background:#DCFCE7;color:#166534}
+.section-label.amber{background:#FEF3C7;color:#92400E}
+.section-label.cyan{background:#E0F2FE;color:#075985}
+.section-label.red{background:#FEE2E2;color:#991B1B}
+.section-label.slate{background:#F1F5F9;color:#334155}
+.section-title{font-size:16px;font-weight:700;color:#1E3A5F;margin-bottom:16px}
+
+/* CARD */
+.card{background:#fff;border:1px solid #E2E8F0;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.08);padding:20px 24px}
+
+/* NOTES / CALLOUTS */
+.note{border-radius:8px;padding:12px 16px;font-size:12px;line-height:1.65;margin-top:14px}
+.note-amber{background:#FFFBEB;border:1px solid #FDE68A;border-left:4px solid #F59E0B;color:#78350F}
+.note-blue{background:#EFF6FF;border:1px solid #BFDBFE;border-left:4px solid #3B82F6;color:#1E40AF}
+.note-green{background:#F0FDF4;border:1px solid #BBF7D0;border-left:4px solid #16A34A;color:#14532D}
+.note-red{background:#FEF2F2;border:1px solid #FECACA;border-left:4px solid #EF4444;color:#7F1D1D}
+.tbd-callout{background:#FFFBEB;border:1px solid #FDE68A;border-left:4px solid #F59E0B;border-radius:8px;padding:12px 16px;font-size:12px;color:#78350F;margin-top:14px;line-height:1.65}
+
+/* PILLS */
+.pill{display:inline-flex;align-items:center;border-radius:9999px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.4px;padding:2px 9px}
+.pill-green{background:#DCFCE7;color:#166534}
+.pill-amber{background:#FEF3C7;color:#92400E}
+.pill-red{background:#FEE2E2;color:#991B1B}
+.pill-gray{background:#F1F5F9;color:#475569}
+.pill-blue{background:#DBEAFE;color:#1E40AF}
+
+/* BUTTONS */
+.btn{padding:7px 16px;border-radius:7px;font-size:13px;font-weight:600;border:none;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;display:inline-flex;align-items:center;gap:6px}
+.btn-primary{background:#3B82F6;color:#fff}
+.btn-ghost{background:#F1F5F9;color:#475569;border:1px solid #E2E8F0}
+.btn-danger{background:#FEF2F2;color:#DC2626;border:1px solid #FECACA}
+.btn-sm{padding:5px 12px;font-size:12px}
+
+/* WIZARD STEP INDICATOR */
+.step-indicator{display:flex;align-items:center;gap:0;margin-bottom:28px}
+.step-item{display:flex;flex-direction:column;align-items:center;flex:1;position:relative}
+.step-item:not(:last-child)::after{content:'';position:absolute;top:17px;left:50%;width:100%;height:2px;background:#E2E8F0;z-index:0}
+.step-item.done:not(:last-child)::after{background:#10B981}
+.step-item.active:not(:last-child)::after{background:#E2E8F0}
+.step-circle{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;z-index:1;position:relative}
+.step-circle-inactive{background:#F1F5F9;border:2px solid #E2E8F0;color:#94A3B8}
+.step-circle-active{background:#3B82F6;border:2px solid #3B82F6;color:#fff}
+.step-circle-done{background:#10B981;border:2px solid #10B981;color:#fff}
+.step-label{font-size:11px;font-weight:600;color:#64748B;margin-top:6px;text-align:center}
+.step-label.active{color:#3B82F6}
+.step-label.done{color:#10B981}
+
+/* WIZARD PANEL */
+.wizard-panel{background:#fff;border:1px solid #E2E8F0;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.08);overflow:hidden;margin-bottom:32px}
+.wizard-panel-head{background:#F8FAFC;border-bottom:1px solid #E2E8F0;padding:14px 20px;display:flex;align-items:center;gap:10px}
+.wizard-panel-num{width:26px;height:26px;background:#3B82F6;color:#fff;border-radius:50%;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.wizard-panel-title{font-size:14px;font-weight:700;color:#1E3A5F}
+.wizard-panel-body{padding:20px 24px}
+
+/* DROP ZONE */
+.dropzone{border:2px dashed #93C5FD;border-radius:12px;background:#F0F7FF;padding:36px 20px;text-align:center}
+.dropzone-accepted{border:2px solid #10B981;background:#F0FDF4;border-radius:12px;padding:16px 20px;display:flex;align-items:center;gap:14px}
+.dropzone-icon{font-size:36px}
+.dz-file-name{font-size:14px;font-weight:700;color:#1E3A5F}
+.dz-file-meta{font-size:12px;color:#10B981;font-weight:600}
+
+/* MAPPING TABLE */
+.map-table{width:100%;border-collapse:collapse;font-size:13px}
+.map-table th{background:#F8FAFC;padding:9px 14px;text-align:left;color:#64748B;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.35px;border:1px solid #E2E8F0}
+.map-table td{padding:9px 14px;border-bottom:1px solid #F1F5F9;vertical-align:middle;color:#1E293B}
+.map-table tr:last-child td{border-bottom:none}
+.map-table tr.unmapped td{background:#FFFBEB}
+.map-table .csv-col{font-family:'IBM Plex Mono',monospace;font-size:12px;color:#334155;background:#F1F5F9;padding:3px 8px;border-radius:4px}
+.map-select{background:#F8FAFC;border:1px solid #E2E8F0;border-radius:6px;padding:5px 10px;font-size:12px;font-family:'Plus Jakarta Sans',sans-serif;color:#1E293B;width:100%}
+.map-select.unmapped{background:#FFFBEB;border-color:#FDE68A;color:#92400E}
+
+/* VALIDATION TABLE */
+.val-table{width:100%;border-collapse:collapse;font-size:12px}
+.val-table th{background:#F8FAFC;padding:8px 12px;text-align:left;color:#64748B;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.35px;border:1px solid #E2E8F0}
+.val-table td{padding:9px 12px;border-bottom:1px solid #F1F5F9;vertical-align:middle;color:#1E293B}
+.val-table tr:last-child td{border-bottom:none}
+.val-table tr.row-warn td{background:#FFFDF0}
+.val-table tr.row-err td{background:#FFF5F5}
+.status-icon{font-size:14px}
+
+/* DIFF TABLE */
+.diff-table{width:100%;border-collapse:collapse;font-size:12px}
+.diff-table th{background:#F8FAFC;padding:8px 12px;text-align:left;color:#64748B;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.35px;border:1px solid #E2E8F0}
+.diff-table td{padding:9px 12px;border-bottom:1px solid #F1F5F9;vertical-align:middle;color:#1E293B}
+.diff-table tr:last-child td{border-bottom:none}
+.diff-table tr.added td{background:#F0FDF4}
+.diff-table tr.removed td{background:#FEF2F2;text-decoration:line-through;color:#9CA3AF}
+.diff-table tr.changed td{background:#FFFDF0}
+.diff-badge-added{background:#DCFCE7;color:#166534;font-size:10px;font-weight:700;padding:1px 7px;border-radius:9999px;text-transform:uppercase}
+.diff-badge-removed{background:#FEE2E2;color:#991B1B;font-size:10px;font-weight:700;padding:1px 7px;border-radius:9999px;text-transform:uppercase}
+.diff-badge-changed{background:#FEF3C7;color:#92400E;font-size:10px;font-weight:700;padding:1px 7px;border-radius:9999px;text-transform:uppercase}
+
+/* STAT CARDS */
+.stat-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px}
+.stat-card{flex:1;min-width:120px;background:#fff;border:1px solid #E2E8F0;border-radius:10px;padding:14px 16px;text-align:center}
+.stat-num{font-size:26px;font-weight:700;margin-bottom:2px}
+.stat-label{font-size:11px;color:#64748B;font-weight:600;text-transform:uppercase;letter-spacing:.4px}
+
+/* COA TABLE */
+.coa-table{width:100%;border-collapse:collapse;font-size:13px}
+.coa-table th{background:#F8FAFC;padding:9px 14px;text-align:left;color:#64748B;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.35px;border:1px solid #E2E8F0}
+.coa-table td{padding:11px 14px;border-bottom:1px solid #F1F5F9;vertical-align:middle;color:#1E293B}
+.coa-table tr:last-child td{border-bottom:none}
+.coa-table tr.coa-conditional td{background:#FFFDF0}
+
+/* PILL COA VARIANTS */
+.pill-coa-req{background:#FEE2E2;color:#991B1B;font-size:11px;font-weight:700;padding:3px 10px;border-radius:9999px;text-transform:uppercase;letter-spacing:.4px}
+.pill-coa-cond{background:#FEF3C7;color:#92400E;font-size:11px;font-weight:700;padding:3px 10px;border-radius:9999px;text-transform:uppercase;letter-spacing:.4px}
+.pill-coa-not{background:#F1F5F9;color:#475569;font-size:11px;font-weight:700;padding:3px 10px;border-radius:9999px;text-transform:uppercase;letter-spacing:.4px}
+
+/* EMPTY STATE */
+.empty-state{text-align:center;padding:60px 40px}
+.empty-icon{font-size:52px;margin-bottom:14px;opacity:.45}
+.empty-title{font-size:16px;font-weight:700;color:#475569;margin-bottom:8px}
+.empty-sub{font-size:13px;color:#94A3B8;margin-bottom:22px}
+
+/* OPEN QUESTIONS */
+.oq-item{background:#fff;border:1px solid #E2E8F0;border-left:4px solid #F59E0B;border-radius:8px;padding:12px 16px;margin-bottom:10px}
+.oq-head{font-size:13px;font-weight:600;color:#1E3A5F;margin-bottom:4px}
+.oq-head .oq-n{color:#F59E0B;margin-right:6px}
+.oq-body{font-size:12px;color:#64748B;line-height:1.55}
+
+/* UTILITY */
+.divider{height:1px;background:#E2E8F0;margin:36px 0}
+.caption{font-size:12px;color:#64748B;font-style:italic;margin-top:10px;line-height:1.55}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+.mt-8{margin-top:8px}
+.mt-12{margin-top:12px}
+.mt-16{margin-top:16px}
+.mt-20{margin-top:20px}
+.mb-4{margin-bottom:4px}
+.mb-8{margin-bottom:8px}
+.mb-12{margin-bottom:12px}
+.mb-16{margin-bottom:16px}
+.flex{display:flex}.items-center{align-items:center}.gap-8{gap:8px}.gap-12{gap:12px}.justify-between{justify-content:space-between}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="topnav">
+  <a href="https://jfloyd-qredible.netlify.app/">← All Mockups</a>
+  <span class="sep">/</span>
+  <span class="title">Track B Catalog Upload</span>
+  <span class="sep">/</span>
+  <span class="ticket-badge">QP-3702 · NEW</span>
+</nav>
+
+<!-- BANNER -->
+<div class="banner">
+  <strong>TRACK B CATALOG UPLOAD WIZARD — net-new surface for card-present retail merchants</strong> — Full upload flow: file ingest → column mapping → validation preview → compliance review trigger. Includes diff/update state for subsequent uploads, COA requirement per product classification, empty state, and open questions for Brian alignment.
+</div>
+
+<!-- PAGE -->
+<div class="page">
+
+  <div class="page-header">
+    <h1>Track B (Card-Present Retail) — Catalog Upload Wizard</h1>
+    <p>End-to-end mockup: new-merchant first upload · column mapping · validation · COA classification · diff/update state · empty state · open questions.</p>
+  </div>
+
+  <!-- ① CONTEXT & PROBLEM -->
+  <div class="section">
+    <div class="section-label blue">① Context &amp; Problem</div>
+    <div class="section-title">Why this surface exists</div>
+
+    <div style="background:#EFF6FF;border:2px solid #3B82F6;border-radius:14px;padding:24px 28px">
+      <div class="grid-2" style="gap:24px">
+        <div>
+          <div style="font-size:13px;font-weight:700;color:#1E3A5F;margin-bottom:8px">What is Track B?</div>
+          <p style="font-size:13px;color:#1E293B;line-height:1.75">
+            <strong>Track B = card-present retail</strong> — physical dispensaries and storefront hemp/CBD retailers. Unlike Track A (ecommerce) merchants who have a live website to scan, Track B merchants sell products in-store. Their compliance footprint is their <strong>product catalog</strong>: the full list of SKUs they carry, with associated product attributes (THC/CBD %, category type, brand, barcode).
+          </p>
+        </div>
+        <div>
+          <div style="font-size:13px;font-weight:700;color:#EF4444;margin-bottom:8px">The gap today</div>
+          <p style="font-size:13px;color:#1E293B;line-height:1.75">
+            There is <strong>no catalog upload UI</strong> in Qredible today. Track B merchants cannot submit their product catalog for compliance review. This is a net-new surface. Once uploaded, the catalog feeds the compliance report generation flow — the same <code>hemp-cbd-base-v3</code> policy evaluation path used for Track A scans, applied to catalog rows rather than page content.
+          </p>
+        </div>
+      </div>
+
+      <div class="note note-blue mt-16">
+        <strong>Scope:</strong> This wizard is accessed from the merchant's <strong>Catalog</strong> tab inside the Qredible merchant portal. The staff-facing admin view shows additional fields (policy slug, review queue assignment) not exposed to the merchant. Both views are represented in this mockup.
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ② UPLOAD WIZARD — NEW MERCHANT -->
+  <div class="section">
+    <div class="section-label green">② Initial Upload Wizard</div>
+    <div class="section-title">New merchant — no prior catalog on file</div>
+
+    <!-- Step indicator -->
+    <div class="step-indicator">
+      <div class="step-item done">
+        <div class="step-circle step-circle-done">✓</div>
+        <div class="step-label done">Upload File</div>
+      </div>
+      <div class="step-item active">
+        <div class="step-circle step-circle-active">2</div>
+        <div class="step-label active">Map Columns</div>
+      </div>
+      <div class="step-item">
+        <div class="step-circle step-circle-inactive">3</div>
+        <div class="step-label">Validate</div>
+      </div>
+      <div class="step-item">
+        <div class="step-circle step-circle-inactive">4</div>
+        <div class="step-label">Confirm &amp; Run</div>
+      </div>
+    </div>
+
+    <!-- Step 1: Upload -->
+    <div class="wizard-panel">
+      <div class="wizard-panel-head">
+        <div class="wizard-panel-num" style="background:#10B981">✓</div>
+        <div class="wizard-panel-title">Step 1 — Upload File</div>
+        <span class="pill pill-green" style="margin-left:auto;font-size:10px">Complete</span>
+      </div>
+      <div class="wizard-panel-body">
+
+        <!-- Accepted state -->
+        <div class="dropzone-accepted">
+          <div style="font-size:32px">📄</div>
+          <div style="flex:1">
+            <div class="dz-file-name">hemp_products_catalog_Q1_2026.csv</div>
+            <div class="dz-file-meta mt-8">847 rows detected · 8 columns · 124 KB</div>
+          </div>
+          <button class="btn btn-ghost btn-sm">Replace file</button>
+        </div>
+
+        <div style="margin-top:12px;display:flex;align-items:center;gap:16px">
+          <span style="font-size:12px;color:#64748B">Accepted formats: <strong>CSV, XLSX</strong> · Max 5,000 rows</span>
+          <a href="#" style="font-size:12px">⬇ Download template</a>
+        </div>
+
+        <!-- Inactive drop zone for reference -->
+        <div style="margin-top:20px;padding:8px 12px;background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;font-size:12px;color:#64748B">
+          <strong style="color:#1E3A5F">Before file accepted — drop zone appearance:</strong>
+          <div class="dropzone" style="margin-top:12px;padding:28px 20px">
+            <div class="dropzone-icon" style="margin-bottom:10px">📁</div>
+            <div style="font-size:14px;font-weight:700;color:#1E3A5F;margin-bottom:6px">Drag &amp; drop your product catalog here</div>
+            <div style="font-size:12px;color:#64748B;margin-bottom:14px">CSV or XLSX · max 5,000 rows</div>
+            <button class="btn btn-primary btn-sm">Browse files</button>
+            <div style="margin-top:12px"><a href="#" style="font-size:12px">⬇ Download CSV template</a></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Step 2: Column Mapping -->
+    <div class="wizard-panel" style="border-color:#3B82F6;border-width:2px">
+      <div class="wizard-panel-head" style="background:#EFF6FF">
+        <div class="wizard-panel-num">2</div>
+        <div class="wizard-panel-title">Step 2 — Map Columns</div>
+        <span class="pill pill-amber" style="margin-left:auto;font-size:10px">2 unmatched</span>
+      </div>
+      <div class="wizard-panel-body">
+
+        <div class="note note-amber mb-16">
+          <strong>Auto-matched 6 of 8 columns.</strong> Review 2 unmatched columns below. Unmatched columns will be skipped unless you assign them to a system field. Select "Skip" to confirm intentional omission.
+        </div>
+
+        <table class="map-table">
+          <thead>
+            <tr>
+              <th style="width:240px">CSV column (your file)</th>
+              <th>System field</th>
+              <th style="width:80px;text-align:center">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="csv-col">Product Name</span></td>
+              <td><select class="map-select"><option selected>Name</option></select></td>
+              <td style="text-align:center"><span style="color:#10B981;font-size:16px">✓</span></td>
+            </tr>
+            <tr>
+              <td><span class="csv-col">SKU</span></td>
+              <td><select class="map-select"><option selected>SKU</option></select></td>
+              <td style="text-align:center"><span style="color:#10B981;font-size:16px">✓</span></td>
+            </tr>
+            <tr>
+              <td><span class="csv-col">Brand</span></td>
+              <td><select class="map-select"><option selected>Brand</option></select></td>
+              <td style="text-align:center"><span style="color:#10B981;font-size:16px">✓</span></td>
+            </tr>
+            <tr>
+              <td><span class="csv-col">THC %</span></td>
+              <td><select class="map-select"><option selected>THC Delta-9 %</option></select></td>
+              <td style="text-align:center"><span style="color:#10B981;font-size:16px">✓</span></td>
+            </tr>
+            <tr>
+              <td><span class="csv-col">CBD %</span></td>
+              <td><select class="map-select"><option selected>CBD %</option></select></td>
+              <td style="text-align:center"><span style="color:#10B981;font-size:16px">✓</span></td>
+            </tr>
+            <tr>
+              <td><span class="csv-col">Product Type</span></td>
+              <td><select class="map-select"><option selected>Category Type</option></select></td>
+              <td style="text-align:center"><span style="color:#10B981;font-size:16px">✓</span></td>
+            </tr>
+            <tr>
+              <td><span class="csv-col">UPC</span></td>
+              <td><select class="map-select"><option selected>Barcode</option></select></td>
+              <td style="text-align:center"><span style="color:#10B981;font-size:16px">✓</span></td>
+            </tr>
+            <tr>
+              <td><span class="csv-col">Price</span></td>
+              <td><select class="map-select"><option selected>MSRP</option></select></td>
+              <td style="text-align:center"><span style="color:#10B981;font-size:16px">✓</span></td>
+            </tr>
+            <tr class="unmapped">
+              <td><span class="csv-col">Vendor Notes</span></td>
+              <td>
+                <select class="map-select unmapped">
+                  <option selected>— No match / Skip —</option>
+                  <option>Internal Notes</option>
+                  <option>Vendor ID</option>
+                </select>
+              </td>
+              <td style="text-align:center"><span style="color:#F59E0B;font-size:16px">⚠</span></td>
+            </tr>
+            <tr class="unmapped">
+              <td><span class="csv-col">Internal Code</span></td>
+              <td>
+                <select class="map-select unmapped">
+                  <option selected>— No match / Skip —</option>
+                  <option>Internal ID</option>
+                  <option>Reference Code</option>
+                </select>
+              </td>
+              <td style="text-align:center"><span style="color:#F59E0B;font-size:16px">⚠</span></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="flex items-center justify-between mt-16">
+          <button class="btn btn-ghost">← Back</button>
+          <button class="btn btn-primary">Continue to Validation →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 3: Validation Preview -->
+    <div class="wizard-panel">
+      <div class="wizard-panel-head">
+        <div class="wizard-panel-num" style="background:#94A3B8">3</div>
+        <div class="wizard-panel-title">Step 3 — Validation Preview</div>
+        <span class="pill pill-gray" style="margin-left:auto;font-size:10px">Pending</span>
+      </div>
+      <div class="wizard-panel-body">
+
+        <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px">
+          <div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:8px;padding:10px 16px;text-align:center;flex:1;min-width:100px">
+            <div style="font-size:22px;font-weight:700;color:#166534">844</div>
+            <div style="font-size:11px;color:#166534;font-weight:600;text-transform:uppercase">Rows valid</div>
+          </div>
+          <div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:8px;padding:10px 16px;text-align:center;flex:1;min-width:100px">
+            <div style="font-size:22px;font-weight:700;color:#92400E">2</div>
+            <div style="font-size:11px;color:#92400E;font-weight:600;text-transform:uppercase">Warnings</div>
+          </div>
+          <div style="background:#FEF2F2;border:1px solid #FECACA;border-radius:8px;padding:10px 16px;text-align:center;flex:1;min-width:100px">
+            <div style="font-size:22px;font-weight:700;color:#DC2626">1</div>
+            <div style="font-size:11px;color:#DC2626;font-weight:600;text-transform:uppercase">Errors</div>
+          </div>
+        </div>
+
+        <div class="note note-red mb-16">
+          <strong>1 error must be resolved before upload can proceed.</strong> Download the error report, fix the row in your source file, and re-upload. Warnings may proceed — they will be flagged in the compliance report.
+        </div>
+
+        <div style="font-size:12px;font-weight:700;color:#64748B;text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px">Sample rows (5 of 847)</div>
+        <table class="val-table">
+          <thead>
+            <tr>
+              <th style="width:36px">Row</th>
+              <th>Product Name</th>
+              <th>SKU</th>
+              <th>Category Type</th>
+              <th>THC %</th>
+              <th>CBD %</th>
+              <th style="width:60px;text-align:center">Status</th>
+              <th>Issue</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="color:#94A3B8">2</td>
+              <td>Green Bliss Hemp Flower 3.5g</td>
+              <td class="mono" style="font-size:11px">HF-001-35</td>
+              <td>Hemp Flower</td>
+              <td>0.28%</td>
+              <td>14.2%</td>
+              <td style="text-align:center"><span class="status-icon">✅</span></td>
+              <td style="color:#94A3B8;font-size:11px">—</td>
+            </tr>
+            <tr>
+              <td style="color:#94A3B8">3</td>
+              <td>Clarity CBD Tincture 1000mg</td>
+              <td class="mono" style="font-size:11px">CT-1000</td>
+              <td>CBD Tincture</td>
+              <td>0.02%</td>
+              <td>33.4%</td>
+              <td style="text-align:center"><span class="status-icon">✅</span></td>
+              <td style="color:#94A3B8;font-size:11px">—</td>
+            </tr>
+            <tr>
+              <td style="color:#94A3B8">4</td>
+              <td>Restore Hemp Topical Cream</td>
+              <td class="mono" style="font-size:11px">TP-REST-02</td>
+              <td>Topicals</td>
+              <td>0.00%</td>
+              <td>8.1%</td>
+              <td style="text-align:center"><span class="status-icon">✅</span></td>
+              <td style="color:#94A3B8;font-size:11px">—</td>
+            </tr>
+            <tr class="row-warn">
+              <td style="color:#94A3B8">87</td>
+              <td>Relax Delta Hemp Pre-Roll</td>
+              <td class="mono" style="font-size:11px">PR-RLX-87</td>
+              <td>Hemp Flower</td>
+              <td><strong style="color:#92400E">0.31%</strong></td>
+              <td>11.6%</td>
+              <td style="text-align:center"><span class="status-icon">⚠️</span></td>
+              <td style="font-size:11px;color:#92400E">THC value 0.31% exceeds 0.3% federal limit</td>
+            </tr>
+            <tr class="row-err">
+              <td style="color:#94A3B8">213</td>
+              <td>Calm Pet CBD Drops 250mg</td>
+              <td class="mono" style="font-size:11px">PET-250</td>
+              <td><strong style="color:#DC2626">—</strong></td>
+              <td>0.00%</td>
+              <td>8.3%</td>
+              <td style="text-align:center"><span class="status-icon">🔴</span></td>
+              <td style="font-size:11px;color:#DC2626">Missing required field: Category Type</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="caption mt-8">Showing 5 of 847 rows. <a href="#">Download full validation report (CSV)</a></div>
+
+        <div class="flex items-center justify-between mt-16">
+          <button class="btn btn-ghost">← Back to Mapping</button>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-danger btn-sm">Download error report</button>
+            <button class="btn btn-primary" disabled style="opacity:.45;cursor:not-allowed">Continue → <span style="font-size:11px">(resolve errors first)</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 4: Confirm & Run -->
+    <div class="wizard-panel">
+      <div class="wizard-panel-head">
+        <div class="wizard-panel-num" style="background:#94A3B8">4</div>
+        <div class="wizard-panel-title">Step 4 — Confirm &amp; Run Compliance Review</div>
+        <span class="pill pill-gray" style="margin-left:auto;font-size:10px">Pending</span>
+      </div>
+      <div class="wizard-panel-body">
+
+        <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:10px;padding:18px 20px;margin-bottom:18px">
+          <div style="font-size:11px;font-weight:700;color:#64748B;text-transform:uppercase;letter-spacing:.4px;margin-bottom:12px">Review summary</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:13px">
+            <div>
+              <div style="color:#94A3B8;font-size:11px;margin-bottom:2px">Products to upload</div>
+              <div style="font-weight:700;color:#1E3A5F;font-size:16px">847</div>
+            </div>
+            <div>
+              <div style="color:#94A3B8;font-size:11px;margin-bottom:2px">Warnings included</div>
+              <div style="font-weight:700;color:#92400E;font-size:16px">2</div>
+            </div>
+            <div>
+              <div style="color:#94A3B8;font-size:11px;margin-bottom:2px">Policy applied</div>
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#1E40AF;background:#DBEAFE;display:inline-block;padding:2px 8px;border-radius:4px">hemp-cbd-base-v3 · v12</div>
+            </div>
+            <div>
+              <div style="color:#94A3B8;font-size:11px;margin-bottom:2px">Output</div>
+              <div style="font-weight:600;color:#1E3A5F;font-size:12px">Catalog Compliance Report</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="note note-amber mb-16">
+          <strong>Staff-facing note (not shown to merchant):</strong> The policy slug <code>hemp-cbd-base-v3 · v12</code> is derived from the merchant's active <code>policy_ids</code>. The merchant sees only "Compliance Review" — the policy identifier is internal to the admin wizard context.
+        </div>
+
+        <div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:10px;padding:14px 18px;font-size:13px;color:#1E293B;margin-bottom:18px;line-height:1.7">
+          <strong>What will happen:</strong> Upload 847 products → run compliance review against policy <code style="font-size:11px">hemp-cbd-base-v3 · v12</code> → produce <strong>Catalog Compliance Report</strong>. Products with warnings will appear flagged in the report. The review runs asynchronously — you'll receive an email when it's complete (typically 2–5 minutes for catalogs under 1,000 rows).
+        </div>
+
+        <div class="flex items-center justify-between">
+          <button class="btn btn-ghost">← Back to Validation</button>
+          <button class="btn btn-primary" style="font-size:14px;padding:10px 22px">Upload &amp; Run Review</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ③ COA REQUIREMENT PER LINE ITEM -->
+  <div class="section">
+    <div class="section-label amber">③ COA Requirement Per Classification</div>
+    <div class="section-title">Classification assignment &amp; COA requirement — post-upload step</div>
+
+    <div class="card">
+      <p style="font-size:13px;color:#1E293B;line-height:1.75;margin-bottom:18px">
+        After upload, the wizard reads <code>PlCategoryEntity.coaRequirement</code> (backed by <code>pl_category.coa_requirement</code>) for each product classification detected in the catalog. The value determines whether a Certificate of Analysis must be on file before a product passes compliance review.
+      </p>
+
+      <div class="note note-blue mb-16">
+        <strong>Schema annotation:</strong> <code>PlCategoryEntity.coaRequirement</code> is set at the <strong>Product Classification level</strong> — not per product, not per merchant. The upload wizard reads this at classification-assignment time and flags which products will require a COA before they pass review. Do NOT derive or infer COA requirement from product attributes; always read <code>pl_category.coa_requirement</code>.
+      </div>
+
+      <div style="font-size:12px;font-weight:700;color:#64748B;text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px">Product classifications detected in this upload</div>
+
+      <table class="coa-table">
+        <thead>
+          <tr>
+            <th>Classification</th>
+            <th>Products in upload</th>
+            <th><code style="font-size:11px">PlCategoryEntity.coaRequirement</code></th>
+            <th>Implication</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Hemp Flower</strong></td>
+            <td>312</td>
+            <td><span class="pill-coa-req">Required</span></td>
+            <td style="font-size:12px;color:#475569">All 312 products must have a valid COA on file before passing review.</td>
+          </tr>
+          <tr>
+            <td><strong>CBD Tincture</strong></td>
+            <td>189</td>
+            <td><span class="pill-coa-req">Required</span></td>
+            <td style="font-size:12px;color:#475569">All 189 products must have a valid COA on file before passing review.</td>
+          </tr>
+          <tr class="coa-conditional">
+            <td>
+              <strong>Pet CBD</strong>
+              <div style="font-size:10px;color:#F59E0B;font-weight:600;margin-top:3px">⚠ See footnote</div>
+            </td>
+            <td>47</td>
+            <td><span class="pill-coa-cond">Conditional</span></td>
+            <td style="font-size:12px;color:#475569">COA required if THC content exceeds trace amounts per policy configuration. Products at 0.00% THC may proceed without COA; review will flag any above threshold.</td>
+          </tr>
+          <tr>
+            <td><strong>Topicals</strong></td>
+            <td>299</td>
+            <td><span class="pill-coa-not">Not Required</span></td>
+            <td style="font-size:12px;color:#475569">COA is not required for this classification. Products will pass without a COA unless other policy rules apply.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="tbd-callout mt-16">
+        <strong>CONDITIONAL — footnote:</strong> <code>CONDITIONAL</code> means COA is required if THC content exceeds trace amounts as defined by the merchant's active policy configuration (specifically: <code>enforcement_rules.coa_thc_trace_threshold</code> in the assigned policy). The threshold is not hardcoded in the classification — it is resolved at review time against the active policy version. This allows the same classification to behave differently under different policy versions without re-classifying products.
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ④ UPDATE / DIFF STATE -->
+  <div class="section">
+    <div class="section-label cyan">④ Update / Diff State</div>
+    <div class="section-title">Subsequent upload — merchant has uploaded before</div>
+
+    <div class="card">
+
+      <!-- Previous upload header -->
+      <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;padding:12px 16px;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:#64748B;text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px">Previous catalog</div>
+          <div style="font-size:14px;font-weight:700;color:#1E3A5F">2026-01-15 · 823 products</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <span style="font-size:12px;color:#64748B">Policy at time of last review:</span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#1E40AF;background:#DBEAFE;padding:2px 7px;border-radius:4px">hemp-cbd-base-v3 · v11</span>
+        </div>
+      </div>
+
+      <!-- Diff summary cards -->
+      <div class="stat-row">
+        <div class="stat-card" style="border-color:#BBF7D0">
+          <div class="stat-num" style="color:#166534">+31</div>
+          <div class="stat-label" style="color:#166534">Added</div>
+        </div>
+        <div class="stat-card" style="border-color:#FECACA">
+          <div class="stat-num" style="color:#DC2626">-7</div>
+          <div class="stat-label" style="color:#DC2626">Removed</div>
+        </div>
+        <div class="stat-card" style="border-color:#FDE68A">
+          <div class="stat-num" style="color:#92400E">~12</div>
+          <div class="stat-label" style="color:#92400E">Changed</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" style="color:#475569">797</div>
+          <div class="stat-label">Unchanged</div>
+        </div>
+        <div class="stat-card" style="border-color:#BFDBFE">
+          <div class="stat-num" style="color:#1E40AF">854</div>
+          <div class="stat-label" style="color:#1E40AF">Total (new)</div>
+        </div>
+      </div>
+
+      <!-- Diff table -->
+      <div style="font-size:12px;font-weight:700;color:#64748B;text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px">Diff preview (sample rows)</div>
+      <table class="diff-table">
+        <thead>
+          <tr>
+            <th style="width:70px">Change</th>
+            <th>SKU</th>
+            <th>Product Name</th>
+            <th>Category</th>
+            <th>THC %</th>
+            <th>CBD %</th>
+            <th>Detail</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="added">
+            <td><span class="diff-badge-added">Added</span></td>
+            <td class="mono" style="font-size:11px">HF-NEW-91</td>
+            <td>Sunrise Hemp Flower 7g</td>
+            <td>Hemp Flower</td>
+            <td>0.27%</td>
+            <td>16.1%</td>
+            <td style="font-size:11px;color:#166534">New SKU · not in prior catalog</td>
+          </tr>
+          <tr class="added">
+            <td><span class="diff-badge-added">Added</span></td>
+            <td class="mono" style="font-size:11px">CT-2000</td>
+            <td>Focus CBD Tincture 2000mg</td>
+            <td>CBD Tincture</td>
+            <td>0.01%</td>
+            <td>66.7%</td>
+            <td style="font-size:11px;color:#166534">New SKU · not in prior catalog</td>
+          </tr>
+          <tr class="removed">
+            <td><span class="diff-badge-removed">Removed</span></td>
+            <td class="mono" style="font-size:11px">HF-OLD-12</td>
+            <td>Legacy Blend Hemp Flower 1g</td>
+            <td>Hemp Flower</td>
+            <td>0.29%</td>
+            <td>12.0%</td>
+            <td style="font-size:11px;color:#991B1B">SKU absent from new file</td>
+          </tr>
+          <tr class="changed">
+            <td><span class="diff-badge-changed">Changed</span></td>
+            <td class="mono" style="font-size:11px">PR-RLX-87</td>
+            <td>Relax Delta Hemp Pre-Roll</td>
+            <td>Hemp Flower</td>
+            <td>
+              <span style="text-decoration:line-through;color:#94A3B8">0.28%</span>
+              <span style="color:#92400E;font-weight:700;margin-left:4px">0.31%</span>
+            </td>
+            <td>0.00%</td>
+            <td style="font-size:11px;color:#92400E">THC % updated: 0.28% → 0.31%</td>
+          </tr>
+          <tr class="changed">
+            <td><span class="diff-badge-changed">Changed</span></td>
+            <td class="mono" style="font-size:11px">CT-500-B</td>
+            <td>Balance CBD Tincture 500mg</td>
+            <td>CBD Tincture</td>
+            <td>0.02%</td>
+            <td>
+              <span style="text-decoration:line-through;color:#94A3B8">16.5%</span>
+              <span style="color:#92400E;font-weight:700;margin-left:4px">17.2%</span>
+            </td>
+            <td style="font-size:11px;color:#92400E">CBD % updated: 16.5% → 17.2%</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="caption mt-8">Showing 5 representative diff rows. <a href="#">Download full diff report (CSV)</a></div>
+
+      <!-- CTA options -->
+      <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:10px;padding:16px 20px;margin-top:20px">
+        <div style="font-size:12px;font-weight:700;color:#64748B;text-transform:uppercase;letter-spacing:.4px;margin-bottom:12px">Choose review scope</div>
+        <div class="grid-2" style="gap:12px">
+          <div style="background:#fff;border:2px solid #3B82F6;border-radius:10px;padding:16px;cursor:pointer">
+            <div style="font-size:13px;font-weight:700;color:#1E40AF;margin-bottom:6px">Run Compliance Review on Deltas Only</div>
+            <div style="font-size:12px;color:#475569;line-height:1.6">Reviews only the 50 products that changed (31 added + 12 changed + 7 removed status change). Faster. Recommended when your catalog is mostly stable.</div>
+            <div style="margin-top:10px">
+              <button class="btn btn-primary btn-sm">Review 50 products</button>
+            </div>
+          </div>
+          <div style="background:#fff;border:1px solid #E2E8F0;border-radius:10px;padding:16px;cursor:pointer">
+            <div style="font-size:13px;font-weight:700;color:#1E3A5F;margin-bottom:6px">Run Full Re-review</div>
+            <div style="font-size:12px;color:#475569;line-height:1.6">Re-reviews all 854 products against the current policy version (<code style="font-size:10px">hemp-cbd-base-v3 · v12</code>). Use this if the policy has changed since the last review, or if you want a clean baseline.</div>
+            <div style="margin-top:10px">
+              <button class="btn btn-ghost btn-sm">Review all 854 products</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ⑤ EMPTY STATE -->
+  <div class="section">
+    <div class="section-label slate">⑤ Empty State</div>
+    <div class="section-title">Merchant catalog tab — before first upload</div>
+
+    <div class="card" style="padding:0;overflow:hidden">
+      <!-- Simulated browser chrome / tab bar -->
+      <div style="background:#1E3A5F;padding:10px 20px;display:flex;align-items:center;gap:20px;font-size:12px">
+        <span style="color:#93C5FD;font-weight:600">Overview</span>
+        <span style="color:#93C5FD;font-weight:600">Documents</span>
+        <span style="background:#fff;color:#1E3A5F;padding:4px 12px;border-radius:6px 6px 0 0;font-weight:700">Catalog</span>
+        <span style="color:#93C5FD;font-weight:600">Reports</span>
+        <span style="color:#93C5FD;font-weight:600">Settings</span>
+      </div>
+
+      <div class="empty-state">
+        <div class="empty-icon">📦</div>
+        <div class="empty-title">No catalog uploaded yet</div>
+        <div class="empty-sub">Upload your product catalog to begin your compliance review. Accepted formats: CSV, XLSX · max 5,000 rows.</div>
+        <button class="btn btn-primary">Upload Catalog</button>
+        <div style="margin-top:14px">
+          <a href="#" style="font-size:12px">⬇ Download CSV template</a>
+          <span style="color:#E2E8F0;margin:0 8px">|</span>
+          <a href="#" style="font-size:12px">Learn what to include →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ⑥ OPEN QUESTIONS -->
+  <div class="section">
+    <div class="section-label amber">⑥ Open Questions</div>
+    <div class="section-title">For Brian alignment</div>
+
+    <div class="oq-item">
+      <div class="oq-head"><span class="oq-n">Q1</span> XLSX column ordering — strict or mapped?</div>
+      <div class="oq-body">
+        For XLSX uploads, should column order be strictly enforced (columns must appear in template order) or should the column mapping UI always be presented regardless of format? Strict ordering reduces wizard complexity but shifts burden to the merchant to conform to the template. The mockup currently shows the mapping step for all uploads — confirm whether XLSX with a known template header row should auto-skip mapping.
+      </div>
+    </div>
+
+    <div class="oq-item">
+      <div class="oq-head"><span class="oq-n">Q2</span> Multi-location retailers — one catalog per merchant or per location?</div>
+      <div class="oq-body">
+        Some Track B merchants operate multiple physical locations with different product assortments (e.g., a dispensary group with 4 storefronts, each carrying a different SKU mix). Should the catalog be a single entity per merchant company record, or should Qredible support per-location catalogs? If per-location, the upload wizard needs a location selector and <code>pl_catalog</code> must carry a <code>location_id</code> FK. This has significant downstream impact on compliance reporting (do we report per-location or roll up to company?).
+      </div>
+    </div>
+
+    <div class="oq-item">
+      <div class="oq-head"><span class="oq-n">Q3</span> Removed products — do they trigger automatic compliance status change?</div>
+      <div class="oq-body">
+        When a SKU is absent from a new upload (i.e., the diff shows it as "Removed"), should its compliance status be automatically set to <strong>Inactive / Not reviewed</strong> or should it retain its last-known status until explicitly archived? The current mockup shows Removed rows in the diff but does not prescribe a status transition. Brian to confirm: does a removal constitute a "clean pass" action (the product is no longer sold, so compliance risk is gone) or does it need explicit staff acknowledgment?
+      </div>
+    </div>
+
+    <div class="oq-item">
+      <div class="oq-head"><span class="oq-n">Q4</span> Retention policy for prior catalog versions</div>
+      <div class="oq-body">
+        Each upload creates a new catalog snapshot. How long should prior catalog versions be retained? Options: (a) indefinite with soft-delete, (b) rolling N-version window (e.g., keep last 5 uploads), (c) time-based (e.g., 2 years for regulatory audit trail). The diff feature in Section 4 depends on at least the immediately prior version being available. Confirm retention requirements and whether merchants can self-serve access to prior catalog exports, or if that's a staff-only admin function.
+      </div>
+    </div>
+
+  </div>
+
+</div><!-- /page -->
+
+</body>
+</html>
