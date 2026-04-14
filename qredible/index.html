@@ -691,18 +691,17 @@
   <div class="section-content" data-section-cat="q-audit">
   <div class="card-grid">
 
-    <a data-status="todo" data-category="q-audit" data-date="2026-04-13" href="qredible-tickets/policy-lifecycle.html" class="proto-card" data-keywords="policy lifecycle customer flow onboarding wizard intake assignment chaining stack overlay bulletin merchant dashboard chained composable hemp cbd kratom payment rails open questions tbd qp-3647 acme franchise inheritance multi-policy resolution scoring strictest-wins">
+    <a data-status="todo" data-category="q-audit" data-date="2026-04-13" href="qredible-tickets/policy-lifecycle.html" class="proto-card" data-keywords="policy lifecycle customer flow onboarding wizard intake assignment chaining stack overlay bulletin merchant dashboard chained composable hemp cbd kratom payment rails open questions tbd qp-3647">
       <div class="card-top">
-        <div class="card-icon">&#129518;</div>
-        <span class="card-ticket">QP-3647 &middot; Lifecycle</span>
+        <div class="card-icon">&#128260;</div>
+        <span class="card-ticket">QP-3647 &bull; POLICY-FIRST</span>
       </div>
       <div class="card-name">Policy Lifecycle &#8212; Customer Flow &amp; Chaining</div>
-      <p class="card-desc">End-to-end customer flow under policy-first: onboarding &rarr; policy assignment &rarr; day-in-the-life dashboard &rarr; scan trigger &rarr; policy updates &rarr; bulletins &rarr; overlay model. Includes the chained-policy stack pattern (lightweight, specific, composable) and an explicit list of open questions for Brian/Ronaldo alignment.</p>
+      <p class="card-desc">End-to-end customer flow under policy-first: onboarding &#8594; policy assignment &#8594; day-in-the-life dashboard &#8594; scan trigger &#8594; policy updates &#8594; bulletins &#8594; overlay model. Includes the chained-policy stack pattern (lightweight, specific, composable) and an explicit list of open questions for Brian/Ronaldo alignment.</p>
       <div class="card-pills">
         <span class="pill pill-blue">Q-Audit</span>
         <span class="pill pill-green">Policy-First</span>
-        <span class="pill pill-green">New</span>
-        <span class="pill pill-amber">Open Questions</span>
+        <span class="pill pill-green">Mockup ready</span>
       </div>
       <div class="card-footer">
         <span class="card-date">Apr 13, 2026</span>
@@ -710,18 +709,18 @@
       </div>
     </a>
 
-    <a data-status="todo" data-category="q-audit" data-date="2026-04-13" href="qredible-tickets/policy-evidence-loop.html" class="proto-card" data-keywords="policy evidence loop coverage check missing policy detection q-scanai findings product scan coa license payment rails mri evidence tags signature attributes vocabulary kratom worked example confidence auto-attach suggest review queue analyst soc2 audit qp-3647 closed loop feedback acme hemp">
+    <a data-status="todo" data-category="q-audit" data-date="2026-04-13" href="qredible-tickets/policy-evidence-loop.html" class="proto-card" data-keywords="policy evidence loop coverage check missing policy detection q-scanai findings product scan coa license payment rails mri evidence tags signature attributes vocabulary kratom worked example confidence auto-attach suggest review queue analyst soc2 audit qp-3647">
       <div class="card-top">
-        <div class="card-icon">&#128260;</div>
-        <span class="card-ticket">QP-3647 &middot; Evidence Loop</span>
+        <div class="card-icon">&#128300;</div>
+        <span class="card-ticket">QP-3647 &bull; POLICY-FIRST &bull; NEW</span>
       </div>
       <div class="card-name">Policy Evidence Loop &#8212; Detect Missing Policies from Scans</div>
       <p class="card-desc">Closed-loop system tying Q-ScanAI findings, product scans, COA results, license scans, payment rails detection, and MRI checks back to policy assignment. Each finding produces evidence tags; canonical policies declare expected evidence signatures; coverage check detects missing policies based on real evidence about the merchant. Worked example: Acme Hemp Co caught selling kratom under hemp-cbd-only policies.</p>
       <div class="card-pills">
         <span class="pill pill-blue">Q-Audit</span>
         <span class="pill pill-green">Policy-First</span>
-        <span class="pill pill-green">New</span>
-        <span class="pill pill-amber">Open Questions</span>
+        <span class="pill pill-blue">Evidence Loop</span>
+        <span class="pill pill-green">Mockup ready</span>
       </div>
       <div class="card-footer">
         <span class="card-date">Apr 13, 2026</span>
@@ -995,45 +994,6 @@
       });
       cards.forEach(function(card) { grid.appendChild(card); });
     });
-    reorderSections();
-  }
-
-  function reorderSections() {
-    var headers = Array.from(document.querySelectorAll('.section-header'));
-    if (headers.length === 0) return;
-    var parent = headers[0].parentElement;
-    if (!headers.every(function(h) { return h.parentElement === parent; })) return;
-
-    var pairs = headers.map(function(header) {
-      var content = header.nextElementSibling;
-      var cards = content ? Array.from(content.querySelectorAll('.proto-card')) : [];
-      var visibleDates = cards
-        .filter(function(c) { return !c.classList.contains('hidden') && !c.classList.contains('status-hidden'); })
-        .map(function(c) { return c.getAttribute('data-date') || ''; })
-        .filter(Boolean);
-      var date;
-      if (currentSort === 'newest') {
-        date = visibleDates.length ? visibleDates.reduce(function(a, b) { return a > b ? a : b; }) : '';
-      } else {
-        date = visibleDates.length ? visibleDates.reduce(function(a, b) { return a < b ? a : b; }) : '9999-12-31';
-      }
-      return { header: header, content: content, date: date };
-    });
-
-    pairs.sort(function(a, b) {
-      return currentSort === 'newest' ? b.date.localeCompare(a.date) : a.date.localeCompare(b.date);
-    });
-
-    var footer = parent.querySelector('footer');
-    pairs.forEach(function(pair) {
-      if (footer) {
-        parent.insertBefore(pair.header, footer);
-        parent.insertBefore(pair.content, footer);
-      } else {
-        parent.appendChild(pair.header);
-        parent.appendChild(pair.content);
-      }
-    });
   }
 
   function applyFilters() {
@@ -1068,7 +1028,6 @@
       header.style.display = showSection ? '' : 'none';
       content.style.display = showSection ? '' : 'none';
     });
-    reorderSections();
   }
 
   function toggleSection(header) {
