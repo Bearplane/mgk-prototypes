@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Report Generation — Qredible Ticket QP-3701</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:#F1F5F9;color:#0F172A;font-size:14px;line-height:1.5}
+a{color:#3B82F6;text-decoration:none}a:hover{text-decoration:underline}
+code,.mono{font-family:'IBM Plex Mono',monospace}
+
+/* NAV */
+.topnav{background:#1E3A5F;padding:12px 24px;display:flex;align-items:center;gap:8px;font-size:13px;color:#94A3B8}
+.topnav a{color:#93C5FD}
+.topnav .sep{color:#475569}
+.topnav .ticket-badge{background:#3B82F6;color:#fff;font-size:11px;font-weight:600;padding:2px 8px;border-radius:4px;font-family:'IBM Plex Mono',monospace}
+.topnav .title{color:#fff;font-weight:600}
+
+/* BANNER */
+.banner{background:#EFF6FF;border-bottom:3px solid #3B82F6;padding:14px 24px;font-size:13px;color:#1E3A5F;line-height:1.55}
+.banner strong{color:#1E3A5F}
+.banner code{background:#DBEAFE;padding:1px 5px;border-radius:3px;font-size:12px}
+
+/* PAGE */
+.page{max-width:1200px;margin:0 auto;padding:32px 24px}
+.page-header{margin-bottom:28px}
+.page-header h1{font-size:22px;font-weight:700;color:#1E3A5F;margin-bottom:6px}
+.page-header p{color:#64748B;font-size:13px}
+
+/* SECTION */
+.section{margin-bottom:40px}
+.section-label{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:700;padding:4px 12px;border-radius:20px;margin-bottom:12px;letter-spacing:.4px;text-transform:uppercase}
+.section-label.blue{background:#DBEAFE;color:#1E40AF}
+.section-label.green{background:#DCFCE7;color:#166534}
+.section-label.amber{background:#FEF3C7;color:#92400E}
+.section-label.purple{background:#EDE9FE;color:#4C1D95}
+.section-label.slate{background:#F1F5F9;color:#334155}
+.section-label.cyan{background:#E0F2FE;color:#075985}
+.section-title{font-size:16px;font-weight:700;color:#1E3A5F;margin-bottom:16px}
+
+/* CARD */
+.card{background:#fff;border:1px solid #E2E8F0;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.08);padding:20px 24px}
+
+/* NOTES */
+.note{border-radius:8px;padding:12px 16px;font-size:12px;line-height:1.65;margin-top:14px}
+.note-amber{background:#FFFBEB;border:1px solid #FDE68A;border-left:4px solid #F59E0B;color:#78350F}
+.note-blue{background:#EFF6FF;border:1px solid #BFDBFE;border-left:4px solid #3B82F6;color:#1E40AF}
+.note-green{background:#F0FDF4;border:1px solid #BBF7D0;border-left:4px solid #16A34A;color:#14532D}
+.note-slate{background:#F8FAFC;border:1px solid #E2E8F0;border-left:4px solid #94A3B8;color:#475569}
+
+/* PILLS */
+.pill{display:inline-flex;align-items:center;border-radius:9999px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.4px;padding:2px 9px}
+.pill-green{background:#DCFCE7;color:#166534}
+.pill-amber{background:#FEF3C7;color:#92400E}
+.pill-blue{background:#DBEAFE;color:#1E40AF}
+.pill-slate{background:#F1F5F9;color:#475569;border:1px solid #E2E8F0}
+.pill-red{background:#FEE2E2;color:#991B1B}
+
+/* BTNS */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 18px;border-radius:8px;font-size:13px;font-weight:600;border:none;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;text-decoration:none}
+.btn-primary{background:#3B82F6;color:#fff}
+.btn-primary:hover{background:#2563EB;color:#fff}
+.btn-primary-lg{padding:12px 28px;font-size:15px;border-radius:10px}
+.btn-ghost{background:#F1F5F9;color:#475569;border:1px solid #E2E8F0}
+.btn-success{background:#10B981;color:#fff}
+.btn-success:hover{background:#059669;color:#fff}
+.btn-success-lg{padding:12px 28px;font-size:15px;border-radius:10px}
+.btn-disabled{background:#E2E8F0;color:#94A3B8;cursor:not-allowed}
+
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse;font-size:12px}
+.tbl th{background:#F8FAFC;padding:8px 12px;text-align:left;color:#64748B;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.3px;border:1px solid #E2E8F0}
+.tbl td{padding:9px 12px;border-bottom:1px solid #F1F5F9;vertical-align:top;color:#1E293B}
+.tbl tr:last-child td{border-bottom:none}
+
+/* MERCHANT HEADER */
+.merchant-bar{background:#fff;border:1px solid #E2E8F0;border-radius:12px;padding:18px 24px;display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.merchant-name{font-size:18px;font-weight:700;color:#1E3A5F;margin-bottom:2px}
+.merchant-meta{font-size:12px;color:#64748B}
+.merchant-meta code{color:#475569}
+
+/* STATE PANELS */
+.state-panels{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-top:16px}
+.state-panel{border-radius:12px;overflow:hidden;border:2px solid #E2E8F0}
+.state-panel.active-state{border-color:#3B82F6}
+.state-panel.success-state{border-color:#10B981}
+.state-panel-head{padding:10px 16px;font-size:12px;font-weight:700;display:flex;align-items:center;gap:8px}
+.sp-idle .state-panel-head{background:#F8FAFC;color:#475569}
+.sp-inflight .state-panel-head{background:#EFF6FF;color:#1E40AF}
+.sp-complete .state-panel-head{background:#F0FDF4;color:#166534}
+.state-panel-body{padding:16px;background:#fff}
+
+/* SPINNER */
+@keyframes spin{to{transform:rotate(360deg)}}
+.spinner-ring{width:32px;height:32px;border:3px solid #DBEAFE;border-top-color:#3B82F6;border-radius:50%;animation:spin 0.8s linear infinite;display:inline-block}
+.spinner-ring-sm{width:16px;height:16px;border:2px solid #DBEAFE;border-top-color:#3B82F6;border-radius:50%;animation:spin 0.8s linear infinite;display:inline-block;vertical-align:middle}
+
+/* STAGE LIST */
+.stage-list{list-style:none;margin-top:10px}
+.stage-list li{display:flex;align-items:flex-start;gap:8px;padding:5px 0;font-size:12px;color:#94A3B8}
+.stage-list li.done{color:#10B981}
+.stage-list li.active{color:#1E3A5F;font-weight:600}
+.stage-dot{width:10px;height:10px;border-radius:50%;margin-top:2px;flex-shrink:0}
+.dot-done{background:#10B981}
+.dot-active{background:#3B82F6}
+.dot-pending{background:#E2E8F0}
+
+/* POLL NOTE */
+.poll-note{font-size:11px;color:#94A3B8;font-family:'IBM Plex Mono',monospace;margin-top:10px;padding:6px 10px;background:#F8FAFC;border-radius:6px;display:inline-block}
+
+/* SUCCESS BANNER */
+.success-banner{background:#F0FDF4;border:1px solid #BBF7D0;border-radius:10px;padding:14px 18px;display:flex;align-items:center;gap:12px}
+.success-icon{font-size:22px;flex-shrink:0}
+.success-text{font-size:13px;color:#166534;font-weight:600}
+.success-sub{font-size:12px;color:#15803D;font-weight:400;margin-top:2px}
+
+/* COLLAPSIBLE */
+.collapsible-toggle{background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;padding:9px 14px;font-size:12px;font-weight:600;color:#475569;cursor:pointer;width:100%;text-align:left;display:flex;align-items:center;justify-content:space-between;font-family:'Plus Jakarta Sans',sans-serif;margin-top:14px}
+.collapsible-toggle:hover{background:#F1F5F9}
+.collapsible-body{background:#F8FAFC;border:1px solid #E2E8F0;border-top:none;border-radius:0 0 8px 8px;padding:14px 16px;font-size:12px;color:#1E293B}
+.collapsible-body.hidden{display:none}
+.hood-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #F1F5F9;font-size:12px}
+.hood-row:last-child{border-bottom:none}
+.hood-label{color:#64748B;font-weight:500}
+.hood-val{color:#1E293B;font-family:'IBM Plex Mono',monospace;font-size:11px}
+
+/* DIVIDER */
+.divider{height:1px;background:#E2E8F0;margin:36px 0}
+.caption{font-size:12px;color:#64748B;font-style:italic;margin-top:10px;line-height:1.55}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="topnav">
+  <a href="https://jfloyd-qredible.netlify.app/">← All Mockups</a>
+  <span class="sep">/</span>
+  <span class="title">Report Generation</span>
+  <span class="sep">/</span>
+  <span class="ticket-badge">QP-3701 · NEW</span>
+</nav>
+
+<!-- BANNER -->
+<div class="banner">
+  <strong>QP-3701 — Produce Compliance Report button flow</strong> — Staff triggers an async Claude-powered evaluation job from a merchant detail page. The job loads the active policy, gathers evidence, runs the Claude evaluator with <code>web_search</code>, and renders a structured compliance report. This page shows the button UX, in-flight polling state, completion state, and an "under the hood" transparency section.
+</div>
+
+<!-- PAGE -->
+<div class="page">
+
+  <div class="page-header">
+    <h1>Produce Compliance Report — Button &amp; Job Flow</h1>
+    <p>Staff-facing flow for generating a policy-driven Claude compliance report for a single merchant. Covers idle button state, async job polling, completion, and transparency details.</p>
+  </div>
+
+  <!-- ① MERCHANT CONTEXT -->
+  <div class="section">
+    <div class="section-label blue">① Merchant Context</div>
+    <div class="section-title">Merchant Detail Page — "Bulk Marijuana Seeds Co."</div>
+
+    <div class="merchant-bar">
+      <div>
+        <div class="merchant-name">Bulk Marijuana Seeds Co.</div>
+        <div class="merchant-meta">
+          <code>MID WSTTN-001842</code> &nbsp;·&nbsp; Tier 2 &nbsp;·&nbsp; Hemp / CBD Consumer Products &nbsp;·&nbsp; Status: <span class="pill pill-amber">Conditional Pass</span>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="font-size:12px;color:#64748B">Last report: <code>2026-03-01</code></span>
+        <!-- IDLE STATE BUTTON -->
+        <button class="btn btn-primary btn-primary-lg" onclick="startDemo()">
+          &#9654; Produce Compliance Report
+        </button>
+      </div>
+    </div>
+
+    <div class="note note-blue">
+      <strong>Button placement:</strong> The "Produce Compliance Report" button lives in the merchant detail page action bar, alongside other staff actions (Edit Merchant, Assign Policy, View Scans). It is only active when the merchant has an assigned policy. Clicking it enqueues a <code>compliance_report_job</code> and transitions the button to the in-flight state immediately (optimistic UI).
+    </div>
+  </div>
+
+  <!-- ② THREE UX STATES -->
+  <div class="section">
+    <div class="section-label purple">② UX States — Side-by-Side Review</div>
+    <div class="section-title">Three States: Idle → In-Flight → Complete</div>
+    <p style="font-size:13px;color:#64748B;margin-bottom:16px">All three states shown simultaneously so reviewers can evaluate the full button progression without interacting with the demo.</p>
+
+    <div class="state-panels">
+
+      <!-- IDLE -->
+      <div class="state-panel sp-idle">
+        <div class="state-panel-head">
+          <span class="pill pill-slate">Idle</span>
+          Ready to generate
+        </div>
+        <div class="state-panel-body">
+          <div style="text-align:center;padding:18px 0">
+            <button class="btn btn-primary btn-primary-lg" style="width:100%;justify-content:center">
+              &#9654; Produce Compliance Report
+            </button>
+            <div style="font-size:11px;color:#94A3B8;margin-top:8px">Policy: <code>hemp-cbd-base-v3 · v12</code></div>
+          </div>
+          <div class="note note-slate" style="margin-top:0">
+            Button is enabled. Policy is assigned. No job running. Previous report date shown in merchant header.
+          </div>
+        </div>
+      </div>
+
+      <!-- IN-FLIGHT -->
+      <div class="state-panel sp-inflight active-state">
+        <div class="state-panel-head">
+          <span class="spinner-ring-sm"></span>
+          <span class="pill pill-blue">In-Flight</span>
+          Job running…
+        </div>
+        <div class="state-panel-body">
+          <div style="text-align:center;padding:12px 0 8px">
+            <div class="spinner-ring" style="margin:0 auto 10px"></div>
+            <div style="font-size:13px;font-weight:600;color:#1E3A5F" id="stage-label">Running Claude evaluator… (claude-sonnet-4-6)</div>
+          </div>
+
+          <ul class="stage-list">
+            <li class="done"><span class="stage-dot dot-done"></span>Loading policy… (hemp-cbd-base-v3 · v12)</li>
+            <li class="done"><span class="stage-dot dot-done"></span>Gathering evidence… (34 checklist items, 847 products)</li>
+            <li class="active"><span class="stage-dot dot-active"></span>Running Claude evaluator… (claude-sonnet-4-6)</li>
+            <li><span class="stage-dot dot-pending"></span>Checking live sources via web_search…</li>
+            <li><span class="stage-dot dot-pending"></span>Rendering report…</li>
+          </ul>
+
+          <div style="margin-top:12px">
+            <div class="poll-note">Checking job status… (attempt 12 of 30, every 2s)</div>
+          </div>
+
+          <div style="margin-top:10px">
+            <button class="btn btn-disabled" style="width:100%;justify-content:center" disabled>
+              &#9654; Produce Compliance Report
+            </button>
+            <div style="font-size:11px;color:#94A3B8;margin-top:6px;text-align:center">Button disabled while job runs</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- COMPLETE -->
+      <div class="state-panel sp-complete success-state">
+        <div class="state-panel-head">
+          <span class="pill pill-green">Complete</span>
+          Report ready
+        </div>
+        <div class="state-panel-body">
+          <div class="success-banner" style="margin-bottom:12px">
+            <span class="success-icon">&#10003;</span>
+            <div>
+              <div class="success-text">Compliance report generated</div>
+              <div class="success-sub">Job CR-20260414-0091 · completed in 47s</div>
+            </div>
+          </div>
+
+          <ul class="stage-list">
+            <li class="done"><span class="stage-dot dot-done"></span>Loading policy… (hemp-cbd-base-v3 · v12)</li>
+            <li class="done"><span class="stage-dot dot-done"></span>Gathering evidence… (34 checklist items, 847 products)</li>
+            <li class="done"><span class="stage-dot dot-done"></span>Running Claude evaluator… (claude-sonnet-4-6)</li>
+            <li class="done"><span class="stage-dot dot-done"></span>Checking live sources via web_search…</li>
+            <li class="done"><span class="stage-dot dot-done"></span>Rendering report…</li>
+          </ul>
+
+          <div style="margin-top:14px;display:flex;gap:8px">
+            <a href="report-rendered.html" class="btn btn-success" style="flex:1;justify-content:center">&#128196; View Report</a>
+            <button class="btn btn-ghost" onclick="alert('Re-run would confirm before enqueueing a new job.')">Re-run</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ③ LIVE DEMO SECTION -->
+  <div class="section">
+    <div class="section-label amber">③ Interactive Demo</div>
+    <div class="section-title">Simulate the Button Flow</div>
+
+    <div class="card" id="demo-card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+        <div>
+          <div style="font-size:14px;font-weight:700;color:#1E3A5F">Bulk Marijuana Seeds Co. — Action Bar</div>
+          <div style="font-size:12px;color:#64748B"><code>MID WSTTN-001842</code> · Policy: <code>hemp-cbd-base-v3 · v12</code></div>
+        </div>
+        <div id="demo-btn-area">
+          <button class="btn btn-primary btn-primary-lg" onclick="startDemo()" id="demo-btn">
+            &#9654; Produce Compliance Report
+          </button>
+        </div>
+      </div>
+
+      <div id="demo-progress" style="display:none">
+        <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:#EFF6FF;border-radius:8px;margin-bottom:10px">
+          <div class="spinner-ring" style="flex-shrink:0"></div>
+          <div style="flex:1">
+            <div style="font-size:13px;font-weight:600;color:#1E3A5F" id="demo-stage">Loading policy… (hemp-cbd-base-v3 · v12)</div>
+            <div class="poll-note" id="demo-poll">Checking job status… (attempt 1 of 30, every 2s)</div>
+          </div>
+        </div>
+        <ul class="stage-list" id="demo-stages">
+          <li id="s0"><span class="stage-dot dot-active"></span>Loading policy… (hemp-cbd-base-v3 · v12)</li>
+          <li id="s1"><span class="stage-dot dot-pending"></span>Gathering evidence… (34 checklist items, 847 products)</li>
+          <li id="s2"><span class="stage-dot dot-pending"></span>Running Claude evaluator… (claude-sonnet-4-6)</li>
+          <li id="s3"><span class="stage-dot dot-pending"></span>Checking live sources via web_search…</li>
+          <li id="s4"><span class="stage-dot dot-pending"></span>Rendering report…</li>
+        </ul>
+      </div>
+
+      <div id="demo-complete" style="display:none">
+        <div class="success-banner" style="margin-bottom:12px">
+          <span class="success-icon">&#10003;</span>
+          <div>
+            <div class="success-text">Compliance report generated — Job CR-20260414-0091</div>
+            <div class="success-sub">Completed in 47s · claude-sonnet-4-6 · Policy hemp-cbd-base-v3 v12</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center">
+          <a href="report-rendered.html" class="btn btn-success btn-success-lg">&#128196; View Report</a>
+          <button class="btn btn-ghost" onclick="resetDemo()">&#8635; Reset Demo</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ④ UNDER THE HOOD -->
+  <div class="section">
+    <div class="section-label slate">④ Under the Hood</div>
+    <div class="section-title">Technical Transparency</div>
+
+    <div class="card">
+      <p style="font-size:13px;color:#64748B;margin-bottom:14px">Staff can expand this section to see model details, token estimates, and the audit log row for the job. Collapsed by default to keep the UI clean.</p>
+
+      <button class="collapsible-toggle" onclick="toggleHood(this)">
+        <span>&#128296; Under the hood — Job CR-20260414-0091</span>
+        <span id="hood-arrow">&#9660; Show</span>
+      </button>
+      <div class="collapsible-body hidden" id="hood-body">
+        <div class="hood-row">
+          <span class="hood-label">Model</span>
+          <span class="hood-val">claude-sonnet-4-6</span>
+        </div>
+        <div class="hood-row">
+          <span class="hood-label">Policy</span>
+          <span class="hood-val">hemp-cbd-base-v3 · version 12</span>
+        </div>
+        <div class="hood-row">
+          <span class="hood-label">Tools enabled</span>
+          <span class="hood-val">web_search</span>
+        </div>
+        <div class="hood-row">
+          <span class="hood-label">Tokens estimated</span>
+          <span class="hood-val">~85,000 input / ~4,200 output</span>
+        </div>
+        <div class="hood-row">
+          <span class="hood-label">Audit log</span>
+          <span class="hood-val">compliance_report_job #CR-20260414-0091 · status: COMPLETE · duration: 47s</span>
+        </div>
+        <div class="hood-row">
+          <span class="hood-label">Merchant</span>
+          <span class="hood-val">Bulk Marijuana Seeds Co. · MID WSTTN-001842</span>
+        </div>
+        <div class="hood-row">
+          <span class="hood-label">Generated</span>
+          <span class="hood-val">2026-04-14 14:32:07 UTC</span>
+        </div>
+        <div class="note note-blue" style="margin-top:10px">
+          Audit log rows for compliance report jobs are immutable. Each run produces a new <code>compliance_report_job</code> record linked to the merchant, policy version, and output report artifact.
+        </div>
+      </div>
+
+      <!-- Second collapsible: What Claude evaluates -->
+      <button class="collapsible-toggle" onclick="toggleSection('eval-body', 'eval-arrow')">
+        <span>&#129302; What Claude evaluates</span>
+        <span id="eval-arrow">&#9660; Show</span>
+      </button>
+      <div class="collapsible-body hidden" id="eval-body">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:10px">
+          <div style="background:#fff;border:1px solid #E2E8F0;border-radius:8px;padding:12px">
+            <div style="font-size:11px;font-weight:700;color:#1E40AF;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">System Prompt</div>
+            <div style="font-size:12px;color:#1E293B;line-height:1.65">Active policy JSON (<code>hemp-cbd-base-v3 v12</code>) is passed as the system prompt. Defines evaluation rules, section weights, scoring thresholds, and report configuration.</div>
+          </div>
+          <div style="background:#fff;border:1px solid #E2E8F0;border-radius:8px;padding:12px">
+            <div style="font-size:11px;font-weight:700;color:#166534;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">User Content</div>
+            <div style="font-size:12px;color:#1E293B;line-height:1.65">Merchant checklist evidence (34 items), product catalog (847 products with COA status and TypeDisposition), MRI results, and tier requirements passed as user message content.</div>
+          </div>
+          <div style="background:#fff;border:1px solid #E2E8F0;border-radius:8px;padding:12px">
+            <div style="font-size:11px;font-weight:700;color:#92400E;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">web_search Tool</div>
+            <div style="font-size:12px;color:#1E293B;line-height:1.65">Live lookups: state cultivation license status, FDA warning letter search, OFAC/Vital4 MRI verification, real-time regulatory news for hemp/CBD. Results injected into evaluation context.</div>
+          </div>
+        </div>
+        <div class="note note-amber">
+          <strong>Policy-driven output shape:</strong> The <code>report_configuration.sections[]</code> array in the active policy JSON determines which sections appear in the rendered report, their order, and their scoring weights. Changing the policy changes the report shape — no code deploys required.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ⑤ POLLING DETAIL -->
+  <div class="section">
+    <div class="section-label cyan">⑤ Polling Pattern</div>
+    <div class="section-title">Async Job Polling — Implementation Notes</div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div style="font-size:13px;font-weight:700;color:#1E3A5F;margin-bottom:10px">Job lifecycle</div>
+        <table class="tbl">
+          <thead>
+            <tr><th>Phase</th><th>Duration (est.)</th><th>Notes</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Enqueue</td><td>&lt; 1s</td><td>Job ID returned immediately; UI transitions to in-flight</td></tr>
+            <tr><td>Policy load</td><td>1–3s</td><td>Policy JSON fetched, validated, passed as system prompt</td></tr>
+            <tr><td>Evidence gather</td><td>3–8s</td><td>Checklist items, product catalog, MRI results assembled</td></tr>
+            <tr><td>Claude evaluation</td><td>20–40s</td><td>claude-sonnet-4-6 with web_search; longest phase</td></tr>
+            <tr><td>Report render</td><td>2–5s</td><td>Structured output parsed, report artifact written</td></tr>
+            <tr><td><strong>Total</strong></td><td><strong>30–60s</strong></td><td>Typical: ~47s</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card">
+        <div style="font-size:13px;font-weight:700;color:#1E3A5F;margin-bottom:10px">Polling config</div>
+        <div class="hood-row"><span class="hood-label">Poll interval</span><span class="hood-val">2s</span></div>
+        <div class="hood-row"><span class="hood-label">Max attempts</span><span class="hood-val">30 (60s timeout)</span></div>
+        <div class="hood-row"><span class="hood-label">Endpoint</span><span class="hood-val">GET /api/jobs/{job_id}/status</span></div>
+        <div class="hood-row"><span class="hood-label">Terminal states</span><span class="hood-val">COMPLETE · FAILED · TIMEOUT</span></div>
+        <div class="hood-row"><span class="hood-label">On FAILED</span><span class="hood-val">Show error banner + retry option</span></div>
+        <div class="note note-amber" style="margin-top:10px;margin-bottom:0">
+          <strong>Timeout handling:</strong> At attempt 30 with no COMPLETE status, show "Job is taking longer than expected — check back in a few minutes" with a dismiss option. Do not auto-retry without staff confirmation.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ⑥ OPEN QUESTIONS -->
+  <div class="section">
+    <div class="section-label amber">⑥ Open Questions</div>
+    <div class="section-title">For Brian / Ronaldo Alignment</div>
+
+    <div style="background:#fff;border:1px solid #E2E8F0;border-left:4px solid #F59E0B;border-radius:8px;padding:12px 16px;margin-bottom:10px">
+      <div style="font-size:13px;font-weight:600;color:#1E3A5F;margin-bottom:4px"><span style="color:#F59E0B;margin-right:6px">Q1</span> Token / cost visibility</div>
+      <div style="font-size:12px;color:#64748B;line-height:1.55">Should the "Under the Hood" token estimate be actual (post-run) or estimated (pre-run)? Should cost in dollars be surfaced to staff, or kept internal?</div>
+    </div>
+    <div style="background:#fff;border:1px solid #E2E8F0;border-left:4px solid #F59E0B;border-radius:8px;padding:12px 16px;margin-bottom:10px">
+      <div style="font-size:13px;font-weight:600;color:#1E3A5F;margin-bottom:4px"><span style="color:#F59E0B;margin-right:6px">Q2</span> Re-run gating</div>
+      <div style="font-size:12px;color:#64748B;line-height:1.55">Should staff be able to re-run immediately (any time), or should there be a cooldown (e.g., 24h) to prevent runaway API costs? If so, who can override?</div>
+    </div>
+    <div style="background:#fff;border:1px solid #E2E8F0;border-left:4px solid #F59E0B;border-radius:8px;padding:12px 16px;margin-bottom:10px">
+      <div style="font-size:13px;font-weight:600;color:#1E3A5F;margin-bottom:4px"><span style="color:#F59E0B;margin-right:6px">Q3</span> Report artifact storage</div>
+      <div style="font-size:12px;color:#64748B;line-height:1.55">Is the rendered report stored as a PDF artifact, a structured JSON record, or both? How long are past reports retained? Is there a versioned report history per merchant?</div>
+    </div>
+    <div style="background:#fff;border:1px solid #E2E8F0;border-left:4px solid #F59E0B;border-radius:8px;padding:12px 16px">
+      <div style="font-size:13px;font-weight:600;color:#1E3A5F;margin-bottom:4px"><span style="color:#F59E0B;margin-right:6px">Q4</span> Merchant visibility</div>
+      <div style="font-size:12px;color:#64748B;line-height:1.55">Can merchants see their own compliance report (read-only), or is this staff-only? If merchants can view it, does the report shape change (e.g., hide internal confidence scores)?</div>
+    </div>
+  </div>
+
+</div><!-- /page -->
+
+<script>
+var demoRunning = false;
+var demoTimer = null;
+
+var stages = [
+  {id:'s0', label:'Loading policy… (hemp-cbd-base-v3 · v12)'},
+  {id:'s1', label:'Gathering evidence… (34 checklist items, 847 products)'},
+  {id:'s2', label:'Running Claude evaluator… (claude-sonnet-4-6)'},
+  {id:'s3', label:'Checking live sources via web_search…'},
+  {id:'s4', label:'Rendering report…'}
+];
+
+function startDemo(){
+  if(demoRunning) return;
+  demoRunning = true;
+  document.getElementById('demo-btn-area').innerHTML = '<button class="btn btn-disabled" disabled>&#9654; Produce Compliance Report</button>';
+  document.getElementById('demo-progress').style.display='block';
+  document.getElementById('demo-complete').style.display='none';
+
+  var attempt = 1;
+  var currentStage = 0;
+  var stageDelays = [1800, 2500, 3200, 2800, 2000];
+
+  function advanceStage(idx){
+    // mark previous as done
+    if(idx > 0){
+      var prev = document.getElementById(stages[idx-1].id);
+      prev.className='done';
+      prev.querySelector('.stage-dot').className='stage-dot dot-done';
+    }
+    if(idx >= stages.length){
+      // done
+      clearInterval(pollTimer);
+      document.getElementById('demo-progress').style.display='none';
+      document.getElementById('demo-complete').style.display='block';
+      demoRunning = false;
+      return;
+    }
+    var el = document.getElementById(stages[idx].id);
+    el.className='active';
+    el.querySelector('.stage-dot').className='stage-dot dot-active';
+    document.getElementById('demo-stage').textContent = stages[idx].label;
+    if(idx < stages.length-1){
+      demoTimer = setTimeout(function(){ advanceStage(idx+1); }, stageDelays[idx]);
+    } else {
+      demoTimer = setTimeout(function(){ advanceStage(idx+1); }, stageDelays[idx]);
+    }
+  }
+
+  var pollTimer = setInterval(function(){
+    attempt++;
+    document.getElementById('demo-poll').textContent = 'Checking job status… (attempt '+attempt+' of 30, every 2s)';
+    if(attempt >= 30) clearInterval(pollTimer);
+  }, 2000);
+
+  advanceStage(0);
+}
+
+function resetDemo(){
+  demoRunning = false;
+  if(demoTimer) clearTimeout(demoTimer);
+  document.getElementById('demo-btn-area').innerHTML = '<button class="btn btn-primary btn-primary-lg" onclick="startDemo()" id="demo-btn">&#9654; Produce Compliance Report</button>';
+  document.getElementById('demo-progress').style.display='none';
+  document.getElementById('demo-complete').style.display='none';
+  stages.forEach(function(s,i){
+    var el = document.getElementById(s.id);
+    el.className='';
+    el.querySelector('.stage-dot').className='stage-dot dot-pending';
+  });
+  document.getElementById('demo-stage').textContent = stages[0].label;
+  document.getElementById('demo-poll').textContent = 'Checking job status… (attempt 1 of 30, every 2s)';
+}
+
+function toggleHood(btn){
+  var body = document.getElementById('hood-body');
+  var arrow = document.getElementById('hood-arrow');
+  if(body.classList.contains('hidden')){
+    body.classList.remove('hidden');
+    arrow.textContent = '▲ Hide';
+  } else {
+    body.classList.add('hidden');
+    arrow.textContent = '▼ Show';
+  }
+}
+
+function toggleSection(bodyId, arrowId){
+  var body = document.getElementById(bodyId);
+  var arrow = document.getElementById(arrowId);
+  if(body.classList.contains('hidden')){
+    body.classList.remove('hidden');
+    arrow.textContent = '▲ Hide';
+  } else {
+    body.classList.add('hidden');
+    arrow.textContent = '▼ Show';
+  }
+}
+</script>
+</body>
+</html>

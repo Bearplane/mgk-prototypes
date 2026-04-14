@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Compliance Report — Bulk Marijuana Seeds Co. — QP-3701</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:#F1F5F9;color:#0F172A;font-size:14px;line-height:1.5}
+a{color:#3B82F6;text-decoration:none}a:hover{text-decoration:underline}
+code,.mono{font-family:'IBM Plex Mono',monospace}
+
+/* NAV */
+.topnav{background:#1E3A5F;padding:12px 24px;display:flex;align-items:center;gap:8px;font-size:13px;color:#94A3B8}
+.topnav a{color:#93C5FD}
+.topnav .sep{color:#475569}
+.topnav .ticket-badge{background:#3B82F6;color:#fff;font-size:11px;font-weight:600;padding:2px 8px;border-radius:4px;font-family:'IBM Plex Mono',monospace}
+.topnav .title{color:#fff;font-weight:600}
+
+/* REPORT SHELL */
+.report-shell{max-width:960px;margin:0 auto;padding:32px 24px}
+
+/* REPORT HEADER BAR */
+.report-header-bar{background:#1E3A5F;border-radius:12px 12px 0 0;padding:18px 28px;display:flex;align-items:center;justify-content:space-between}
+.report-logo{font-size:22px;font-weight:700;color:#fff;letter-spacing:-.3px}
+.report-logo span{color:#93C5FD}
+.report-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#94A3B8;margin-top:2px}
+.report-header-right{text-align:right;font-size:11px;color:#94A3B8;font-family:'IBM Plex Mono',monospace;line-height:1.8}
+
+/* MERCHANT BLOCK */
+.merchant-block{background:#fff;border:1px solid #E2E8F0;border-top:none;padding:20px 28px;display:flex;align-items:flex-start;justify-content:space-between;gap:20px}
+.merchant-legal{font-size:20px;font-weight:700;color:#1E3A5F;margin-bottom:4px}
+.merchant-mid{font-family:'IBM Plex Mono',monospace;font-size:11px;color:#64748B;margin-bottom:6px}
+.merchant-tags{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.m-tag{font-size:11px;font-weight:600;padding:2px 10px;border-radius:9999px}
+.mt-tier{background:#DBEAFE;color:#1E40AF}
+.mt-industry{background:#E0F2FE;color:#075985}
+.score-block{text-align:right;flex-shrink:0}
+.score-num{font-size:40px;font-weight:700;color:#1E3A5F;line-height:1}
+.score-denom{font-size:16px;color:#94A3B8;font-weight:500}
+.score-label{font-size:11px;color:#64748B;margin-top:4px}
+.score-status{display:inline-block;margin-top:6px;font-size:12px;font-weight:700;padding:3px 12px;border-radius:9999px;background:#FEF3C7;color:#92400E}
+
+/* META BAR */
+.meta-bar{background:#F8FAFC;border:1px solid #E2E8F0;border-top:none;padding:10px 28px;font-size:11px;color:#64748B;font-family:'IBM Plex Mono',monospace;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.meta-bar .meta-sep{color:#E2E8F0}
+
+/* POLICY CALLOUT */
+.policy-callout{background:#EFF6FF;border:1px solid #BFDBFE;border-left:4px solid #3B82F6;border-radius:8px;padding:12px 16px;font-size:12px;color:#1E40AF;line-height:1.65;margin-bottom:24px}
+.policy-callout strong{color:#1E3A5F}
+.policy-callout code{background:#DBEAFE;padding:1px 5px;border-radius:3px;font-size:11px}
+
+/* SECTION */
+.report-section{background:#fff;border:1px solid #E2E8F0;border-radius:12px;margin-bottom:20px;overflow:hidden}
+.rs-head{padding:14px 20px;border-bottom:1px solid #E2E8F0;display:flex;align-items:center;gap:10px}
+.rs-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:3px 10px;border-radius:12px}
+.rs-label-purple{background:#EDE9FE;color:#4C1D95}
+.rs-label-blue{background:#DBEAFE;color:#1E40AF}
+.rs-label-green{background:#DCFCE7;color:#166534}
+.rs-label-amber{background:#FEF3C7;color:#92400E}
+.rs-label-red{background:#FEE2E2;color:#991B1B}
+.rs-label-cyan{background:#E0F2FE;color:#075985}
+.rs-title{font-size:14px;font-weight:700;color:#1E3A5F}
+.rs-body{padding:18px 20px}
+
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse;font-size:12px}
+.tbl th{background:#F8FAFC;padding:8px 12px;text-align:left;color:#64748B;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.3px;border:1px solid #E2E8F0}
+.tbl td{padding:9px 12px;border-bottom:1px solid #F1F5F9;vertical-align:top;color:#1E293B}
+.tbl tr:last-child td{border-bottom:none}
+
+/* STATUS PILLS */
+.pill{display:inline-flex;align-items:center;border-radius:9999px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;padding:2px 8px}
+.pill-pass{background:#DCFCE7;color:#166534}
+.pill-fail{background:#FEE2E2;color:#991B1B}
+.pill-partial{background:#FEF3C7;color:#92400E}
+.pill-clear{background:#DCFCE7;color:#166534}
+.pill-flagged{background:#FEE2E2;color:#991B1B}
+.pill-high{background:#FEE2E2;color:#991B1B}
+.pill-medium{background:#FEF3C7;color:#92400E}
+.pill-low{background:#DBEAFE;color:#1E40AF}
+.pill-violation{background:#FEE2E2;color:#991B1B}
+.pill-audit{background:#FEF3C7;color:#92400E}
+.pill-met{background:#DCFCE7;color:#166534}
+.pill-unmet{background:#FEE2E2;color:#991B1B}
+.pill-internal{background:#E0F2FE;color:#075985}
+.pill-web{background:#EDE9FE;color:#4C1D95}
+
+/* SEVERITY ENUM */
+.sev-tag{font-size:10px;font-weight:700;font-family:'IBM Plex Mono',monospace;padding:1px 6px;border-radius:4px;display:inline-block}
+.sev-s3{background:#FEE2E2;color:#991B1B}
+.sev-s2{background:#FEF3C7;color:#92400E}
+.sev-s1{background:#DBEAFE;color:#1E40AF}
+
+/* DISPOSITION TAG */
+.disp-tag{font-size:10px;font-weight:700;font-family:'IBM Plex Mono',monospace;padding:2px 6px;border-radius:4px;display:inline-block;background:#F8FAFC;border:1px solid #E2E8F0;color:#475569}
+.disp-violation{background:#FEE2E2;border-color:#FECACA;color:#991B1B}
+.disp-audit{background:#FFFBEB;border-color:#FDE68A;color:#92400E}
+
+/* COA STATUS */
+.coa-tag{font-size:10px;font-weight:700;font-family:'IBM Plex Mono',monospace;padding:2px 7px;border-radius:4px;display:inline-block}
+.coa-violation{background:#FEE2E2;color:#991B1B}
+.coa-audit{background:#FFFBEB;color:#92400E}
+
+/* ACTIONS LIST */
+.action-item{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid #F1F5F9}
+.action-item:last-child{border-bottom:none}
+.action-num{font-size:18px;font-weight:700;color:#94A3B8;width:24px;flex-shrink:0;line-height:1.2}
+.action-content{flex:1}
+.action-title{font-size:13px;font-weight:600;color:#1E3A5F;margin-bottom:3px}
+.action-detail{font-size:12px;color:#64748B;line-height:1.55}
+.action-deadline{font-size:11px;font-family:'IBM Plex Mono',monospace;color:#94A3B8;margin-top:3px}
+
+/* MRI GRID */
+.mri-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.mri-card{background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;padding:12px 14px}
+.mri-provider{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:#64748B;margin-bottom:4px}
+.mri-check{font-size:12px;font-weight:600;color:#1E3A5F;margin-bottom:6px}
+.mri-meta{font-size:11px;color:#94A3B8;font-family:'IBM Plex Mono',monospace;margin-top:4px}
+
+/* EXEC SUMMARY */
+.exec-prose{font-size:13px;color:#1E293B;line-height:1.8;margin-bottom:16px}
+.score-bar-wrap{display:flex;align-items:center;gap:14px;margin-bottom:10px}
+.score-bar-bg{flex:1;height:10px;background:#E2E8F0;border-radius:999px;overflow:hidden}
+.score-bar-fill{height:10px;background:#F59E0B;border-radius:999px;width:78%}
+.score-bar-num{font-size:14px;font-weight:700;color:#1E3A5F;white-space:nowrap}
+.exec-verdict{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;border-radius:8px;background:#FFFBEB;border:1px solid #FDE68A;font-size:13px;font-weight:700;color:#92400E}
+
+/* REPORT FOOTER */
+.report-footer{background:#F8FAFC;border:1px solid #E2E8F0;border-radius:0 0 12px 12px;padding:14px 28px;font-size:11px;color:#94A3B8;line-height:1.8}
+.report-footer code{font-size:10px;color:#64748B}
+.footer-disclaimer{margin-top:6px;font-size:11px;color:#94A3B8;font-style:italic}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="topnav">
+  <a href="report-generation.html">← Back to Report Generation</a>
+  <span class="sep">/</span>
+  <span class="title">Compliance Report — Bulk Marijuana Seeds Co.</span>
+  <span class="sep">/</span>
+  <span class="ticket-badge">QP-3701 · NEW</span>
+</nav>
+
+<!-- REPORT SHELL -->
+<div class="report-shell">
+
+  <!-- REPORT HEADER BAR -->
+  <div class="report-header-bar">
+    <div>
+      <div class="report-logo">Q<span>redible</span></div>
+      <div class="report-label">Compliance Report</div>
+    </div>
+    <div class="report-header-right">
+      <div>Job <code style="color:#93C5FD">CR-20260414-0091</code></div>
+      <div>Generated 2026-04-14 14:32:07 UTC</div>
+      <div>claude-sonnet-4-6 &nbsp;·&nbsp; hemp-cbd-base-v3 v12</div>
+    </div>
+  </div>
+
+  <!-- MERCHANT BLOCK -->
+  <div class="merchant-block">
+    <div>
+      <div class="merchant-legal">Bulk Marijuana Seeds Co.</div>
+      <div class="merchant-mid">MID WSTTN-001842</div>
+      <div class="merchant-tags">
+        <span class="m-tag mt-tier">Tier 2</span>
+        <span class="m-tag mt-industry">Hemp / CBD Consumer Products</span>
+      </div>
+    </div>
+    <div class="score-block">
+      <div><span class="score-num">78</span><span class="score-denom">/100</span></div>
+      <div class="score-label">Overall Compliance Score</div>
+      <div class="score-status">CONDITIONAL PASS</div>
+    </div>
+  </div>
+
+  <!-- META BAR -->
+  <div class="meta-bar">
+    <span>Model: <strong style="color:#1E293B">claude-sonnet-4-6</strong></span>
+    <span class="meta-sep">|</span>
+    <span>Policy: <strong style="color:#1E293B">hemp-cbd-base-v3 v12</strong></span>
+    <span class="meta-sep">|</span>
+    <span>Job: <strong style="color:#1E293B">CR-20260414-0091</strong></span>
+    <span class="meta-sep">|</span>
+    <span>Generated: <strong style="color:#1E293B">2026-04-14 14:32:07 UTC</strong></span>
+    <span class="meta-sep">|</span>
+    <span>Tools: <strong style="color:#1E293B">web_search</strong></span>
+  </div>
+
+  <!-- POLICY CALLOUT -->
+  <div style="margin-top:20px">
+    <div class="policy-callout">
+      <strong>Policy-aware renderer:</strong> <code>report_configuration.sections[]</code> in the active policy JSON drives which sections appear in this report, their order, and their scoring weights. Changing the policy changes the report shape — no code deploys required. This report reflects <code>hemp-cbd-base-v3 v12</code> section configuration.
+    </div>
+  </div>
+
+  <!-- SECTION 1: EXECUTIVE SUMMARY -->
+  <div class="report-section">
+    <div class="rs-head">
+      <span class="rs-label rs-label-purple">01</span>
+      <span class="rs-title">Executive Summary</span>
+    </div>
+    <div class="rs-body">
+      <p class="exec-prose">
+        Bulk Marijuana Seeds Co. demonstrates substantial compliance with the <strong>hemp-cbd-base-v3</strong> policy framework, achieving a score of <strong>78/100</strong>. The merchant maintains a valid state cultivation license and has farm bill attestation on file; however, two products in the active catalog have expired Certificates of Analysis (COA), and one product line shows delta-9 THC concentration above the 0.3% federal threshold. MRI screening returned no OFAC flags and no FDA warning letters; Vital4 returned a single advisory note requiring follow-up. Immediate remediation of the flagged COA items and THC exceedance is required before the next review cycle.
+      </p>
+      <div class="score-bar-wrap">
+        <span style="font-size:12px;color:#64748B;width:110px;flex-shrink:0">Compliance Score</span>
+        <div class="score-bar-bg"><div class="score-bar-fill"></div></div>
+        <span class="score-bar-num">78 / 100</span>
+      </div>
+      <div>
+        <div class="exec-verdict">&#9888; CONDITIONAL PASS — remediation required within 30 days</div>
+      </div>
+      <div style="margin-top:14px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+        <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;padding:10px 14px;text-align:center">
+          <div style="font-size:22px;font-weight:700;color:#10B981">31</div>
+          <div style="font-size:11px;color:#64748B">Checklist Items Pass</div>
+        </div>
+        <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;padding:10px 14px;text-align:center">
+          <div style="font-size:22px;font-weight:700;color:#EF4444">3</div>
+          <div style="font-size:11px;color:#64748B">Items Fail or Partial</div>
+        </div>
+        <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;padding:10px 14px;text-align:center">
+          <div style="font-size:22px;font-weight:700;color:#F59E0B">2</div>
+          <div style="font-size:11px;color:#64748B">Products Flagged</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 2: TIER ASSESSMENT -->
+  <div class="report-section">
+    <div class="rs-head">
+      <span class="rs-label rs-label-blue">02</span>
+      <span class="rs-title">Tier Assessment — Tier 2 Requirements</span>
+    </div>
+    <div class="rs-body">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>Requirement</th>
+            <th>Policy Source</th>
+            <th>Status</th>
+            <th>Evidence</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>State cultivation license on file</td>
+            <td><code>tier_requirements.t2.license</code></td>
+            <td><span class="pill pill-met">Met</span></td>
+            <td>License #CO-H-2024-00412 verified via web_search; expiry 2027-03-31</td>
+          </tr>
+          <tr>
+            <td>Farm Bill attestation signed</td>
+            <td><code>tier_requirements.t2.attestation</code></td>
+            <td><span class="pill pill-met">Met</span></td>
+            <td>Signed attestation uploaded 2025-11-14; no gaps identified</td>
+          </tr>
+          <tr>
+            <td>COA on file for all active products</td>
+            <td><code>tier_requirements.t2.coa_coverage</code></td>
+            <td><span class="pill pill-unmet">Unmet</span></td>
+            <td>2 of 847 products have expired COAs (see Product Findings)</td>
+          </tr>
+          <tr>
+            <td>Delta-9 THC ≤ 0.3% on all products</td>
+            <td><code>tier_requirements.t2.thc_limit</code></td>
+            <td><span class="pill pill-unmet">Unmet</span></td>
+            <td>1 product line (SKU-7741) shows 0.34% per COA dated 2025-09-01</td>
+          </tr>
+          <tr>
+            <td>No active FDA warning letters</td>
+            <td><code>tier_requirements.t2.fda_warnings</code></td>
+            <td><span class="pill pill-met">Met</span></td>
+            <td>FDA warning letter lookup via web_search returned no results for merchant</td>
+          </tr>
+          <tr>
+            <td>OFAC / sanctions screening clear</td>
+            <td><code>tier_requirements.t2.ofac</code></td>
+            <td><span class="pill pill-met">Met</span></td>
+            <td>OFAC screening via Vital4 returned CLEAR; last checked 2026-04-14</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- SECTION 3: CHECKLIST RESULTS -->
+  <div class="report-section">
+    <div class="rs-head">
+      <span class="rs-label rs-label-cyan">03</span>
+      <span class="rs-title">Checklist Results — 34 Items Evaluated</span>
+    </div>
+    <div class="rs-body">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Status</th>
+            <th>Evidence Source</th>
+            <th>Confidence</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>State cultivation license — Colorado</td>
+            <td><span class="pill pill-pass">Pass</span></td>
+            <td><span class="pill pill-web">web_search</span></td>
+            <td><span class="sev-tag sev-s3">HIGH · S3</span></td>
+            <td>License #CO-H-2024-00412 confirmed active, expiry 2027-03-31</td>
+          </tr>
+          <tr>
+            <td>Farm Bill (2018) attestation on file</td>
+            <td><span class="pill pill-pass">Pass</span></td>
+            <td><span class="pill pill-internal">Internal</span></td>
+            <td><span class="sev-tag sev-s3">HIGH · S3</span></td>
+            <td>Signed document uploaded 2025-11-14; no expiry gaps</td>
+          </tr>
+          <tr>
+            <td>Delta-9 THC limit ≤ 0.3% (all SKUs)</td>
+            <td><span class="pill pill-fail">Fail</span></td>
+            <td><span class="pill pill-internal">Internal</span></td>
+            <td><span class="sev-tag sev-s3">HIGH · S3</span></td>
+            <td>SKU-7741 COA shows 0.34% — exceeds federal threshold; immediate action required</td>
+          </tr>
+          <tr>
+            <td>COA currency — all products within 12 months</td>
+            <td><span class="pill pill-partial">Partial</span></td>
+            <td><span class="pill pill-internal">Internal</span></td>
+            <td><span class="sev-tag sev-s2">MEDIUM · S2</span></td>
+            <td>845/847 products compliant; SKU-1192 and SKU-3308 COAs expired</td>
+          </tr>
+          <tr>
+            <td>No FDA warning letters on record</td>
+            <td><span class="pill pill-pass">Pass</span></td>
+            <td><span class="pill pill-web">web_search</span></td>
+            <td><span class="sev-tag sev-s3">HIGH · S3</span></td>
+            <td>FDA enforcement database search returned no results for entity name or MID</td>
+          </tr>
+          <tr>
+            <td>Accurate product labeling — hemp declaration</td>
+            <td><span class="pill pill-pass">Pass</span></td>
+            <td><span class="pill pill-internal">Internal</span></td>
+            <td><span class="sev-tag sev-s1">LOW · S1</span></td>
+            <td>Sampled 10 product listings; all include compliant hemp declaration language</td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="margin-top:10px;font-size:11px;color:#94A3B8;font-style:italic">Showing 6 of 34 evaluated items. Full checklist available in audit export. SeverityLevelEnum: S3=HIGH, S2=MEDIUM, S1=LOW.</div>
+    </div>
+  </div>
+
+  <!-- SECTION 4: PRODUCT CLASSIFICATION FINDINGS -->
+  <div class="report-section">
+    <div class="rs-head">
+      <span class="rs-label rs-label-red">04</span>
+      <span class="rs-title">Product Classification Findings — Flagged Products</span>
+    </div>
+    <div class="rs-body">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>SKU</th>
+            <th>Product Name</th>
+            <th>CoaStatusEnum</th>
+            <th>TypeDisposition</th>
+            <th>Detail</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>SKU-7741</code></td>
+            <td>Premium Hemp Seed Blend 500g</td>
+            <td><span class="coa-tag coa-violation">POLICY_VIOLATION</span></td>
+            <td><span class="disp-tag disp-violation">VIOLATIVE_DELTA9_THC</span></td>
+            <td>COA dated 2025-09-01 reports delta-9 THC at 0.34%. Exceeds 0.3% federal limit. Product must be suspended from sale pending retest or reformulation.</td>
+          </tr>
+          <tr>
+            <td><code>SKU-1192</code></td>
+            <td>CBD Tincture 1000mg (30ml)</td>
+            <td><span class="coa-tag coa-audit">AUDIT_RECOMMENDED</span></td>
+            <td><span class="disp-tag disp-audit">VIOLATIVE_EXPIRED_COA</span></td>
+            <td>COA expired 2026-01-07. Product remains listed in active catalog. Merchant must provide current COA within 30 days or product will be flagged for removal.</td>
+          </tr>
+          <tr>
+            <td><code>SKU-3308</code></td>
+            <td>Broad Spectrum Hemp Oil 250mg</td>
+            <td><span class="coa-tag coa-audit">AUDIT_RECOMMENDED</span></td>
+            <td><span class="disp-tag disp-audit">VIOLATIVE_EXPIRED_COA</span></td>
+            <td>COA expired 2025-12-22. Product is listed as active. Same remediation timeline as SKU-1192 applies.</td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="margin-top:12px;background:#FEF2F2;border:1px solid #FECACA;border-radius:8px;padding:10px 14px;font-size:12px;color:#991B1B">
+        <strong>Action required:</strong> SKU-7741 must be suspended immediately pending THC retest. SKU-1192 and SKU-3308 must have current COAs submitted within 30 days or face catalog removal.
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 5: MRI RISK INTELLIGENCE -->
+  <div class="report-section">
+    <div class="rs-head">
+      <span class="rs-label rs-label-amber">05</span>
+      <span class="rs-title">MRI Risk Intelligence</span>
+    </div>
+    <div class="rs-body">
+      <div class="mri-grid">
+        <div class="mri-card">
+          <div class="mri-provider">Vital4</div>
+          <div class="mri-check">Business Entity Screening</div>
+          <div><span class="pill pill-clear">CLEAR</span></div>
+          <div class="mri-meta">Last checked: 2026-04-14 14:29:11 UTC<br>No adverse media or sanctions matches</div>
+        </div>
+        <div class="mri-card">
+          <div class="mri-provider">OFAC</div>
+          <div class="mri-check">Sanctions &amp; SDN List</div>
+          <div><span class="pill pill-clear">CLEAR</span></div>
+          <div class="mri-meta">Last checked: 2026-04-14 14:29:18 UTC<br>No matches on SDN list or consolidated sanctions</div>
+        </div>
+        <div class="mri-card" style="border-color:#FDE68A;background:#FFFBEB">
+          <div class="mri-provider">FDA Warning Letters</div>
+          <div class="mri-check">Enforcement Database Lookup</div>
+          <div><span class="pill pill-clear">CLEAR</span> <span style="font-size:10px;color:#92400E;font-weight:600;margin-left:4px">+ Advisory</span></div>
+          <div class="mri-meta" style="color:#92400E">Last checked: 2026-04-14 14:31:03 UTC via web_search<br>No warning letters found. Vital4 advisory note: merchant name appears in a 2024 state-level bulletin (not a federal enforcement action). Requires staff review.</div>
+        </div>
+      </div>
+      <div style="margin-top:12px;background:#FFFBEB;border:1px solid #FDE68A;border-left:4px solid #F59E0B;border-radius:8px;padding:10px 14px;font-size:12px;color:#78350F">
+        <strong>Advisory:</strong> Vital4 returned a state-level bulletin reference for this merchant from 2024. This is not a federal enforcement action and does not affect the current compliance score, but should be reviewed by a compliance officer before the next tier upgrade decision.
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 6: RECOMMENDED ACTIONS -->
+  <div class="report-section">
+    <div class="rs-head">
+      <span class="rs-label rs-label-red">06</span>
+      <span class="rs-title">Recommended Actions</span>
+    </div>
+    <div class="rs-body">
+
+      <div class="action-item">
+        <div class="action-num">1</div>
+        <div class="action-content">
+          <div class="action-title"><span class="pill pill-high" style="margin-right:6px">HIGH</span> Suspend SKU-7741 from active catalog immediately</div>
+          <div class="action-detail">SKU-7741 (Premium Hemp Seed Blend 500g) has a COA showing delta-9 THC at 0.34%, exceeding the 0.3% federal threshold. Product must be suspended from sale pending a retest by an accredited third-party lab. If the retest confirms the exceedance, the product must be reformulated or permanently removed.</div>
+          <div class="action-deadline">Deadline: Immediate (within 48 hours) &nbsp;·&nbsp; Owner: Merchant + Compliance Staff</div>
+        </div>
+      </div>
+
+      <div class="action-item">
+        <div class="action-num">2</div>
+        <div class="action-content">
+          <div class="action-title"><span class="pill pill-high" style="margin-right:6px">HIGH</span> Submit current COAs for SKU-1192 and SKU-3308</div>
+          <div class="action-detail">Both products have expired Certificates of Analysis. The merchant must submit current COAs (dated within the last 12 months, from an accredited lab) for SKU-1192 (CBD Tincture 1000mg) and SKU-3308 (Broad Spectrum Hemp Oil 250mg). Products will be flagged for catalog removal if COAs are not received within the remediation window.</div>
+          <div class="action-deadline">Deadline: 30 days (by 2026-05-14) &nbsp;·&nbsp; Owner: Merchant</div>
+        </div>
+      </div>
+
+      <div class="action-item">
+        <div class="action-num">3</div>
+        <div class="action-content">
+          <div class="action-title"><span class="pill pill-medium" style="margin-right:6px">MEDIUM</span> Review Vital4 state-level bulletin advisory</div>
+          <div class="action-detail">A 2024 state-level bulletin references this merchant by name. Although it is not a federal enforcement action and does not affect the current score, a compliance officer should review the bulletin contents and document the outcome before any tier upgrade is considered.</div>
+          <div class="action-deadline">Deadline: 60 days (by 2026-06-13) &nbsp;·&nbsp; Owner: Compliance Officer</div>
+        </div>
+      </div>
+
+      <div class="action-item">
+        <div class="action-num">4</div>
+        <div class="action-content">
+          <div class="action-title"><span class="pill pill-low" style="margin-right:6px">LOW</span> Establish COA refresh calendar for full product catalog</div>
+          <div class="action-detail">With 847 active products, COA expiry tracking should be systematized. Recommend that the merchant implement a COA renewal calendar with 90-day advance reminders to prevent future lapses. Qredible can surface approaching COA expirations on the merchant dashboard as a proactive compliance tool.</div>
+          <div class="action-deadline">Deadline: Next review cycle &nbsp;·&nbsp; Owner: Merchant (recommended)</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- REPORT FOOTER -->
+  <div class="report-footer">
+    <div>
+      Model <code>claude-sonnet-4-6</code> &nbsp;·&nbsp; Policy <code>hemp-cbd-base-v3 v12</code> &nbsp;·&nbsp; Generated 2026-04-14 14:32:07 UTC &nbsp;·&nbsp; Job <code>CR-20260414-0091</code>
+    </div>
+    <div class="footer-disclaimer">
+      This report is generated from policy-defined rules and AI evaluation. Review by compliance staff is recommended before enforcement action. Report reflects data available at time of generation; live web_search results may differ if checked at a later date.
+    </div>
+  </div>
+
+</div><!-- /report-shell -->
+
+</body>
+</html>
