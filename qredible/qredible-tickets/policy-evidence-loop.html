@@ -7,344 +7,723 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Plus Jakarta Sans',sans-serif;background:#F1F5F9;color:#1E293B;font-size:14px;line-height:1.5}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:#F1F5F9;color:#0F172A;font-size:14px;line-height:1.5}
 a{color:#3B82F6;text-decoration:none}a:hover{text-decoration:underline}
 code,.mono{font-family:'IBM Plex Mono',monospace}
 
-.topnav{background:#1E3A5F;padding:12px 24px;display:flex;align-items:center;gap:8px;font-size:13px;color:#94A3B8;position:sticky;top:0;z-index:10}
+/* NAV */
+.topnav{background:#1E3A5F;padding:12px 24px;display:flex;align-items:center;gap:8px;font-size:13px;color:#94A3B8}
 .topnav a{color:#93C5FD}
 .topnav .sep{color:#475569}
 .topnav .ticket-badge{background:#3B82F6;color:#fff;font-size:11px;font-weight:600;padding:2px 8px;border-radius:4px;font-family:'IBM Plex Mono',monospace}
-.topnav .new-badge{background:#10B981;color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;letter-spacing:.4px}
 .topnav .title{color:#fff;font-weight:600}
-.topnav .right{margin-left:auto;font-size:12px}
 
+/* BANNER */
 .banner{background:#EFF6FF;border-bottom:3px solid #3B82F6;padding:14px 24px;font-size:13px;color:#1E3A5F;line-height:1.55}
 .banner strong{color:#1E3A5F}
 .banner code{background:#DBEAFE;padding:1px 5px;border-radius:3px;font-size:12px}
 
+/* PAGE */
 .page{max-width:1200px;margin:0 auto;padding:32px 24px}
 .page-header{margin-bottom:28px}
-.page-header h1{font-size:24px;font-weight:700;color:#1E3A5F;margin-bottom:6px}
-.page-header p{color:#64748B;font-size:13px;max-width:780px}
+.page-header h1{font-size:22px;font-weight:700;color:#1E3A5F;margin-bottom:6px}
+.page-header p{color:#64748B;font-size:13px}
 
-.section{margin-bottom:32px;background:#fff;border:1px solid #E2E8F0;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05);padding:28px 32px}
-.section h2{display:flex;align-items:center;gap:12px;font-size:18px;font-weight:700;color:#1E3A5F;margin-bottom:6px}
-.section h2 .num{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:#3B82F6;color:#fff;font-size:14px;font-weight:700}
-.section .lead{color:#64748B;font-size:13px;margin-bottom:18px;max-width:820px}
-.section h3{font-size:14px;font-weight:700;color:#1E3A5F;margin:16px 0 10px}
-.section p{margin-bottom:10px;color:#334155}
-.section ul{margin:8px 0 12px 22px;color:#334155}
-.section li{margin-bottom:6px}
+/* SECTION */
+.section{margin-bottom:40px}
+.section-label{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:700;padding:4px 12px;border-radius:20px;margin-bottom:12px;letter-spacing:.4px;text-transform:uppercase;background:#EDE9FE;color:#4C1D95}
+.section-label.blue{background:#DBEAFE;color:#1E40AF}
+.section-label.green{background:#DCFCE7;color:#166534}
+.section-label.amber{background:#FEF3C7;color:#92400E}
+.section-label.cyan{background:#E0F2FE;color:#075985}
+.section-label.red{background:#FEE2E2;color:#991B1B}
+.section-label.slate{background:#F1F5F9;color:#334155}
+.section-label.teal{background:#CCFBF1;color:#134E4A}
+.section-title{font-size:16px;font-weight:700;color:#1E3A5F;margin-bottom:16px}
 
-.pill{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;letter-spacing:.4px;text-transform:uppercase}
+/* CARD */
+.card{background:#fff;border:1px solid #E2E8F0;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.08);padding:20px 24px}
+
+/* FLOW */
+.flow-row{display:flex;align-items:stretch;flex-wrap:wrap;justify-content:center;gap:0}
+.flow-box{background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;padding:10px 14px;text-align:center;font-size:12px;font-weight:600;color:#1E3A5F;min-width:120px}
+.flow-box .fnum{font-size:10px;color:#94A3B8;font-weight:500;margin-bottom:2px}
+.flow-box.hl-g{background:#F0FDF4;border-color:#BBF7D0;color:#166534}
+.flow-box.hl-b{background:#EFF6FF;border-color:#BFDBFE;color:#1E40AF}
+.flow-box.hl-a{background:#FFFBEB;border-color:#FDE68A;color:#92400E}
+.flow-box.hl-r{background:#FEF2F2;border-color:#FECACA;color:#991B1B}
+.arr{color:#3B82F6;font-size:18px;padding:0 6px;font-weight:700;align-self:center}
+
+/* NOTES */
+.note{border-radius:8px;padding:12px 16px;font-size:12px;line-height:1.65;margin-top:14px}
+.note-amber{background:#FFFBEB;border:1px solid #FDE68A;border-left:4px solid #F59E0B;color:#78350F}
+.note-blue{background:#EFF6FF;border:1px solid #BFDBFE;border-left:4px solid #3B82F6;color:#1E40AF}
+.note-green{background:#F0FDF4;border:1px solid #BBF7D0;border-left:4px solid #16A34A;color:#14532D}
+.note-red{background:#FEF2F2;border:1px solid #FECACA;border-left:4px solid #EF4444;color:#991B1B}
+.tbd-callout{background:#FFFBEB;border:1px solid #FDE68A;border-left:4px solid #F59E0B;border-radius:8px;padding:12px 16px;font-size:12px;color:#78350F;margin-top:14px;line-height:1.65}
+
+/* PILLS */
+.pill{display:inline-flex;align-items:center;border-radius:9999px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.4px;padding:2px 9px}
 .pill-locked{background:#E0F2FE;color:#075985}
 .pill-tbd{background:#FEF3C7;color:#92400E}
+.pill-excl{background:#FEE2E2;color:#991B1B}
+.pill-active{background:#DCFCE7;color:#166534}
+.pill-high{background:#DCFCE7;color:#166534}
+.pill-med{background:#FEF3C7;color:#92400E}
+.pill-low{background:#F1F5F9;color:#64748B}
 
-/* CIRCULAR LOOP DIAGRAM */
-.loop-diagram{background:#F8FAFC;border:1px dashed #CBD5E1;border-radius:10px;padding:20px;margin-top:14px}
-.loop-row{display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:wrap}
-.loop-node{background:#fff;border:2px solid #3B82F6;border-radius:8px;padding:10px 14px;font-size:12px;font-weight:700;color:#1E3A5F;min-width:120px;text-align:center}
-.loop-node .icon{font-size:18px;display:block;margin-bottom:3px}
-.loop-arrow{color:#3B82F6;font-size:18px;padding:0 10px;font-weight:700}
-.loop-back{display:flex;align-items:center;justify-content:center;margin-top:14px;gap:8px;color:#64748B;font-size:11px;font-style:italic}
+/* EVIDENCE SOURCE GRID */
+.src-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.src-card{background:#fff;border:1px solid #E2E8F0;border-radius:10px;padding:14px 16px}
+.src-card-head{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.src-card-icon{font-size:16px}
+.src-card-name{font-size:13px;font-weight:700;color:#1E3A5F}
+.src-card-sub{font-size:10px;font-weight:600;color:#94A3B8;text-transform:uppercase;letter-spacing:.4px;margin-left:auto}
+.src-card-desc{font-size:12px;color:#475569;line-height:1.55}
+.src-card-tags{margin-top:8px;display:flex;flex-wrap:wrap;gap:4px}
+.tag{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:10px;background:#F1F5F9;color:#475569;padding:1px 7px;border-radius:4px}
 
-/* SOURCE GRID */
-.source-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin-top:14px}
-.source-card{background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;padding:14px}
-.source-card .head{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:#1E3A5F;margin-bottom:6px}
-.source-card .what{font-size:12px;color:#64748B;line-height:1.45}
-.cap{margin-top:14px;font-size:12px;color:#64748B;font-style:italic}
+/* EVIDENCE TAG TABLE */
+.etable{width:100%;border-collapse:collapse;font-size:12px}
+.etable th{background:#F8FAFC;padding:9px 14px;text-align:left;color:#64748B;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.3px;border:1px solid #E2E8F0}
+.etable td{padding:9px 14px;border-bottom:1px solid #F1F5F9;vertical-align:top}
+.etable tr:last-child td{border-bottom:none}
+.etable .src-badge{font-size:10px;font-weight:700;padding:1px 7px;border-radius:10px;text-transform:uppercase;white-space:nowrap}
+.src-scan{background:#DBEAFE;color:#1E40AF}
+.src-product{background:#EDE9FE;color:#4C1D95}
+.src-coa{background:#DCFCE7;color:#166534}
+.src-license{background:#FEF3C7;color:#92400E}
+.src-payment{background:#E0F2FE;color:#075985}
+.src-mri{background:#FEE2E2;color:#991B1B}
 
-/* EVIDENCE TAGS TABLE */
-.tags-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:12px}
-.tags-table th{background:#1E3A5F;color:#fff;text-align:left;padding:9px 12px;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.5px}
-.tags-table td{padding:9px 12px;border-bottom:1px solid #E2E8F0;color:#334155}
-.tags-table tr:nth-child(even) td{background:#F8FAFC}
-.tags-table .src{font-weight:600;color:#1E3A5F}
-.tags-table code{font-family:'IBM Plex Mono',monospace;font-size:11px;background:#EFF6FF;color:#1E40AF;padding:2px 6px;border-radius:3px;display:inline-block}
-.note-box{margin-top:14px;background:#F0FDF4;border-left:3px solid #10B981;border-radius:6px;padding:12px 16px;font-size:12px;color:#166534}
-.note-box strong{color:#14532D}
+/* ALGORITHM STEPS */
+.algo-steps{counter-reset:step}
+.algo-step{display:flex;align-items:flex-start;gap:14px;padding:10px 0;border-bottom:1px solid #F1F5F9}
+.algo-step:last-child{border-bottom:none}
+.algo-step-num{width:28px;height:28px;border-radius:50%;background:#3B82F6;color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.algo-step-num.out{background:#EF4444}
+.algo-step-body{font-size:13px;color:#1E293B;line-height:1.55}
+.algo-step-body code{font-size:11px;background:#F1F5F9;padding:1px 5px;border-radius:3px}
 
-/* COVERAGE ALGORITHM */
-.algo{background:#0F172A;border-radius:10px;padding:20px;margin-top:14px;color:#E2E8F0;font-family:'IBM Plex Mono',monospace;font-size:12px;line-height:1.7}
-.algo .step{margin-bottom:6px}
-.algo .step .num{color:#3B82F6;font-weight:700;display:inline-block;width:24px}
-.algo .step .body{color:#E2E8F0}
-.algo .step code{color:#86EFAC;background:transparent;padding:0}
-.signature-box{background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;padding:14px;margin-top:12px;font-size:12px}
-.signature-box .pid{font-family:'IBM Plex Mono',monospace;color:#3B82F6;font-weight:700}
-.signature-box .tags-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
-.signature-box .tag{font-family:'IBM Plex Mono',monospace;font-size:11px;background:#DCFCE7;color:#166534;padding:3px 9px;border-radius:4px;font-weight:600}
+/* STORY PANELS */
+.story-panels{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.story-panel{background:#fff;border:1px solid #E2E8F0;border-radius:10px;overflow:hidden}
+.panel-head{padding:8px 12px;font-size:11px;font-weight:700;text-align:center;text-transform:uppercase;letter-spacing:.4px}
+.ph-1{background:#DBEAFE;color:#1E40AF}
+.ph-2{background:#EDE9FE;color:#4C1D95}
+.ph-3{background:#FEF3C7;color:#92400E}
+.ph-4{background:#FEE2E2;color:#991B1B}
+.ph-5{background:#DCFCE7;color:#166534}
+.panel-body{padding:12px;font-size:11px;color:#475569;line-height:1.6}
+.panel-body strong{color:#1E293B}
+.panel-body code{font-size:10px;background:#F1F5F9;padding:1px 4px;border-radius:3px;color:#475569}
 
-/* WORKED EXAMPLE STRIP */
-.story-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:14px}
-.story-panel{background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;padding:13px;font-size:11px;color:#475569;position:relative}
-.story-panel .panel-num{position:absolute;top:8px;right:10px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:#94A3B8;font-weight:700}
-.story-panel h4{font-size:11px;font-weight:700;color:#1E3A5F;margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px}
-.story-panel code{font-family:'IBM Plex Mono',monospace;font-size:10px;background:#EFF6FF;color:#1E40AF;padding:1px 5px;border-radius:3px;display:inline-block;margin:1px 0}
-.story-panel .merchant-meta{font-size:10px;color:#64748B}
-.story-panel.story-detect{background:#FEF3C7;border-color:#FCD34D}
-.story-panel.story-accept{background:#DCFCE7;border-color:#86EFAC}
-@media (max-width:900px){.story-strip{grid-template-columns:1fr}}
+/* CONFIDENCE TABLE */
+.conf-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:12px}
+.conf-table th{background:#F8FAFC;padding:9px 14px;text-align:left;color:#64748B;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.3px;border:1px solid #E2E8F0}
+.conf-table td{padding:9px 14px;border-bottom:1px solid #F1F5F9;vertical-align:top}
+.conf-table tr:last-child td{border-bottom:none}
 
-/* CONFIDENCE TIERS */
-.confidence{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
-.conf-tier{background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;padding:14px}
-.conf-tier h4{font-size:13px;font-weight:700;margin-bottom:6px}
-.conf-tier .desc{font-size:11px;color:#64748B;line-height:1.45}
-.conf-tier.high{border-left:5px solid #EF4444}
-.conf-tier.high h4{color:#991B1B}
-.conf-tier.med{border-left:5px solid #F59E0B}
-.conf-tier.med h4{color:#92400E}
-.conf-tier.low{border-left:5px solid #10B981}
-.conf-tier.low h4{color:#166534}
-
-/* CONTRAST */
-.contrast{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
-.contrast-box{border:1px solid #E2E8F0;border-radius:8px;padding:14px}
-.contrast-box.old{background:#FEF2F2;border-color:#FECACA}
-.contrast-box.new{background:#F0FDF4;border-color:#BBF7D0}
-.contrast-box h5{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
-.contrast-box.old h5{color:#991B1B}
-.contrast-box.new h5{color:#166534}
-.contrast-box p{font-size:12px;color:#475569;margin:0}
-
-/* TBD CALLOUT */
-.tbd{background:#FEF3C7;border:1px solid #FCD34D;border-radius:8px;padding:14px 18px;margin:14px 0;font-size:13px;color:#78350F;display:flex;gap:10px;align-items:flex-start}
-.tbd .icon{font-size:18px;flex-shrink:0}
-.tbd strong{display:block;color:#92400E;margin-bottom:4px;font-size:12px;text-transform:uppercase;letter-spacing:.4px}
+/* CONTRAST OLD/NEW */
+.contrast-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px}
+.contrast-card{background:#fff;border:1px solid #E2E8F0;border-radius:10px;overflow:hidden}
+.contrast-head{padding:10px 16px;font-size:12px;font-weight:700;text-align:center}
+.contrast-head.old{background:#FEF3C7;color:#92400E}
+.contrast-head.new{background:#DCFCE7;color:#166534}
+.contrast-body{padding:14px 16px;font-size:12px;color:#475569;line-height:1.7}
 
 /* OPEN QUESTIONS */
-.open-list{counter-reset:oq}
-.open-item{display:flex;gap:14px;background:#FFFBEB;border:1px solid #FDE68A;border-radius:8px;padding:13px 16px;margin-bottom:8px}
-.open-item::before{counter-increment:oq;content:counter(oq);background:#F59E0B;color:#fff;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0}
-.open-item .q-text{font-size:12px;color:#78350F;line-height:1.5}
-.open-item .q-text strong{color:#92400E;display:block;margin-bottom:3px}
+.oq-item{background:#fff;border:1px solid #E2E8F0;border-left:4px solid #F59E0B;border-radius:8px;padding:12px 16px;margin-bottom:10px}
+.oq-head{font-size:13px;font-weight:600;color:#1E3A5F;margin-bottom:4px}
+.oq-head .oq-n{color:#F59E0B;margin-right:6px}
+.oq-body{font-size:12px;color:#64748B;line-height:1.55}
 
-/* FOOTER */
-.footer{text-align:center;padding:30px 24px;color:#94A3B8;font-size:12px;border-top:1px solid #E2E8F0;background:#fff;margin-top:24px}
-.footer a{color:#3B82F6}
+/* UTILITY */
+.divider{height:1px;background:#E2E8F0;margin:36px 0}
+.caption{font-size:12px;color:#64748B;font-style:italic;margin-top:10px;line-height:1.55}
 </style>
 </head>
 <body>
 
-<div class="topnav">
-  <span class="ticket-badge">QP-3647</span>
-  <span class="new-badge">NEW</span>
-  <span class="sep">·</span>
-  <span class="title">Policy Evidence Loop — Closed-Loop Compliance Detection</span>
-  <span class="right"><a href="../index.html">← All Mockups</a></span>
-</div>
+<!-- NAV -->
+<nav class="topnav">
+  <a href="https://jfloyd-qredible.netlify.app/">← All Mockups</a>
+  <span class="sep">/</span>
+  <span class="title">Policy Evidence Loop</span>
+  <span class="sep">/</span>
+  <span class="ticket-badge">QP-3647 · Evidence Loop</span>
+</nav>
 
+<!-- POLICY-FIRST BANNER -->
 <div class="banner">
-  📜 <strong>POLICY-FIRST ARCHITECTURE</strong> — This page proposes the closed-loop system tying scan findings BACK to policy assignment. Q-ScanAI findings, product scans, COA results, license scans, OFAC/MRI checks, and payment rail detection all produce <strong>evidence tags</strong>; policies declare <strong>expected evidence signatures</strong>; the coverage check detects when a merchant has evidence of a regulated activity that no assigned policy covers — and surfaces the gap as a suggested policy.
+  📜 <strong>POLICY-FIRST ARCHITECTURE — CLOSED-LOOP DETECTION — 2026-04-13</strong> — This mockup defines the feedback system that ties <strong>Q-ScanAI findings, product scans, COA results, license checks, payment rail detection, and MRI checks</strong> back to <code>policy_ids</code>. Every finding produces evidence tags; canonical policies declare expected evidence signatures; a coverage check runs after every scan to detect missing policies. Supersedes QP-3603 (attributes survive as a flat tagging vocabulary only).
 </div>
 
+<!-- PAGE -->
 <div class="page">
 
   <div class="page-header">
-    <h1>Policy Evidence Loop — Detect Missing Policies from Real Evidence</h1>
-    <p>The merchant's policy stack should reflect what they actually do, not just what they said at sign-up. Companion to <a href="policy-editor.html">Policy Editor</a>, <a href="bulletin-authoring.html">Bulletin Authoring</a>, and <a href="policy-lifecycle.html">Policy Lifecycle</a>.</p>
+    <h1>Policy Evidence Loop — Closed-Loop Compliance Detection</h1>
+    <p>The system that connects scan findings back to policy assignment — detecting missing policies based on concrete evidence the platform obtains about a merchant. Worked example: Acme Hemp Co caught selling kratom while only on hemp-CBD policies.</p>
   </div>
 
-  <!-- SECTION 1 -->
+  <!-- ① THE BIG IDEA -->
   <div class="section">
-    <h2><span class="num">1</span> The Big Idea</h2>
-    <p>Policies define what we look for. Findings tell us what we found. If we find evidence of a regulated activity that none of the merchant's assigned policies cover, that's a coverage gap — and the system should catch it automatically and suggest (or auto-attach) the missing policy.</p>
-    <div class="loop-diagram">
-      <div class="loop-row">
-        <div class="loop-node"><span class="icon">📜</span>Policies</div>
-        <span class="loop-arrow">→</span>
-        <div class="loop-node"><span class="icon">⚙️</span>Scan Config</div>
-        <span class="loop-arrow">→</span>
-        <div class="loop-node"><span class="icon">🔍</span>Findings</div>
-        <span class="loop-arrow">→</span>
-        <div class="loop-node"><span class="icon">🏷️</span>Evidence Tags</div>
-        <span class="loop-arrow">→</span>
-        <div class="loop-node"><span class="icon">🎯</span>Coverage Check</div>
+    <div class="section-label">① The Big Idea</div>
+    <div class="section-title">🔍 Policies define what we look for. Findings tell us what we found.</div>
+
+    <div class="card">
+      <p style="font-size:14px;line-height:1.8;color:#1E293B;margin-bottom:22px">
+        Policies define what we look for. Findings tell us what we found. If we find evidence of a regulated activity that none of the merchant's assigned policies cover, that's a <strong>coverage gap</strong> — and the system should catch it automatically and suggest (or auto-attach) the missing policy. The merchant's policy stack should reflect what they <em>actually do</em>, not just what they said at sign-up. This closes the loop: every scan not only evaluates the merchant against their current policies, it also checks whether their policy stack is still complete based on what the evidence shows.
+      </p>
+
+      <!-- Loop diagram -->
+      <div style="font-size:13px;font-weight:600;color:#1E3A5F;margin-bottom:14px;text-align:center">The closed loop — five nodes</div>
+      <div class="flow-row" style="flex-wrap:wrap;gap:4px">
+        <div class="flow-box hl-g">
+          <div class="fnum">①</div>
+          📜 Policies<br/><span style="font-size:10px;color:#166534">define scan config</span>
+        </div>
+        <div class="arr">→</div>
+        <div class="flow-box">
+          <div class="fnum">②</div>
+          🔍 Scan Config<br/><span style="font-size:10px;color:#64748B">built from policy sections</span>
+        </div>
+        <div class="arr">→</div>
+        <div class="flow-box hl-a">
+          <div class="fnum">③</div>
+          📋 Findings<br/><span style="font-size:10px;color:#92400E">raw scan results</span>
+        </div>
+        <div class="arr">→</div>
+        <div class="flow-box hl-b">
+          <div class="fnum">④</div>
+          🏷️ Evidence Tags<br/><span style="font-size:10px;color:#1E40AF">normalized facts</span>
+        </div>
+        <div class="arr">→</div>
+        <div class="flow-box hl-r">
+          <div class="fnum">⑤</div>
+          🔎 Coverage Check<br/><span style="font-size:10px;color:#991B1B">gap detected?</span>
+        </div>
+        <div class="arr" style="color:#10B981">↩</div>
+        <div class="flow-box hl-g" style="border-style:dashed">
+          <div class="fnum">back to ①</div>
+          📜 Policies<br/><span style="font-size:10px;color:#166534">updated stack</span>
+        </div>
       </div>
-      <div class="loop-back">↻ Coverage Check feeds back into Policy assignment when gaps are detected — closing the loop.</div>
     </div>
   </div>
 
-  <!-- SECTION 2 -->
-  <div class="section">
-    <h2><span class="num">2</span> Sources of Evidence</h2>
-    <p class="lead">The platform already has rich scan and check infrastructure. Each scan type produces facts about the merchant that can be normalized into evidence tags.</p>
-    <div class="source-grid">
-      <div class="source-card"><div class="head">🔍 Q-ScanAI website findings</div><div class="what">Keyword detections, page-level violations, missing disclaimers, prohibited-state shipping detection.</div></div>
-      <div class="source-card"><div class="head">🔍 Product scans (Project Z)</div><div class="what">Catalog item titles, descriptions, ingredients, claims, categories. Pulled via Zyte against the merchant's e-commerce surfaces.</div></div>
-      <div class="source-card"><div class="head">🔍 COA results (Project Cambridge)</div><div class="what">Analyte values, lab IDs, batch numbers, presence of specific cannabinoids/alkaloids extracted by Aluma.</div></div>
-      <div class="source-card"><div class="head">🔍 License scans (CannaSpyGlass)</div><div class="what">License types currently active, license states, expiration dates, license-holder name reconciliation.</div></div>
-      <div class="source-card"><div class="head">🔍 OFAC / MRI checks</div><div class="what">Sanctions hits, PEP matches, BBB grades, court records, FDA warning letters, FTC actions.</div></div>
-      <div class="source-card"><div class="head">🔍 Payment rail detection</div><div class="what">Checkout payment methods detected on the live site — cards, ACH, crypto, P2P apps like Venmo/Cashapp/Zelle.</div></div>
-      <div class="source-card"><div class="head">🔍 Domain &amp; business identity</div><div class="what">WHOIS data, address consistency across listings, DBA reconciliation, contact identity verification.</div></div>
-    </div>
-    <p class="cap">Each finding gets stamped with one or more <strong>evidence tags</strong> — short, normalized facts about what was observed. The tag vocabulary is the bridge between raw scan output and policy logic.</p>
-  </div>
+  <div class="divider"></div>
 
-  <!-- SECTION 3 -->
+  <!-- ② SOURCES OF EVIDENCE -->
   <div class="section">
-    <h2><span class="num">3</span> Evidence Tags 🏷️ — The Vocabulary</h2>
-    <p class="lead">A flat, normalized vocabulary describing what was observed. This is where attributes (the old QP-3603 surface) survive — not as a separate admin module, but as a fixed/extensible vocabulary referenced by policies.</p>
-    <table class="tags-table">
-      <thead><tr><th>Source</th><th>Tag</th><th>Example</th></tr></thead>
-      <tbody>
-        <tr><td class="src">Q-ScanAI</td><td><code>contains-kratom-keyword</code></td><td>Page mentions "kratom" or "mitragynine"</td></tr>
-        <tr><td class="src">Q-ScanAI</td><td><code>prohibited-state-shipping-detected</code></td><td>Site offers shipping to a state that prohibits the product</td></tr>
-        <tr><td class="src">Product scan</td><td><code>product-category-vape</code></td><td>Catalog item classified as vape device</td></tr>
-        <tr><td class="src">Product scan</td><td><code>product-category-peptide</code></td><td>Catalog item is a research peptide</td></tr>
-        <tr><td class="src">COA</td><td><code>analyte-detected-delta-9-thc-over-0.3pct</code></td><td>COA shows total Δ9-THC &gt; 0.3% on a hemp product</td></tr>
-        <tr><td class="src">COA</td><td><code>analyte-detected-psilocybin</code></td><td>COA shows psilocybin presence</td></tr>
-        <tr><td class="src">License</td><td><code>active-license-tobacco-state-tx</code></td><td>Active TX tobacco license on file</td></tr>
-        <tr><td class="src">Payment rails</td><td><code>accepts-venmo</code> / <code>accepts-cashapp</code></td><td>P2P consumer rails detected at checkout</td></tr>
-        <tr><td class="src">MRI</td><td><code>ofac-sdn-match-confirmed</code></td><td>Beneficial owner matches OFAC SDN list</td></tr>
-        <tr><td class="src">Identity</td><td><code>address-mismatch-detected</code></td><td>WHOIS address doesn't match listed business address</td></tr>
-      </tbody>
-    </table>
-    <div class="note-box">
-      <strong>This is the surviving role of attributes.</strong> Each tag is consumed by policies in two ways: (a) by the policies the merchant ALREADY has, to evaluate compliance; and (b) by the coverage check, to detect MISSING policies. The vocabulary is fixed/extensible (a small schema, code-driven), not a separate admin surface.
-    </div>
-  </div>
+    <div class="section-label blue">② Evidence Sources</div>
+    <div class="section-title">🔍 What the platform already knows about a merchant</div>
 
-  <!-- SECTION 4 -->
-  <div class="section">
-    <h2><span class="num">4</span> Coverage Check — Detecting Missing Policies</h2>
-    <p class="lead">Each canonical policy declares an "expected evidence signature" — the set of evidence tags that, if observed on a merchant, mean the merchant should be subject to this policy.</p>
+    <div class="src-grid">
 
-    <div class="signature-box">
-      <strong>Example signature</strong> — Policy <span class="pid">kratom-v1</span> declares its signature as:
-      <div class="tags-row">
-        <span class="tag">contains-kratom-keyword</span>
-        <span class="tag">analyte-detected-mitragynine</span>
-        <span class="tag">analyte-detected-7-hydroxymitragynine</span>
-        <span class="tag">product-category-kratom</span>
+      <div class="src-card">
+        <div class="src-card-head">
+          <span class="src-card-icon">🔍</span>
+          <span class="src-card-name">Q-ScanAI Website Findings</span>
+          <span class="src-card-sub src-scan">Website</span>
+        </div>
+        <div class="src-card-desc">Keyword detections, page-level violations, missing disclaimers, age-gate checks, prohibited-state shipping indicators. Runs on schedule or on demand against the merchant's live site.</div>
+        <div class="src-card-tags">
+          <span class="tag">contains-kratom-keyword</span>
+          <span class="tag">missing-disclaimer</span>
+          <span class="tag">prohibited-state-shipping</span>
+        </div>
       </div>
-      <p style="margin-top:10px;font-size:12px;color:#64748B">Any one of those tags appearing on a merchant = strong signal they should be subject to <code>kratom-v1</code>.</p>
+
+      <div class="src-card">
+        <div class="src-card-head">
+          <span class="src-card-icon">🔍</span>
+          <span class="src-card-name">Product Scans (Project Z / Zyte)</span>
+          <span class="src-card-sub src-product">Catalog</span>
+        </div>
+        <div class="src-card-desc">Product titles, descriptions, ingredient lists, health claims, and categories extracted from the merchant's catalog. Catches new product categories the merchant didn't disclose at onboarding.</div>
+        <div class="src-card-tags">
+          <span class="tag">product-category-vape</span>
+          <span class="tag">product-category-peptide</span>
+          <span class="tag">product-category-kratom</span>
+        </div>
+      </div>
+
+      <div class="src-card">
+        <div class="src-card-head">
+          <span class="src-card-icon">🔍</span>
+          <span class="src-card-name">COA Results (Project Cambridge / Aluma)</span>
+          <span class="src-card-sub src-coa">COA</span>
+        </div>
+        <div class="src-card-desc">Analyte values, lab accreditation IDs, batch numbers, cannabinoid profiles. A COA showing unexpected analytes (Δ9-THC over limit, psilocybin, mitragynine) is strong evidence of a coverage gap.</div>
+        <div class="src-card-tags">
+          <span class="tag">analyte-delta9-thc-over-0.3pct</span>
+          <span class="tag">analyte-psilocybin</span>
+          <span class="tag">analyte-mitragynine</span>
+        </div>
+      </div>
+
+      <div class="src-card">
+        <div class="src-card-head">
+          <span class="src-card-icon">🔍</span>
+          <span class="src-card-name">License Scans (CannaSpyGlass)</span>
+          <span class="src-card-sub src-license">License</span>
+        </div>
+        <div class="src-card-desc">Active license types, issuing states, expiration dates, license categories. An active tobacco retailer license implies the merchant sells tobacco — even if they didn't select that category at sign-up.</div>
+        <div class="src-card-tags">
+          <span class="tag">active-license-tobacco-state-tx</span>
+          <span class="tag">license-type-cannabis-dispensary</span>
+        </div>
+      </div>
+
+      <div class="src-card">
+        <div class="src-card-head">
+          <span class="src-card-icon">🔍</span>
+          <span class="src-card-name">OFAC / MRI Checks</span>
+          <span class="src-card-sub src-mri">MRI</span>
+        </div>
+        <div class="src-card-desc">Sanctions hits, PEP matches, BBB grade, court records, adverse media. OFAC SDN matches or serious adverse-media findings may trigger policies that add escalated review requirements.</div>
+        <div class="src-card-tags">
+          <span class="tag">ofac-sdn-match-confirmed</span>
+          <span class="tag">adverse-media-serious</span>
+        </div>
+      </div>
+
+      <div class="src-card">
+        <div class="src-card-head">
+          <span class="src-card-icon">🔍</span>
+          <span class="src-card-name">Payment Rail Detection</span>
+          <span class="src-card-sub src-payment">Checkout</span>
+        </div>
+        <div class="src-card-desc">Checkout payment methods observed on the live site: card networks, ACH, crypto, P2P apps (Venmo, CashApp, Zelle). P2P detection is a strong signal that triggers the appropriate payment-rails policy.</div>
+        <div class="src-card-tags">
+          <span class="tag">accepts-venmo</span>
+          <span class="tag">accepts-cashapp</span>
+          <span class="tag">accepts-crypto</span>
+        </div>
+      </div>
+
+      <div class="src-card">
+        <div class="src-card-head">
+          <span class="src-card-icon">🔍</span>
+          <span class="src-card-name">Domain &amp; Business Identity</span>
+          <span class="src-card-sub" style="font-size:10px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.4px">Identity</span>
+        </div>
+        <div class="src-card-desc">WHOIS data, address consistency, DBA reconciliation, corporate structure. Identity mismatches or address discrepancies produce evidence tags that may trigger watchlist or MRI policies.</div>
+        <div class="src-card-tags">
+          <span class="tag">address-mismatch-detected</span>
+          <span class="tag">dba-unreconciled</span>
+        </div>
+      </div>
+
     </div>
 
-    <div class="algo">
-      <div class="step"><span class="num">01</span><span class="body">For each evidence tag <code>t</code> observed on merchant <code>m</code>:</span></div>
-      <div class="step"><span class="num">02</span><span class="body">  Find all canonical policies <code>P</code> whose signature includes <code>t</code></span></div>
-      <div class="step"><span class="num">03</span><span class="body">  Compare <code>P</code> against <code>m.policy_ids</code></span></div>
-      <div class="step"><span class="num">04</span><span class="body">  If a matching policy exists in the library but is NOT assigned → <span style="color:#FCA5A5">COVERAGE GAP</span></span></div>
-      <div class="step"><span class="num">05</span><span class="body">  Open a "Suggested Policy" item in the Q-Audit review queue with:</span></div>
-      <div class="step"><span class="num">  </span><span class="body">    • the suggested <code>policy_id</code></span></div>
-      <div class="step"><span class="num">  </span><span class="body">    • the supporting evidence tags + their source findings</span></div>
-      <div class="step"><span class="num">  </span><span class="body">    • a confidence score (see Section 6)</span></div>
+    <p class="caption">Each finding gets stamped with one or more <strong>evidence tags</strong> — short, normalized facts about what was observed. Tags are the currency of the coverage check.</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ③ EVIDENCE TAGS VOCABULARY -->
+  <div class="section">
+    <div class="section-label green">③ Evidence Tags 🏷️</div>
+    <div class="section-title">The normalized vocabulary — surviving role of attributes (QP-3603)</div>
+
+    <div class="card" style="padding:0;overflow:hidden">
+      <table class="etable">
+        <thead>
+          <tr>
+            <th>Source</th>
+            <th>Evidence Tag</th>
+            <th>What it means</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="src-badge src-scan">Q-ScanAI</span></td>
+            <td><code>contains-kratom-keyword</code></td>
+            <td>Page text includes "kratom", "mitragynine", or known synonyms</td>
+          </tr>
+          <tr>
+            <td><span class="src-badge src-scan">Q-ScanAI</span></td>
+            <td><code>prohibited-state-shipping-detected</code></td>
+            <td>Site offers shipping to a state where the product is banned</td>
+          </tr>
+          <tr>
+            <td><span class="src-badge src-product">Product</span></td>
+            <td><code>product-category-vape</code></td>
+            <td>Catalog item classified as vape device or e-liquid</td>
+          </tr>
+          <tr>
+            <td><span class="src-badge src-product">Product</span></td>
+            <td><code>product-category-peptide</code></td>
+            <td>Catalog item is a research peptide (BPC-157, TB-500, etc.)</td>
+          </tr>
+          <tr>
+            <td><span class="src-badge src-product">Product</span></td>
+            <td><code>product-category-kratom</code></td>
+            <td>Catalog item classified as kratom or kratom extract</td>
+          </tr>
+          <tr>
+            <td><span class="src-badge src-coa">COA</span></td>
+            <td><code>analyte-delta9-thc-over-0.3pct</code></td>
+            <td>COA shows total Δ9-THC &gt; 0.3% dry weight on a hemp product</td>
+          </tr>
+          <tr>
+            <td><span class="src-badge src-coa">COA</span></td>
+            <td><code>analyte-psilocybin-detected</code></td>
+            <td>COA confirms psilocybin presence in a product sample</td>
+          </tr>
+          <tr>
+            <td><span class="src-badge src-coa">COA</span></td>
+            <td><code>analyte-mitragynine-detected</code></td>
+            <td>COA confirms mitragynine (kratom alkaloid) present</td>
+          </tr>
+          <tr>
+            <td><span class="src-badge src-license">License</span></td>
+            <td><code>active-license-tobacco-state-tx</code></td>
+            <td>Active Texas tobacco/vape retailer license confirmed on file</td>
+          </tr>
+          <tr>
+            <td><span class="src-badge src-payment">Payment</span></td>
+            <td><code>accepts-venmo</code> / <code>accepts-cashapp</code></td>
+            <td>P2P consumer payment rails observed at merchant checkout</td>
+          </tr>
+          <tr>
+            <td><span class="src-badge src-mri">MRI</span></td>
+            <td><code>ofac-sdn-match-confirmed</code></td>
+            <td>Beneficial owner confirmed match against OFAC SDN list</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="note note-blue" style="margin-top:14px">
+      <strong>This is the surviving role of attributes (QP-3603).</strong> Attributes are not a separate admin surface — they're a fixed, extensible vocabulary of normalized facts. Each tag is consumed by policies in two ways: (a) by the policies a merchant <em>already has</em>, to evaluate compliance, and (b) by the coverage check, to detect <em>missing</em> policies. The tag vocabulary is owned by the platform, not configurable per-merchant.
     </div>
   </div>
 
-  <!-- SECTION 5 -->
+  <div class="divider"></div>
+
+  <!-- ④ COVERAGE CHECK ALGORITHM -->
   <div class="section">
-    <h2><span class="num">5</span> Worked Example — Headline Scenario</h2>
-    <p class="lead">A concrete walkthrough. Acme Hemp Co is a CBD merchant — but a recent scan finds something else.</p>
-    <div class="story-strip">
+    <div class="section-label amber">④ Coverage Check</div>
+    <div class="section-title">🔎 Detecting missing policies — the algorithm</div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start">
+
+      <div class="card">
+        <div style="font-size:13px;font-weight:600;color:#1E3A5F;margin-bottom:14px">How the coverage check works</div>
+        <div>
+          <div class="algo-step">
+            <div class="algo-step-num">1</div>
+            <div class="algo-step-body">For each <strong>evidence tag</strong> observed on the merchant in the latest scan batch</div>
+          </div>
+          <div class="algo-step">
+            <div class="algo-step-num">2</div>
+            <div class="algo-step-body">Find all canonical policies whose <code>expected_evidence_signature</code> includes that tag</div>
+          </div>
+          <div class="algo-step">
+            <div class="algo-step-num">3</div>
+            <div class="algo-step-body">Compare the matching policies against the merchant's current <code>policy_ids</code></div>
+          </div>
+          <div class="algo-step">
+            <div class="algo-step-num" style="background:#F59E0B">4</div>
+            <div class="algo-step-body">If a matching policy exists in the canonical library but is <strong>not</strong> assigned to the merchant → <strong>coverage gap detected</strong></div>
+          </div>
+          <div class="algo-step">
+            <div class="algo-step-num out">5</div>
+            <div class="algo-step-body">Open a <strong>Suggested Policy</strong> item in the Q-Audit review queue with supporting evidence and confidence score</div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card" style="margin-bottom:14px">
+          <div style="font-size:13px;font-weight:600;color:#1E3A5F;margin-bottom:10px">Example — policy signature declaration</div>
+          <p style="font-size:12px;color:#475569;margin-bottom:10px">Each canonical policy declares the evidence tags that signal a merchant should be subject to it:</p>
+          <div style="background:#0F172A;border-radius:8px;padding:14px 16px;font-family:'IBM Plex Mono',monospace;font-size:11px;line-height:1.7;color:#E2E8F0">
+            <span style="color:#64748B">// kratom-watchlist-v1.json</span><br/>
+            <span style="color:#93C5FD">"expected_evidence_signature"</span>: {<br/>
+            &nbsp;&nbsp;<span style="color:#93C5FD">"match_any"</span>: [<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#86EFAC">"contains-kratom-keyword"</span>,<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#86EFAC">"product-category-kratom"</span>,<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#86EFAC">"analyte-mitragynine-detected"</span><br/>
+            &nbsp;&nbsp;]<br/>
+            }<br/>
+            <span style="color:#64748B">// Any one of these tags on a merchant</span><br/>
+            <span style="color:#64748B">// = strong signal they should be on kratom-watchlist-v1</span>
+          </div>
+        </div>
+        <div class="note note-green">
+          <strong>The key insight:</strong> The check runs automatically after every scan. A merchant can't slip through by simply not disclosing a product category — the evidence finds it for us.
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ⑤ WORKED EXAMPLE -->
+  <div class="section">
+    <div class="section-label cyan">⑤ Worked Example</div>
+    <div class="section-title">🏪 Acme Hemp Co — caught selling kratom under hemp-only policies</div>
+
+    <div class="story-panels">
+
       <div class="story-panel">
-        <span class="panel-num">01</span>
-        <h4>Merchant Snapshot</h4>
-        <div class="merchant-meta"><strong>Acme Hemp Co</strong>, Texas. CBD products, online-only.</div>
-        <p style="margin-top:6px">Currently assigned:</p>
-        <code>hemp-cbd-base-v3</code><br>
-        <code>state-overlay-tx-v2</code><br>
-        <code>payment-rails-mc-v1</code>
+        <div class="panel-head ph-1">① Merchant Setup</div>
+        <div class="panel-body">
+          <strong>Acme Hemp Co — Texas</strong><br/><br/>
+          Currently assigned:<br/>
+          <code>hemp-cbd-base-v3</code><br/>
+          <code>state-overlay-tx-v2</code><br/>
+          <code>payment-rails-mc-v1</code><br/><br/>
+          No kratom policy. Merchant said at sign-up: hemp gummies + CBD oil only.
+        </div>
       </div>
+
       <div class="story-panel">
-        <span class="panel-num">02</span>
-        <h4>Scan Event</h4>
-        <p>Latest Q-ScanAI run on <code>acmehemp.example</code> detects <strong>"kratom extract"</strong> on the homepage.</p>
-        <p style="margin-top:6px">Product scan finds <strong>"Premium Kratom Capsules — 60ct"</strong> in catalog.</p>
+        <div class="panel-head ph-2">② Scan Event</div>
+        <div class="panel-body">
+          Latest Q-ScanAI run on <code>acmehemp.example</code>:<br/><br/>
+          ⚠️ Keyword <strong>"kratom extract"</strong> detected on homepage copy.<br/><br/>
+          Product scan finds <strong>"Premium Kratom Capsules — 60ct"</strong> in the catalog with 14 other kratom SKUs.
+        </div>
       </div>
-      <div class="story-panel story-detect">
-        <span class="panel-num">03</span>
-        <h4>Evidence Tags Emitted</h4>
-        <code>contains-kratom-keyword</code>
-        <code>product-category-kratom</code>
-        <p style="margin-top:8px">Two tags from two distinct sources.</p>
+
+      <div class="story-panel">
+        <div class="panel-head ph-3">③ Tags Emitted</div>
+        <div class="panel-body">
+          Evidence tags produced:<br/><br/>
+          <code>contains-kratom-keyword</code><br/>
+          (Q-ScanAI · homepage)<br/><br/>
+          <code>product-category-kratom</code><br/>
+          (Product scan · 15 SKUs)<br/><br/>
+          Coverage check runs automatically.
+        </div>
       </div>
-      <div class="story-panel story-detect">
-        <span class="panel-num">04</span>
-        <h4>Coverage Check</h4>
-        <p>Policy <code>kratom-v1</code> declares those tags in its signature.</p>
-        <p style="margin-top:6px">Merchant is <strong>NOT</strong> on <code>kratom-v1</code>.</p>
-        <p style="margin-top:6px;color:#991B1B"><strong>⚠ Coverage Gap Detected</strong></p>
-        <p style="margin-top:6px">Confidence: <strong>HIGH</strong> (3 distinct sources)</p>
+
+      <div class="story-panel">
+        <div class="panel-head ph-4">④ Gap Detected</div>
+        <div class="panel-body">
+          Coverage check finds:<br/><br/>
+          Policy <code>kratom-watchlist-v1</code> declares <code>contains-kratom-keyword</code> and <code>product-category-kratom</code> in its signature.<br/><br/>
+          Merchant is <strong>NOT</strong> on <code>kratom-watchlist-v1</code>.<br/><br/>
+          ⛔ Coverage gap opened.
+        </div>
       </div>
-      <div class="story-panel story-accept">
-        <span class="panel-num">05</span>
-        <h4>Analyst Review &amp; Bulletin</h4>
-        <p>Suggested Policy card appears in Q-Audit queue. Analyst opens, reviews evidence with links back to scan finding + product, accepts.</p>
-        <p style="margin-top:6px"><code>kratom-v1</code> auto-attaches.</p>
-        <p style="margin-top:6px">Merchant gets a bulletin: "We detected products on your store that put you under <code>kratom-v1</code>. New requirements: …"</p>
+
+      <div class="story-panel">
+        <div class="panel-head ph-5">⑤ Review Queue</div>
+        <div class="panel-body">
+          Analyst sees in Q-Audit:<br/><br/>
+          <strong>Suggested Policy</strong><br/>
+          Acme Hemp Co<br/>
+          <code>kratom-watchlist-v1</code><br/>
+          Confidence: <strong>HIGH</strong><br/>
+          (2 distinct source types)<br/><br/>
+          <span style="color:#3B82F6;font-weight:600">Accept → auto-attach</span><br/>
+          <span style="color:#991B1B">Dismiss with reason</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Analyst review + merchant bulletin -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">
+
+      <div class="card">
+        <div style="font-size:13px;font-weight:600;color:#1E3A5F;margin-bottom:12px">Analyst review — supporting evidence</div>
+        <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;padding:12px 14px;font-size:12px">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+            <span style="font-weight:700;color:#1E3A5F">Acme Hemp Co</span>
+            <span style="background:#FEF3C7;color:#92400E;font-size:9px;font-weight:700;padding:1px 7px;border-radius:10px;text-transform:uppercase">Coverage Gap</span>
+            <span style="background:#DCFCE7;color:#166534;font-size:9px;font-weight:700;padding:1px 7px;border-radius:10px;text-transform:uppercase;margin-left:auto">HIGH Confidence</span>
+          </div>
+          <div style="color:#475569;margin-bottom:8px"><strong>Suggested policy:</strong> <code>kratom-watchlist-v1</code></div>
+          <div style="color:#475569;margin-bottom:4px"><strong>Evidence (2 distinct source types):</strong></div>
+          <div style="color:#64748B;padding-left:10px;line-height:1.8">
+            🔍 Q-ScanAI — keyword "kratom extract" on homepage <a href="#" style="font-size:10px">[view finding →]</a><br/>
+            🔍 Product scan — 15 kratom SKUs in catalog <a href="#" style="font-size:10px">[view products →]</a>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:12px">
+            <button style="background:#10B981;color:#fff;border:none;padding:7px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif">Accept — attach kratom-watchlist-v1</button>
+            <button style="background:#F1F5F9;color:#475569;border:1px solid #E2E8F0;padding:7px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif">Dismiss with reason</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div style="font-size:13px;font-weight:600;color:#1E3A5F;margin-bottom:12px">Merchant notification — if accepted</div>
+        <div style="background:#fff;border:1px solid #E2E8F0;border-radius:8px;overflow:hidden">
+          <div style="background:#1E3A5F;color:#fff;padding:10px 14px;font-size:12px;display:flex;align-items:center;gap:8px">
+            <span>🔔</span>
+            <span style="font-weight:700">New compliance policy applied</span>
+            <span style="background:#EF4444;color:#fff;font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px;margin-left:auto;text-transform:uppercase">Action Needed</span>
+          </div>
+          <div style="padding:14px;font-size:12px;color:#1E293B;line-height:1.65">
+            <p style="margin-bottom:8px">We detected products on your store that place you under the <code>kratom-watchlist-v1</code> policy.</p>
+            <p style="margin-bottom:8px;color:#475569"><strong>Why:</strong> Kratom products detected in your catalog (15 SKUs) and on your homepage.</p>
+            <p style="color:#475569"><strong>New requirements added to your checklist:</strong> Kratom COA with alkaloid panel · state compliance attestation · prohibited-state shipping review.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ⑥ CONFIDENCE LEVELS -->
+  <div class="section">
+    <div class="section-label red">⑥ Confidence Levels ❓</div>
+    <div class="section-title">When to auto-attach vs. suggest vs. log only</div>
+
+    <div class="card" style="margin-bottom:14px">
+      <div style="font-size:13px;font-weight:600;color:#1E3A5F;margin-bottom:12px">Proposed confidence tiers</div>
+      <table class="conf-table">
+        <thead>
+          <tr>
+            <th>Tier</th>
+            <th>Criteria</th>
+            <th>Proposed action</th>
+            <th>Example</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="pill pill-high">HIGH</span></td>
+            <td>3+ distinct evidence source types (e.g. website scan + product + COA)</td>
+            <td><strong>Auto-attach policy + notify merchant + open bulletin</strong></td>
+            <td>Kratom keyword on site + 15 kratom SKUs + mitragynine on COA</td>
+          </tr>
+          <tr>
+            <td><span class="pill pill-med">MEDIUM</span></td>
+            <td>2 source types, or 1 strong source (COA analyte confirmation)</td>
+            <td>Surface in <strong>Q-Audit review queue</strong> — analyst must approve before attach</td>
+            <td>Kratom keyword on site + 15 kratom SKUs (no COA yet)</td>
+          </tr>
+          <tr>
+            <td><span class="pill pill-low">LOW</span></td>
+            <td>1 weak source (single keyword hit on one page, no product evidence)</td>
+            <td><strong>Log only</strong> — no surface, no queue item. Accumulates toward MEDIUM.</td>
+            <td>One mention of "kratom" in a blog post with no products found</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="tbd-callout">
+      ❓ <strong>TBD — Auto-attach thresholds: Brian and Ronaldo decision.</strong> Auto-attach is a strong action: it changes the merchant's compliance requirements without their explicit confirmation. Analysts may want veto authority on every policy change, even HIGH-confidence ones. Alternatively, analysts could be notified after auto-attach with a 24-hour veto window. These thresholds should be tuned against real data once the first scan cohort runs through the coverage check.
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ⑦ DETECTING POLICIES THAT NO LONGER APPLY -->
+  <div class="section">
+    <div class="section-label teal">⑦ The Reverse Case 🔁</div>
+    <div class="section-title">🔁 Detecting policies that no longer apply</div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start">
+      <div class="card">
+        <div style="font-size:13px;font-weight:600;color:#1E3A5F;margin-bottom:10px">The scenario</div>
+        <p style="font-size:13px;color:#475569;line-height:1.7">A merchant currently on <code>tobacco-vape-v1</code> removes all vape products from their catalog. Their product scans no longer show any vape-related evidence. Should the system detect that the policy may no longer apply and suggest removing it?</p>
+      </div>
+      <div>
+        <div class="note note-amber">
+          <strong>Recommendation: suggest-only, never auto-detach.</strong> Removing compliance coverage is inherently riskier than adding it. Proposed behavior: if zero matching evidence appears across <strong>90 consecutive days of scans</strong> (not just one scan cycle), surface a "Policy may no longer apply" suggestion in Q-Audit. Analyst reviews and explicitly detaches. Never auto-detach.
+        </div>
+        <div class="note note-green" style="margin-top:10px">
+          <strong>Asymmetry is intentional.</strong> Attaching a missing policy = reducing compliance risk. Detaching a policy = increasing compliance risk. The system should be more cautious about detach suggestions than attach suggestions, and should always require human sign-off on removal.
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- SECTION 6 -->
+  <div class="divider"></div>
+
+  <!-- ⑧ BEFORE/AFTER PICTURE -->
   <div class="section">
-    <h2><span class="num">6</span> Confidence Levels &amp; Auto-Attach Thresholds</h2>
-    <p class="lead">Not every coverage gap should auto-attach. Confidence is a function of how many distinct evidence sources support the suggestion.</p>
-    <div class="confidence">
-      <div class="conf-tier high">
-        <h4>HIGH — 3+ sources</h4>
-        <p class="desc">Multiple distinct scan types produced matching evidence (e.g. keyword + product + COA). <strong>Auto-attach + notify merchant.</strong></p>
+    <div class="section-label slate">⑧ Before / After 🧭</div>
+    <div class="section-title">🧭 How the evidence loop changes the compliance picture</div>
+
+    <div class="contrast-grid">
+      <div class="contrast-card">
+        <div class="contrast-head old">❌ OLD — Industry-keyed, no feedback loop</div>
+        <div class="contrast-body">
+          Merchant tells you what they sell at sign-up<br/>
+          You trust them — no ongoing validation<br/>
+          Scans run with hardcoded checks per industry type<br/>
+          Findings produce flags — no feedback to policy config<br/>
+          Merchant can add new product categories and the policy stack never adapts<br/>
+          Coverage gaps persist indefinitely until a human catches them
+        </div>
       </div>
-      <div class="conf-tier med">
-        <h4>MEDIUM — 2 sources or 1 strong</h4>
-        <p class="desc">Two related sources or one high-signal source (active license, COA analyte). <strong>Suggest in review queue.</strong> Analyst decides.</p>
-      </div>
-      <div class="conf-tier low">
-        <h4>LOW — 1 weak source</h4>
-        <p class="desc">A single keyword hit or a single ambiguous tag. <strong>Log only.</strong> Aggregate over time; surface if it crosses thresholds later.</p>
+      <div class="contrast-card">
+        <div class="contrast-head new">✅ NEW — Policy-first + evidence loop</div>
+        <div class="contrast-body">
+          Merchant's initial answers → auto-assigned policies<br/>
+          Scans run with policy-driven config<br/>
+          Findings produce normalized evidence tags<br/>
+          Coverage check runs after every scan<br/>
+          Coverage gaps surface as suggested policies in Q-Audit<br/>
+          Analyst reviews → policies attach → merchant's stack auto-converges on what they actually sell
+        </div>
       </div>
     </div>
-    <div class="tbd"><div class="icon">❓</div><div><strong>TBD — Auto-attach authority</strong>Brian and Ronaldo will want to weigh in on whether the system can auto-attach without analyst approval. Auto-attach is a strong action; analysts may want veto authority on every policy change. Default conservative: HIGH confidence still routes to a 1-click analyst confirmation rather than full auto-attach.</div></div>
-  </div>
 
-  <!-- SECTION 7 -->
-  <div class="section">
-    <h2><span class="num">7</span> Detecting Policies That No Longer Apply 🔁</h2>
-    <p class="lead">The reverse case is just as real. A merchant on <code>tobacco-vape-v1</code> who removes all vape products from their catalog should eventually have that policy detached.</p>
-    <p>The argument: yes, but with a longer evidence window (e.g., zero matching evidence across 90 days of scans), and probably <strong>suggest-only, never auto-detach</strong>. Removing compliance coverage is risk-asymmetric — if the auto-attach side is wrong, you've added some checklist items the merchant doesn't need; if the auto-detach side is wrong, you've stopped checking something that legally applies. Default to caution.</p>
-    <div class="tbd"><div class="icon">❓</div><div><strong>TBD — Reverse case in v1?</strong>Probably worth shipping the attach side of the loop first, validating it, and adding the detach side once we have evidence-window data and analyst comfort with the model.</div></div>
-  </div>
-
-  <!-- SECTION 8 -->
-  <div class="section">
-    <h2><span class="num">8</span> Before / After 🧭</h2>
-    <p class="lead">What this changes about the platform's relationship with the merchant.</p>
-    <div class="contrast">
-      <div class="contrast-box old">
-        <h5>OLD model — industry-keyed, no feedback loop</h5>
-        <p>Merchant tells you what they sell at sign-up → you trust them → scans run with hardcoded checks → findings produce flags → no feedback loop → policy never adapts. If they pivot or expand into a new category, you find out from a stakeholder complaint or a missed compliance event.</p>
-      </div>
-      <div class="contrast-box new">
-        <h5>NEW model — policy-first + evidence loop</h5>
-        <p>Merchant tells you what they sell at sign-up → assigned policies → scans run with policy-driven checks → findings produce evidence tags → coverage check runs after every scan → coverage gaps surface as suggested policies → analyst reviews → policies attach → merchant's policy stack <strong>auto-converges on what they actually do</strong>.</p>
-      </div>
+    <div class="note note-blue" style="margin-top:16px">
+      <strong>The merchant's policy stack is self-correcting.</strong> Even if a merchant doesn't update their profile when they add a new product category, the scans will find it and the coverage check will surface the gap. The system reduces dependence on merchant self-reporting for compliance accuracy.
     </div>
   </div>
 
-  <!-- SECTION 9 -->
+  <div class="divider"></div>
+
+  <!-- ⑨ OPEN QUESTIONS -->
   <div class="section">
-    <h2><span class="num">9</span> Open Questions ⚠️</h2>
-    <p class="lead">The decision-forcing items specific to the evidence loop. These need alignment before this ships.</p>
-    <div class="open-list">
-      <div class="open-item"><div class="q-text"><strong>Auto-attach vs suggest-only thresholds</strong>Where exactly does the line sit? Brian/Ronaldo decision. Default conservative posture: HIGH confidence still routes to 1-click analyst confirmation; nothing fully auto-attaches in v1.</div></div>
-      <div class="open-item"><div class="q-text"><strong>Evidence tag vocabulary governance</strong>Who owns the canonical tag list? How does it evolve when a new regulated category emerges? Is there a tag-add review process or is it dev-only?</div></div>
-      <div class="open-item"><div class="q-text"><strong>False positive challenge flow</strong>How does a merchant challenge a wrongly-suggested policy? "We don't actually sell kratom — that's a CBD product line called Kratom Kalm." Needs a flag-and-explain workflow into Q-Audit.</div></div>
-      <div class="open-item"><div class="q-text"><strong>Reverse case (detach) — keep or punt for v1?</strong>Risk-asymmetric vs the attach case. Probably ship attach first, validate, add detach later with longer evidence windows.</div></div>
-      <div class="open-item"><div class="q-text"><strong>Cross-merchant signal — long-tail policy discovery</strong>If many merchants in the same MCC consistently produce evidence of a regulated activity that no canonical policy covers yet, should the system suggest <em>creating a new policy</em>? Definitely v2+, but worth flagging now so the data model doesn't preclude it.</div></div>
-      <div class="open-item"><div class="q-text"><strong>SOC 2 audit trail</strong>Every coverage decision needs to be auditable: which evidence triggered it, who reviewed, what action was taken, when. Probably the same audit log as policy publication, scoped to coverage events.</div></div>
-      <div class="open-item"><div class="q-text"><strong>Performance &amp; cadence</strong>How often does the coverage check run? After every scan (real-time but expensive), batched nightly (cheap but slow), or per-merchant on a separate cadence? Default: run after every completed scan, batched at policy-library granularity.</div></div>
+    <div class="section-label red">⑨ Open Questions ⚠️</div>
+    <div class="section-title">What's not decided yet — specific to the evidence loop</div>
+
+    <div class="oq-item">
+      <div class="oq-head"><span class="oq-n">1.</span> Auto-attach vs. suggest-only thresholds — Brian / Ronaldo decision</div>
+      <div class="oq-body">The proposed tiers (HIGH = auto-attach, MEDIUM = suggest, LOW = log) are a starting point. These thresholds should be calibrated against real data and analyst feedback. The risk tolerance question: is a wrong auto-attach (attaching a policy to a merchant who doesn't need it) more costly than a wrong miss (failing to catch a coverage gap)?</div>
     </div>
+
+    <div class="oq-item">
+      <div class="oq-head"><span class="oq-n">2.</span> Evidence tag vocabulary governance — who owns the canonical tag list, how does it evolve?</div>
+      <div class="oq-body">New scan capabilities will produce new evidence types. Who decides when a new tag is added to the vocabulary? Who maps new tags to existing policy signatures, and who decides when a new tag warrants a new policy? This needs an owner and a lightweight change process.</div>
+    </div>
+
+    <div class="oq-item">
+      <div class="oq-head"><span class="oq-n">3.</span> False positive handling — how do merchants challenge a wrongly-suggested policy?</div>
+      <div class="oq-body">A merchant selling a product with "kratom" in the name as a colloquial ingredient reference (not actual kratom) may be flagged incorrectly. How do they challenge the suggestion? What's the analyst review process? What's the escalation path if the merchant disputes the evidence that triggered the suggestion?</div>
+    </div>
+
+    <div class="oq-item">
+      <div class="oq-head"><span class="oq-n">4.</span> Reverse case (auto-detach) — keep or punt for v1?</div>
+      <div class="oq-body">The recommend is suggest-only for policy removal, never auto-detach. But even suggest-only requires a 90-day evidence window and analyst review workflow. This may be a v2+ feature — the attach direction is more urgent and more valuable. Confirm scope for v1.</div>
+    </div>
+
+    <div class="oq-item">
+      <div class="oq-head"><span class="oq-n">5.</span> Cross-merchant signal — can many merchants' evidence suggest a new policy that doesn't exist yet?</div>
+      <div class="oq-body">If a significant number of merchants consistently produce evidence of a regulated activity with no matching canonical policy, that's a signal that a new policy should be created. This "long-tail discovery" capability is a v2+ idea — but worth designing the evidence data model to support it from the start.</div>
+    </div>
+
+    <div class="oq-item">
+      <div class="oq-head"><span class="oq-n">6.</span> SOC 2 audit trail — every coverage decision must be auditable</div>
+      <div class="oq-body">Which evidence tags triggered the suggestion, which scan run produced them, who reviewed the suggestion, what action was taken, and when — all of this needs to be captured in an immutable audit log. This affects the data model for coverage suggestions and must be designed before the feature ships.</div>
+    </div>
+
+    <div class="oq-item">
+      <div class="oq-head"><span class="oq-n">7.</span> Coverage check frequency — after every scan, or batched nightly?</div>
+      <div class="oq-body">Running the coverage check after every individual scan is the most responsive option but may be noisy (a single partial scan with one keyword hit doesn't justify a queue item). Batching per scan session (all scan types for a merchant, collected over a rolling 24h window) may produce better signal-to-noise. Per-merchant vs. platform-wide batch cadence is also a performance question.</div>
+    </div>
+
   </div>
 
-</div>
-
-<div class="footer">
-  Qredible mockup · QP-3647 Policy Evidence Loop · Companion to <a href="policy-editor.html">Policy Editor</a>, <a href="bulletin-authoring.html">Bulletin Authoring</a>, and <a href="policy-lifecycle.html">Policy Lifecycle</a> · 2026-04-13
 </div>
 
 </body>
