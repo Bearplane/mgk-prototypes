@@ -957,6 +957,45 @@
       });
       cards.forEach(function(card) { grid.appendChild(card); });
     });
+    reorderSections();
+  }
+
+  function reorderSections() {
+    var headers = Array.from(document.querySelectorAll('.section-header'));
+    if (headers.length === 0) return;
+    var parent = headers[0].parentElement;
+    if (!headers.every(function(h) { return h.parentElement === parent; })) return;
+
+    var pairs = headers.map(function(header) {
+      var content = header.nextElementSibling;
+      var cards = content ? Array.from(content.querySelectorAll('.proto-card')) : [];
+      var visibleDates = cards
+        .filter(function(c) { return !c.classList.contains('hidden') && !c.classList.contains('status-hidden'); })
+        .map(function(c) { return c.getAttribute('data-date') || ''; })
+        .filter(Boolean);
+      var date;
+      if (currentSort === 'newest') {
+        date = visibleDates.length ? visibleDates.reduce(function(a, b) { return a > b ? a : b; }) : '';
+      } else {
+        date = visibleDates.length ? visibleDates.reduce(function(a, b) { return a < b ? a : b; }) : '9999-12-31';
+      }
+      return { header: header, content: content, date: date };
+    });
+
+    pairs.sort(function(a, b) {
+      return currentSort === 'newest' ? b.date.localeCompare(a.date) : a.date.localeCompare(b.date);
+    });
+
+    var footer = parent.querySelector('footer');
+    pairs.forEach(function(pair) {
+      if (footer) {
+        parent.insertBefore(pair.header, footer);
+        parent.insertBefore(pair.content, footer);
+      } else {
+        parent.appendChild(pair.header);
+        parent.appendChild(pair.content);
+      }
+    });
   }
 
   function applyFilters() {
@@ -991,6 +1030,7 @@
       header.style.display = showSection ? '' : 'none';
       content.style.display = showSection ? '' : 'none';
     });
+    reorderSections();
   }
 
   function toggleSection(header) {
