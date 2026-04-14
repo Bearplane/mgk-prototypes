@@ -156,7 +156,7 @@ code,.mono{font-family:'IBM Plex Mono',monospace}
 
 <!-- POLICY-FIRST BANNER -->
 <div class="banner">
-  📜 <strong>POLICY-FIRST ARCHITECTURE — CLOSED-LOOP DETECTION — 2026-04-13</strong> — This mockup defines the feedback system that ties <strong>Q-ScanAI findings, product scans, COA results, license checks, payment rail detection, and MRI checks</strong> back to <code>policy_ids</code>. Every finding produces evidence tags; canonical policies declare expected evidence signatures; a coverage check runs after every scan to detect missing policies. Supersedes QP-3603 (attributes survive as a flat tagging vocabulary only).
+  📜 <strong>POLICY-FIRST — CLOSED-LOOP EVIDENCE DETECTION — 2026-04-13</strong> — This mockup defines the feedback system that ties <strong>Q-ScanAI findings, product scans, COA results, license checks, payment rail detection, and MRI checks</strong> back to active scan configurations. Every finding produces evidence tags; canonical policies declare expected evidence signatures; a coverage check runs after every scan to detect missing policies.
 </div>
 
 <!-- PAGE -->
@@ -228,7 +228,7 @@ code,.mono{font-family:'IBM Plex Mono',monospace}
           <span class="src-card-name">Q-ScanAI Website Findings</span>
           <span class="src-card-sub src-scan">Website</span>
         </div>
-        <div class="src-card-desc">Keyword detections, page-level violations, missing disclaimers, age-gate checks, prohibited-state shipping indicators. Runs on schedule or on demand against the merchant's live site.</div>
+        <div class="src-card-desc">Keyword detections, page-level violations, missing disclaimers, age-gate checks, prohibited-state shipping indicators. Runs on schedule or on demand against the merchant's live site. Produces <code>pl_compliance_finding</code> rows. Powered by Puppeteer (<code>WebCrawlerService</code>) + OpenAI <code>ComplianceAnalyzer</code> / <code>CustomComplianceAnalyzer</code>.</div>
         <div class="src-card-tags">
           <span class="tag">contains-kratom-keyword</span>
           <span class="tag">missing-disclaimer</span>
@@ -239,10 +239,10 @@ code,.mono{font-family:'IBM Plex Mono',monospace}
       <div class="src-card">
         <div class="src-card-head">
           <span class="src-card-icon">🔍</span>
-          <span class="src-card-name">Product Scans (Project Z / Zyte)</span>
+          <span class="src-card-name">Product Scans (Project Z — Zyte via ZyteClientService)</span>
           <span class="src-card-sub src-product">Catalog</span>
         </div>
-        <div class="src-card-desc">Product titles, descriptions, ingredient lists, health claims, and categories extracted from the merchant's catalog. Catches new product categories the merchant didn't disclose at onboarding.</div>
+        <div class="src-card-desc">Product titles, descriptions, ingredient lists, health claims, and categories extracted from the merchant's catalog. Catches new product categories the merchant didn't disclose at onboarding. Updates <code>pl_product</code> records. Runs cannabis detection + category auto-classification. Queues COA import if lab report URLs are found.</div>
         <div class="src-card-tags">
           <span class="tag">product-category-vape</span>
           <span class="tag">product-category-peptide</span>
@@ -253,10 +253,10 @@ code,.mono{font-family:'IBM Plex Mono',monospace}
       <div class="src-card">
         <div class="src-card-head">
           <span class="src-card-icon">🔍</span>
-          <span class="src-card-name">COA Results (Project Cambridge / Aluma)</span>
+          <span class="src-card-name">COA Results (Project Cambridge — Aluma via AlumaClientService)</span>
           <span class="src-card-sub src-coa">COA</span>
         </div>
-        <div class="src-card-desc">Analyte values, lab accreditation IDs, batch numbers, cannabinoid profiles. A COA showing unexpected analytes (Δ9-THC over limit, psilocybin, mitragynine) is strong evidence of a coverage gap.</div>
+        <div class="src-card-desc">Analyte values, lab accreditation IDs, batch numbers, cannabinoid profiles. A COA showing unexpected analytes (Δ9-THC over limit, psilocybin, mitragynine) is strong evidence of a coverage gap. Extracts analyte values into <code>vault_coa</code>. Three-phase pipeline: upload+enqueue → Aluma polling cron → export+disposition via <code>CoaExtractionExportService</code>.</div>
         <div class="src-card-tags">
           <span class="tag">analyte-delta9-thc-over-0.3pct</span>
           <span class="tag">analyte-psilocybin</span>
@@ -267,10 +267,10 @@ code,.mono{font-family:'IBM Plex Mono',monospace}
       <div class="src-card">
         <div class="src-card-head">
           <span class="src-card-icon">🔍</span>
-          <span class="src-card-name">License Scans (CannaSpyGlass)</span>
+          <span class="src-card-name">License Scans (CannaSpyGlass via LicenseScanningService)</span>
           <span class="src-card-sub src-license">License</span>
         </div>
-        <div class="src-card-desc">Active license types, issuing states, expiration dates, license categories. An active tobacco retailer license implies the merchant sells tobacco — even if they didn't select that category at sign-up.</div>
+        <div class="src-card-desc">Active license types, issuing states, expiration dates, license categories. An active tobacco retailer license implies the merchant sells tobacco — even if they didn't select that category at sign-up. Creates <code>pl_document</code> records of type License. Updates company address/state/phone from license records.</div>
         <div class="src-card-tags">
           <span class="tag">active-license-tobacco-state-tx</span>
           <span class="tag">license-type-cannabis-dispensary</span>
@@ -327,7 +327,7 @@ code,.mono{font-family:'IBM Plex Mono',monospace}
   <!-- ③ EVIDENCE TAGS VOCABULARY -->
   <div class="section">
     <div class="section-label green">③ Evidence Tags 🏷️</div>
-    <div class="section-title">The normalized vocabulary — surviving role of attributes (QP-3603)</div>
+    <div class="section-title">The normalized vocabulary — tags as the currency of policy evaluation</div>
 
     <div class="card" style="padding:0;overflow:hidden">
       <table class="etable">
@@ -399,7 +399,7 @@ code,.mono{font-family:'IBM Plex Mono',monospace}
     </div>
 
     <div class="note note-blue" style="margin-top:14px">
-      <strong>This is the surviving role of attributes (QP-3603).</strong> Attributes are not a separate admin surface — they're a fixed, extensible vocabulary of normalized facts. Each tag is consumed by policies in two ways: (a) by the policies a merchant <em>already has</em>, to evaluate compliance, and (b) by the coverage check, to detect <em>missing</em> policies. The tag vocabulary is owned by the platform, not configurable per-merchant.
+      <strong>Evidence tags are the currency of the coverage check.</strong> Tags are not a separate admin surface — they're a fixed, extensible vocabulary of normalized facts. Each tag is consumed by policies in two ways: (a) by the policies a merchant <em>already has</em>, to evaluate compliance, and (b) by the coverage check, to detect <em>missing</em> policies. The tag vocabulary is seeded from existing <code>plComplianceElementEntity.elementName</code> values — no new admin surface needed to bootstrap it.
     </div>
   </div>
 
@@ -439,6 +439,10 @@ code,.mono{font-family:'IBM Plex Mono',monospace}
       </div>
 
       <div>
+        <div class="note note-red" style="margin-bottom:14px">
+          <strong>⚠ Prerequisite fix required — disposition granularity bug.</strong><br/>
+          <code>CoaHelper.buildDisposition()</code> at <code>src/coa/coa.helper.ts:475</code> always assigns the generic <code>Disposition.VIOLATIVE</code> regardless of which rule fired. The granular values <code>VIOLATIVE_DELTA9_THC</code>, <code>VIOLATIVE_THCO</code>, and <code>VIOLATIVE_EXPIRED_COA</code> are defined in the enum but never written. The policy engine needs to distinguish which violation caused a VIOLATIVE disposition — this is a prerequisite fix before evidence tagging on COA findings works correctly.
+        </div>
         <div class="card" style="margin-bottom:14px">
           <div style="font-size:13px;font-weight:600;color:#1E3A5F;margin-bottom:10px">Example — policy signature declaration</div>
           <p style="font-size:12px;color:#475569;margin-bottom:10px">Each canonical policy declares the evidence tags that signal a merchant should be subject to it:</p>
@@ -460,6 +464,32 @@ code,.mono{font-family:'IBM Plex Mono',monospace}
         </div>
       </div>
 
+    </div>
+
+    <div class="card" style="margin-top:16px">
+      <div style="font-size:13px;font-weight:600;color:#1E3A5F;margin-bottom:14px">Real integration points — where policy-first hooks in</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:#64748B;text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px">Evidence tagging injection</div>
+          <div style="font-size:12px;color:#1E293B;line-height:1.7">
+            All Compliance Element findings are created in <code>ScanService.saveCustomComplianceResults()</code> at <code>src/scan/scan.service.ts:~677</code>. One <code>EvidenceTaggingService.tag()</code> call inserted before each <code>PlComplianceFindingEntity</code> save stamps normalized tags on every finding. Same injection point exists in <code>saveComplianceFindingResults()</code> for system findings (FDA, age verification, etc.).<br/><br/>
+            The Compliance Element <code>elementName</code> value is the natural tag vocabulary seed — no new admin surface needed to bootstrap the vocabulary.
+          </div>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:700;color:#64748B;text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px">Coverage check trigger</div>
+          <div style="font-size:12px;color:#1E293B;line-height:1.7">
+            <code>ScanService.scanUrl()</code> already emits end-of-scan events via <code>emitter.emit()</code> at <code>~line 611</code> (e.g., <code>EventConstant.START_TRANSCRIPTION_JOB_STATUS_CHECKING_CRON</code>). The same pattern fires a new <code>COVERAGE_CHECK</code> event that starts a new <code>ComplianceCoverageCheck.cron.ts</code> after every scan. No new queue or infrastructure — just another cron file in <code>src/scheduler/cron/</code>.<br/><br/>
+            COA validation rule lookup already at <code>resolveCoaValidationRule()</code> in <code>CoaExtractionExportService:~380</code> — single-line swap to <code>PolicyLookupService</code> call.
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:14px;padding-top:14px;border-top:1px solid #E2E8F0">
+        <div style="font-size:11px;font-weight:700;color:#64748B;text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px">Rules engine — dormant dependency</div>
+        <div style="font-size:12px;color:#1E293B;line-height:1.7">
+          <code>json-rules-engine</code> is declared in <code>RTQ-Admin-API/package.json</code> dependencies but has zero wiring in any service. Someone imported a full rules-engine library and never hooked it up. This is the cleanest path for the coverage check evaluator — wire policy doc rules to <code>json-rules-engine</code> without adding any new dependency.
+        </div>
+      </div>
     </div>
   </div>
 
