@@ -215,20 +215,8 @@ code,.mono{font-family:'IBM Plex Mono',monospace}
         </div>
 
         <div class="form-row">
-          <div class="form-label">Checklist items<span class="hint">Drag to reorder · Click to edit</span></div>
+          <div class="form-label">Checklist items<span class="hint">Non-COA requirements — drag to reorder</span></div>
           <div class="checklist-box">
-            <div class="checklist-row">
-              <span class="grip">⋮⋮</span>
-              <span class="key">coa.finished_product</span>
-              <span class="label">Finished Product COA</span>
-              <span class="pill pill-req">Required</span>
-            </div>
-            <div class="checklist-row">
-              <span class="grip">⋮⋮</span>
-              <span class="key">coa.bulk_material</span>
-              <span class="label">Bulk Material COA</span>
-              <span class="pill pill-cond">Conditional</span>
-            </div>
             <div class="checklist-row">
               <span class="grip">⋮⋮</span>
               <span class="key">license.state_cultivation</span>
@@ -250,26 +238,59 @@ code,.mono{font-family:'IBM Plex Mono',monospace}
             </div>
             <button class="btn-add">+ Add checklist item</button>
           </div>
+          <p style="font-size:11px;color:#64748B;margin-top:8px;line-height:1.5">Checklist items are generic policy constraints — licenses, attestations, and document-level rules — that become required/conditional items at onboarding and renewal. <strong>COA requirements are handled separately</strong> because they're enforced at the Product Classification level (see below), not as standalone checklist items.</p>
+        </div>
+
+        <div class="form-row">
+          <div class="form-label">Product Classification COA Rules<span class="hint">Drives <code class="mono" style="font-size:10px">pl_category.coa_requirement</code></span></div>
+          <div class="checklist-box">
+            <div class="checklist-row">
+              <span class="grip">⋮⋮</span>
+              <span class="label" style="flex:1"><strong>Finished Product</strong> <span style="color:#64748B;font-size:11px">· any <code class="mono">pl_category</code> with <code class="mono">type=FINISHED_PRODUCT</code></span></label>
+              <span class="pill pill-req">REQUIRED</span>
+            </div>
+            <div class="checklist-row">
+              <span class="grip">⋮⋮</span>
+              <span class="label" style="flex:1"><strong>Bulk Material</strong> <span style="color:#64748B;font-size:11px">· <code class="mono">type=BULK_MATERIAL</code>, applied only when <code class="mono">merchant.type == 'wholesaler'</code></span></label>
+              <span class="pill pill-cond">CONDITIONAL</span>
+            </div>
+            <div class="checklist-row">
+              <span class="grip">⋮⋮</span>
+              <span class="label" style="flex:1"><strong>Accessories / Apparel</strong> <span style="color:#64748B;font-size:11px">· <code class="mono">type=ACCESSORY</code>, no lab analysis applicable</span></label>
+              <span class="pill" style="background:#DCFCE7;color:#166534;font-size:10px;font-weight:600;padding:1px 7px;border-radius:10px">NOT_REQUIRED</span>
+            </div>
+            <button class="btn-add">+ Add classification rule</button>
+          </div>
+        </div>
+
+        <div class="annotation" style="background:#EFF6FF;border-left:3px solid #3B82F6;padding:12px 14px;margin-top:14px;font-size:12px;color:#1E3A5F;line-height:1.6">
+          <strong>🗄 Real data model — this isn't a new abstraction.</strong>
+          COA requirements already live on the existing <code class="mono" style="background:#DBEAFE;padding:1px 5px;border-radius:3px">pl_category</code> table (Product Classification) as the <code class="mono" style="background:#DBEAFE;padding:1px 5px;border-radius:3px">coa_requirement</code> enum column: <code class="mono">REQUIRED</code> / <code class="mono">CONDITIONAL</code> / <code class="mono">NOT_REQUIRED</code>. Each product's effective requirement is resolved via <code class="mono">pl_product_category</code> assignments, sorted by <code class="mono">priority</code>, in <code class="mono">ProductHelper.determineCOARequirement()</code>. The policy editor doesn't create a parallel concept — it <strong>sets the enum value on matching classification rows</strong> when the policy publishes. Admins can already edit this field directly in the Product Classification admin tile; policies are the programmatic way to set it in bulk across a merchant cohort.
         </div>
 
         <div class="annotation blue">
           <strong>Why this is one edit instead of three tickets —</strong>
-          Pre-pivot, adding a new checklist item meant (a) a new attribute row in the Regulatory Attributes table, (b) a rule definition in the Compliance Rules Engine, and (c) a code change to map it into the scanner. Now it is one line in the policy doc, versioned by the editor, and every downstream system (scanner, onboarding, MRI, reports) reads it from the same source.
+          Pre-pivot, adding a new compliance rule meant (a) a new attribute row in the Regulatory Attributes table, (b) a rule definition in the Compliance Rules Engine, and (c) a code change to map it into the scanner. Now it's one line in the policy doc, versioned by the editor, and every downstream system (scanner, onboarding, MRI, reports) reads it from the same source. For COA requirements specifically, the policy writes directly into the existing <code>pl_category.coa_requirement</code> field that the rest of the platform already consumes.
         </div>
 
         <!-- JSON preview -->
         <div class="json-panel">
           <div class="json-panel-header">
-            <span>Live JSON Preview — <code style="color:#93C5FD">hemp-cbd-v3.checklist</code></span>
+            <span>Live JSON Preview — <code style="color:#93C5FD">hemp-cbd-v3</code></span>
             <span class="tag">read-only</span>
           </div>
-<pre><span class="c">// Section 3 — checklist[]</span>
+<pre><span class="c">// Section 3 — checklist[] (non-COA requirements only)</span>
 <span class="k">"checklist"</span>: [
-  { <span class="k">"key"</span>: <span class="s">"coa.finished_product"</span>,   <span class="k">"label"</span>: <span class="s">"Finished Product COA"</span>,             <span class="k">"status"</span>: <span class="s">"required"</span> },
-  { <span class="k">"key"</span>: <span class="s">"coa.bulk_material"</span>,       <span class="k">"label"</span>: <span class="s">"Bulk Material COA"</span>,                 <span class="k">"status"</span>: <span class="s">"conditional"</span>, <span class="k">"when"</span>: <span class="s">"merchant.type == 'wholesaler'"</span> },
   { <span class="k">"key"</span>: <span class="s">"license.state_cultivation"</span>, <span class="k">"label"</span>: <span class="s">"State Cultivation License"</span>,         <span class="k">"status"</span>: <span class="s">"required"</span> },
   { <span class="k">"key"</span>: <span class="s">"attestation.farm_bill"</span>,    <span class="k">"label"</span>: <span class="s">"2018 Farm Bill Compliance Attestation"</span>, <span class="k">"status"</span>: <span class="s">"required"</span> },
   { <span class="k">"key"</span>: <span class="s">"product.thc_delta_limit"</span>,  <span class="k">"label"</span>: <span class="s">"Δ9-THC ≤ 0.3% dry weight"</span>,          <span class="k">"status"</span>: <span class="s">"required"</span>, <span class="k">"newIn"</span>: <span class="s">"v3"</span> }
+],
+
+<span class="c">// Section 4 — product_classification[] — drives pl_category.coa_requirement</span>
+<span class="k">"product_classification"</span>: [
+  { <span class="k">"category_type"</span>: <span class="s">"FINISHED_PRODUCT"</span>, <span class="k">"coa_requirement"</span>: <span class="s">"REQUIRED"</span> },
+  { <span class="k">"category_type"</span>: <span class="s">"BULK_MATERIAL"</span>,    <span class="k">"coa_requirement"</span>: <span class="s">"CONDITIONAL"</span>, <span class="k">"when"</span>: <span class="s">"merchant.type == 'wholesaler'"</span> },
+  { <span class="k">"category_type"</span>: <span class="s">"ACCESSORY"</span>,        <span class="k">"coa_requirement"</span>: <span class="s">"NOT_REQUIRED"</span> }
 ]</pre>
         </div>
       </div>
