@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MID Management — Qredible Ticket</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:#F1F5F9;color:#1E293B;font-size:14px;line-height:1.5}
+a{color:#3B82F6;text-decoration:none}a:hover{text-decoration:underline}
+code,.mono{font-family:'IBM Plex Mono',monospace}
+
+/* NAV */
+.topnav{background:#1E3A5F;padding:12px 24px;display:flex;align-items:center;gap:8px;font-size:13px;color:#94A3B8;position:sticky;top:0;z-index:100}
+.topnav a{color:#93C5FD}
+.topnav .sep{color:#475569}
+.topnav .ticket-badge{background:#3B82F6;color:#fff;font-size:11px;font-weight:600;padding:2px 8px;border-radius:4px;font-family:'IBM Plex Mono',monospace}
+.topnav .title{color:#fff;font-weight:600}
+
+/* BANNER */
+.banner{background:#EFF6FF;border-bottom:3px solid #3B82F6;padding:14px 24px;font-size:13px;color:#1E3A5F;line-height:1.55}
+.banner strong{color:#1E3A5F}
+.banner code{background:#DBEAFE;padding:1px 5px;border-radius:3px;font-size:12px}
+
+/* PAGE */
+.page{max-width:1200px;margin:0 auto;padding:32px 24px}
+.page-header{margin-bottom:28px}
+.page-header h1{font-size:22px;font-weight:700;color:#1E3A5F;margin-bottom:6px}
+.page-header p{color:#64748B;font-size:13px}
+
+/* SECTION */
+.section{margin-bottom:40px}
+.section-label{display:inline-flex;align-items:center;border-radius:20px;font-size:12px;font-weight:700;padding:4px 12px;text-transform:uppercase;letter-spacing:.4px;margin-bottom:12px;background:#EDE9FE;color:#4C1D95}
+.section-label.blue{background:#DBEAFE;color:#1E40AF}
+.section-label.green{background:#DCFCE7;color:#166534}
+.section-label.amber{background:#FEF3C7;color:#92400E}
+.section-label.red{background:#FEE2E2;color:#991B1B}
+.section-title{font-size:16px;font-weight:700;color:#1E3A5F;margin-bottom:16px}
+
+/* TWO-COL CARD */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.card{background:#fff;border:1px solid #E2E8F0;border-radius:10px;padding:20px 24px}
+.card h3{font-size:13px;font-weight:700;color:#1E3A5F;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #F1F5F9}
+.card ul{list-style:none;padding:0}
+.card ul li{font-size:12px;color:#475569;padding:4px 0;padding-left:14px;position:relative;line-height:1.55}
+.card ul li::before{content:"·";position:absolute;left:0;color:#3B82F6;font-weight:700}
+.card ul li code{background:#F1F5F9;padding:1px 5px;border-radius:3px;font-size:11px;color:#1E293B}
+
+/* TABLE */
+.table-toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.table-toolbar .btn-bulk{background:#3B82F6;color:#fff;border:none;padding:8px 18px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px}
+.table-toolbar .search-area{font-size:12px;color:#64748B}
+.tbl-wrap{background:#fff;border:1px solid #E2E8F0;border-radius:10px;overflow:hidden}
+table{width:100%;border-collapse:collapse}
+thead th{background:#F8FAFC;border-bottom:2px solid #E2E8F0;padding:10px 14px;font-size:11px;font-weight:700;color:#475569;text-align:left;text-transform:uppercase;letter-spacing:.4px}
+thead th.new-col{background:#EFF6FF;color:#1E40AF}
+tbody tr{border-bottom:1px solid #F1F5F9}
+tbody tr:last-child{border-bottom:none}
+tbody tr:nth-child(even){background:#FAFAFA}
+tbody td{padding:11px 14px;font-size:12px;color:#1E293B;vertical-align:middle}
+tbody td.new-col{background:#F8FBFF}
+.company-link{color:#3B82F6;font-weight:600;font-size:13px}
+.badge{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px}
+.badge-active{background:#DCFCE7;color:#166534}
+.badge-pending{background:#FEF3C7;color:#92400E}
+.mid-chip{background:#EFF6FF;border:1px solid #BFDBFE;color:#1E40AF;font-family:'IBM Plex Mono',monospace;font-size:10px;padding:2px 8px;border-radius:4px;font-weight:600;display:inline-block;margin:1px 2px}
+.mid-empty{border:1px dashed #CBD5E1;color:#94A3B8;padding:4px 10px;border-radius:6px;font-size:11px;display:inline-flex;align-items:center;gap:6px}
+.mid-empty a{font-size:11px;font-weight:600}
+.action-link{font-size:11px;color:#3B82F6;font-weight:600;white-space:nowrap}
+.checkbox-col{width:32px}
+input[type=checkbox]{accent-color:#3B82F6;width:14px;height:14px;cursor:pointer}
+
+/* MODAL */
+.modal-wrap{background:#fff;border:1px solid #E2E8F0;border-radius:10px;box-shadow:0 8px 32px rgba(0,0,0,.1);max-width:600px;overflow:hidden;margin:0 auto}
+.modal-header{background:#1E3A5F;color:#fff;padding:16px 20px;display:flex;align-items:center;justify-content:space-between}
+.modal-header h2{font-size:15px;font-weight:700}
+.modal-header .close-btn{background:rgba(255,255,255,.15);border:none;color:#fff;width:28px;height:28px;border-radius:6px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.modal-body{padding:20px}
+.modal-footer{padding:14px 20px;border-top:1px solid #E2E8F0;display:flex;justify-content:flex-end;gap:8px;background:#F8FAFC}
+.btn{padding:7px 16px;border-radius:6px;font-size:12px;font-weight:600;border:1px solid transparent;cursor:pointer}
+.btn-secondary{background:#fff;border-color:#E2E8F0;color:#475569}
+.btn-primary{background:#3B82F6;color:#fff;border-color:#3B82F6}
+.btn-danger{background:#EF4444;color:#fff}
+
+/* AMBER CALLOUT */
+.amber-callout{background:#FFFBEB;border:1px solid #FDE68A;border-left:4px solid #F59E0B;border-radius:8px;padding:12px 16px;font-size:12px;color:#78350F;margin-bottom:16px;line-height:1.6}
+.amber-callout code{background:#FEF3C7;padding:1px 5px;border-radius:3px;font-size:11px}
+
+/* MID LIST IN MODAL */
+.mid-row{display:grid;grid-template-columns:1fr auto auto auto;gap:10px;align-items:center;padding:10px 14px;background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;margin-bottom:8px}
+.mid-row-value{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;color:#1E40AF}
+.mid-row-label{font-size:11px;color:#64748B}
+.mid-row-date{font-size:10px;color:#94A3B8;font-family:'IBM Plex Mono',monospace}
+.btn-sm{padding:4px 10px;font-size:11px;font-weight:600;border-radius:5px;border:1px solid #E2E8F0;cursor:pointer;background:#fff;color:#475569}
+.btn-sm:hover{border-color:#3B82F6;color:#3B82F6}
+.btn-sm.danger:hover{border-color:#EF4444;color:#EF4444}
+
+/* ADD MID FORM */
+.add-mid-form{margin-top:16px;padding-top:16px;border-top:1px solid #E2E8F0}
+.add-mid-form h4{font-size:12px;font-weight:700;color:#1E3A5F;margin-bottom:10px}
+.form-row-inline{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:flex-end}
+.field-group label{display:block;font-size:11px;font-weight:600;color:#475569;margin-bottom:4px}
+.form-input{width:100%;border:1px solid #CBD5E1;border-radius:6px;padding:7px 11px;font-size:12px;font-family:'Plus Jakarta Sans',sans-serif;color:#1E293B;background:#fff;outline:none}
+.form-input:focus{border-color:#3B82F6;box-shadow:0 0 0 2px rgba(59,130,246,.12)}
+.form-input.mono{font-family:'IBM Plex Mono',monospace}
+
+/* WIZARD */
+.wizard-steps{display:flex;gap:0;margin-bottom:20px}
+.wizard-step{display:flex;align-items:center;gap:8px;font-size:12px;color:#94A3B8}
+.wizard-step .step-num{width:22px;height:22px;border-radius:50%;background:#E2E8F0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#64748B;flex-shrink:0}
+.wizard-step.done .step-num{background:#10B981;color:#fff}
+.wizard-step.active .step-num{background:#3B82F6;color:#fff}
+.wizard-step.active{color:#1E3A5F;font-weight:600}
+.wizard-step .label{font-size:11px}
+.wizard-arrow{color:#CBD5E1;padding:0 10px;font-size:14px}
+.wizard-panel{background:#fff;border:1px solid #E2E8F0;border-radius:10px;overflow:hidden}
+.wizard-panel-header{background:#F8FAFC;padding:12px 18px;font-size:13px;font-weight:700;color:#1E3A5F;border-bottom:1px solid #E2E8F0}
+.wizard-panel-body{padding:20px 24px}
+
+/* METHOD CARDS */
+.method-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.method-card{border:2px solid #E2E8F0;border-radius:10px;padding:18px;cursor:pointer;position:relative}
+.method-card.recommended{border-color:#3B82F6;background:#F8FBFF}
+.method-card h4{font-size:13px;font-weight:700;color:#1E3A5F;margin-bottom:6px}
+.method-card p{font-size:12px;color:#64748B;line-height:1.5}
+.rec-badge{position:absolute;top:-10px;right:12px;background:#3B82F6;color:#fff;font-size:9px;font-weight:700;padding:2px 8px;border-radius:10px;letter-spacing:.4px;text-transform:uppercase}
+
+/* CSV DROP ZONE */
+.drop-zone{border:2px dashed #BFDBFE;background:#F8FBFF;border-radius:10px;padding:32px;text-align:center;color:#64748B;font-size:13px}
+.drop-zone .icon{font-size:32px;margin-bottom:10px}
+.drop-zone strong{display:block;font-size:14px;color:#1E3A5F;margin-bottom:4px}
+.csv-preview{margin-top:16px;background:#0F172A;border-radius:8px;overflow:hidden}
+.csv-preview-header{background:#1E293B;padding:8px 14px;font-size:11px;color:#94A3B8;display:flex;align-items:center;justify-content:space-between}
+.csv-preview-header .tag{background:#334155;color:#93C5FD;padding:2px 8px;border-radius:10px;font-family:'IBM Plex Mono',monospace;font-size:10px}
+.csv-preview pre{padding:12px 16px;font-family:'IBM Plex Mono',monospace;font-size:11px;line-height:1.7;color:#E2E8F0}
+.csv-preview pre .k{color:#93C5FD}
+.csv-preview pre .s{color:#86EFAC}
+.csv-preview pre .c{color:#64748B}
+.validation-note{background:#F0FDF4;border:1px solid #BBF7D0;border-left:4px solid #10B981;border-radius:8px;padding:10px 14px;font-size:12px;color:#14532D;margin-top:14px;line-height:1.6}
+
+/* ARCHITECTURE CARD */
+.arch-card{background:#fff;border:1px solid #E2E8F0;border-radius:10px;padding:24px}
+.arch-card h3{font-size:14px;font-weight:700;color:#1E3A5F;margin-bottom:4px}
+.arch-card .arch-sub{font-size:12px;color:#64748B;margin-bottom:18px}
+.arch-row{display:grid;grid-template-columns:36px 1fr;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid #F1F5F9}
+.arch-row:last-child{border-bottom:none}
+.arch-icon{width:28px;height:28px;background:#EFF6FF;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px}
+.arch-text{font-size:12px;color:#475569;line-height:1.6}
+.arch-text strong{color:#1E293B;display:block;margin-bottom:2px}
+.arch-text code{background:#F1F5F9;padding:1px 5px;border-radius:3px;font-size:11px}
+
+/* OPEN QUESTIONS */
+.oq-card{background:#fff;border:1px solid #E2E8F0;border-left:4px solid #F59E0B;border-radius:8px;padding:12px 16px;margin-bottom:10px}
+.oq-card .oq-num{font-size:10px;font-weight:700;color:#F59E0B;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px}
+.oq-card p{font-size:12px;color:#475569;line-height:1.55}
+.oq-card code{background:#FEF3C7;padding:1px 5px;border-radius:3px;font-size:11px;color:#92400E}
+
+/* DIVIDER */
+.divider{height:1px;background:#E2E8F0;margin:40px 0}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="topnav">
+  <a href="https://jfloyd-qredible.netlify.app/">← All Mockups</a>
+  <span class="sep">/</span>
+  <span class="title">MID Management</span>
+  <span class="sep">/</span>
+  <span class="ticket-badge">QP-3700</span>
+</nav>
+
+<!-- BANNER -->
+<div class="banner">
+  <strong>MID Management — WeMonitor Surface (April 2026) —</strong>
+  MIDs are stored on <code>pl_company_dba.merchant_identifier</code> and set today via direct DB writes with no UI. This mockup proposes adding MID management to the WeMonitor surface with bulk assign, processor-scoping enforced via <code>pl_merchant_processor_client</code>, and CSV upload.
+</div>
+
+<!-- PAGE -->
+<div class="page">
+
+  <div class="page-header">
+    <h1>MID Management — Merchant Identifier Assignment</h1>
+    <p>WeMonitor surface addition: bulk-assign and manage Merchant IDs per company, scoped to the current processor's relationship.</p>
+  </div>
+
+  <!-- SECTION 1 -->
+  <div class="section">
+    <div class="section-label">① Context &amp; Today's State</div>
+    <div class="two-col">
+      <div class="card">
+        <h3>Today (no UI)</h3>
+        <ul>
+          <li>MIDs stored on <code>pl_company_dba.merchant_identifier</code></li>
+          <li>Set exclusively via direct DB writes — no application UI</li>
+          <li>No visibility into which merchants have MIDs assigned</li>
+          <li>Multiple DBAs per company = multiple MIDs possible per company</li>
+          <li>Field is effectively read-only from the application's perspective</li>
+          <li>No audit trail for MID create/update/delete</li>
+          <li>Bulk assignment requires manual DB scripts</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>After this feature</h3>
+        <ul>
+          <li>New MID column visible in the WeMonitor merchant table</li>
+          <li>Inline "Manage MIDs" action per merchant row</li>
+          <li>Bulk modal for add / edit / remove per company</li>
+          <li>CSV upload for batch MID assignment at scale</li>
+          <li>All MIDs scoped to the current processor — Processor A's MIDs are never visible to Processor B monitoring the same merchant</li>
+          <li>Scoping enforced via <code>pl_merchant_processor_client.pl_merchant_processor_company_id</code> filter</li>
+          <li>Optional label/note per MID (e.g. "Retail", "Wholesale")</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- SECTION 2 — TABLE -->
+  <div class="section">
+    <div class="section-label blue">② WeMonitor Table — MID Column</div>
+    <div class="section-title">WeMonitor — Monitored Merchants (WestTown Payments, LLC)</div>
+
+    <div class="table-toolbar">
+      <button class="btn-bulk">☰ Bulk Assign MIDs</button>
+      <span class="search-area">Showing 5 of 142 merchants — filtered: All</span>
+    </div>
+
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th class="checkbox-col"><input type="checkbox"></th>
+            <th>Company</th>
+            <th>Status</th>
+            <th>Last Scan</th>
+            <th class="new-col">MID(s) ★ New</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Row 1 -->
+          <tr>
+            <td><input type="checkbox"></td>
+            <td><a class="company-link" href="#">Rocky Seeds</a><br><span style="font-size:11px;color:#94A3B8">1 DBA</span></td>
+            <td><span class="badge badge-active">Active</span></td>
+            <td style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#64748B">2026-04-13</td>
+            <td class="new-col">
+              <span class="mid-chip">WSTTN-001842</span>
+            </td>
+            <td><a class="action-link" href="#">Manage MIDs</a></td>
+          </tr>
+          <!-- Row 2 -->
+          <tr>
+            <td><input type="checkbox"></td>
+            <td><a class="company-link" href="#">Bulk Marijuana Seeds</a><br><span style="font-size:11px;color:#94A3B8">2 DBAs</span></td>
+            <td><span class="badge badge-active">Active</span></td>
+            <td style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#64748B">2026-04-12</td>
+            <td class="new-col">
+              <span class="mid-chip">WSTTN-003391</span>
+              <span class="mid-chip">WSTTN-003392</span>
+              <br><span style="font-size:10px;color:#94A3B8;margin-top:3px;display:inline-block">retail · wholesale</span>
+            </td>
+            <td><a class="action-link" href="#">Manage MIDs</a></td>
+          </tr>
+          <!-- Row 3 -->
+          <tr>
+            <td><input type="checkbox"></td>
+            <td><a class="company-link" href="#">Crop King Seeds</a><br><span style="font-size:11px;color:#94A3B8">1 DBA</span></td>
+            <td><span class="badge badge-active">Active</span></td>
+            <td style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#64748B">2026-04-11</td>
+            <td class="new-col">
+              <span class="mid-chip">WSTTN-007204</span>
+            </td>
+            <td><a class="action-link" href="#">Manage MIDs</a></td>
+          </tr>
+          <!-- Row 4 -->
+          <tr>
+            <td><input type="checkbox"></td>
+            <td><a class="company-link" href="#">Hemp Depot</a><br><span style="font-size:11px;color:#94A3B8">3 DBAs</span></td>
+            <td><span class="badge badge-pending">Pending</span></td>
+            <td style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#64748B">2026-04-10</td>
+            <td class="new-col">
+              <span class="mid-chip">WSTTN-009811</span>
+              <span class="mid-chip">WSTTN-009812</span>
+              <span class="mid-chip">WSTTN-009813</span>
+            </td>
+            <td><a class="action-link" href="#">Manage MIDs</a></td>
+          </tr>
+          <!-- Row 5 — empty state -->
+          <tr>
+            <td><input type="checkbox"></td>
+            <td><a class="company-link" href="#">CBD North</a><br><span style="font-size:11px;color:#94A3B8">1 DBA</span></td>
+            <td><span class="badge badge-active">Active</span></td>
+            <td style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#64748B">2026-04-09</td>
+            <td class="new-col">
+              <span class="mid-empty">No MID &nbsp;<a href="#">+ Assign MID</a></span>
+            </td>
+            <td><a class="action-link" href="#">Manage MIDs</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- SECTION 3 — MODAL -->
+  <div class="section">
+    <div class="section-label" style="background:#F0FDF4;color:#166534">③ Manage MIDs Modal — Single Company</div>
+    <div class="section-title">Modal: "Manage Merchant IDs — Bulk Marijuana Seeds"</div>
+
+    <div class="modal-wrap">
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h2>Manage Merchant IDs — Bulk Marijuana Seeds</h2>
+        <button class="close-btn">✕</button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="modal-body">
+
+        <!-- Processor scoping callout -->
+        <div class="amber-callout">
+          🔒 <strong>MIDs you assign here are private to WestTown Payments, LLC.</strong> Other processors monitoring this merchant cannot see or access them. Backend enforces this via <code>pl_merchant_processor_client.pl_merchant_processor_company_id</code> filter.
+        </div>
+
+        <!-- Existing MIDs -->
+        <div style="font-size:11px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px">Assigned MIDs (2)</div>
+
+        <div class="mid-row">
+          <div>
+            <div class="mid-row-value">WSTTN-003391</div>
+            <div class="mid-row-label">Retail operations</div>
+          </div>
+          <div class="mid-row-date">Added 2026-02-14</div>
+          <button class="btn-sm">Edit</button>
+          <button class="btn-sm danger">Remove</button>
+        </div>
+
+        <div class="mid-row">
+          <div>
+            <div class="mid-row-value">WSTTN-003392</div>
+            <div class="mid-row-label">Wholesale / B2B</div>
+          </div>
+          <div class="mid-row-date">Added 2026-03-01</div>
+          <button class="btn-sm">Edit</button>
+          <button class="btn-sm danger">Remove</button>
+        </div>
+
+        <!-- Add MID form -->
+        <div class="add-mid-form">
+          <h4>Add a MID</h4>
+          <div class="form-row-inline">
+            <div class="field-group">
+              <label>MID Value</label>
+              <input class="form-input mono" type="text" placeholder="e.g. WSTTN-004500">
+            </div>
+            <div class="field-group">
+              <label>Label / Note <span style="font-weight:400;color:#94A3B8">(optional)</span></label>
+              <input class="form-input" type="text" placeholder="Retail, Wholesale, etc.">
+            </div>
+            <button class="btn btn-primary" style="white-space:nowrap">Add MID</button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="modal-footer">
+        <button class="btn btn-secondary">Cancel</button>
+        <button class="btn btn-primary">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- SECTION 4 — BATCH CSV UPLOAD -->
+  <div class="section">
+    <div class="section-label amber">④ Batch CSV Upload Flow</div>
+    <div class="section-title">Bulk MID Assignment — 3-Step Wizard</div>
+
+    <!-- Wizard Steps Indicator -->
+    <div class="wizard-steps">
+      <div class="wizard-step done">
+        <div class="step-num">✓</div>
+        <span class="label">Select companies</span>
+      </div>
+      <div class="wizard-arrow">→</div>
+      <div class="wizard-step done">
+        <div class="step-num">✓</div>
+        <span class="label">Choose method</span>
+      </div>
+      <div class="wizard-arrow">→</div>
+      <div class="wizard-step active">
+        <div class="step-num">3</div>
+        <span class="label">Upload CSV</span>
+      </div>
+    </div>
+
+    <!-- Step 1 callout (completed state) -->
+    <div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:8px;padding:10px 16px;font-size:12px;color:#14532D;margin-bottom:14px;display:flex;align-items:center;gap:8px">
+      <span>✓</span>
+      <span><strong>Step 1 complete:</strong> 3 companies selected — Bulk Marijuana Seeds, Hemp Depot, Rocky Seeds</span>
+    </div>
+
+    <!-- Step 2: Method choice (for reference) -->
+    <div class="method-cards" style="margin-bottom:16px">
+      <div class="method-card">
+        <h4>One-at-a-time assignment</h4>
+        <p>Paginated modal — assign MIDs to each selected company in sequence. Best for small batches of 5 or fewer merchants.</p>
+      </div>
+      <div class="method-card recommended">
+        <div class="rec-badge">Recommended</div>
+        <h4>CSV Upload</h4>
+        <p>Upload a formatted CSV to assign MIDs to many merchants at once. Best for large batches or initial data migration from your existing system.</p>
+      </div>
+    </div>
+
+    <!-- Step 3: CSV upload panel -->
+    <div class="wizard-panel">
+      <div class="wizard-panel-header">Step 3 — Upload CSV</div>
+      <div class="wizard-panel-body">
+
+        <div class="drop-zone">
+          <div class="icon">📂</div>
+          <strong>Drag and drop your CSV here, or click to browse</strong>
+          <span style="font-size:12px">Accepted: .csv — max 5,000 rows</span>
+        </div>
+
+        <div style="margin-top:16px;font-size:12px;font-weight:700;color:#475569;margin-bottom:8px">Expected CSV format:</div>
+        <div class="csv-preview">
+          <div class="csv-preview-header">
+            <span>mid_upload_template.csv</span>
+            <span class="tag">example</span>
+          </div>
+<pre><span class="c"># company_id,mid_value,label</span>
+<span class="s">12345</span>,<span class="k">WSTTN-001842</span>,<span class="s">Retail</span>
+<span class="s">12346</span>,<span class="k">WSTTN-003391</span>,<span class="s">Retail</span>
+<span class="s">12346</span>,<span class="k">WSTTN-003392</span>,<span class="s">Wholesale</span>
+<span class="s">12347</span>,<span class="k">WSTTN-009811</span>,<span class="s">Main</span></pre>
+        </div>
+
+        <div class="validation-note">
+          <strong>Validation behavior —</strong> Duplicate MIDs for the same company will be added as additional MIDs (not overwritten). If a MID value already exists for this company under your processor, the row is skipped with a warning shown in the upload summary.
+        </div>
+
+        <div style="margin-top:16px;display:flex;justify-content:flex-end;gap:8px">
+          <button class="btn btn-secondary">Back</button>
+          <button class="btn btn-primary" style="opacity:.45;cursor:not-allowed">Upload &amp; Assign →</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- SECTION 5 — ARCHITECTURE -->
+  <div class="section">
+    <div class="section-label" style="background:#F0FDF4;color:#166534">⑤ Processor Scoping — Architecture Note</div>
+    <div class="section-title">MID privacy is enforced at the data layer, not the UI layer</div>
+
+    <div class="arch-card">
+      <h3>How processor isolation works</h3>
+      <div class="arch-sub">Each processor's MIDs are siloed by the <code>pl_merchant_processor_client</code> join table — no UI suppression required.</div>
+
+      <div class="arch-row">
+        <div class="arch-icon">🔗</div>
+        <div class="arch-text">
+          <strong>pl_merchant_processor_client</strong>
+          Links a company to a specific processor. Every MID read/write operation filters by <code>pl_merchant_processor_company_id</code> — the FK that identifies which processor owns the relationship.
+        </div>
+      </div>
+
+      <div class="arch-row">
+        <div class="arch-icon">🔒</div>
+        <div class="arch-text">
+          <strong>Processor A cannot see Processor B's MIDs</strong>
+          Processor A can assign MID <code>MC-001</code> to a company. Processor B monitoring the same company can assign MID <code>VIS-887</code>. Neither processor's MIDs appear in the other's WeMonitor view — no extra row-level security policy needed beyond the existing FK filter.
+        </div>
+      </div>
+
+      <div class="arch-row">
+        <div class="arch-icon">📋</div>
+        <div class="arch-text">
+          <strong>WeMonitor table query</strong>
+          The table only fetches MIDs where <code>pl_merchant_processor_client.pl_merchant_processor_company_id = current_processor_id</code>. The MID column in the UI is therefore always processor-scoped by construction.
+        </div>
+      </div>
+
+      <div class="arch-row">
+        <div class="arch-icon">🗂️</div>
+        <div class="arch-text">
+          <strong>Multiple MIDs per company (multiple DBAs)</strong>
+          <code>pl_company_dba.merchant_identifier</code> is per-DBA. A company with 3 DBAs can have 3 different MIDs under a single processor, all shown as a chip list in the MID column.
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- SECTION 6 — OPEN QUESTIONS -->
+  <div class="section">
+    <div class="section-label red">⑥ Open Questions</div>
+
+    <div class="oq-card">
+      <div class="oq-num">Q1 — CSV format</div>
+      <p>Final column spec: just <code>company_id + mid_value + label</code>, or should we include <code>dba_id</code> for explicit DBA-level targeting? Without <code>dba_id</code>, the API would need to infer which DBA to write to (e.g. first/primary DBA). Recommend clarifying before implementation.</p>
+    </div>
+
+    <div class="oq-card">
+      <div class="oq-num">Q2 — Conflict handling</div>
+      <p>If a MID value already exists for a given (company × processor) pair, should the upload row be skipped with a warning, or should it overwrite the existing label/note? Current mockup proposes skip-with-warning as the safer default.</p>
+    </div>
+
+    <div class="oq-card">
+      <div class="oq-num">Q3 — Audit trail</div>
+      <p>Are MID create / update / delete events currently audited anywhere? Given the processor-scoping sensitivity and potential SOC 2 obligations, MID mutations should likely be logged to the same audit table used for other compliance data changes. Is that table <code>pl_audit_log</code> or a separate entity?</p>
+    </div>
+
+    <div class="oq-card">
+      <div class="oq-num">Q4 — Required vs. optional</div>
+      <p>Are MIDs required for all merchants under a processor, or optional per processor workflow? Some processors may want to block scan review until a MID is assigned; others may treat it as purely optional metadata. Should this be a per-processor configuration flag?</p>
+    </div>
+
+    <div class="oq-card">
+      <div class="oq-num">Q5 — MCC (Merchant Category Code)</div>
+      <p>No MCC field exists on any entity today. If MCC is eventually needed alongside MID (common in card-brand reporting), should it live in the same "Manage MIDs" modal as an additional field per-MID, or in a separate surface? Flagging early to avoid a schema refactor later.</p>
+    </div>
+
+  </div>
+
+</div>
+
+</body>
+</html>
