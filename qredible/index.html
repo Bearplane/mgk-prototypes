@@ -517,11 +517,29 @@
   ══════════════════════════════════════ -->
   <div class="section-header" data-section-cat="wemonitor" onclick="toggleSection(this)">
     <span class="section-title">We Monitor</span>
-    <span class="section-count">4 mockups</span>
+    <span class="section-count">5 mockups</span>
     <span class="section-chevron">&#9662;</span>
   </div>
   <div class="section-content" data-section-cat="wemonitor">
   <div class="card-grid">
+
+    <a data-status="todo" data-category="wemonitor" data-date="2026-04-14" href="qredible-tickets/mid-management.html" class="proto-card" data-keywords="mid merchant identifier pl_company_dba merchant_identifier pl_merchant_processor_client processor scoped bulk assign csv upload modal wemonitor mid management multiple mids per company qp-3700">
+      <div class="card-top">
+        <div class="card-icon">&#128273;</div>
+        <span class="card-ticket">QP-3700 &bull; NEW</span>
+      </div>
+      <div class="card-name">MID Management &#8212; Merchant Identifier Assignment</div>
+      <p class="card-desc">Bulk management UI for assigning merchant identifiers (MIDs) to monitored companies. MIDs are processor-specific (scoped via <code>pl_merchant_processor_client</code>) &#8212; a merchant's MID for one processor is never visible to another. New MID column in the WeMonitor table, bulk modal supporting multiple MIDs per company (multi-DBA via <code>pl_company_dba.merchant_identifier</code>), and batch CSV upload flow. Complements policy-first but tracked separately.</p>
+      <div class="card-pills">
+        <span class="pill pill-blue">WeMonitor</span>
+        <span class="pill pill-green">Net New</span>
+        <span class="pill pill-green">Mockup ready</span>
+      </div>
+      <div class="card-footer">
+        <span class="card-date">Apr 14, 2026</span>
+        <span class="card-cta">View mockup &#8594;</span>
+      </div>
+    </a>
 
     <a data-status="todo" data-category="wemonitor" data-date="2026-04-07" href="qredible-tickets/wemonitor-rework.html" class="proto-card" data-keywords="wemonitor rework pending companies bulk actions mri industry type company pair retailer underwriting queue qp-3648">
       <div class="card-top">
@@ -697,7 +715,7 @@
         <span class="card-ticket">QP-3647 &bull; POLICY-FIRST</span>
       </div>
       <div class="card-name">Policy Lifecycle &#8212; Customer Flow &amp; Chaining</div>
-      <p class="card-desc">End-to-end customer flow under policy-first: onboarding &#8594; policy assignment &#8594; day-in-the-life dashboard &#8594; scan trigger &#8594; policy updates &#8594; bulletins &#8594; overlay model. Includes the chained-policy stack pattern (lightweight, specific, composable) and an explicit list of open questions for Brian/Ronaldo alignment.</p>
+      <p class="card-desc">End-to-end flow: scan config created as a policy &#8594; assigned to merchant set &#8594; merchant compliance view &#8594; scan trigger &#8594; policy updates &#8594; bulletins &#8594; overlay model. Includes the chained-policy stack pattern, "Where This Lives" infrastructure table (existing hook points vs. net new), and a net-new merchant compliance surface proposal.</p>
       <div class="card-pills">
         <span class="pill pill-blue">Q-Audit</span>
         <span class="pill pill-green">Policy-First</span>
@@ -731,10 +749,10 @@
     <a data-status="todo" data-category="q-audit" data-date="2026-04-13" href="qredible-tickets/policy-editor.html" class="proto-card" data-keywords="policy editor versioned policy document hemp cbd v3 checklist merchant tiers product classification mri scoring enforcement rules policy-first architecture qp-3647 rescoped industry config engine">
       <div class="card-top">
         <div class="card-icon">&#128220;</div>
-        <span class="card-ticket">QP-3647 (rescoped)</span>
+        <span class="card-ticket">QP-3647</span>
       </div>
       <div class="card-name">Policy Editor &#8212; Versioned Policy Authoring</div>
-      <p class="card-desc">Policy-first rescope of QP-3647. Editor for versioned policy documents (tiers, checklist, product classification, MRI, payment rails, scoring, reports, enforcement). Supersedes QP-3603/QP-3604.</p>
+      <p class="card-desc">Author, publish, and version policy documents — the durable container for reusable scan configurations. Covers real enum vocabulary (TypeDisposition subtypes, CategoryCoaRequirement, ComplianceFindingSeverityEnum), violative drill-down enforcement pattern, COA requirement reality (PlCategoryEntity, not per-product), and QP-2943 fulfillment.</p>
       <div class="card-pills">
         <span class="pill pill-blue">Q-Audit</span>
         <span class="pill pill-blue">Admin</span>
