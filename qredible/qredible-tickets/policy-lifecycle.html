@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Policy Lifecycle — Qredible Ticket</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:#F1F5F9;color:#1E293B;font-size:14px;line-height:1.5}
+a{color:#3B82F6;text-decoration:none}a:hover{text-decoration:underline}
+code,.mono{font-family:'IBM Plex Mono',monospace}
+
+/* NAV */
+.topnav{background:#1E3A5F;padding:12px 24px;display:flex;align-items:center;gap:8px;font-size:13px;color:#94A3B8;position:sticky;top:0;z-index:10}
+.topnav a{color:#93C5FD}
+.topnav .sep{color:#475569}
+.topnav .ticket-badge{background:#3B82F6;color:#fff;font-size:11px;font-weight:600;padding:2px 8px;border-radius:4px;font-family:'IBM Plex Mono',monospace}
+.topnav .title{color:#fff;font-weight:600}
+.topnav .right{margin-left:auto;font-size:12px}
+
+/* POLICY-FIRST BANNER */
+.banner{background:#EFF6FF;border-bottom:3px solid #3B82F6;padding:14px 24px;font-size:13px;color:#1E3A5F;line-height:1.55}
+.banner strong{color:#1E3A5F}
+.banner code{background:#DBEAFE;padding:1px 5px;border-radius:3px;font-size:12px}
+
+/* PAGE */
+.page{max-width:1200px;margin:0 auto;padding:32px 24px}
+.page-header{margin-bottom:28px}
+.page-header h1{font-size:24px;font-weight:700;color:#1E3A5F;margin-bottom:6px}
+.page-header p{color:#64748B;font-size:13px;max-width:760px}
+
+/* SECTION */
+.section{margin-bottom:32px;background:#fff;border:1px solid #E2E8F0;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.05);padding:28px 32px}
+.section h2{display:flex;align-items:center;gap:12px;font-size:18px;font-weight:700;color:#1E3A5F;margin-bottom:6px}
+.section h2 .num{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:#3B82F6;color:#fff;font-size:14px;font-weight:700}
+.section .lead{color:#64748B;font-size:13px;margin-bottom:18px;max-width:820px}
+.section h3{font-size:14px;font-weight:700;color:#1E3A5F;margin:16px 0 10px}
+.section p{margin-bottom:10px;color:#334155}
+.section ul{margin:8px 0 12px 22px;color:#334155}
+.section li{margin-bottom:6px}
+
+/* PILLS */
+.pill{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;letter-spacing:.4px;text-transform:uppercase}
+.pill-locked{background:#E0F2FE;color:#075985}
+.pill-tbd{background:#FEF3C7;color:#92400E}
+.pill-punt{background:#FEE2E2;color:#991B1B}
+.pill-new{background:#DCFCE7;color:#166534}
+.pill-mono{font-family:'IBM Plex Mono',monospace;text-transform:none;letter-spacing:0}
+
+/* FLOW STEPS */
+.flow{display:flex;align-items:stretch;gap:0;margin:14px 0;flex-wrap:wrap}
+.step{flex:1;min-width:160px;background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;padding:12px 14px;position:relative;font-size:12px}
+.step .step-num{font-family:'IBM Plex Mono',monospace;font-size:10px;color:#3B82F6;font-weight:700;margin-bottom:4px}
+.step .step-title{font-weight:600;color:#1E3A5F;margin-bottom:4px;font-size:13px}
+.step .step-desc{color:#64748B;line-height:1.45}
+.flow .arrow{display:flex;align-items:center;color:#94A3B8;font-size:18px;padding:0 6px}
+
+/* MENTAL MODEL DIAGRAM */
+.mental{display:flex;align-items:center;justify-content:space-between;background:#F8FAFC;border:1px dashed #CBD5E1;border-radius:10px;padding:20px;margin-top:14px;gap:8px;flex-wrap:wrap}
+.mental-box{flex:1;min-width:180px;background:#fff;border:2px solid #3B82F6;border-radius:8px;padding:14px;text-align:center}
+.mental-box .icon{font-size:24px;margin-bottom:6px}
+.mental-box .title{font-weight:700;color:#1E3A5F;font-size:13px;margin-bottom:4px}
+.mental-box .desc{font-size:11px;color:#64748B;line-height:1.4}
+.mental-arrow{color:#3B82F6;font-size:22px;font-weight:700}
+
+/* WORKED EXAMPLE CALLOUT */
+.example{background:#FFFBEB;border-left:4px solid #F59E0B;border-radius:6px;padding:14px 18px;margin:14px 0;font-size:13px;color:#78350F}
+.example strong{color:#92400E}
+.example .label{display:inline-block;background:#F59E0B;color:#fff;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:2px 8px;border-radius:4px;margin-right:8px}
+
+/* CONFIRMATION CARD MOCK */
+.confirm-card{background:#fff;border:2px solid #3B82F6;border-radius:10px;padding:18px;margin-top:14px;max-width:560px}
+.confirm-card .ttl{font-size:13px;font-weight:700;color:#1E3A5F;margin-bottom:10px}
+.confirm-card .row{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;background:#F8FAFC;border-radius:6px;margin-bottom:6px}
+.confirm-card .row .pid{font-family:'IBM Plex Mono',monospace;font-size:11px;color:#3B82F6;font-weight:600;background:#DBEAFE;padding:2px 7px;border-radius:4px;white-space:nowrap}
+.confirm-card .row .meaning{font-size:12px;color:#475569;line-height:1.45}
+.confirm-card .actions{margin-top:12px;display:flex;gap:8px}
+.btn-primary{background:#3B82F6;color:#fff;border:none;padding:8px 16px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer}
+.btn-ghost{background:#fff;border:1px solid #CBD5E1;color:#475569;padding:8px 16px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer}
+
+/* DASHBOARD MOCK */
+.dash{display:grid;grid-template-columns:1fr 1.4fr 1fr;gap:14px;margin-top:14px}
+.dash-col{background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;padding:14px}
+.dash-col h4{font-size:11px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+.policy-card{background:#fff;border:1px solid #E2E8F0;border-radius:6px;padding:10px;margin-bottom:8px}
+.policy-card .pid{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;color:#1E3A5F;margin-bottom:3px}
+.policy-card .meta{font-size:10px;color:#64748B}
+.policy-card a{font-size:11px}
+.checklist-item{display:flex;align-items:flex-start;gap:8px;background:#fff;border:1px solid #E2E8F0;border-radius:6px;padding:9px 11px;margin-bottom:6px;font-size:11px}
+.checklist-item .src{font-family:'IBM Plex Mono',monospace;font-size:9px;color:#94A3B8;display:block;margin-top:2px}
+.status-pill{font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px;text-transform:uppercase;letter-spacing:.4px;white-space:nowrap}
+.status-done{background:#DCFCE7;color:#166534}
+.status-prog{background:#FEF3C7;color:#92400E}
+.status-need{background:#FEE2E2;color:#991B1B}
+.finding{background:#fff;border:1px solid #E2E8F0;border-left:3px solid #94A3B8;border-radius:6px;padding:9px 11px;margin-bottom:6px;font-size:11px}
+.finding.high{border-left-color:#EF4444}
+.finding.med{border-left-color:#F59E0B}
+.finding.low{border-left-color:#10B981}
+.finding .ttl{font-weight:600;color:#1E293B;margin-bottom:2px}
+.finding .meta{font-size:10px;color:#64748B}
+.dash-cap{margin-top:12px;font-size:12px;color:#64748B;font-style:italic}
+
+/* RUNTIME FLOW DIAGRAM */
+.runtime{background:#0F172A;border-radius:10px;padding:20px;margin-top:14px;color:#E2E8F0}
+.runtime h4{color:#93C5FD;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:14px}
+.runtime-flow{display:flex;align-items:center;gap:0;flex-wrap:wrap;font-size:11px}
+.rt-node{background:#1E293B;border:1px solid #334155;border-radius:6px;padding:9px 12px;font-family:'IBM Plex Mono',monospace;color:#BFDBFE}
+.runtime-flow .arrow{color:#475569;padding:0 6px}
+.side-callout{margin-top:14px;padding:12px 16px;background:#FFFBEB;border-left:3px solid #F59E0B;border-radius:6px;font-size:12px;color:#78350F}
+
+/* POLICY STACK */
+.stack-wrap{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:14px}
+.stack{background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;padding:14px}
+.stack h4{font-size:12px;font-weight:700;color:#1E3A5F;margin-bottom:10px}
+.stack-layer{background:#fff;border:1px solid #E2E8F0;border-radius:6px;padding:10px 12px;margin-bottom:6px}
+.stack-layer .pid{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;color:#3B82F6;margin-bottom:3px}
+.stack-layer .what{font-size:11px;color:#64748B;line-height:1.4}
+.stack-layer.l1{border-left:4px solid #10B981}
+.stack-layer.l2{border-left:4px solid #3B82F6}
+.stack-layer.l3{border-left:4px solid #8B5CF6}
+.stack-layer.l4{border-left:4px solid #EC4899}
+
+/* CONTRAST OLD/NEW */
+.contrast{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px}
+.contrast-box{border:1px solid #E2E8F0;border-radius:8px;padding:14px}
+.contrast-box.old{background:#FEF2F2;border-color:#FECACA}
+.contrast-box.new{background:#F0FDF4;border-color:#BBF7D0}
+.contrast-box h5{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+.contrast-box.old h5{color:#991B1B}
+.contrast-box.new h5{color:#166534}
+.contrast-box p{font-size:12px;color:#475569;margin:0}
+
+/* TBD CALLOUT */
+.tbd{background:#FEF3C7;border:1px solid #FCD34D;border-radius:8px;padding:14px 18px;margin:14px 0;font-size:13px;color:#78350F;display:flex;gap:10px;align-items:flex-start}
+.tbd .icon{font-size:18px;flex-shrink:0}
+.tbd strong{display:block;color:#92400E;margin-bottom:4px;font-size:12px;text-transform:uppercase;letter-spacing:.4px}
+
+/* PROPOSED BANNER (Section 7) */
+.proposed-banner{background:linear-gradient(90deg,#FEF3C7,#FED7AA);border:2px dashed #F59E0B;border-radius:10px;padding:14px 18px;margin-bottom:14px;font-size:13px;color:#78350F;font-weight:600;text-align:center}
+.proposed-banner strong{color:#92400E;letter-spacing:.5px}
+
+/* OVERLAY VIEW */
+.overlay-view{background:#fff;border:1px solid #E2E8F0;border-radius:8px;padding:14px;margin-top:12px}
+.overlay-view .merchant-pov{background:#EFF6FF;border:1px solid #BFDBFE;border-radius:6px;padding:12px;margin-top:10px;font-size:12px;color:#1E3A5F}
+
+/* NOTIFICATION CARD */
+.notif{background:#fff;border:2px solid #3B82F6;border-left:6px solid #3B82F6;border-radius:8px;padding:14px 16px;margin-top:12px;max-width:560px}
+.notif .row1{display:flex;align-items:center;gap:8px;font-weight:700;color:#1E3A5F;font-size:13px;margin-bottom:6px}
+.notif .body{font-size:12px;color:#475569;line-height:1.5;margin-bottom:10px}
+
+/* OPEN QUESTIONS */
+.open-list{counter-reset:oq}
+.open-item{display:flex;gap:14px;background:#FFFBEB;border:1px solid #FDE68A;border-radius:8px;padding:13px 16px;margin-bottom:8px}
+.open-item::before{counter-increment:oq;content:counter(oq);background:#F59E0B;color:#fff;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0}
+.open-item .q-text{font-size:12px;color:#78350F;line-height:1.5}
+.open-item .q-text strong{color:#92400E;display:block;margin-bottom:3px}
+
+/* FOOTER */
+.footer{text-align:center;padding:30px 24px;color:#94A3B8;font-size:12px;border-top:1px solid #E2E8F0;background:#fff;margin-top:24px}
+.footer a{color:#3B82F6}
+</style>
+</head>
+<body>
+
+<div class="topnav">
+  <span class="ticket-badge">QP-3647</span>
+  <span class="sep">·</span>
+  <span class="title">Policy Lifecycle — Customer Flow Under Policy-First</span>
+  <span class="right"><a href="../index.html">← All Mockups</a></span>
+</div>
+
+<div class="banner">
+  📜 <strong>POLICY-FIRST ARCHITECTURE</strong> — Versioned JSON policy documents replaced industry-keyed attribute tables on <strong>2026-04-12</strong>. <code>QP-3603</code> and <code>QP-3604</code> are SUPERSEDED. This page walks through the customer-facing lifecycle of a policy from onboarding through scans, updates, and proposed overlay exemptions.
+</div>
+
+<div class="page">
+
+  <div class="page-header">
+    <h1>Policy Lifecycle — Customer Flow &amp; Chaining</h1>
+    <p>How a policy gets onto a merchant, how it shapes what the platform does for that merchant, and how it changes over time. Companion to <a href="policy-editor.html">Policy Editor</a> (authoring), <a href="bulletin-authoring.html">Bulletin Authoring</a> (publishing), and <a href="policy-evidence-loop.html">Policy Evidence Loop</a> (closed-loop detection).</p>
+  </div>
+
+  <!-- SECTION 1 -->
+  <div class="section">
+    <h2><span class="num">1</span> The Mental Model</h2>
+    <p class="lead">A policy is a versioned JSON doc covering merchant tiers, checklist, product classification, MRI config, payment rails, scoring, reports, and enforcement. A merchant subscribes to one or more policies. Everything the platform does for that merchant — scans, scoring, dashboard, reports — is computed from their active policies. Merchants don't fork policies; per-merchant exemptions live as overlays on top of canonical ones.</p>
+    <div class="mental">
+      <div class="mental-box">
+        <div class="icon">📜</div>
+        <div class="title">Canonical Policies</div>
+        <div class="desc">Authored by Qredible compliance staff. Stable IDs. Versioned. Live in the policy library.</div>
+      </div>
+      <div class="mental-arrow">→</div>
+      <div class="mental-box">
+        <div class="icon">🏪</div>
+        <div class="title">Merchant Subscribes to N Policies</div>
+        <div class="desc">A `policy_ids` array on the company record. Many-to-many. Lightweight, narrow, composable.</div>
+      </div>
+      <div class="mental-arrow">→</div>
+      <div class="mental-box">
+        <div class="icon">⚙️</div>
+        <div class="title">Platform Computes Everything</div>
+        <div class="desc">Scans, scoring, dashboard, reports, enforcement — all derived from the active policy stack.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 2 -->
+  <div class="section">
+    <h2><span class="num">2</span> Onboarding → Policy Assignment</h2>
+    <p class="lead">First-impression UX. The merchant's first encounter with policy-first happens in the Q-Trust signup wizard.</p>
+    <div class="flow">
+      <div class="step"><div class="step-num">STEP 01</div><div class="step-title">Sign up in Q-Trust</div><div class="step-desc">Merchant creates an account and accepts the platform terms.</div></div>
+      <div class="arrow">→</div>
+      <div class="step"><div class="step-num">STEP 02</div><div class="step-title">Wizard intake</div><div class="step-desc">Business type, products, geographies, payment rails. Optional URL + catalog upload to seed.</div></div>
+      <div class="arrow">→</div>
+      <div class="step"><div class="step-num">STEP 03</div><div class="step-title">Auto-assign policy_ids</div><div class="step-desc">Intake answers map to canonical policies in the library.</div></div>
+      <div class="arrow">→</div>
+      <div class="step"><div class="step-num">STEP 04</div><div class="step-title">Plain-English confirmation</div><div class="step-desc">Merchant sees what they're subject to and what it means before any scan runs.</div></div>
+    </div>
+
+    <div class="example">
+      <span class="label">Worked Example</span>
+      <strong>Acme Hemp Co</strong> — Texas. Sells hemp gummies and CBD oil tinctures online. Accepts Visa, MasterCard, and ACH.
+      <br><br>Wizard answers map to assigned policies: <code>hemp-cbd-base-v3</code>, <code>state-overlay-tx-v2</code>, <code>payment-rails-mc-v1</code>.
+    </div>
+
+    <h3>Mock Confirmation Screen</h3>
+    <div class="confirm-card">
+      <div class="ttl">🏪 Welcome, Acme Hemp Co. Based on what you told us, you're subject to:</div>
+      <div class="row">
+        <span class="pid">hemp-cbd-base-v3</span>
+        <div class="meaning">Federal hemp/CBD compliance baseline. Your products need current COAs, your site needs FDA disclaimers, and you can't ship to prohibited states.</div>
+      </div>
+      <div class="row">
+        <span class="pid">state-overlay-tx-v2</span>
+        <div class="meaning">Texas-specific rules. You'll need an active TX hemp manufacturer registration and your bank statements are reviewed quarterly.</div>
+      </div>
+      <div class="row">
+        <span class="pid">payment-rails-mc-v1</span>
+        <div class="meaning">MasterCard merchant monitoring requirements. Adds extra scan checks and a quarterly findings report we can share with your processor.</div>
+      </div>
+      <div class="actions">
+        <button class="btn-primary">Got it, continue →</button>
+        <button class="btn-ghost">This doesn't look right →</button>
+      </div>
+    </div>
+
+    <div class="tbd"><div class="icon">❓</div><div><strong>TBD — Wizard → policy mapping rule</strong>Hand-coded category table (cheapest), configurable rule engine in admin (medium effort), or auto-detection from a free-text business description (most flexible, hardest)? Three different effort levels and three different governance models. Brian/Ronaldo decision.</div></div>
+  </div>
+
+  <!-- SECTION 3 -->
+  <div class="section">
+    <h2><span class="num">3</span> Day in the Life — Merchant Dashboard</h2>
+    <p class="lead">Once policies are assigned and the first scan has run, the merchant lives in a dashboard computed entirely from their active policies.</p>
+    <div class="dash">
+      <div class="dash-col">
+        <h4>Your Policies</h4>
+        <div class="policy-card">
+          <div class="pid">hemp-cbd-base-v3</div>
+          <div class="meta">✅ Active · v3 · 12 checklist items</div>
+          <a href="#">View what this requires →</a>
+        </div>
+        <div class="policy-card">
+          <div class="pid">state-overlay-tx-v2</div>
+          <div class="meta">✅ Active · v2 · 4 checklist items</div>
+          <a href="#">View what this requires →</a>
+        </div>
+        <div class="policy-card">
+          <div class="pid">payment-rails-mc-v1</div>
+          <div class="meta">✅ Active · v1 · 6 checklist items</div>
+          <a href="#">View what this requires →</a>
+        </div>
+      </div>
+      <div class="dash-col">
+        <h4>Unified Checklist</h4>
+        <div class="checklist-item"><div style="flex:1"><strong>Refresh COA for SKU SP-001</strong> <span class="src">from hemp-cbd-base-v3</span></div><span class="status-pill status-need">Action</span></div>
+        <div class="checklist-item"><div style="flex:1"><strong>Upload current ACH bank statement</strong> <span class="src">from state-overlay-tx-v2</span></div><span class="status-pill status-prog">In Progress</span></div>
+        <div class="checklist-item"><div style="flex:1"><strong>Add MasterCard merchant agreement</strong> <span class="src">from payment-rails-mc-v1</span></div><span class="status-pill status-need">Action</span></div>
+        <div class="checklist-item"><div style="flex:1"><strong>Confirm prohibited-states list</strong> <span class="src">from hemp-cbd-base-v3</span></div><span class="status-pill status-done">Complete</span></div>
+        <div class="checklist-item"><div style="flex:1"><strong>Verify TX hemp manufacturer license active</strong> <span class="src">from state-overlay-tx-v2</span></div><span class="status-pill status-done">Complete</span></div>
+        <div class="checklist-item"><div style="flex:1"><strong>Quarterly findings report ready</strong> <span class="src">from payment-rails-mc-v1</span></div><span class="status-pill status-prog">In Progress</span></div>
+      </div>
+      <div class="dash-col">
+        <h4>Recent Findings</h4>
+        <div class="finding high"><div class="ttl">Missing FDA disclaimer</div><div class="meta">/products/oil-tincture-1500mg · 2h ago</div></div>
+        <div class="finding med"><div class="ttl">COA expired (SKU SP-001)</div><div class="meta">Q-Vault · today</div></div>
+        <div class="finding low"><div class="ttl">Footer disclaimer needs link</div><div class="meta">/about · today</div></div>
+        <div class="finding low"><div class="ttl">Sanctions screen clear</div><div class="meta">MRI · yesterday</div></div>
+      </div>
+    </div>
+    <p class="dash-cap">Everything on this dashboard is computed from the merchant's active policies. The merchant never sees the policy JSON, only its consequences. Severity, checklist items, and which scans run are all driven by the policy stack — change the stack, the dashboard changes.</p>
+  </div>
+
+  <!-- SECTION 4 -->
+  <div class="section">
+    <h2><span class="num">4</span> Scan Trigger → Findings → Status</h2>
+    <p class="lead">The runtime data path. This is the half of the loop that <em>produces</em> evidence; the half that feeds it back into policy assignment lives on the <a href="policy-evidence-loop.html">Policy Evidence Loop</a> page.</p>
+    <div class="runtime">
+      <h4>Runtime Flow</h4>
+      <div class="runtime-flow">
+        <div class="rt-node">📜 Active Policies</div><span class="arrow">→</span>
+        <div class="rt-node">⚙️ Scan Config</div><span class="arrow">→</span>
+        <div class="rt-node">🔍 Scanner Runs</div><span class="arrow">→</span>
+        <div class="rt-node">📋 Raw Findings</div><span class="arrow">→</span>
+        <div class="rt-node">🏷️ Evidence Tags</div><span class="arrow">→</span>
+        <div class="rt-node">⚖️ Policy Eval</div><span class="arrow">→</span>
+        <div class="rt-node">🟢 Status Update</div>
+      </div>
+    </div>
+    <div class="side-callout">
+      ↗ <strong>This is half of a closed loop.</strong> The same evidence tags that drive scoring also drive coverage detection — the system can spot when a merchant produces evidence of a regulated activity that none of their assigned policies cover. See <a href="policy-evidence-loop.html"><strong>Policy Evidence Loop</strong></a>.
+    </div>
+  </div>
+
+  <!-- SECTION 5 -->
+  <div class="section">
+    <h2><span class="num">5</span> Policy Chaining 🧩 — Lightweight, Specific, Composable</h2>
+    <p class="lead">Instead of one giant policy per merchant, the model favors small, narrow, versioned policies that <strong>stack</strong>. A Texas hemp merchant who takes MasterCard chains three policies; a multi-category merchant might chain four or more.</p>
+
+    <div class="stack-wrap">
+      <div class="stack">
+        <h4>Example A — 3-layer stack (Acme Hemp Co)</h4>
+        <div class="stack-layer l1"><div class="pid">hemp-cbd-base-v3</div><div class="what">Federal hemp/CBD baseline. COA requirements, FDA disclaimers, prohibited-state shipping rules, total Δ9-THC ≤ 0.3% threshold.</div></div>
+        <div class="stack-layer l2"><div class="pid">state-overlay-tx-v2</div><div class="what">Texas-specific. TX hemp manufacturer registration check, quarterly bank statement review, TX-specific labeling rules.</div></div>
+        <div class="stack-layer l3"><div class="pid">payment-rails-mc-v1</div><div class="what">MasterCard processor requirements. Authenticated scanning, MID tracking, quarterly compliance report export.</div></div>
+      </div>
+      <div class="stack">
+        <h4>Example B — 4-layer stack (multi-category merchant)</h4>
+        <div class="stack-layer l1"><div class="pid">hemp-cbd-base-v3</div><div class="what">Federal hemp/CBD baseline.</div></div>
+        <div class="stack-layer l2"><div class="pid">kratom-watchlist-v1</div><div class="what">Adds 7-OH and mitragynine watchlist, state-by-state prohibition map, age gate enforcement.</div></div>
+        <div class="stack-layer l3"><div class="pid">peptides-research-only-v1</div><div class="what">Research-only disclaimer enforcement, B2B buyer verification, prohibited consumer rails (Venmo/Cashapp).</div></div>
+        <div class="stack-layer l4"><div class="pid">payment-rails-visa-v1</div><div class="what">Visa-specific monitoring requirements.</div></div>
+      </div>
+    </div>
+
+    <div class="contrast">
+      <div class="contrast-box old">
+        <h5>OLD model — industry-keyed</h5>
+        <p>One industry row → one giant rules table that conflated everything. Adding a state rule meant editing the master table and risking regressions everywhere.</p>
+      </div>
+      <div class="contrast-box new">
+        <h5>NEW model — chained policies</h5>
+        <p>Small, named, versioned, narrow policies. Each one has one job. A merchant's compliance posture is a thin stack of these, and changes are scoped to whichever layer needs to move.</p>
+      </div>
+    </div>
+
+    <div class="tbd"><div class="icon">❓</div><div><strong>TBD — Multi-policy resolution</strong>When policies overlap (base says "allow", state overlay says "block"), how do they combine? Strictest-wins, union, or per-section override declared inside the policy? Probably strictest-wins as default with explicit override hooks. Needs alignment.</div></div>
+  </div>
+
+  <!-- SECTION 6 -->
+  <div class="section">
+    <h2><span class="num">6</span> Policy Update Flow — Versioning + Bulletins</h2>
+    <p class="lead">Every policy is versioned. Edits go through Draft → Publish → Bulletin → Grace Period → Adapt-or-Exempt.</p>
+    <div class="flow">
+      <div class="step"><div class="step-num">STEP 01</div><div class="step-title">Edit in Policy Editor</div><div class="step-desc">Compliance staff opens <a href="policy-editor.html">policy-editor.html</a> and edits <code>hemp-cbd-base-v3</code>.</div></div>
+      <div class="arrow">→</div>
+      <div class="step"><div class="step-num">STEP 02</div><div class="step-title">Draft v4 created</div><div class="step-desc">Edits stage as v4 Draft. v3 stays Active until publish.</div></div>
+      <div class="arrow">→</div>
+      <div class="step"><div class="step-num">STEP 03</div><div class="step-title">v4 publishes</div><div class="step-desc">v3 archives. v4 becomes the active version. Affected merchant query runs.</div></div>
+      <div class="arrow">→</div>
+      <div class="step"><div class="step-num">STEP 04</div><div class="step-title">Bulletin fans out</div><div class="step-desc"><a href="bulletin-authoring.html">Bulletin Authoring</a> generates the merchant-facing notice with severity + grace period.</div></div>
+    </div>
+
+    <h3>Merchant View</h3>
+    <div class="notif">
+      <div class="row1">🔔 Your policy <code class="mono">hemp-cbd-base-v3</code> is updating to v4 on May 15, 2026</div>
+      <div class="body">New requirement: all CBD products must show batch number on label. You have 30 days to comply (<strong>grace period ends 2026-05-15</strong>). After that, products without a batch number on the label will be flagged Critical and may be excluded from your processor's monthly export.</div>
+      <button class="btn-primary">View affected products</button>
+      <button class="btn-ghost">Request exemption →</button>
+    </div>
+  </div>
+
+  <!-- SECTION 7 -->
+  <div class="section">
+    <h2><span class="num">7</span> Overlay Model</h2>
+    <div class="proposed-banner">⚠️ <strong>PROPOSED — STATUS: TBD.</strong> The Policy Editor mockup currently authors canonical policies only. There is no overlay surface yet. This section is the proposed shape.</div>
+    <p>Merchants legitimately need exceptions sometimes — a single SKU exempted because it's wholesale-only, a check disabled with justification, a custom keyword the scanner should ignore for them. Two ways to handle that:</p>
+    <ul>
+      <li><strong>Overlay (recommended):</strong> A thin per-merchant doc that layers on top of the base policies, listing exemptions and additions. Engine evaluates <code>policy + overlay</code>. Auditable, scoped, easy to roll back.</li>
+      <li><strong>Variant policies (avoid):</strong> Forking the canonical policy into a per-merchant variant. Cleanly versionable but explodes the policy library and detaches the merchant from upstream updates.</li>
+    </ul>
+
+    <div class="overlay-view">
+      <h3>Worked Example</h3>
+      <p><strong>Base policy</strong> <code>hemp-cbd-base-v3</code> says: "All CBD products must show batch number on label." <strong>Acme Hemp Co</strong> requests an exemption for a single wholesale-only SKU not sold to consumers. Analyst grants overlay <code>acme-hemp-co-overlays-v1</code> with one entry exempting that SKU from that check. Engine now evaluates <code>policy + overlay</code> for Acme.</p>
+      <div class="merchant-pov">
+        <strong>What Acme sees in their portal:</strong> "Exempted for you: 1 product (SKU SP-027). Reason: wholesale-only SKU, not sold to consumers. Granted by: J. Floyd, 2026-04-15. Expires: never."
+      </div>
+    </div>
+
+    <div class="tbd"><div class="icon">❓</div><div><strong>Open question — Overlays in v1?</strong>Do per-merchant exemptions exist as overlays on top of canonical policies, or do we punt on exemptions entirely in v1 and route them all to support tickets? Worth deciding before the first non-trivial customer goes live.</div></div>
+  </div>
+
+  <!-- SECTION 8 -->
+  <div class="section">
+    <h2><span class="num">8</span> Open Questions ⚠️</h2>
+    <p class="lead">The decision-forcing items for Brian + Ronaldo alignment. Each one shapes a different part of the customer flow.</p>
+    <div class="open-list">
+      <div class="open-item"><div class="q-text"><strong>Overlay model — keep or punt for v1?</strong>If kept, where does an analyst create one in Q-Audit, and what does the merchant see in their portal? If punted, do exemptions become support tickets or do they not exist at all?</div></div>
+      <div class="open-item"><div class="q-text"><strong>Wizard → policy mapping rule</strong>Hand-coded category table, configurable rule engine, or auto-detected from a free-text business description? Different effort levels, different governance models.</div></div>
+      <div class="open-item"><div class="q-text"><strong>Policy publication approval workflow</strong>Who can publish a policy version? Is there a Draft → Review → Publish gate? Where does sign-off get captured for SOC 2 audit?</div></div>
+      <div class="open-item"><div class="q-text"><strong>Multi-policy merchants — overlap resolution</strong>When base + state overlay conflict, how does scoring combine? Strictest-wins as default? Per-section override declared in the policy?</div></div>
+      <div class="open-item"><div class="q-text"><strong>Customer-visible policy explainer</strong>What does the merchant see in their portal about WHY they're subject to a given policy and WHAT it means? "Here's what hemp-cbd-base-v3 requires of you" needs a UX, not just a slug.</div></div>
+      <div class="open-item"><div class="q-text"><strong>Self-service flag for misclassification</strong>When a merchant disagrees with their assigned policies, is there a flow to flag/request reassignment, or does it route to support?</div></div>
+      <div class="open-item"><div class="q-text"><strong>Franchise inheritance</strong>Out of scope for v1 but the data model shouldn't preclude it. Franchise org carries policies, new locations inherit unless overridden. The Organization entity Q-Transact already added (for Shaman) is the natural anchor.</div></div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  Qredible mockup · QP-3647 Policy Lifecycle · Companion to <a href="policy-editor.html">Policy Editor</a>, <a href="bulletin-authoring.html">Bulletin Authoring</a>, and <a href="policy-evidence-loop.html">Policy Evidence Loop</a> · 2026-04-13
+</div>
+
+</body>
+</html>
