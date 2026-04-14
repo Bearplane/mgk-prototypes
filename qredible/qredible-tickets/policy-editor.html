@@ -125,6 +125,62 @@ code,.mono{font-family:'IBM Plex Mono',monospace}
 
 /* DIVIDER */
 .divider{height:1px;background:#E2E8F0;margin:40px 0}
+
+/* TWO-LAYER EDITOR */
+.layer-toggle{display:inline-flex;border:1px solid #E2E8F0;border-radius:8px;overflow:hidden;margin-bottom:18px}
+.layer-toggle-btn{padding:7px 18px;font-size:12px;font-weight:600;color:#64748B;background:#F8FAFC;border:none;cursor:pointer;border-right:1px solid #E2E8F0}
+.layer-toggle-btn:last-child{border-right:none}
+.layer-toggle-btn.active{background:#1E3A5F;color:#fff}
+.split-pane{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid #E2E8F0;border-radius:10px;overflow:hidden;min-height:340px}
+.narrative-pane{background:#FAFAFA;border-right:1px solid #E2E8F0;padding:20px 24px}
+.narrative-pane-header{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#94A3B8;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.narrative-pane-header .pane-tag{background:#F0F9FF;color:#0369A1;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:600;text-transform:none;letter-spacing:0}
+.narrative-body{font-size:13px;color:#1E293B;line-height:1.75}
+.narrative-body h4{font-size:13px;font-weight:700;color:#1E3A5F;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.narrative-body .n-section{margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid #E2E8F0}
+.narrative-body .n-section:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.narrative-body ul{padding-left:18px;font-size:12px;color:#475569;line-height:2}
+.narrative-body .n-badge{font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px;background:#DBEAFE;color:#1E40AF}
+.json-pane{background:#0F172A;padding:0}
+.json-pane-header{background:#1E293B;padding:10px 16px;font-size:11px;font-weight:700;color:#94A3B8;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #0F172A}
+.json-pane-header .pane-tag{background:#334155;color:#93C5FD;padding:2px 8px;border-radius:10px;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:400}
+.json-pane pre{padding:16px;font-family:'IBM Plex Mono',monospace;font-size:11px;line-height:1.7;color:#E2E8F0;overflow-x:auto}
+.json-pane pre .k{color:#93C5FD}.json-pane pre .s{color:#86EFAC}.json-pane pre .n{color:#FCA5A5}.json-pane pre .b{color:#C4B5FD}.json-pane pre .c{color:#64748B}
+
+/* CLAUDE DRAFTING ASSISTANT */
+.claude-chat{background:#fff;border:1px solid #E2E8F0;border-radius:10px;overflow:hidden}
+.claude-chat-header{background:#F8FAFC;border-bottom:1px solid #E2E8F0;padding:12px 18px;font-size:13px;font-weight:700;color:#1E3A5F;display:flex;align-items:center;gap:10px}
+.claude-chat-header .ai-badge{background:#7C3AED;color:#fff;font-size:10px;font-weight:700;padding:2px 9px;border-radius:10px}
+.claude-chat-header .model-tag{font-family:'IBM Plex Mono',monospace;font-size:10px;color:#94A3B8;font-weight:400}
+.chat-msg{padding:14px 18px;border-bottom:1px solid #F1F5F9}
+.chat-msg:last-child{border-bottom:none}
+.chat-msg .msg-role{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.chat-msg.user .msg-role{color:#1E40AF}
+.chat-msg.claude .msg-role{color:#7C3AED}
+.chat-msg .msg-body{font-size:13px;color:#1E293B;line-height:1.7}
+.chat-msg.user .msg-body{background:#EFF6FF;border-radius:6px;padding:10px 14px;font-style:italic}
+.chat-msg .msg-narrative{background:#F0FDF4;border-left:3px solid #16A34A;border-radius:0 6px 6px 0;padding:10px 14px;font-size:12px;color:#14532D;line-height:1.7;margin-bottom:10px}
+.chat-msg .msg-json{background:#0F172A;border-radius:6px;padding:12px 14px;font-family:'IBM Plex Mono',monospace;font-size:11px;line-height:1.65;color:#E2E8F0;overflow-x:auto}
+.chat-msg .msg-json .k{color:#93C5FD}.chat-msg .msg-json .s{color:#86EFAC}.chat-msg .msg-json .n{color:#FCA5A5}.chat-msg .msg-json .b{color:#C4B5FD}
+.chat-input-row{background:#F8FAFC;border-top:1px solid #E2E8F0;padding:12px 18px;display:flex;gap:10px;align-items:center}
+.chat-input-row input{flex:1;border:1px solid #CBD5E1;border-radius:6px;padding:8px 12px;font-size:12px;font-family:'Plus Jakarta Sans',sans-serif;color:#94A3B8;background:#fff}
+.chat-input-row .send-btn{background:#7C3AED;color:#fff;border:none;border-radius:6px;padding:8px 16px;font-size:12px;font-weight:600;cursor:pointer}
+
+/* GUIDED MODE */
+.mode-switcher{display:inline-flex;border:1px solid #E2E8F0;border-radius:8px;overflow:hidden;margin-bottom:18px}
+.mode-btn{padding:8px 20px;font-size:12px;font-weight:600;color:#64748B;background:#F8FAFC;border:none;cursor:pointer;border-right:1px solid #E2E8F0;display:flex;align-items:center;gap:6px}
+.mode-btn:last-child{border-right:none}
+.mode-btn.active{background:#1E3A5F;color:#fff}
+.guided-preview{background:#fff;border:1px solid #E2E8F0;border-radius:10px;overflow:hidden}
+.guided-header{background:#F8FAFC;border-bottom:1px solid #E2E8F0;padding:12px 18px;font-size:13px;font-weight:700;color:#1E3A5F}
+.guided-body{padding:20px 24px}
+.guided-step{display:flex;align-items:flex-start;gap:14px;margin-bottom:18px;padding-bottom:18px;border-bottom:1px solid #F1F5F9}
+.guided-step:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.guided-step-num{width:28px;height:28px;border-radius:50%;background:#EDE9FE;color:#4C1D95;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.guided-step-content{flex:1}
+.guided-step-title{font-size:13px;font-weight:700;color:#1E3A5F;margin-bottom:4px}
+.guided-step-desc{font-size:12px;color:#64748B;line-height:1.6}
+.guided-step select,.guided-step input{border:1px solid #CBD5E1;border-radius:6px;padding:6px 10px;font-size:12px;font-family:'Plus Jakarta Sans',sans-serif;color:#1E293B;background:#fff;margin-top:8px;width:100%;max-width:320px}
 </style>
 </head>
 <body>
@@ -544,6 +600,262 @@ code,.mono{font-family:'IBM Plex Mono',monospace}
         </div>
       </div>
 
+    </div>
+  </div>
+
+  <hr style="height:1px;background:#E2E8F0;border:none;margin:40px 0">
+
+  <!-- SECTION 8 — TWO-LAYER EDITOR -->
+  <div class="section">
+    <div class="section-label" style="background:#EDE9FE;color:#4C1D95">⑧ Two-Layer Editor — Narrative + JSON</div>
+    <div class="section-title">The same policy content in two representations — both authoritative</div>
+
+    <div class="layer-toggle">
+      <button class="layer-toggle-btn">Narrative view</button>
+      <button class="layer-toggle-btn">JSON view</button>
+      <button class="layer-toggle-btn active">Split pane</button>
+    </div>
+
+    <div class="split-pane">
+      <!-- Narrative pane -->
+      <div class="narrative-pane">
+        <div class="narrative-pane-header">
+          Narrative view
+          <span class="pane-tag">Human-readable · editable</span>
+        </div>
+        <div class="narrative-body">
+
+          <div class="n-section">
+            <h4>Checklist — Hemp / CBD Consumer Products 2026.v3 <span class="n-badge">Section 03</span></h4>
+            <p style="font-size:12px;color:#475569;margin-bottom:10px">All merchants assigned to this policy must provide the following at onboarding and at each renewal cycle.</p>
+            <ul>
+              <li><strong>Finished Product COA</strong> — Required for all merchants.</li>
+              <li><strong>Bulk Material COA</strong> — Conditional: required when <code style="font-size:11px">merchant.type == 'wholesaler'</code>.</li>
+              <li><strong>State Cultivation License</strong> — Required for all merchants.</li>
+              <li><strong>2018 Farm Bill Compliance Attestation</strong> — Required for all merchants.</li>
+              <li><strong>Δ9-THC ≤ 0.3% dry weight — document upload</strong> — Required for all merchants. <span style="font-size:9px;font-weight:700;background:#DBEAFE;color:#1E40AF;padding:1px 6px;border-radius:3px;">NEW IN v3</span></li>
+            </ul>
+          </div>
+
+          <div class="n-section">
+            <h4>Enforcement Rules <span class="n-badge">Section 09</span></h4>
+            <ul>
+              <li>Any <strong>Violative</strong> outcome → suspend processing until resolved.</li>
+              <li>THC-O &gt; 0% (<code style="font-size:11px">VIOLATIVE_THCO</code>) → immediate escalation + alert.</li>
+              <li>Δ9-THC &gt; 0.3% (<code style="font-size:11px">VIOLATIVE_DELTA9_THC</code>) → escalation + alert.</li>
+              <li>Expired COA (<code style="font-size:11px">VIOLATIVE_EXPIRED_COA</code>) → 14-day grace period notice.</li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- JSON pane -->
+      <div class="json-pane">
+        <div class="json-pane-header">
+          <span>JSON view — <code style="color:#93C5FD;font-size:10px">hemp-cbd-v3</code></span>
+          <span class="pane-tag">read-write · evaluator runs this</span>
+        </div>
+<pre><span class="c">// Section 3 — checklist[]</span>
+<span class="k">"checklist"</span>: [
+  { <span class="k">"key"</span>: <span class="s">"coa.finished_product"</span>,
+    <span class="k">"label"</span>: <span class="s">"Finished Product COA"</span>,
+    <span class="k">"status"</span>: <span class="s">"required"</span> },
+  { <span class="k">"key"</span>: <span class="s">"coa.bulk_material"</span>,
+    <span class="k">"label"</span>: <span class="s">"Bulk Material COA"</span>,
+    <span class="k">"status"</span>: <span class="s">"conditional"</span>,
+    <span class="k">"when"</span>: <span class="s">"merchant.type == 'wholesaler'"</span> },
+  { <span class="k">"key"</span>: <span class="s">"license.state_cultivation"</span>,
+    <span class="k">"label"</span>: <span class="s">"State Cultivation License"</span>,
+    <span class="k">"status"</span>: <span class="s">"required"</span> },
+  { <span class="k">"key"</span>: <span class="s">"attestation.farm_bill"</span>,
+    <span class="k">"label"</span>: <span class="s">"2018 Farm Bill Compliance Attestation"</span>,
+    <span class="k">"status"</span>: <span class="s">"required"</span> },
+  { <span class="k">"key"</span>: <span class="s">"product.thc_delta_limit"</span>,
+    <span class="k">"label"</span>: <span class="s">"Δ9-THC ≤ 0.3% dry weight"</span>,
+    <span class="k">"status"</span>: <span class="s">"required"</span>,
+    <span class="k">"newIn"</span>: <span class="s">"v3"</span> }
+],
+
+<span class="c">// Section 9 — enforcement_rules[]</span>
+<span class="k">"enforcement_rules"</span>: [
+  { <span class="k">"on"</span>: <span class="s">"VIOLATIVE"</span>,
+    <span class="k">"action"</span>: <span class="s">"suspend_processing"</span> },
+  { <span class="k">"on"</span>: <span class="s">"VIOLATIVE_THCO"</span>,
+    <span class="k">"action"</span>: <span class="s">"escalate_immediate"</span> },
+  { <span class="k">"on"</span>: <span class="s">"VIOLATIVE_DELTA9_THC"</span>,
+    <span class="k">"action"</span>: <span class="s">"escalate_immediate"</span> },
+  { <span class="k">"on"</span>: <span class="s">"VIOLATIVE_EXPIRED_COA"</span>,
+    <span class="k">"action"</span>: <span class="s">"grace_period"</span>,
+    <span class="k">"grace_days"</span>: <span class="n">14</span> }
+]</pre>
+      </div>
+    </div>
+
+    <div class="annotation blue" style="margin-top:14px">
+      <strong>Two-layer model:</strong> the narrative is what compliance staff read and edit; the JSON is what the evaluator runs. Both are authoritative — editing either updates the other. Google Docs integration available for external drafting sessions.
+    </div>
+  </div>
+
+  <hr style="height:1px;background:#E2E8F0;border:none;margin:40px 0">
+
+  <!-- SECTION 9 — CLAUDE DRAFTING ASSISTANT -->
+  <div class="section">
+    <div class="section-label" style="background:#EDE9FE;color:#4C1D95">⑨ Claude Drafting Assistant</div>
+    <div class="section-title">Inline AI drafting — narrative + JSON generated together from a single prompt</div>
+
+    <div class="claude-chat">
+      <div class="claude-chat-header">
+        <span>Ask Claude to draft this section</span>
+        <span class="ai-badge">AI</span>
+        <span class="model-tag">claude-sonnet-4-6</span>
+      </div>
+
+      <!-- User message -->
+      <div class="chat-msg user">
+        <div class="msg-role">Compliance Staff</div>
+        <div class="msg-body">Draft the THC limit checklist item for Texas</div>
+      </div>
+
+      <!-- Claude response -->
+      <div class="chat-msg claude">
+        <div class="msg-role">Claude</div>
+        <div class="msg-body">
+          <div class="msg-narrative">
+            <strong>Texas THC Compliance</strong> — All products must contain ≤ 0.3% total delta-9 THC by dry weight, in compliance with Texas Agriculture Code § 121.001 and USDA hemp regulations. Products exceeding this threshold are classified as Schedule I controlled substances under Texas law. COA required from an accredited laboratory within 90 days of harvest.
+          </div>
+          <div style="font-size:11px;color:#94A3B8;margin-bottom:6px;font-weight:600;">JSON equivalent:</div>
+          <div class="msg-json">{
+  <span class="k">"id"</span>: <span class="s">"product.thc_delta_tx"</span>,
+  <span class="k">"type"</span>: <span class="s">"threshold_check"</span>,
+  <span class="k">"label"</span>: <span class="s">"Texas THC Compliance"</span>,
+  <span class="k">"threshold"</span>: <span class="n">0.003</span>,
+  <span class="k">"field"</span>: <span class="s">"thc_delta9_pct"</span>,
+  <span class="k">"unit"</span>: <span class="s">"dry_weight"</span>,
+  <span class="k">"jurisdiction"</span>: <span class="s">"TX"</span>,
+  <span class="k">"coa_required"</span>: <span class="b">true</span>,
+  <span class="k">"coa_max_age_days"</span>: <span class="n">90</span>,
+  <span class="k">"severity"</span>: <span class="s">"S3"</span>
+}</div>
+          <div style="margin-top:12px;display:flex;gap:8px">
+            <button style="background:#10B981;color:#fff;border:none;border-radius:6px;padding:6px 14px;font-size:12px;font-weight:600;cursor:pointer">Accept both →</button>
+            <button style="background:#F1F5F9;color:#475569;border:1px solid #E2E8F0;border-radius:6px;padding:6px 14px;font-size:12px;font-weight:600;cursor:pointer">Edit narrative</button>
+            <button style="background:#F1F5F9;color:#475569;border:1px solid #E2E8F0;border-radius:6px;padding:6px 14px;font-size:12px;font-weight:600;cursor:pointer">Edit JSON</button>
+            <button style="background:#FEF2F2;color:#991B1B;border:1px solid #FECACA;border-radius:6px;padding:6px 14px;font-size:12px;font-weight:600;cursor:pointer">Discard</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Input row -->
+      <div class="chat-input-row">
+        <input type="text" placeholder="Ask Claude to draft a section, suggest a jurisdiction rule, or review for gaps…" disabled/>
+        <button class="send-btn">Send</button>
+      </div>
+    </div>
+
+    <div class="annotation" style="margin-top:14px">
+      Integrates with Google Docs for external drafting sessions. Claude uses the active policy's existing vocabulary and real enum values (<code style="font-size:11px">TypeDisposition</code>, <code style="font-size:11px">SeverityLevelEnum</code>) in its suggestions. Model: <code style="font-size:11px">claude-sonnet-4-6</code>.
+    </div>
+  </div>
+
+  <hr style="height:1px;background:#E2E8F0;border:none;margin:40px 0">
+
+  <!-- SECTION 10 — GUIDED MODE -->
+  <div class="section">
+    <div class="section-label" style="background:#F0FDF4;color:#166534">⑩ Guided Mode — Step-by-step Policy Authoring</div>
+    <div class="section-title">Switch between Expert JSON editing and the guided component builder</div>
+
+    <div class="mode-switcher">
+      <button class="mode-btn active">
+        <span>{ }</span> Expert JSON
+      </button>
+      <button class="mode-btn">
+        <span>🧭</span> Guided
+      </button>
+      <button class="mode-btn">
+        <span>👁</span> Preview
+      </button>
+    </div>
+
+    <div class="annotation blue" style="margin-bottom:18px">
+      <strong>Guided mode</strong> walks you through adding policy components step by step. Switch to Expert JSON to hand-edit the full policy document. <a href="policy-authoring-wizard.html" style="color:#1E40AF;font-weight:600">Open in Guided mode →</a>
+    </div>
+
+    <div class="guided-preview">
+      <div class="guided-header">Guided mode — Add a checklist item (step 2 of 4)</div>
+      <div class="guided-body">
+
+        <div class="guided-step">
+          <div class="guided-step-num">1</div>
+          <div class="guided-step-content">
+            <div class="guided-step-title">Choose component type</div>
+            <div class="guided-step-desc">What kind of compliance requirement is this?</div>
+            <select disabled>
+              <option selected>Threshold check (numeric limit)</option>
+              <option>Document upload (COA, license, attestation)</option>
+              <option>Jurisdiction rule</option>
+              <option>Conditional gate</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="guided-step" style="background:#F0FDF4;border-radius:8px;padding:14px;margin-bottom:18px">
+          <div class="guided-step-num" style="background:#DCFCE7;color:#166534">2</div>
+          <div class="guided-step-content">
+            <div class="guided-step-title" style="color:#166534">Configure the threshold</div>
+            <div class="guided-step-desc">Enter the field name, limit, unit, and jurisdiction. Claude will suggest values based on the active policy vocabulary.</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
+              <div>
+                <div style="font-size:11px;font-weight:600;color:#475569;margin-bottom:4px">Field</div>
+                <input type="text" value="thc_delta9_pct" style="border:1px solid #CBD5E1;border-radius:6px;padding:6px 10px;font-size:12px;font-family:'IBM Plex Mono',monospace;color:#1E293B;background:#fff;width:100%"/>
+              </div>
+              <div>
+                <div style="font-size:11px;font-weight:600;color:#475569;margin-bottom:4px">Threshold value</div>
+                <input type="text" value="0.003" style="border:1px solid #CBD5E1;border-radius:6px;padding:6px 10px;font-size:12px;font-family:'IBM Plex Mono',monospace;color:#1E293B;background:#fff;width:100%"/>
+              </div>
+              <div>
+                <div style="font-size:11px;font-weight:600;color:#475569;margin-bottom:4px">Unit</div>
+                <select style="border:1px solid #CBD5E1;border-radius:6px;padding:6px 10px;font-size:12px;color:#1E293B;background:#fff;width:100%">
+                  <option selected>dry_weight</option>
+                  <option>wet_weight</option>
+                  <option>volume_pct</option>
+                </select>
+              </div>
+              <div>
+                <div style="font-size:11px;font-weight:600;color:#475569;margin-bottom:4px">Severity</div>
+                <select style="border:1px solid #CBD5E1;border-radius:6px;padding:6px 10px;font-size:12px;color:#1E293B;background:#fff;width:100%">
+                  <option selected>S3 — High (ComplianceFindingSeverityEnum.HIGH)</option>
+                  <option>S2 — Medium</option>
+                  <option>S1 — Low</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="guided-step" style="opacity:.45">
+          <div class="guided-step-num">3</div>
+          <div class="guided-step-content">
+            <div class="guided-step-title">Set jurisdiction &amp; COA requirements</div>
+            <div class="guided-step-desc">Scope this rule to a specific state or make it federal. Configure COA age limit if applicable.</div>
+          </div>
+        </div>
+
+        <div class="guided-step" style="opacity:.45">
+          <div class="guided-step-num">4</div>
+          <div class="guided-step-content">
+            <div class="guided-step-title">Review &amp; insert</div>
+            <div class="guided-step-desc">Preview the generated narrative and JSON before inserting into the policy document.</div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:10px;margin-top:8px">
+          <button style="background:#1E3A5F;color:#fff;border:none;border-radius:6px;padding:8px 18px;font-size:12px;font-weight:600;cursor:pointer">Next step →</button>
+          <button style="background:#F1F5F9;color:#475569;border:1px solid #E2E8F0;border-radius:6px;padding:8px 18px;font-size:12px;font-weight:600;cursor:pointer">← Back</button>
+          <a href="policy-authoring-wizard.html" style="margin-left:auto;font-size:12px;color:#3B82F6;font-weight:600;display:flex;align-items:center;gap:4px">Open full wizard →</a>
+        </div>
+
+      </div>
     </div>
   </div>
 

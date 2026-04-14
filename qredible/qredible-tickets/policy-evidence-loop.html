@@ -809,6 +809,317 @@ code,.mono{font-family:'IBM Plex Mono',monospace}
 
   </div>
 
+  <div class="divider"></div>
+
+  <!-- ⑩ CLAUDE EVALUATOR LOOP -->
+  <div class="section">
+    <div class="section-label" style="background:#F3E8FF;color:#6B21A8">⑩ Claude Evaluator Loop 🤖</div>
+    <div class="section-title">How the Claude evaluator runs — net-new capability, not yet built</div>
+
+    <div class="card" style="margin-bottom:16px">
+      <div style="font-size:13px;font-weight:600;color:#1E3A5F;margin-bottom:16px">Evaluation loop architecture — input → model → output</div>
+
+      <!-- Horizontal flow cards -->
+      <div style="display:grid;grid-template-columns:1fr auto 1fr auto 1fr auto 1fr;gap:0;align-items:stretch">
+
+        <!-- Card 1: Policy system prompt -->
+        <div style="background:#EFF6FF;border:2px solid #BFDBFE;border-radius:10px;padding:14px 16px">
+          <div style="font-size:10px;font-weight:700;color:#1E40AF;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">① System Prompt</div>
+          <div style="font-size:12px;font-weight:700;color:#1E3A5F;margin-bottom:8px">Policy JSON</div>
+          <div style="font-size:11px;color:#475569;line-height:1.6">
+            Active policy JSON document — full versioned policy (~15k tokens)<br/><br/>
+            Contains:<br/>
+            · Policy ID + version slug<br/>
+            · Merchant tier assignment<br/>
+            · Evaluation date<br/>
+            · Rule set + thresholds<br/>
+            · Evidence signature declarations
+          </div>
+          <div style="margin-top:10px">
+            <span class="tag">hemp-cbd-base-v3</span>
+            <span class="tag">merchant-tier: standard</span>
+          </div>
+        </div>
+
+        <div class="arr" style="padding:0 10px;align-self:center;font-size:22px">→</div>
+
+        <!-- Card 2: Evidence user content -->
+        <div style="background:#F0FDF4;border:2px solid #BBF7D0;border-radius:10px;padding:14px 16px">
+          <div style="font-size:10px;font-weight:700;color:#166534;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">② User Content</div>
+          <div style="font-size:12px;font-weight:700;color:#1E3A5F;margin-bottom:8px">Evidence Package</div>
+          <div style="font-size:11px;color:#475569;line-height:1.6">
+            Structured JSON containing:<br/><br/>
+            · Checklist evidence (merchant submissions)<br/>
+            · Product catalog (Zyte scan results)<br/>
+            · COA results (Aluma extraction output)<br/>
+            · MRI results (OFAC, adverse media)<br/>
+            · License scan results (CannaSpyGlass)<br/>
+            · Payment rail detections
+          </div>
+          <div style="margin-top:10px">
+            <span class="tag">evidence-package-v1</span>
+          </div>
+        </div>
+
+        <div class="arr" style="padding:0 10px;align-self:center;font-size:22px">→</div>
+
+        <!-- Card 3: Claude evaluator (center/featured) -->
+        <div style="background:#1E3A5F;border:2px solid #1E3A5F;border-radius:10px;padding:16px;text-align:center;box-shadow:0 4px 16px rgba(30,58,95,.25)">
+          <div style="font-size:10px;font-weight:700;color:#93C5FD;text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px">③ Evaluator</div>
+          <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:6px">Claude Sonnet 4.6</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#94A3B8;margin-bottom:12px">claude-sonnet-4-6</div>
+          <div style="background:#0F172A;border-radius:6px;padding:8px 10px;margin-bottom:10px">
+            <div style="font-size:10px;font-weight:700;color:#F59E0B;margin-bottom:4px">Tool enabled</div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#86EFAC">web_search</div>
+          </div>
+          <div style="font-size:10px;color:#94A3B8;line-height:1.5">Model pinned — never <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#FCA5A5">latest</span></div>
+        </div>
+
+        <div class="arr" style="padding:0 10px;align-self:center;font-size:22px">→</div>
+
+        <!-- Card 4: Structured findings output -->
+        <div style="background:#FFFBEB;border:2px solid #FDE68A;border-radius:10px;padding:14px 16px">
+          <div style="font-size:10px;font-weight:700;color:#92400E;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">④ Output</div>
+          <div style="font-size:12px;font-weight:700;color:#1E3A5F;margin-bottom:8px">Structured Findings JSON</div>
+          <div style="font-size:11px;color:#475569;line-height:1.6">
+            Matches evidence schema.<br/>Each finding tagged with:<br/><br/>
+            · <code>CoaStatusEnum</code> value<br/>
+            · <code>TypeDisposition</code> value<br/>
+            · <code>SeverityLevelEnum</code> tag<br/>
+            · Source evidence reference<br/>
+            · Confidence score<br/>
+            · web_search citations (if used)
+          </div>
+          <div style="margin-top:10px">
+            <span class="tag">findings-v1</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- web_search invocations -->
+    <div class="card" style="margin-bottom:16px">
+      <div style="font-size:13px;font-weight:600;color:#1E3A5F;margin-bottom:4px">web_search tool invocations — what deterministic scanners can't do</div>
+      <p style="font-size:12px;color:#64748B;margin-bottom:16px">web_search is called selectively for signals that require real-time external lookup — license databases, FDA enforcement, regulatory news, and identity cross-reference.</p>
+
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px">
+
+        <!-- Invocation 1 -->
+        <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:10px;padding:14px 16px">
+          <div style="font-size:11px;font-weight:700;color:#4C1D95;text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px">Live License Status Check</div>
+          <div style="background:#0F172A;border-radius:6px;padding:10px 12px;margin-bottom:10px;font-family:'IBM Plex Mono',monospace;font-size:10px;line-height:1.65;color:#E2E8F0">
+            <span style="color:#64748B">// query used</span><br/>
+            <span style="color:#86EFAC">"Texas hemp retailer license status ACME HEMP CO license #TX-2024-HM-00412"</span><br/><br/>
+            <span style="color:#64748B">// source returned</span><br/>
+            <span style="color:#93C5FD">DSHS Texas hemp license registry — license active, expires 2026-08-01</span>
+          </div>
+          <div style="font-size:11px;color:#475569;line-height:1.55">State database lookups in real time. Validates license number, status, and expiry against the issuing authority's public registry.</div>
+          <div style="margin-top:8px"><span style="background:#EDE9FE;color:#4C1D95;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px">finding tag: license-active-tx-hemp-verified</span></div>
+        </div>
+
+        <!-- Invocation 2 -->
+        <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:10px;padding:14px 16px">
+          <div style="font-size:11px;font-weight:700;color:#991B1B;text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px">Current FDA Warning Letter Lookup</div>
+          <div style="background:#0F172A;border-radius:6px;padding:10px 12px;margin-bottom:10px;font-family:'IBM Plex Mono',monospace;font-size:10px;line-height:1.65;color:#E2E8F0">
+            <span style="color:#64748B">// query used</span><br/>
+            <span style="color:#86EFAC">"site:fda.gov warning letter CBD hemp \"Acme Hemp\" 2024 2025 2026"</span><br/><br/>
+            <span style="color:#64748B">// source returned</span><br/>
+            <span style="color:#93C5FD">FDA.gov — no warning letter found for this entity name</span>
+          </div>
+          <div style="font-size:11px;color:#475569;line-height:1.55">FDA warning letter search against FDA.gov. Catches recent enforcement actions that wouldn't appear in the MRI batch refresh window.</div>
+          <div style="margin-top:8px"><span style="background:#FEE2E2;color:#991B1B;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px">finding tag: fda-warning-letter-clear</span></div>
+        </div>
+
+        <!-- Invocation 3 -->
+        <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:10px;padding:14px 16px">
+          <div style="font-size:11px;font-weight:700;color:#075985;text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px">Real-Time Regulatory News Scan</div>
+          <div style="background:#0F172A;border-radius:6px;padding:10px 12px;margin-bottom:10px;font-family:'IBM Plex Mono',monospace;font-size:10px;line-height:1.65;color:#E2E8F0">
+            <span style="color:#64748B">// query used</span><br/>
+            <span style="color:#86EFAC">"kratom enforcement action DEA FDA 2026 site:dea.gov OR site:fda.gov"</span><br/><br/>
+            <span style="color:#64748B">// source returned</span><br/>
+            <span style="color:#93C5FD">DEA.gov — kratom scheduling notice published 2026-02-14 (rule change detected)</span>
+          </div>
+          <div style="font-size:11px;color:#475569;line-height:1.55">Recent enforcement actions and rule changes. Catches scheduling changes, new state bans, and enforcement escalations that affect active policies.</div>
+          <div style="margin-top:8px"><span style="background:#E0F2FE;color:#075985;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px">finding tag: regulatory-change-detected-kratom-dea-2026</span></div>
+        </div>
+
+        <!-- Invocation 4 -->
+        <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:10px;padding:14px 16px">
+          <div style="font-size:11px;font-weight:700;color:#134E4A;text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px">Domain / Business Verification Cross-Reference</div>
+          <div style="background:#0F172A;border-radius-6px:6px;border-radius:6px;padding:10px 12px;margin-bottom:10px;font-family:'IBM Plex Mono',monospace;font-size:10px;line-height:1.65;color:#E2E8F0">
+            <span style="color:#64748B">// query used</span><br/>
+            <span style="color:#86EFAC">"\"Acme Hemp Co\" OR \"acmehemp.com\" Texas business registration secretary of state"</span><br/><br/>
+            <span style="color:#64748B">// source returned</span><br/>
+            <span style="color:#93C5FD">TX SOS — entity "ACME HEMP HOLDINGS LLC" matches; DBA "Acme Hemp Co" confirmed</span>
+          </div>
+          <div style="font-size:11px;color:#475569;line-height:1.55">Business identity cross-reference against state registries and WHOIS. Resolves DBA mismatches and catches entity name discrepancies before they become MRI flags.</div>
+          <div style="margin-top:8px"><span style="background:#CCFBF1;color:#134E4A;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px">finding tag: business-identity-verified-tx-sos</span></div>
+        </div>
+
+      </div>
+
+      <div class="note note-amber" style="margin-top:14px">
+        <strong>web_search is called selectively</strong> — only when the evidence package doesn't contain a recent enough signal. Cached results from prior runs are reused within the refresh window defined by the MRI check's <code>refresh_frequency_hours</code>. The evaluator does not call web_search on every run for every merchant — it checks the evidence package age first and skips the live lookup if the cached result is still within the refresh window.
+      </div>
+
+      <div class="note note-blue" style="margin-top:10px">
+        <strong>This is the same Claude + web_search capability powering the Compliance Report generation flow (QP-3701).</strong> The evaluator loop IS the report engine. The compliance report is the structured findings JSON rendered for human consumption — the evaluator produces the underlying data that the report renders.
+      </div>
+    </div>
+
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ⑪ PER-COMPANY OVERRIDES -->
+  <div class="section">
+    <div class="section-label" style="background:#FEF3C7;color:#92400E">⑪ Per-Company Overrides 🏢</div>
+    <div class="section-title">Company-specific compliance overrides via <code style="font-size:14px">pl_company_config_param</code></div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+
+      <!-- Current state -->
+      <div class="card">
+        <div style="font-size:12px;font-weight:700;color:#92400E;text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px;background:#FEF3C7;padding:6px 12px;border-radius:6px;display:inline-block">Current State — what exists today</div>
+        <div style="font-size:12px;color:#475569;line-height:1.7;margin-top:10px">
+          <p style="margin-bottom:10px">The <code>pl_company_config_param</code> table already exists and already supports COA validation rule overrides. Fields currently managed via <strong>direct DB writes — no UI</strong>:</p>
+          <div style="background:#0F172A;border-radius:8px;padding:12px 14px;font-family:'IBM Plex Mono',monospace;font-size:10px;line-height:1.75;color:#E2E8F0;margin-bottom:10px">
+            <span style="color:#64748B">-- coa_validation_rule (JSON blob)</span><br/>
+            {<br/>
+            &nbsp;&nbsp;<span style="color:#93C5FD">"thc_delta9_threshold"</span>: <span style="color:#86EFAC">0.005</span>,<br/>
+            &nbsp;&nbsp;<span style="color:#93C5FD">"thco_threshold"</span>: <span style="color:#86EFAC">0.001</span>,<br/>
+            &nbsp;&nbsp;<span style="color:#93C5FD">"coa_expiration_days"</span>: <span style="color:#86EFAC">90</span>,<br/>
+            &nbsp;&nbsp;<span style="color:#93C5FD">"bypassCategoryRules"</span>: <span style="color:#FCA5A5">false</span><br/>
+            }
+          </div>
+          <p style="font-size:11px;color:#94A3B8">Current path: staff edits DB directly. No audit trail on who set it or why. No UI in Q-Audit. Override is applied in <code>resolveCoaValidationRule()</code> but is not injected into the evaluation context before the Claude call — that wiring doesn't exist yet.</p>
+        </div>
+      </div>
+
+      <!-- What changes -->
+      <div class="card">
+        <div style="font-size:12px;font-weight:700;color:#166534;text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px;background:#DCFCE7;padding:6px 12px;border-radius:6px;display:inline-block">What Changes with the Evaluator</div>
+        <div style="font-size:12px;color:#475569;line-height:1.7;margin-top:10px">
+          <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px">
+            <div style="width:24px;height:24px;border-radius:50%;background:#3B82F6;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">1</div>
+            <div>Company-specific override params are <strong>read at evaluation time</strong> and injected into the evaluation context <strong>before</strong> the Claude call — not applied as a post-processing filter.</div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px">
+            <div style="width:24px;height:24px;border-radius:50%;background:#3B82F6;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">2</div>
+            <div><strong>Staff override via Q-Audit UI</strong>: a staff member sets a company-specific threshold (e.g., "this merchant ships to Texas only — apply 0.3% instead of baseline 0.5%"). No direct DB writes required.</div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:10px">
+            <div style="width:24px;height:24px;border-radius:50%;background:#3B82F6;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">3</div>
+            <div>The evaluator sees: <strong>base policy + company override params → merges them → runs evaluation</strong>. The Claude call receives the merged context, so the model reasons from the correct thresholds from the first token.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Worked example -->
+    <div class="card" style="margin-bottom:16px">
+      <div style="font-size:13px;font-weight:600;color:#1E3A5F;margin-bottom:16px">Worked example — Bulk Marijuana Seeds Co., Texas operations</div>
+
+      <div style="display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:0;align-items:stretch;margin-bottom:16px">
+
+        <!-- Base policy -->
+        <div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:10px;padding:14px 16px">
+          <div style="font-size:10px;font-weight:700;color:#1E40AF;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">Base Policy</div>
+          <div style="font-size:12px;font-weight:700;color:#1E3A5F;margin-bottom:8px">hemp-cbd-base-v3</div>
+          <div style="background:#0F172A;border-radius:6px;padding:10px 12px;font-family:'IBM Plex Mono',monospace;font-size:10px;line-height:1.65;color:#E2E8F0">
+            thc_delta9_threshold:<br/>
+            &nbsp;&nbsp;<span style="color:#86EFAC">0.005</span> <span style="color:#64748B">(0.5%)</span><br/><br/>
+            coa_expiration_days:<br/>
+            &nbsp;&nbsp;<span style="color:#86EFAC">90</span><br/><br/>
+            bypassCategoryRules:<br/>
+            &nbsp;&nbsp;<span style="color:#FCA5A5">false</span>
+          </div>
+        </div>
+
+        <div class="arr" style="padding:0 12px;align-self:center;font-size:20px">+</div>
+
+        <!-- Company override -->
+        <div style="background:#FEF3C7;border:1px solid #FDE68A;border-radius:10px;padding:14px 16px">
+          <div style="font-size:10px;font-weight:700;color:#92400E;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">Company Override — <code style="text-transform:none">pl_company_config_param #12847</code></div>
+          <div style="font-size:12px;font-weight:700;color:#1E3A5F;margin-bottom:8px">Bulk Marijuana Seeds Co.</div>
+          <div style="background:#0F172A;border-radius:6px;padding:10px 12px;font-family:'IBM Plex Mono',monospace;font-size:10px;line-height:1.65;color:#E2E8F0">
+            <span style="color:#64748B">// Texas operations only</span><br/>
+            thc_delta9_threshold:<br/>
+            &nbsp;&nbsp;<span style="color:#F59E0B">0.003</span> <span style="color:#64748B">(0.3%)</span><br/><br/>
+            coa_expiration_days:<br/>
+            &nbsp;&nbsp;<span style="color:#F59E0B">60</span>
+          </div>
+          <div style="margin-top:8px;font-size:11px;color:#78350F;line-height:1.5">Set by staff: merchant ships to Texas only. TX applies stricter 0.3% limit. COA freshness tightened to 60 days per acquirer requirement.</div>
+        </div>
+
+        <div class="arr" style="padding:0 12px;align-self:center;font-size:20px">=</div>
+
+        <!-- Merged context -->
+        <div style="background:#F0FDF4;border:2px solid #16A34A;border-radius:10px;padding:14px 16px">
+          <div style="font-size:10px;font-weight:700;color:#166534;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">Merged Evaluation Context</div>
+          <div style="font-size:12px;font-weight:700;color:#1E3A5F;margin-bottom:8px">Passed to Claude call</div>
+          <div style="background:#0F172A;border-radius:6px;padding:10px 12px;font-family:'IBM Plex Mono',monospace;font-size:10px;line-height:1.65;color:#E2E8F0">
+            thc_delta9_threshold:<br/>
+            &nbsp;&nbsp;<span style="color:#86EFAC">0.003</span> <span style="color:#64748B">← override wins</span><br/><br/>
+            coa_expiration_days:<br/>
+            &nbsp;&nbsp;<span style="color:#86EFAC">60</span> <span style="color:#64748B">← override wins</span><br/><br/>
+            bypassCategoryRules:<br/>
+            &nbsp;&nbsp;<span style="color:#FCA5A5">false</span> <span style="color:#64748B">← from base</span><br/><br/>
+            thco_threshold:<br/>
+            &nbsp;&nbsp;<span style="color:#86EFAC">0.001</span> <span style="color:#64748B">← from base</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Audit trail entry -->
+      <div style="background:#0F172A;border-radius:10px;padding:14px 16px;font-family:'IBM Plex Mono',monospace;font-size:11px;line-height:1.75;color:#E2E8F0">
+        <span style="color:#F59E0B;font-weight:700">AUDIT TRAIL</span><br/>
+        <span style="color:#64748B">2026-04-10T14:32:11Z</span> · <span style="color:#86EFAC">override applied</span><br/>
+        &nbsp;&nbsp;pl_company_config_param <span style="color:#93C5FD">#12847</span><br/>
+        &nbsp;&nbsp;company: <span style="color:#93C5FD">Bulk Marijuana Seeds Co.</span> (id: 88421)<br/>
+        &nbsp;&nbsp;staff: <span style="color:#93C5FD">@jfloyd</span><br/>
+        &nbsp;&nbsp;base policy: <span style="color:#93C5FD">hemp-cbd-base-v3</span><br/>
+        &nbsp;&nbsp;fields overridden: <span style="color:#F59E0B">thc_delta9_threshold</span> 0.005→0.003 · <span style="color:#F59E0B">coa_expiration_days</span> 90→60<br/>
+        &nbsp;&nbsp;reason: <span style="color:#86EFAC">"TX-only shipping — state enforces 0.3% limit; acquirer tightened COA freshness requirement"</span>
+      </div>
+
+      <div class="note note-green" style="margin-top:14px">
+        <strong>Overrides land in the report's audit trail.</strong> The compliance report shows both the base policy value and the applied override, so reviewers know when a custom rule drove the outcome. A finding that would be COMPLIANT under the base policy but VIOLATIVE under the company override is flagged as <code>override-driven-violation</code> so analysts can distinguish override-caused outcomes from policy-caused outcomes.
+      </div>
+    </div>
+
+    <!-- Override merge flow -->
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;color:#1E3A5F;margin-bottom:12px">Override injection — where it hooks into the evaluator call</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
+        <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;padding:12px;text-align:center">
+          <div style="font-size:18px;margin-bottom:6px">📜</div>
+          <div style="font-size:11px;font-weight:700;color:#1E3A5F;margin-bottom:4px">Load base policy</div>
+          <div style="font-size:10px;color:#64748B">PolicyLookupService fetches active policy version for merchant's tier</div>
+        </div>
+        <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;padding:12px;text-align:center">
+          <div style="font-size:18px;margin-bottom:6px">🏢</div>
+          <div style="font-size:11px;font-weight:700;color:#1E3A5F;margin-bottom:4px">Read company params</div>
+          <div style="font-size:10px;color:#64748B"><code>pl_company_config_param</code> lookup by company ID — returns JSON override blob</div>
+        </div>
+        <div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:8px;padding:12px;text-align:center">
+          <div style="font-size:18px;margin-bottom:6px">🔀</div>
+          <div style="font-size:11px;font-weight:700;color:#1E3A5F;margin-bottom:4px">Merge context</div>
+          <div style="font-size:10px;color:#64748B">Override fields win over base policy fields. Unset override fields fall through to base. Logged to audit trail.</div>
+        </div>
+        <div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:8px;padding:12px;text-align:center">
+          <div style="font-size:18px;margin-bottom:6px">🤖</div>
+          <div style="font-size:11px;font-weight:700;color:#1E3A5F;margin-bottom:4px">Claude call</div>
+          <div style="font-size:10px;color:#64748B">Merged context injected as system prompt. Model reasons from correct thresholds from token 1.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
 </div>
 
 </body>
