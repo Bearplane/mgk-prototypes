@@ -148,7 +148,7 @@ code,.mono{font-family:'IBM Plex Mono',monospace}
 
 <!-- POLICY-FIRST BANNER -->
 <div class="banner">
-  📜 <strong>POLICY-FIRST ARCHITECTURE — supersedes industry-keyed model 2026-04-12</strong> — Defines the end-to-end customer flow: onboarding → policy assignment → day-in-the-life dashboard → scan trigger → policy updates → bulletins → overlay model. Lightweight chainable policies (<code>hemp-cbd-base-v3</code> + <code>state-overlay-tx-v2</code> + <code>payment-rails-mc-v1</code>) are the preferred shape. Open questions for Brian / Ronaldo alignment are flagged throughout.
+  📜 <strong>POLICY-FIRST SCAN CONFIGURATION — save reusable scan configs, apply across thousands of merchants</strong> — Defines the end-to-end flow: onboarding → policy assignment → merchant compliance view → scan trigger → policy updates → bulletins → overlay model. Lightweight chainable policies (<code>hemp-cbd-base-v3</code> + <code>state-overlay-tx-v2</code> + <code>payment-rails-mc-v1</code>) are the preferred shape. Open questions for Brian / Ronaldo alignment are flagged throughout.
 </div>
 
 <!-- PAGE -->
@@ -157,6 +157,21 @@ code,.mono{font-family:'IBM Plex Mono',monospace}
   <div class="page-header">
     <h1>Policy Lifecycle — Customer Flow Under Policy-First</h1>
     <p>End-to-end view: onboarding → policy assignment → merchant dashboard → scan trigger → policy chaining → updates → bulletins → overlay model. Includes the chained-policy stack pattern and explicit open questions for stakeholder alignment.</p>
+  </div>
+
+  <!-- ⓪ PRIMARY MOTIVATION -->
+  <div class="section" style="background:#EFF6FF;border:2px solid #3B82F6;border-radius:14px;padding:24px 28px;margin-bottom:40px">
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#1E40AF;margin-bottom:10px">Why policies exist</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start">
+      <div>
+        <div style="font-size:13px;font-weight:700;color:#1E3A5F;margin-bottom:6px">⚠ The problem</div>
+        <p style="font-size:13px;color:#1E293B;line-height:1.75">Processors manage <strong>thousands of merchants</strong>. The Q-ScanAI scan configuration modal configures one scan at a time — which Compliance Checks, Analyst Review Checks, Compliance Elements, custom keywords, and whitelist keywords apply — but there is <strong>no way to save that configuration and reuse it</strong>. Every scan is set up from scratch. At scale, this doesn't work.</p>
+      </div>
+      <div>
+        <div style="font-size:13px;font-weight:700;color:#166534;margin-bottom:6px">✅ The policy</div>
+        <p style="font-size:13px;color:#1E293B;line-height:1.75">A <strong>policy</strong> is a durable, versioned container for a reusable scan configuration. Create once, assign to a merchant set, and the policy supplies the scan config when scans run. Edit the policy and every future scan across assigned merchants picks up the change. COA governance, evidence loop, and merchant dashboard are all downstream uses of the same container.</p>
+      </div>
+    </div>
   </div>
 
   <!-- ① MENTAL MODEL -->
@@ -272,83 +287,90 @@ code,.mono{font-family:'IBM Plex Mono',monospace}
 
   <div class="divider"></div>
 
-  <!-- ③ DAY IN THE LIFE DASHBOARD -->
+  <!-- ③ DAY IN THE LIFE — MERCHANT VIEW -->
   <div class="section">
     <div class="section-label green">③ Day in the Life</div>
-    <div class="section-title">🏪 Merchant compliance dashboard under policy-first</div>
+    <div class="section-title">🏪 Merchant compliance view under policy-first</div>
 
-    <div class="card" style="padding:20px">
-      <div class="dash-grid">
+    <div class="note note-amber" style="margin-bottom:18px">
+      ⚠ <strong>NET NEW SURFACE — no merchant compliance dashboard exists today.</strong> <code style="font-size:11px">/qmonitor/client.tsx</code> is a stub that renders "Under Construction" with <code style="font-size:11px">roles: []</code>. <code style="font-size:11px">MERCHANT_PROCESSOR_CLIENT</code> users currently redirect to <code style="font-size:11px">/directory/company-detail</code>. This section proposes adding a compliance summary either as a new page under <code style="font-size:11px">/qmonitor/client</code> or as a section injected into <code style="font-size:11px">/directory/company-detail</code>. TBD with Brian which path.
+    </div>
 
-        <!-- Left: assigned policies -->
-        <div>
-          <div class="dash-col-title">📜 Assigned Policies</div>
-          <div class="dash-pc">
-            <div class="dash-pc-name">hemp-cbd-base-v3</div>
-            <div class="dash-pc-meta">✅ Active · v3 &nbsp;<span style="color:#10B981;font-size:10px;font-weight:600">Current</span></div>
-            <a class="dash-pc-link" href="#">View what this requires →</a>
+    <div class="proposed-wrap">
+      <div class="proposed-header">
+        🖼 PROPOSED UI — not yet built &nbsp;·&nbsp; Policy-first merchant compliance summary
+      </div>
+
+      <div class="card" style="padding:20px">
+        <div class="dash-grid">
+
+          <!-- Left: compliance health summary (NOT policy IDs) -->
+          <div>
+            <div class="dash-col-title">📊 Compliance Health</div>
+            <div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:10px;padding:16px 14px;margin-bottom:10px;text-align:center">
+              <div style="font-size:28px;font-weight:800;color:#166534;line-height:1">82</div>
+              <div style="font-size:10px;font-weight:700;color:#166534;text-transform:uppercase;letter-spacing:.4px;margin-top:2px">Compliance Score</div>
+            </div>
+            <div style="background:#FEF3C7;border:1px solid #FDE68A;border-radius:8px;padding:10px 12px;font-size:12px;color:#78350F;margin-bottom:6px">
+              <div style="font-weight:700;margin-bottom:2px">14 compliance items</div>
+              <div>6 critical &nbsp;·&nbsp; 5 in progress &nbsp;·&nbsp; 3 complete</div>
+            </div>
+            <div style="font-size:11px;color:#64748B;line-height:1.6;padding:0 4px">
+              Your compliance requirements are automatically determined based on your products, licenses, and business profile. No policy configuration needed on your end.
+            </div>
           </div>
-          <div class="dash-pc">
-            <div class="dash-pc-name">state-overlay-tx-v2</div>
-            <div class="dash-pc-meta">✅ Active · v2 &nbsp;<span style="color:#10B981;font-size:10px;font-weight:600">Current</span></div>
-            <a class="dash-pc-link" href="#">View what this requires →</a>
+
+          <!-- Center: unified checklist — no policy attribution shown to merchant -->
+          <div>
+            <div class="dash-col-title">Compliance Checklist</div>
+            <div class="cl-row">
+              <span class="pill pill-complete" style="font-size:9px;white-space:nowrap">Complete</span>
+              <div><span class="cl-text">Finished Product COA — all SKUs uploaded</span></div>
+            </div>
+            <div class="cl-row">
+              <span class="pill pill-complete" style="font-size:9px;white-space:nowrap">Complete</span>
+              <div><span class="cl-text">2018 Farm Bill Compliance Attestation on file</span></div>
+            </div>
+            <div class="cl-row">
+              <span class="pill pill-progress" style="font-size:9px;white-space:nowrap">In Progress</span>
+              <div><span class="cl-text">Refresh COA for SKU SP-001 — expires in 12 days</span></div>
+            </div>
+            <div class="cl-row">
+              <span class="pill pill-action" style="font-size:9px;white-space:nowrap">Action Needed</span>
+              <div><span class="cl-text">Upload current ACH bank statement</span></div>
+            </div>
+            <div class="cl-row">
+              <span class="pill pill-complete" style="font-size:9px;white-space:nowrap">Complete</span>
+              <div><span class="cl-text">Merchant agreement on file</span></div>
+            </div>
+            <p style="font-size:11px;color:#64748B;margin-top:10px;font-style:italic">Merchants see checklist items and status — not the policy names that sourced them. Policy attribution is internal only.</p>
           </div>
-          <div class="dash-pc">
-            <div class="dash-pc-name">payment-rails-mc-v1</div>
-            <div class="dash-pc-meta">✅ Active · v1 &nbsp;<span style="color:#10B981;font-size:10px;font-weight:600">Current</span></div>
-            <a class="dash-pc-link" href="#">View what this requires →</a>
+
+          <!-- Right: scan/finding feed — keep as-is -->
+          <div>
+            <div class="dash-col-title">🔍 Recent Findings</div>
+            <div class="find-row">
+              <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px"><span class="sev-ok">Pass</span> <span class="ft">Website scan — no violations</span></div>
+              <div class="fm">Q-ScanAI · 2h ago</div>
+            </div>
+            <div class="find-row">
+              <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px"><span class="sev-w">Warn</span> <span class="ft">Missing disclaimer on /shop page</span></div>
+              <div class="fm">Q-ScanAI · 1d ago</div>
+            </div>
+            <div class="find-row">
+              <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px"><span class="sev-ok">Pass</span> <span class="ft">All COAs verified — 12 SKUs</span></div>
+              <div class="fm">Project Cambridge · 3d ago</div>
+            </div>
+            <div class="find-row">
+              <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px"><span class="sev-n">Info</span> <span class="ft">TX Retailer license confirmed active</span></div>
+              <div class="fm">CannaSpyGlass · 5d ago</div>
+            </div>
           </div>
+
         </div>
-
-        <!-- Center: unified checklist -->
-        <div>
-          <div class="dash-col-title">Unified Checklist (all active policies)</div>
-          <div class="cl-row">
-            <span class="pill pill-complete" style="font-size:9px;white-space:nowrap">Complete</span>
-            <div><span class="cl-text">Finished Product COA — all SKUs uploaded</span><span class="cl-src">hemp-cbd-base-v3</span></div>
-          </div>
-          <div class="cl-row">
-            <span class="pill pill-complete" style="font-size:9px;white-space:nowrap">Complete</span>
-            <div><span class="cl-text">2018 Farm Bill Compliance Attestation on file</span><span class="cl-src">hemp-cbd-base-v3</span></div>
-          </div>
-          <div class="cl-row">
-            <span class="pill pill-progress" style="font-size:9px;white-space:nowrap">In Progress</span>
-            <div><span class="cl-text">Refresh COA for SKU SP-001 — expires in 12 days</span><span class="cl-src">hemp-cbd-base-v3</span></div>
-          </div>
-          <div class="cl-row">
-            <span class="pill pill-action" style="font-size:9px;white-space:nowrap">Action Needed</span>
-            <div><span class="cl-text">Upload current ACH bank statement</span><span class="cl-src">state-overlay-tx-v2</span></div>
-          </div>
-          <div class="cl-row">
-            <span class="pill pill-complete" style="font-size:9px;white-space:nowrap">Complete</span>
-            <div><span class="cl-text">MC merchant agreement on file</span><span class="cl-src">payment-rails-mc-v1</span></div>
-          </div>
-        </div>
-
-        <!-- Right: scan/finding feed -->
-        <div>
-          <div class="dash-col-title">🔍 Recent Findings</div>
-          <div class="find-row">
-            <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px"><span class="sev-ok">Pass</span> <span class="ft">Website scan — no violations</span></div>
-            <div class="fm">Q-ScanAI · 2h ago</div>
-          </div>
-          <div class="find-row">
-            <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px"><span class="sev-w">Warn</span> <span class="ft">Missing disclaimer on /shop page</span></div>
-            <div class="fm">Q-ScanAI · 1d ago</div>
-          </div>
-          <div class="find-row">
-            <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px"><span class="sev-ok">Pass</span> <span class="ft">All COAs verified — 12 SKUs</span></div>
-            <div class="fm">Project Cambridge · 3d ago</div>
-          </div>
-          <div class="find-row">
-            <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px"><span class="sev-n">Info</span> <span class="ft">TX Retailer license confirmed active</span></div>
-            <div class="fm">CannaSpyGlass · 5d ago</div>
-          </div>
-        </div>
-
       </div>
     </div>
-    <p class="caption">Everything on this dashboard is computed from the merchant's active policies. The merchant never sees policy JSON — only its consequences. Checklist items show which policy sourced them.</p>
+    <p class="caption">The merchant sees compliance consequences — not policy internals. No policy IDs, no policy names, no source attribution in the checklist. Policy structure is the processor's operational tooling, not the merchant's concern.</p>
   </div>
 
   <div class="divider"></div>
@@ -639,6 +661,96 @@ code,.mono{font-family:'IBM Plex Mono',monospace}
       <div class="oq-body">A franchisor merchant may want compliance policies to cascade to child merchant accounts. The current model supports this in principle (a franchise-level overlay or shared policy assignment), but it hasn't been designed. Flag as v2+ consideration when the merchant hierarchy model is built — just ensure the data model doesn't foreclose it.</div>
     </div>
 
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ⑨ WHERE THIS LIVES -->
+  <div class="section">
+    <div class="section-label slate">⑨ Where This Lives</div>
+    <div class="section-title">Existing infrastructure vs. net-new — a complete picture</div>
+
+    <div class="card" style="padding:0;overflow:hidden">
+      <table class="overlay-table">
+        <thead>
+          <tr>
+            <th>Concept</th>
+            <th>Lives at</th>
+            <th>Status today</th>
+            <th>Policy-first adds</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Scan config knobs</strong> (Compliance Elements, custom keywords, whitelist, checks)</td>
+            <td><code>POST /api/scan/scanUrl</code> payload · <code>pl_compliance_element</code> table</td>
+            <td style="color:#166534;font-weight:600">Exists · no save</td>
+            <td>Policy <code>scan_configuration</code> section saves and names these knobs; supplied at scan time</td>
+          </tr>
+          <tr>
+            <td><strong>COA validation rule</strong> (Δ9-THC threshold, THC-O threshold, expiration period)</td>
+            <td><code>pl_company_config_param.coa_validation_rule</code> · resolved at <code>CoaExtractionExportService:~380</code></td>
+            <td style="color:#F59E0B;font-weight:600">Exists · no UI · DB write only</td>
+            <td><code>PolicyLookupService</code> replaces direct config read; policy editor IS the QP-2943 UI</td>
+          </tr>
+          <tr>
+            <td><strong>COA requirement per classification</strong></td>
+            <td><code>PlCategoryEntity.coaRequirement</code> · <code>ProductHelper.determineCOARequirement()</code></td>
+            <td style="color:#166534;font-weight:600">Exists · UI in Q-Audit Product Classification tile</td>
+            <td>Policy rules drive values in the classification table; runtime unchanged</td>
+          </tr>
+          <tr>
+            <td><strong>Rules engine evaluator</strong></td>
+            <td><code>json-rules-engine</code> in <code>RTQ-Admin-API/package.json</code></td>
+            <td style="color:#F59E0B;font-weight:600">Declared · unused · zero wiring</td>
+            <td>Wire to <code>PolicyEvaluationService</code>; no new dependency</td>
+          </tr>
+          <tr>
+            <td><strong>Evidence tagging injection</strong></td>
+            <td><code>ScanService.saveCustomComplianceResults():~677</code></td>
+            <td style="color:#F59E0B;font-weight:600">Loop exists · no tagging call</td>
+            <td>One <code>EvidenceTaggingService.tag()</code> call before each <code>PlComplianceFindingEntity</code> save</td>
+          </tr>
+          <tr>
+            <td><strong>Coverage check trigger</strong></td>
+            <td><code>ScanService.scanUrl():~611</code> end-of-scan emitter</td>
+            <td style="color:#166534;font-weight:600">Pattern exists (other crons use it)</td>
+            <td>New <code>COVERAGE_CHECK</code> event → <code>ComplianceCoverageCheck.cron.ts</code>; no new queue</td>
+          </tr>
+          <tr>
+            <td><strong>Disposition granularity</strong> (VIOLATIVE subtypes)</td>
+            <td><code>CoaHelper.buildDisposition():475</code></td>
+            <td style="color:#EF4444;font-weight:600">Bug — always emits generic VIOLATIVE</td>
+            <td>Prerequisite fix: emit <code>VIOLATIVE_DELTA9_THC</code> / <code>VIOLATIVE_THCO</code> / <code>VIOLATIVE_EXPIRED_COA</code></td>
+          </tr>
+          <tr>
+            <td><strong>POLICY_VIOLATION status</strong></td>
+            <td><code>CoaUploadStatus</code> enum (17-value internal pipeline status)</td>
+            <td style="color:#F59E0B;font-weight:600">Enum value exists · never emitted</td>
+            <td>Start emitting when policy-driven rule fires; display layer collapse to be revisited</td>
+          </tr>
+          <tr>
+            <td><strong>Merchant compliance view</strong></td>
+            <td><code>/qmonitor/client.tsx</code> · <code>/directory/company-detail</code></td>
+            <td style="color:#EF4444;font-weight:600">Stub ("Under Construction") · MPC redirects to company-detail</td>
+            <td>Net new: either new page or compliance section injected into company-detail</td>
+          </tr>
+          <tr>
+            <td><strong>Policy admin tile</strong></td>
+            <td><code>RTQManagement.tsx</code> (existing tile grid at <code>/backend</code>)</td>
+            <td style="color:#EF4444;font-weight:600">Does not exist</td>
+            <td>13th fixed tile: lists policies, opens Policy Editor, version history</td>
+          </tr>
+          <tr>
+            <td><strong>futureAttributeSlug</strong> (COA field reference)</td>
+            <td><code>COALibraryFieldModel.futureAttributeSlug</code> · <code>DocRuleFieldItem</code></td>
+            <td style="color:#F59E0B;font-weight:600">Field exists · unused · explicitly forward-looking</td>
+            <td>Policy-referenced lab result fields target this slug</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="caption">Status legend: green = already works today · amber = hook exists, needs wiring or UI · red = net new build needed</p>
   </div>
 
 </div>
