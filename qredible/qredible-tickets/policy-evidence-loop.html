@@ -401,6 +401,60 @@ code,.mono{font-family:'IBM Plex Mono',monospace}
     <div class="note note-blue" style="margin-top:14px">
       <strong>Evidence tags are the currency of the coverage check.</strong> Tags are not a separate admin surface — they're a fixed, extensible vocabulary of normalized facts. Each tag is consumed by policies in two ways: (a) by the policies a merchant <em>already has</em>, to evaluate compliance, and (b) by the coverage check, to detect <em>missing</em> policies. The tag vocabulary is seeded from existing <code>plComplianceElementEntity.elementName</code> values — no new admin surface needed to bootstrap it.
     </div>
+
+    <!-- Real hook points — what evidence tags plug into today -->
+    <div class="card" style="margin-top:18px;padding:18px 20px;background:#F8FAFC;border:1px solid #CBD5E1">
+      <div style="font-size:13px;font-weight:700;color:#1E3A5F;margin-bottom:10px">🗄 Real hook points — what evidence tags map to today (not new abstractions)</div>
+      <p style="font-size:12px;color:#64748B;line-height:1.65;margin-bottom:14px">Evidence tags are the invented vocabulary. They map cleanly to existing enum values and entities already in the codebase — the policy-first system reuses those hooks rather than introducing parallel concepts. Every entry below was verified against the live UI + API + middleware codebases in the 2026-04-14 research reports.</p>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+
+        <div style="background:#fff;border:1px solid #E2E8F0;border-radius:6px;padding:12px 14px">
+          <div style="font-size:11px;font-weight:700;color:#1E40AF;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">COA outcomes (CoaStatusEnum)</div>
+          <p style="font-size:12px;color:#475569;line-height:1.6;margin-bottom:6px">When a COA evidence tag fails a policy check, the matching <code class="mono" style="font-size:11px">vault_coa</code> row's <code class="mono" style="font-size:11px">CoaStatusEnum</code> transitions to one of:</p>
+          <ul style="font-size:11px;color:#475569;margin:4px 0 0 16px;line-height:1.7">
+            <li><code class="mono">POLICY_VIOLATION</code> — policy-first already has a dedicated slot here (pre-plumbed by the team)</li>
+            <li><code class="mono">SYSTEM_FLAGGED</code> — automated violation with high confidence</li>
+            <li><code class="mono">AUDIT_RECOMMENDED</code> — needs analyst review</li>
+            <li><code class="mono">MANUAL_REVIEW</code> — edge case, escalated</li>
+          </ul>
+        </div>
+
+        <div style="background:#fff;border:1px solid #E2E8F0;border-radius:6px;padding:12px 14px">
+          <div style="font-size:11px;font-weight:700;color:#1E40AF;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">Analyte dispositions (TypeDisposition)</div>
+          <p style="font-size:12px;color:#475569;line-height:1.6;margin-bottom:6px">Violation subtypes on a COA are already enumerated:</p>
+          <ul style="font-size:11px;color:#475569;margin:4px 0 0 16px;line-height:1.7">
+            <li><code class="mono">VIOLATIVE_DELTA9_THC</code> — &gt; 0.3%</li>
+            <li><code class="mono">VIOLATIVE_THCO</code> — any THC-O presence</li>
+            <li><code class="mono">VIOLATIVE_EXPIRED_COA</code> — renewal gap</li>
+            <li><code class="mono">VIOLATIVE</code> — generic parent, used as filter</li>
+          </ul>
+          <p style="font-size:11px;color:#64748B;margin-top:6px;font-style:italic">Policies reference these subtypes directly — no new disposition taxonomy needed.</p>
+        </div>
+
+        <div style="background:#fff;border:1px solid #E2E8F0;border-radius:6px;padding:12px 14px">
+          <div style="font-size:11px;font-weight:700;color:#1E40AF;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">Finding severity (SeverityLevelEnum)</div>
+          <p style="font-size:12px;color:#475569;line-height:1.6;margin-bottom:6px">Finding severity already has a real enum. Policies reference these levels directly in their <code class="mono">enforcement_rules</code> section:</p>
+          <ul style="font-size:11px;color:#475569;margin:4px 0 0 16px;line-height:1.7">
+            <li><code class="mono">S1</code> — Low (yellow chip)</li>
+            <li><code class="mono">S2</code> — Medium (orange chip)</li>
+            <li><code class="mono">S3</code> — High (red chip)</li>
+            <li><code class="mono">S0</code> — display-only clean state (green)</li>
+          </ul>
+        </div>
+
+        <div style="background:#fff;border:1px solid #E2E8F0;border-radius:6px;padding:12px 14px">
+          <div style="font-size:11px;font-weight:700;color:#1E40AF;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">Lab field references (futureAttributeSlug)</div>
+          <p style="font-size:12px;color:#475569;line-height:1.6">The <strong>COA Field Library</strong> entity (<code class="mono">COALibraryFieldModel</code>) already has a <code class="mono">futureAttributeSlug</code> column — explicitly named as a forward-looking hook. Policies reference lab fields by slug from this table. The Q-Audit COA Field Library admin tile is where staff define the vocabulary; policies consume it. Zero new DB work to wire this up.</p>
+        </div>
+
+      </div>
+
+      <div style="background:#FEF3C7;border:1px solid #FDE68A;border-radius:6px;padding:12px 14px">
+        <div style="font-size:11px;font-weight:700;color:#78350F;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">Closest existing analog: Q-Audit "Compliance Elements" tile</div>
+        <p style="font-size:12px;color:#78350F;line-height:1.6">The <strong>Compliance Elements</strong> admin tile in Q-Audit Global Settings (<code class="mono">ComplianceElementsModal</code>) is the nearest structural analog to a policy editor today: it manages AI-driven violation detection elements with keywords, AI instructions, risk level, and category. A policy-first system can either <strong>extend this tile</strong> to become the canonical policy editor, or <strong>sit above it</strong> as a wrapper that orchestrates many Compliance Elements into a versioned bundle. Either path reuses Compliance Elements as the underlying store — don't scaffold a parallel one.</p>
+      </div>
+    </div>
   </div>
 
   <div class="divider"></div>
@@ -612,7 +666,8 @@ code,.mono{font-family:'IBM Plex Mono',monospace}
     <div class="section-title">When to auto-attach vs. suggest vs. log only</div>
 
     <div class="card" style="margin-bottom:14px">
-      <div style="font-size:13px;font-weight:600;color:#1E3A5F;margin-bottom:12px">Proposed confidence tiers</div>
+      <div style="font-size:13px;font-weight:600;color:#1E3A5F;margin-bottom:4px">Proposed confidence tiers</div>
+      <p style="font-size:11px;color:#64748B;margin-bottom:12px">Tiers map onto the existing <code class="mono">SeverityLevelEnum</code> (<code class="mono">S1</code>/<code class="mono">S2</code>/<code class="mono">S3</code>) so coverage-gap findings share severity language with scan findings. No new severity taxonomy.</p>
       <table class="conf-table">
         <thead>
           <tr>
@@ -624,19 +679,19 @@ code,.mono{font-family:'IBM Plex Mono',monospace}
         </thead>
         <tbody>
           <tr>
-            <td><span class="pill pill-high">HIGH</span></td>
+            <td><span class="pill pill-high">HIGH · <code class="mono" style="font-size:9px;background:rgba(255,255,255,.2);padding:1px 4px;border-radius:3px">S3</code></span></td>
             <td>3+ distinct evidence source types (e.g. website scan + product + COA)</td>
             <td><strong>Auto-attach policy + notify merchant + open bulletin</strong></td>
             <td>Kratom keyword on site + 15 kratom SKUs + mitragynine on COA</td>
           </tr>
           <tr>
-            <td><span class="pill pill-med">MEDIUM</span></td>
+            <td><span class="pill pill-med">MEDIUM · <code class="mono" style="font-size:9px;background:rgba(255,255,255,.2);padding:1px 4px;border-radius:3px">S2</code></span></td>
             <td>2 source types, or 1 strong source (COA analyte confirmation)</td>
             <td>Surface in <strong>Q-Audit review queue</strong> — analyst must approve before attach</td>
             <td>Kratom keyword on site + 15 kratom SKUs (no COA yet)</td>
           </tr>
           <tr>
-            <td><span class="pill pill-low">LOW</span></td>
+            <td><span class="pill pill-low">LOW · <code class="mono" style="font-size:9px;background:rgba(255,255,255,.2);padding:1px 4px;border-radius:3px">S1</code></span></td>
             <td>1 weak source (single keyword hit on one page, no product evidence)</td>
             <td><strong>Log only</strong> — no surface, no queue item. Accumulates toward MEDIUM.</td>
             <td>One mention of "kratom" in a blog post with no products found</td>
