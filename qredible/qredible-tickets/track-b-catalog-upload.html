@@ -194,6 +194,16 @@ code,.mono{font-family:'IBM Plex Mono',monospace}
     <p>End-to-end mockup: new-merchant first upload · column mapping · validation · COA classification · diff/update state · empty state · open questions.</p>
   </div>
 
+  <div class="note note-blue" style="margin-bottom:24px">
+    <strong>This wizard reuses the generic import engine (QP-3639 +
+    QP-3640), not a parallel implementation.</strong>
+    Track B is a retail-catalog preset that constrains the import
+    engine to a single entity type (products) with a
+    compliance-review trigger on upload. All column mapping, validation,
+    error-resolution, and bulk-action code is shared with the Companies
+    / Products / COAs import modal. No new engine code ships in QP-3702.
+  </div>
+
   <!-- ① CONTEXT & PROBLEM -->
   <div class="section">
     <div class="section-label blue">① Context &amp; Problem</div>
@@ -204,7 +214,7 @@ code,.mono{font-family:'IBM Plex Mono',monospace}
         <div>
           <div style="font-size:13px;font-weight:700;color:#1E3A5F;margin-bottom:8px">What is Track B?</div>
           <p style="font-size:13px;color:#1E293B;line-height:1.75">
-            <strong>Track B = card-present retail</strong> — physical dispensaries and storefront hemp/CBD retailers. Unlike Track A (ecommerce) merchants who have a live website to scan, Track B merchants sell products in-store. Their compliance footprint is their <strong>product catalog</strong>: the full list of SKUs they carry, with associated product attributes (THC/CBD %, category type, brand, barcode).
+            <strong>Track B = card-present retail</strong> — physical dispensaries and storefront hemp/CBD retailers. Unlike Track A (ecommerce) merchants who have a live website to scan, Track B merchants sell products in-store. Their compliance footprint is their <strong>product catalog</strong>: the full list of SKUs they carry, with associated product attributes (SKU, name, category type, brand, barcode, price). Analyte percentages are sourced from COAs, not the catalog.
           </p>
         </div>
         <div>
@@ -297,7 +307,7 @@ code,.mono{font-family:'IBM Plex Mono',monospace}
       <div class="wizard-panel-body">
 
         <div class="note note-amber mb-16">
-          <strong>Auto-matched 6 of 8 columns.</strong> Review 2 unmatched columns below. Unmatched columns will be skipped unless you assign them to a system field. Select "Skip" to confirm intentional omission.
+          <strong>Auto-matched 4 of 6 columns.</strong> Review 2 unmatched columns below. Unmatched columns will be skipped unless you assign them to a system field. Select "Skip" to confirm intentional omission.
         </div>
 
         <table class="map-table">
@@ -322,16 +332,6 @@ code,.mono{font-family:'IBM Plex Mono',monospace}
             <tr>
               <td><span class="csv-col">Brand</span></td>
               <td><select class="map-select"><option selected>Brand</option></select></td>
-              <td style="text-align:center"><span style="color:#10B981;font-size:16px">✓</span></td>
-            </tr>
-            <tr>
-              <td><span class="csv-col">THC %</span></td>
-              <td><select class="map-select"><option selected>THC Delta-9 %</option></select></td>
-              <td style="text-align:center"><span style="color:#10B981;font-size:16px">✓</span></td>
-            </tr>
-            <tr>
-              <td><span class="csv-col">CBD %</span></td>
-              <td><select class="map-select"><option selected>CBD %</option></select></td>
               <td style="text-align:center"><span style="color:#10B981;font-size:16px">✓</span></td>
             </tr>
             <tr>
@@ -373,6 +373,18 @@ code,.mono{font-family:'IBM Plex Mono',monospace}
             </tr>
           </tbody>
         </table>
+
+        <div class="note note-blue mt-16">
+          <strong>Why THC% / CBD% are not catalog columns.</strong>
+          Analyte percentages are stored on the COA, not the product. If your
+          source CSV includes THC% or CBD% columns, the wizard will treat them
+          as merchant-self-reported hints only — the authoritative values come
+          from the COA extraction step (Aluma) once you upload COAs, and
+          validation runs against the thresholds defined in the policy
+          (e.g. <code>hemp-cbd-base-v3</code>'s 0.3% federal Δ9-THC limit).
+          Upload COAs via the COA upload flow (QP-3641 SKU-based bulk matching)
+          to get the compliance review to score analytes.
+        </div>
 
         <div class="flex items-center justify-between mt-16">
           <button class="btn btn-ghost">← Back</button>
@@ -417,8 +429,6 @@ code,.mono{font-family:'IBM Plex Mono',monospace}
               <th>Product Name</th>
               <th>SKU</th>
               <th>Category Type</th>
-              <th>THC %</th>
-              <th>CBD %</th>
               <th style="width:60px;text-align:center">Status</th>
               <th>Issue</th>
             </tr>
@@ -429,8 +439,6 @@ code,.mono{font-family:'IBM Plex Mono',monospace}
               <td>Green Bliss Hemp Flower 3.5g</td>
               <td class="mono" style="font-size:11px">HF-001-35</td>
               <td>Hemp Flower</td>
-              <td>0.28%</td>
-              <td>14.2%</td>
               <td style="text-align:center"><span class="status-icon">✅</span></td>
               <td style="color:#94A3B8;font-size:11px">—</td>
             </tr>
@@ -439,8 +447,6 @@ code,.mono{font-family:'IBM Plex Mono',monospace}
               <td>Clarity CBD Tincture 1000mg</td>
               <td class="mono" style="font-size:11px">CT-1000</td>
               <td>CBD Tincture</td>
-              <td>0.02%</td>
-              <td>33.4%</td>
               <td style="text-align:center"><span class="status-icon">✅</span></td>
               <td style="color:#94A3B8;font-size:11px">—</td>
             </tr>
@@ -449,8 +455,6 @@ code,.mono{font-family:'IBM Plex Mono',monospace}
               <td>Restore Hemp Topical Cream</td>
               <td class="mono" style="font-size:11px">TP-REST-02</td>
               <td>Topicals</td>
-              <td>0.00%</td>
-              <td>8.1%</td>
               <td style="text-align:center"><span class="status-icon">✅</span></td>
               <td style="color:#94A3B8;font-size:11px">—</td>
             </tr>
@@ -459,18 +463,14 @@ code,.mono{font-family:'IBM Plex Mono',monospace}
               <td>Relax Delta Hemp Pre-Roll</td>
               <td class="mono" style="font-size:11px">PR-RLX-87</td>
               <td>Hemp Flower</td>
-              <td><strong style="color:#92400E">0.31%</strong></td>
-              <td>11.6%</td>
-              <td style="text-align:center"><span class="status-icon">⚠️</span></td>
-              <td style="font-size:11px;color:#92400E">THC value 0.31% exceeds 0.3% federal limit</td>
+              <td style="text-align:center"><span class="status-icon">📜</span></td>
+              <td style="font-size:11px;color:#92400E">3 products classified as <code>HEMP_FLOWER</code> — COA required per <code>hemp-cbd-base-v3</code>. Upload COAs after catalog ingestion to complete the compliance review.</td>
             </tr>
             <tr class="row-err">
               <td style="color:#94A3B8">213</td>
               <td>Calm Pet CBD Drops 250mg</td>
               <td class="mono" style="font-size:11px">PET-250</td>
               <td><strong style="color:#DC2626">—</strong></td>
-              <td>0.00%</td>
-              <td>8.3%</td>
               <td style="text-align:center"><span class="status-icon">🔴</span></td>
               <td style="font-size:11px;color:#DC2626">Missing required field: Category Type</td>
             </tr>
@@ -584,7 +584,7 @@ code,.mono{font-family:'IBM Plex Mono',monospace}
             </td>
             <td>47</td>
             <td><span class="pill-coa-cond">Conditional</span></td>
-            <td style="font-size:12px;color:#475569">COA required if THC content exceeds trace amounts per policy configuration. Products at 0.00% THC may proceed without COA; review will flag any above threshold.</td>
+            <td style="font-size:12px;color:#475569">COA required if the COA's extracted Δ9-THC value exceeds the trace-amount threshold defined in the merchant's active policy configuration. Evaluated at COA ingestion (not at catalog upload); catalog rows enter this branch based on classification alone.</td>
           </tr>
           <tr>
             <td><strong>Topicals</strong></td>
@@ -655,8 +655,6 @@ code,.mono{font-family:'IBM Plex Mono',monospace}
             <th>SKU</th>
             <th>Product Name</th>
             <th>Category</th>
-            <th>THC %</th>
-            <th>CBD %</th>
             <th>Detail</th>
           </tr>
         </thead>
@@ -666,8 +664,6 @@ code,.mono{font-family:'IBM Plex Mono',monospace}
             <td class="mono" style="font-size:11px">HF-NEW-91</td>
             <td>Sunrise Hemp Flower 7g</td>
             <td>Hemp Flower</td>
-            <td>0.27%</td>
-            <td>16.1%</td>
             <td style="font-size:11px;color:#166534">New SKU · not in prior catalog</td>
           </tr>
           <tr class="added">
@@ -675,8 +671,6 @@ code,.mono{font-family:'IBM Plex Mono',monospace}
             <td class="mono" style="font-size:11px">CT-2000</td>
             <td>Focus CBD Tincture 2000mg</td>
             <td>CBD Tincture</td>
-            <td>0.01%</td>
-            <td>66.7%</td>
             <td style="font-size:11px;color:#166534">New SKU · not in prior catalog</td>
           </tr>
           <tr class="removed">
@@ -684,33 +678,18 @@ code,.mono{font-family:'IBM Plex Mono',monospace}
             <td class="mono" style="font-size:11px">HF-OLD-12</td>
             <td>Legacy Blend Hemp Flower 1g</td>
             <td>Hemp Flower</td>
-            <td>0.29%</td>
-            <td>12.0%</td>
             <td style="font-size:11px;color:#991B1B">SKU absent from new file</td>
           </tr>
           <tr class="changed">
             <td><span class="diff-badge-changed">Changed</span></td>
             <td class="mono" style="font-size:11px">PR-RLX-87</td>
-            <td>Relax Delta Hemp Pre-Roll</td>
+            <td>Sunset Sherbet Pre-Roll</td>
             <td>Hemp Flower</td>
-            <td>
-              <span style="text-decoration:line-through;color:#94A3B8">0.28%</span>
-              <span style="color:#92400E;font-weight:700;margin-left:4px">0.31%</span>
+            <td style="font-size:11px;color:#92400E">
+              <span class="diff-badge">Classification</span>
+              HEMP_OTHER → HEMP_FLOWER — COA now required
+              per <code>hemp-cbd-base-v3</code>
             </td>
-            <td>0.00%</td>
-            <td style="font-size:11px;color:#92400E">THC % updated: 0.28% → 0.31%</td>
-          </tr>
-          <tr class="changed">
-            <td><span class="diff-badge-changed">Changed</span></td>
-            <td class="mono" style="font-size:11px">CT-500-B</td>
-            <td>Balance CBD Tincture 500mg</td>
-            <td>CBD Tincture</td>
-            <td>0.02%</td>
-            <td>
-              <span style="text-decoration:line-through;color:#94A3B8">16.5%</span>
-              <span style="color:#92400E;font-weight:700;margin-left:4px">17.2%</span>
-            </td>
-            <td style="font-size:11px;color:#92400E">CBD % updated: 16.5% → 17.2%</td>
           </tr>
         </tbody>
       </table>

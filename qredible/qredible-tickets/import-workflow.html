@@ -192,7 +192,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#F1F5F9;color:#1E293B
   <a href="https://jfloyd-qredible.netlify.app/">← All Mockups</a>
   <span class="nav-sep">/</span>
   <span class="nav-title">Unified Import Workflow</span>
-  <span class="nav-badge">QP-36XX</span>
+  <span class="nav-badge">QP-3638 Epic</span>
 </nav>
 
 <div class="page">
@@ -298,6 +298,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#F1F5F9;color:#1E293B
         <div class="step-title">Upload &amp; Detect</div>
       </div>
     </div>
+    <div class="section-ticket" style="margin-bottom:16px;padding:8px 12px;background:#EFF6FF;border:1px solid #BFDBFE;border-radius:6px;font-size:12px;color:#1E40AF;font-weight:600">Maps to: <strong>QP-3639</strong> (Import Phase 1A)</div>
 
     <div class="upload-modal">
       <div class="modal-header">Import Data</div>
@@ -692,19 +693,6 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#F1F5F9;color:#1E293B
   </div>
 
 <div class="section">
-    <div class="section-header">
-      <span class="badge badge-green">② Step 2b</span>
-      <h2>Auto-Classification — Controlled Values</h2>
-    </div>
-    <div class="section-body">
-      <p style="font-size:13px;color:#64748B;margin-bottom:4px;">Fields like <strong>Classification</strong>, <strong>Industry Type</strong>, and <strong>Type of Company</strong> are Qredible-controlled values — no user deviation allowed. The system auto-classifies using Q-Audit's keyword engine, then presents results for review.</p>
-      
-      <!-- Classification Auto-Classify Workflow -->
-      
-    </div>
-  </div>
-
-<div class="section">
     <div class="step-header">
       <span class="badge badge-green">② After</span>
       <div>
@@ -712,6 +700,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#F1F5F9;color:#1E293B
         <div class="step-title">Review &amp; Resolve</div>
       </div>
     </div>
+    <div class="section-ticket" style="margin-bottom:16px;padding:8px 12px;background:#EFF6FF;border:1px solid #BFDBFE;border-radius:6px;font-size:12px;color:#1E40AF;font-weight:600">Maps to: <strong>QP-3640</strong> (Import Phase 1B)</div>
 
     <div class="validation-wrap">
 
@@ -801,6 +790,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#F1F5F9;color:#1E293B
       <span class="badge badge-purple">③ COA</span>
       <span class="section-title">COA-to-Product Bulk Matching</span>
     </div>
+    <div class="section-ticket" style="margin-bottom:16px;padding:8px 12px;background:#EFF6FF;border:1px solid #BFDBFE;border-radius:6px;font-size:12px;color:#1E40AF;font-weight:600;line-height:1.6">Maps to: <strong>QP-3641</strong> (Import Phase 2A — COA-to-Product Bulk Matching). This is the SKU-based COA matching feature. BR-01 covers the match-file upload (Product Name / SKU + COA Filename pairs). BR-03 covers smart auto-match via filename similarity to product name / SKU and Aluma-extracted product name from the COA PDF. Parity with the existing product image upload's SKU-filename matching.</div>
 
     <div class="two-col">
 
@@ -914,6 +904,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#F1F5F9;color:#1E293B
       <span class="badge badge-blue">④ Companies</span>
       <span class="section-title">Company Import — Multi-Industry Type &amp; MCC Codes</span>
     </div>
+    <div class="section-ticket" style="margin-bottom:16px;padding:8px 12px;background:#EFF6FF;border:1px solid #BFDBFE;border-radius:6px;font-size:12px;color:#1E40AF;font-weight:600">Maps to: <strong>QP-3642</strong> (Import Phase 2B — Multi-Industry Type &amp; Progressive Company Classification)</div>
 
     <div class="industry-wrap">
       <div class="two-col-60">
@@ -994,34 +985,57 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#F1F5F9;color:#1E293B
   <!-- IMPLEMENTATION PHASES -->
   <div class="section">
     <div class="section-header">
-      <span class="section-title" style="font-size:17px">Implementation Phases</span>
+      <span class="section-title" style="font-size:17px">Implementation Phases (matches Jira epic QP-3638)</span>
     </div>
     <div class="phases-wrap">
-      <div class="phases-grid">
-        <div class="phase-col phase-col-1">
-          <div class="phase-title phase-title-1">
-            <span class="phase-badge pb1">Phase 1</span> MVP
-          </div>
-          <ul class="phase-list">
-            <li class="pl1">Column mapping for Products and Companies</li>
-            <li class="pl1">Data validation with error / warning / duplicate handling</li>
-            <li class="pl1">COA auto-match improvements (filename + batch + extracted name)</li>
-            <li class="pl1">Multi-industry per company in import</li>
-          </ul>
-        </div>
-        <div class="phase-col phase-col-2">
-          <div class="phase-title phase-title-2">
-            <span class="phase-badge pb2">Phase 2</span> Enhanced
-          </div>
-          <ul class="phase-list">
-            <li class="pl2">COA bulk match file upload</li>
-            <li class="pl2">Smart auto-match with confidence scores</li>
-            <li class="pl2">MCC code import / association</li>
-            <li class="pl2">Saved import mappings (remember column mappings per source)</li>
-            <li class="pl2">Import history / audit log</li>
-          </ul>
-        </div>
-      </div>
+      <table class="phase-table" style="width:100%;border-collapse:collapse;font-size:13px">
+        <thead>
+          <tr style="background:#F1F5F9">
+            <th style="padding:10px 12px;text-align:left;border:1px solid #E2E8F0;width:60px">Phase</th>
+            <th style="padding:10px 12px;text-align:left;border:1px solid #E2E8F0;width:110px">Ticket</th>
+            <th style="padding:10px 12px;text-align:left;border:1px solid #E2E8F0">Scope</th>
+            <th style="padding:10px 12px;text-align:left;border:1px solid #E2E8F0;width:110px">Estimate</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding:10px 12px;border:1px solid #E2E8F0">1A</td>
+            <td style="padding:10px 12px;border:1px solid #E2E8F0"><strong>QP-3639</strong></td>
+            <td style="padding:10px 12px;border:1px solid #E2E8F0">File upload, auto-detection, column mapping, saved-mapping memory</td>
+            <td style="padding:10px 12px;border:1px solid #E2E8F0">~3–4 days</td>
+          </tr>
+          <tr>
+            <td style="padding:10px 12px;border:1px solid #E2E8F0">1B</td>
+            <td style="padding:10px 12px;border:1px solid #E2E8F0"><strong>QP-3640</strong></td>
+            <td style="padding:10px 12px;border:1px solid #E2E8F0">Validation summary, error resolution, bulk actions, controlled-value handling, duplicate selector</td>
+            <td style="padding:10px 12px;border:1px solid #E2E8F0">~3–4 days</td>
+          </tr>
+          <tr>
+            <td style="padding:10px 12px;border:1px solid #E2E8F0">2A</td>
+            <td style="padding:10px 12px;border:1px solid #E2E8F0"><strong>QP-3641</strong></td>
+            <td style="padding:10px 12px;border:1px solid #E2E8F0">COA-to-product bulk matching (SKU/name + smart auto-match)</td>
+            <td style="padding:10px 12px;border:1px solid #E2E8F0">~3–4 days</td>
+          </tr>
+          <tr>
+            <td style="padding:10px 12px;border:1px solid #E2E8F0">2B</td>
+            <td style="padding:10px 12px;border:1px solid #E2E8F0"><strong>QP-3642</strong></td>
+            <td style="padding:10px 12px;border:1px solid #E2E8F0">Multi-industry type, progressive company classification, MCC per company</td>
+            <td style="padding:10px 12px;border:1px solid #E2E8F0">~2–4 days</td>
+          </tr>
+          <tr>
+            <td style="padding:10px 12px;border:1px solid #E2E8F0">3</td>
+            <td style="padding:10px 12px;border:1px solid #E2E8F0"><strong>QP-3643</strong></td>
+            <td style="padding:10px 12px;border:1px solid #E2E8F0">Enhanced COA URL import, JS-rendered page support (Zyte)</td>
+            <td style="padding:10px 12px;border:1px solid #E2E8F0">~2–3 days</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="phase-footer" style="margin-top:12px;font-size:12px;color:#64748B;line-height:1.6">
+        Estimates are day-level with AI assistance, per Joseph's hard rule.
+        Track B retail catalog wizard (QP-3702) and the unified upload
+        router are separate follow-on phases and do not live under QP-3638 —
+        see the Upload Roadmap for end-to-end sequencing.
+      </p>
     </div>
   </div>
 
