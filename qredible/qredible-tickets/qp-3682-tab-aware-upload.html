@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QP-3682 — Tab-Aware Company Upload</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:#F1F5F9;color:#1E293B;font-size:14px;line-height:1.5}
+a{color:#3B82F6;text-decoration:none}a:hover{text-decoration:underline}
+code,.mono{font-family:'IBM Plex Mono',monospace}
+
+/* PROTO NAV */
+.topnav{background:#1E3A5F;padding:12px 24px;display:flex;align-items:center;gap:8px;font-size:13px;color:#94A3B8;position:sticky;top:0;z-index:100}
+.topnav a{color:#93C5FD}.topnav .sep{color:#475569}
+.topnav .ticket-badge{background:#3B82F6;color:#fff;font-size:11px;font-weight:600;padding:2px 8px;border-radius:4px;font-family:'IBM Plex Mono',monospace}
+.topnav .title{color:#fff;font-weight:600}
+
+/* PAGE */
+.page{max-width:1100px;margin:0 auto;padding:32px 24px 64px}
+.page-header{margin-bottom:28px}
+.page-header h1{font-size:22px;font-weight:700;color:#1E3A5F;margin-bottom:6px}
+.page-header p{color:#64748B;font-size:13px}
+
+/* INFO ANNOTATION — visually separated, never in-build */
+.info-block{background:#FFFBEB;border:2px dashed #FCD34D;border-radius:10px;padding:16px 20px;margin-bottom:28px}
+.info-block .info-pill{display:inline-flex;align-items:center;gap:5px;background:#F59E0B;color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;letter-spacing:.5px;text-transform:uppercase;margin-bottom:10px}
+.info-block p,.info-block li{font-size:12px;color:#78350F;line-height:1.65}
+.info-block ul{padding-left:18px;margin-top:6px}
+.info-block strong{color:#92400E}
+.info-block code{background:#FEF3C7;padding:1px 5px;border-radius:3px;font-size:11px}
+
+/* SECTION LABEL */
+.section-label{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:4px 12px;border-radius:20px;margin-bottom:14px}
+.label-blue{background:#DBEAFE;color:#1E40AF}
+.label-green{background:#DCFCE7;color:#166534}
+.label-amber{background:#FEF3C7;color:#92400E}
+.label-red{background:#FEE2E2;color:#991B1B}
+.label-purple{background:#EDE9FE;color:#4C1D95}
+.section-block{margin-bottom:40px}
+.section-title{font-size:14px;font-weight:700;color:#1E3A5F;margin-bottom:14px}
+
+/* MODAL SHELL */
+.modal-wrap{background:#fff;border:1px solid #E2E8F0;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.1);max-width:560px;overflow:hidden;margin:0 auto}
+.modal-header{background:#1E3A5F;color:#fff;padding:18px 22px;display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.modal-header-icon{width:34px;height:34px;background:rgba(255,255,255,.15);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.modal-header-text{flex:1}
+.modal-header-text h2{font-size:15px;font-weight:700;margin-bottom:3px}
+.modal-header-text p{font-size:12px;color:#93C5FD;line-height:1.4}
+.modal-close{background:rgba(255,255,255,.15);border:none;color:#fff;width:28px;height:28px;border-radius:6px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.modal-body{padding:22px}
+.modal-footer{padding:14px 22px;border-top:1px solid #E2E8F0;display:flex;align-items:center;justify-content:flex-end;gap:8px;background:#F8FAFC}
+
+/* FORM ELEMENTS */
+.field-group{margin-bottom:16px}
+.field-group label{display:block;font-size:12px;font-weight:600;color:#475569;margin-bottom:5px}
+.field-group .helper{font-size:11px;color:#94A3B8;margin-top:4px;line-height:1.5}
+.field-group .helper.error{color:#DC2626}
+.form-input{width:100%;border:1px solid #CBD5E1;border-radius:6px;padding:8px 12px;font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;color:#1E293B;background:#fff;outline:none}
+.form-input:focus{border-color:#3B82F6;box-shadow:0 0 0 2px rgba(59,130,246,.12)}
+.form-input.error{border-color:#DC2626}
+.form-select{width:100%;border:1px solid #CBD5E1;border-radius:6px;padding:8px 12px;font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;color:#1E293B;background:#fff;outline:none;cursor:pointer}
+
+/* SEGMENTED CONTROL — destination tab picker */
+.seg-control{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid #CBD5E1;border-radius:8px;overflow:hidden;background:#F8FAFC}
+.seg-option{padding:10px 14px;cursor:pointer;text-align:center;font-size:13px;font-weight:600;color:#64748B;border:none;background:transparent;display:flex;flex-direction:column;align-items:center;gap:3px}
+.seg-option:first-child{border-right:1px solid #CBD5E1}
+.seg-option.active-opt{background:#fff;color:#1E3A5F;box-shadow:inset 0 0 0 2px #3B82F6}
+.seg-option.pending-opt{background:#fff;color:#D97706;box-shadow:inset 0 0 0 2px #F59E0B}
+.seg-option .seg-sub{font-size:10px;font-weight:400;color:#94A3B8;line-height:1.3}
+.seg-option.active-opt .seg-sub{color:#3B82F6}
+.seg-option.pending-opt .seg-sub{color:#D97706}
+
+/* DESTINATION INDICATOR */
+.dest-indicator{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;font-size:12px;font-weight:600;margin-top:8px}
+.dest-pending{background:#FFFBEB;border:1px solid #FDE68A;color:#92400E}
+.dest-active{background:#F0FDF4;border:1px solid #BBF7D0;color:#166534}
+
+/* BUTTONS */
+.btn{padding:8px 18px;border-radius:6px;font-size:13px;font-weight:600;border:1px solid transparent;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.btn-primary{background:#1E3A5F;color:#fff;border-color:#1E3A5F}
+.btn-primary:hover{background:#1E40AF}
+.btn-secondary{background:#fff;border-color:#E2E8F0;color:#475569}
+.btn-danger{background:#EF4444;color:#fff}
+.btn-sm{padding:5px 12px;font-size:12px;border-radius:5px}
+
+/* DIVIDER */
+.divider{height:1px;background:#E2E8F0;margin:36px 0}
+
+/* UPLOAD ZONE */
+.drop-zone{border:2px dashed #BFDBFE;background:#F8FBFF;border-radius:10px;padding:28px;text-align:center;color:#64748B;font-size:13px}
+.drop-zone .dz-icon{font-size:28px;margin-bottom:8px}
+.drop-zone strong{display:block;font-size:14px;color:#1E3A5F;margin-bottom:4px}
+
+/* VALIDATION ERROR LIST */
+.error-list{margin-top:14px;border:1px solid #FECACA;border-radius:8px;overflow:hidden}
+.error-list-header{background:#FEF2F2;padding:8px 14px;display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:#991B1B;border-bottom:1px solid #FECACA}
+.error-row{padding:8px 14px;font-size:12px;border-bottom:1px solid #FEE2E2;display:grid;grid-template-columns:48px 1fr auto;gap:8px;align-items:center}
+.error-row:last-child{border-bottom:none}
+.error-row .row-num{font-family:'IBM Plex Mono',monospace;font-size:11px;color:#94A3B8}
+.error-msg{color:#DC2626;font-size:11px}
+.error-badge{background:#FEE2E2;color:#991B1B;font-size:10px;font-weight:700;padding:1px 7px;border-radius:10px;white-space:nowrap}
+
+/* SUCCESS BANNER */
+.success-banner{background:#F0FDF4;border:1px solid #BBF7D0;border-left:4px solid #16A34A;border-radius:8px;padding:14px 18px;display:flex;align-items:flex-start;gap:12px}
+.success-banner .sb-icon{font-size:20px;flex-shrink:0;margin-top:1px}
+.success-banner h3{font-size:14px;font-weight:700;color:#14532D;margin-bottom:4px}
+.success-banner p{font-size:12px;color:#166534;line-height:1.55}
+.success-banner a{color:#16A34A;font-weight:700;text-decoration:underline}
+
+/* CALLOUT */
+.callout{border-radius:8px;padding:11px 15px;font-size:12px;margin-bottom:14px;line-height:1.6}
+.callout-amber{background:#FFFBEB;border:1px solid #FDE68A;border-left:4px solid #F59E0B;color:#78350F}
+.callout-blue{background:#EFF6FF;border:1px solid #BFDBFE;border-left:4px solid #3B82F6;color:#1E40AF}
+.callout code{background:rgba(0,0,0,.06);padding:1px 5px;border-radius:3px;font-size:11px}
+
+/* FIELD INLINE BADGE */
+.required-pill{font-size:10px;font-weight:600;color:#DC2626;background:#FEE2E2;padding:1px 6px;border-radius:10px;margin-left:5px}
+.optional-pill{font-size:10px;font-weight:500;color:#94A3B8;background:#F1F5F9;padding:1px 6px;border-radius:10px;margin-left:5px}
+
+/* TEST PANEL */
+.test-panel{background:#fff;border:1px solid #E2E8F0;border-radius:10px;overflow:hidden;margin-top:14px}
+.test-panel-header{background:#F8FAFC;padding:10px 16px;font-size:12px;font-weight:700;color:#1E3A5F;border-bottom:1px solid #E2E8F0}
+.test-row{padding:8px 16px;font-size:12px;color:#475569;border-bottom:1px solid #F1F5F9;display:flex;align-items:flex-start;gap:10px}
+.test-row:last-child{border-bottom:none}
+.test-row input[type=checkbox]{margin-top:2px;accent-color:#3B82F6;flex-shrink:0}
+</style>
+</head>
+<body>
+
+<!-- PROTO NAV -->
+<nav class="topnav">
+  <a href="https://jfloyd-qredible.netlify.app/">← All Mockups</a>
+  <span class="sep">/</span>
+  <span class="title">Tab-Aware Company Upload</span>
+  <span class="sep">/</span>
+  <span class="ticket-badge">QP-3682</span>
+</nav>
+
+<div class="page">
+
+  <div class="page-header">
+    <h1>Tab-Aware Company Upload — Add Company + Bulk Upload Modals</h1>
+    <p>WeMonitor surface: Add Company and Bulk Upload modals expose an Active / Pending destination-tab picker. Supports the Pending Q review workflow (v2.2, deploy 2026-04-23).</p>
+  </div>
+
+  <!-- TOP INFO BLOCK -->
+  <div class="info-block">
+    <div class="info-pill">ℹ INFO — NOT IN BUILD</div>
+    <p><strong>How to read this mockup:</strong> Yellow dashed blocks like this one are annotations for Joseph / design review — they are never rendered in the actual app. Everything outside yellow blocks is ship-ready implementation copy. <code>[NEEDS COPY: …]</code> flags mark genuine gaps that need a decision before implementation.</p>
+    <ul>
+      <li><strong>Key design decision:</strong> Destination tab is a <strong>segmented control</strong> (2 segments: Active / Pending), not a dropdown. Keeps it compact and instantly scannable. Archived is intentionally absent — the API rejects Archived as an initial destination.</li>
+      <li><strong>Default = Pending</strong> in both modals, aligning with the Pending Q review workflow.</li>
+      <li><strong>Bulk upload:</strong> one destination for the entire batch in v1. Per-row override is a future consideration per ticket.</li>
+      <li><strong>Post-submit redirect:</strong> confirmation message names the destination tab and links to it directly.</li>
+    </ul>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       EXAMPLE 1 — Add Company modal, Pending (default)
+  ═══════════════════════════════════════ -->
+  <div class="section-block">
+    <div class="section-label label-blue">Example 1 — Add Company modal · Pending tab selected (default)</div>
+    <div class="section-title">Modal opens with Pending pre-selected — operator adds a single merchant for review</div>
+
+    <div class="modal-wrap">
+      <div class="modal-header">
+        <div class="modal-header-icon">＋</div>
+        <div class="modal-header-text">
+          <h2>Add Company</h2>
+          <p>Add a single merchant to your We Monitor list.</p>
+        </div>
+        <button class="modal-close">✕</button>
+      </div>
+      <div class="modal-body">
+
+        <div class="field-group">
+          <label>Legal Name <span class="required-pill">Required</span></label>
+          <input class="form-input" type="text" placeholder="e.g. Rocky Seeds LLC">
+        </div>
+
+        <div class="field-group">
+          <label>Website <span class="optional-pill">Optional</span></label>
+          <input class="form-input" type="text" placeholder="e.g. https://rockyseeds.com">
+        </div>
+
+        <div class="field-group">
+          <label>DBA Name <span class="optional-pill">Optional</span></label>
+          <input class="form-input" type="text" placeholder="e.g. Rocky's, Rock Seeds">
+          <div class="helper">Separate multiple DBAs with commas.</div>
+        </div>
+
+        <div class="field-group">
+          <label>Destination tab <span class="required-pill">Required</span></label>
+          <div class="callout callout-blue" style="margin-bottom:10px;font-size:11px">
+            Choose where this company lands after it's created. <strong>Pending</strong> queues it for review before live monitoring begins.
+          </div>
+          <div class="seg-control">
+            <button class="seg-option pending-opt">
+              ⏳ Pending
+              <span class="seg-sub">Queue for review first</span>
+            </button>
+            <button class="seg-option" style="color:#64748B">
+              ✅ Active
+              <span class="seg-sub">Start monitoring immediately</span>
+            </button>
+          </div>
+          <div class="dest-indicator dest-pending">⏳ Will be added to the Pending tab</div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary">Cancel</button>
+        <button class="btn btn-primary">Add Company</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ═══════════════════════════════════════
+       EXAMPLE 2 — Add Company modal, Active selected
+  ═══════════════════════════════════════ -->
+  <div class="section-block">
+    <div class="section-label label-green">Example 2 — Add Company modal · Active tab selected</div>
+    <div class="section-title">Operator switches to Active — monitoring starts immediately on submit</div>
+
+    <div class="modal-wrap">
+      <div class="modal-header">
+        <div class="modal-header-icon">＋</div>
+        <div class="modal-header-text">
+          <h2>Add Company</h2>
+          <p>Add a single merchant to your We Monitor list.</p>
+        </div>
+        <button class="modal-close">✕</button>
+      </div>
+      <div class="modal-body">
+
+        <div class="field-group">
+          <label>Legal Name <span class="required-pill">Required</span></label>
+          <input class="form-input" type="text" value="Rocky Seeds LLC" readonly>
+        </div>
+
+        <div class="field-group">
+          <label>Website <span class="optional-pill">Optional</span></label>
+          <input class="form-input" type="text" value="https://rockyseeds.com" readonly>
+        </div>
+
+        <div class="field-group">
+          <label>DBA Name <span class="optional-pill">Optional</span></label>
+          <input class="form-input" type="text" placeholder="e.g. Rocky's, Rock Seeds">
+          <div class="helper">Separate multiple DBAs with commas.</div>
+        </div>
+
+        <div class="field-group">
+          <label>Destination tab <span class="required-pill">Required</span></label>
+          <div class="callout callout-blue" style="margin-bottom:10px;font-size:11px">
+            Choose where this company lands after it's created. <strong>Active</strong> starts website and product compliance monitoring immediately.
+          </div>
+          <div class="seg-control">
+            <button class="seg-option" style="color:#64748B">
+              ⏳ Pending
+              <span class="seg-sub">Queue for review first</span>
+            </button>
+            <button class="seg-option active-opt">
+              ✅ Active
+              <span class="seg-sub">Start monitoring immediately</span>
+            </button>
+          </div>
+          <div class="dest-indicator dest-active">✅ Will be added to Active Companies</div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary">Cancel</button>
+        <button class="btn btn-primary">Add Company</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ═══════════════════════════════════════
+       EXAMPLE 3 — Bulk Upload modal, Pending batch (default)
+  ═══════════════════════════════════════ -->
+  <div class="section-block">
+    <div class="section-label label-blue">Example 3 — Bulk Upload modal · Pending batch (default)</div>
+    <div class="section-title">CSV upload — entire batch lands in Pending for review before promotion to Active</div>
+
+    <div class="modal-wrap" style="max-width:620px">
+      <div class="modal-header">
+        <div class="modal-header-icon">⭱</div>
+        <div class="modal-header-text">
+          <h2>Upload Companies</h2>
+          <p>Import multiple merchants from a CSV file into your We Monitor list.</p>
+        </div>
+        <button class="modal-close">✕</button>
+      </div>
+      <div class="modal-body">
+
+        <div class="field-group">
+          <label>Destination tab <span class="required-pill">Required</span></label>
+          <div class="callout callout-amber" style="margin-bottom:10px;font-size:11px">
+            This applies to <strong>every row in your upload.</strong> All companies in this batch will land on the selected tab. Per-row override is not available in this version.
+          </div>
+          <div class="seg-control">
+            <button class="seg-option pending-opt">
+              ⏳ Pending
+              <span class="seg-sub">Queue batch for review first</span>
+            </button>
+            <button class="seg-option" style="color:#64748B">
+              ✅ Active
+              <span class="seg-sub">Start monitoring immediately</span>
+            </button>
+          </div>
+          <div class="dest-indicator dest-pending">⏳ All companies in this batch will be added to the Pending tab</div>
+        </div>
+
+        <div class="field-group" style="margin-top:18px">
+          <label>Upload CSV file <span class="required-pill">Required</span></label>
+          <div class="drop-zone">
+            <div class="dz-icon">📂</div>
+            <strong>Drag and drop your CSV here, or click to browse</strong>
+            <span style="font-size:12px">Accepted: .csv — max 5,000 rows</span>
+          </div>
+          <div class="helper" style="margin-top:8px">
+            Required columns: <code>legal_name</code>. Optional: <code>website</code>, <code>dba_names</code>, <code>state</code>.
+            <a href="#">Download template ↗</a>
+          </div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary">Cancel</button>
+        <button class="btn btn-primary" style="opacity:.45;cursor:not-allowed">Upload &amp; Import</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ═══════════════════════════════════════
+       EXAMPLE 4 — Bulk Upload modal, validation errors
+  ═══════════════════════════════════════ -->
+  <div class="section-block">
+    <div class="section-label label-red">Example 4 — Bulk Upload modal · Validation errors after parse</div>
+    <div class="section-title">CSV parsed — 3 rows have errors. Destination tab remains visible and editable.</div>
+
+    <div class="modal-wrap" style="max-width:620px">
+      <div class="modal-header">
+        <div class="modal-header-icon">⭱</div>
+        <div class="modal-header-text">
+          <h2>Upload Companies</h2>
+          <p>Import multiple merchants from a CSV file into your We Monitor list.</p>
+        </div>
+        <button class="modal-close">✕</button>
+      </div>
+      <div class="modal-body">
+
+        <div class="field-group">
+          <label>Destination tab <span class="required-pill">Required</span></label>
+          <div class="seg-control">
+            <button class="seg-option pending-opt">
+              ⏳ Pending
+              <span class="seg-sub">Queue batch for review first</span>
+            </button>
+            <button class="seg-option" style="color:#64748B">
+              ✅ Active
+              <span class="seg-sub">Start monitoring immediately</span>
+            </button>
+          </div>
+        </div>
+
+        <div style="margin-top:16px;margin-bottom:6px;font-size:12px;font-weight:700;color:#475569">
+          Upload summary — <span style="color:#DC2626">3 errors</span> / 47 rows total
+        </div>
+        <div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:8px;padding:10px 14px;font-size:12px;color:#14532D;margin-bottom:10px;display:flex;gap:16px">
+          <span>✓ <strong>44 rows</strong> ready to import</span>
+          <span>✗ <strong>3 rows</strong> have errors — fix or skip before proceeding</span>
+        </div>
+
+        <div class="error-list">
+          <div class="error-list-header">⚠ Rows with errors</div>
+          <div class="error-row">
+            <span class="row-num">Row 7</span>
+            <span>Bulk Marijuana Seeds</span>
+            <span class="error-badge">Missing legal_name</span>
+          </div>
+          <div class="error-row">
+            <span class="row-num">Row 12</span>
+            <span>website: <code>not-a-url</code></span>
+            <span class="error-badge">Invalid URL format</span>
+          </div>
+          <div class="error-row">
+            <span class="row-num">Row 31</span>
+            <span>Rocky Seeds LLC</span>
+            <span class="error-badge">Duplicate in this batch</span>
+          </div>
+        </div>
+
+        <div class="callout callout-amber" style="margin-top:14px;font-size:11px">
+          Error rows will be <strong>skipped.</strong> The remaining 44 valid rows will be imported to the <strong>Pending tab.</strong> You can re-upload a corrected file after this import completes.
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary">Cancel</button>
+        <button class="btn btn-primary">Import 44 valid rows to Pending →</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ═══════════════════════════════════════
+       EXAMPLE 5 — Success confirmation
+  ═══════════════════════════════════════ -->
+  <div class="section-block">
+    <div class="section-label label-green">Example 5 — Success confirmation after bulk import</div>
+    <div class="section-title">Post-submit: names destination tab, links to it directly</div>
+
+    <div style="max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:16px">
+      <!-- Variant A: bulk -->
+      <div>
+        <div style="font-size:11px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px">Variant A — Bulk upload success</div>
+        <div class="success-banner">
+          <div class="sb-icon">✅</div>
+          <div>
+            <h3>44 companies added to Pending</h3>
+            <p>Your batch has been queued for review. Errors in 3 rows were skipped.<br>
+            <a href="#">View Pending tab →</a></p>
+          </div>
+        </div>
+      </div>
+      <!-- Variant B: single company, Active -->
+      <div>
+        <div style="font-size:11px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px">Variant B — Add Company success (Active destination)</div>
+        <div class="success-banner">
+          <div class="sb-icon">✅</div>
+          <div>
+            <h3>Rocky Seeds LLC added to Active Companies</h3>
+            <p>The company is now being monitored.<br>
+            <a href="#">View Active Companies →</a></p>
+          </div>
+        </div>
+      </div>
+      <!-- Variant C: single company, Pending -->
+      <div>
+        <div style="font-size:11px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px">Variant C — Add Company success (Pending destination)</div>
+        <div class="success-banner">
+          <div class="sb-icon">⏳</div>
+          <div>
+            <h3>Rocky Seeds LLC added to Pending</h3>
+            <p>The company is queued for review before monitoring begins.<br>
+            <a href="#">View Pending tab →</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- BOTTOM INFO: ACCEPTANCE CRITERIA + FUTURE CONSIDERATIONS -->
+  <div class="info-block">
+    <div class="info-pill">ℹ INFO — NOT IN BUILD — Acceptance Criteria (from ticket)</div>
+    <div class="test-panel">
+      <div class="test-panel-header">QP-3682 — Test Panel</div>
+      <div class="test-row"><input type="checkbox"> Add Company modal shows destination tab picker with Active and Pending options. Archived is not offered.</div>
+      <div class="test-row"><input type="checkbox"> Bulk Upload modal shows same picker, with copy clarifying it applies to the whole batch.</div>
+      <div class="test-row"><input type="checkbox"> Default selection is Pending in both modals.</div>
+      <div class="test-row"><input type="checkbox"> Add Company → Active selected → company appears on Active tab.</div>
+      <div class="test-row"><input type="checkbox"> Add Company → Pending selected → company appears on Pending tab.</div>
+      <div class="test-row"><input type="checkbox"> Bulk Upload → Pending → every row lands in Pending tab.</div>
+      <div class="test-row"><input type="checkbox"> Bulk Upload → Active → every row lands in Active tab.</div>
+      <div class="test-row"><input type="checkbox"> API rejects destination = Archived on either flow.</div>
+      <div class="test-row"><input type="checkbox"> Confirmation message names the destination tab and links to it.</div>
+      <div class="test-row"><input type="checkbox"> Newly-uploaded Pending companies appear in the Pending Q workflow surface.</div>
+      <div class="test-row"><input type="checkbox"> Destination field is visible without scrolling on a 1366×768 viewport.</div>
+    </div>
+  </div>
+
+  <div class="info-block" style="margin-top:20px">
+    <div class="info-pill">ℹ INFO — NOT IN BUILD — Future Considerations (v1 deferred)</div>
+    <ul>
+      <li><strong>Per-row tab override in bulk upload</strong> — possible future CSV column (<code>destination_tab</code>). Not in v1.</li>
+      <li><strong>Archived as a destination</strong> — excluded by design. Revisit only with concrete compliance justification.</li>
+      <li><strong>Session-default memory</strong> — remember operator's last-used destination tab. Deferred.</li>
+      <li><strong>Mixed-destination bulk upload</strong> — some Active, some Pending in one batch. Not scoped here; may surface in Bulk Team Member Assignment flow.</li>
+    </ul>
+  </div>
+
+</div><!-- /page -->
+</body>
+</html>
