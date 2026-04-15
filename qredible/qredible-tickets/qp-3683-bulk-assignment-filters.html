@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QP-3683 — Bulk Team Member Assignment Filters</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:#F1F5F9;color:#1E293B;font-size:14px;line-height:1.5}
+a{color:#3B82F6;text-decoration:none}a:hover{text-decoration:underline}
+code,.mono{font-family:'IBM Plex Mono',monospace}
+
+/* PROTO NAV */
+.topnav{background:#1E3A5F;padding:12px 24px;display:flex;align-items:center;gap:8px;font-size:13px;color:#94A3B8;position:sticky;top:0;z-index:100}
+.topnav a{color:#93C5FD}.topnav .sep{color:#475569}
+.topnav .ticket-badge{background:#3B82F6;color:#fff;font-size:11px;font-weight:600;padding:2px 8px;border-radius:4px;font-family:'IBM Plex Mono',monospace}
+.topnav .title{color:#fff;font-weight:600}
+
+/* PAGE */
+.page{max-width:1100px;margin:0 auto;padding:32px 24px 64px}
+.page-header{margin-bottom:28px}
+.page-header h1{font-size:22px;font-weight:700;color:#1E3A5F;margin-bottom:6px}
+.page-header p{color:#64748B;font-size:13px}
+
+/* INFO ANNOTATION */
+.info-block{background:#FFFBEB;border:2px dashed #FCD34D;border-radius:10px;padding:16px 20px;margin-bottom:28px}
+.info-block .info-pill{display:inline-flex;align-items:center;gap:5px;background:#F59E0B;color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;letter-spacing:.5px;text-transform:uppercase;margin-bottom:10px}
+.info-block p,.info-block li{font-size:12px;color:#78350F;line-height:1.65}
+.info-block ul{padding-left:18px;margin-top:6px}
+.info-block strong{color:#92400E}
+.info-block code{background:#FEF3C7;padding:1px 5px;border-radius:3px;font-size:11px}
+
+/* SECTION LABEL */
+.section-label{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:4px 12px;border-radius:20px;margin-bottom:14px}
+.label-blue{background:#DBEAFE;color:#1E40AF}
+.label-green{background:#DCFCE7;color:#166534}
+.label-amber{background:#FEF3C7;color:#92400E}
+.label-purple{background:#EDE9FE;color:#4C1D95}
+.label-slate{background:#F1F5F9;color:#475569}
+.section-block{margin-bottom:40px}
+.section-title{font-size:14px;font-weight:700;color:#1E3A5F;margin-bottom:14px}
+
+/* MODAL SHELL */
+.modal-wrap{background:#fff;border:1px solid #E2E8F0;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.1);max-width:820px;overflow:hidden;margin:0 auto}
+.modal-header{background:#1E3A5F;color:#fff;padding:18px 22px;display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.modal-header-icon{width:34px;height:34px;background:rgba(255,255,255,.15);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.modal-header-text{flex:1}
+.modal-header-text h2{font-size:15px;font-weight:700;margin-bottom:3px}
+.modal-header-text p{font-size:12px;color:#93C5FD;line-height:1.4}
+.modal-close{background:rgba(255,255,255,.15);border:none;color:#fff;width:28px;height:28px;border-radius:6px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+
+/* STEPPER */
+.stepper{display:flex;align-items:center;padding:14px 22px;background:#F8FAFC;border-bottom:1px solid #E2E8F0;gap:0}
+.step{display:flex;align-items:center;gap:8px;font-size:12px}
+.step-circle{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.step-circle.done{background:#10B981;color:#fff}
+.step-circle.active{background:#3B82F6;color:#fff}
+.step-circle.inactive{background:#E2E8F0;color:#94A3B8}
+.step-label{font-size:12px;font-weight:600;white-space:nowrap}
+.step-label.done{color:#10B981}
+.step-label.active{color:#1E3A5F}
+.step-label.inactive{color:#94A3B8}
+.step-connector{flex:1;height:2px;background:#E2E8F0;margin:0 10px;min-width:24px}
+.step-connector.done{background:#10B981}
+
+/* MODAL BODY */
+.modal-body{padding:0}
+.modal-footer{padding:12px 22px;border-top:1px solid #E2E8F0;display:flex;align-items:center;justify-content:space-between;background:#F8FAFC}
+.step-counter{font-size:12px;color:#64748B}
+.footer-actions{display:flex;gap:8px}
+
+/* FILTER BAR — sits above the two-pane body */
+.filter-bar{padding:12px 22px;background:#FAFAFA;border-bottom:1px solid #E2E8F0;display:flex;flex-direction:column;gap:10px}
+.filter-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.search-input{flex:1;min-width:220px;padding:7px 12px 7px 32px;border:1px solid #CBD5E1;border-radius:6px;font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;color:#1E293B;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E") no-repeat 10px center;outline:none}
+.search-input::placeholder{color:#94A3B8}
+.search-input:focus{border-color:#3B82F6;box-shadow:0 0 0 2px rgba(59,130,246,.12)}
+.filter-select{padding:7px 28px 7px 10px;border:1px solid #CBD5E1;border-radius:6px;font-size:12px;font-family:'Plus Jakarta Sans',sans-serif;color:#1E293B;background:#fff;cursor:pointer;white-space:nowrap;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;outline:none}
+.filter-select.active-filter{border-color:#3B82F6;background-color:#EFF6FF;color:#1D4ED8}
+.filter-chip{display:inline-flex;align-items:center;gap:5px;background:#EFF6FF;border:1px solid #BFDBFE;color:#1D4ED8;font-size:12px;font-weight:600;padding:4px 10px;border-radius:20px}
+.filter-chip .chip-x{cursor:pointer;color:#93C5FD;font-size:13px;margin-left:2px}
+.filter-chip .chip-x:hover{color:#3B82F6}
+.clear-filters{font-size:12px;color:#3B82F6;font-weight:600;cursor:pointer;white-space:nowrap}
+.result-count{font-size:12px;color:#64748B}
+.result-count strong{color:#1E293B}
+
+/* TWO-PANE BODY */
+.two-pane{display:grid;grid-template-columns:1fr 1fr;gap:0;border-top:1px solid #E2E8F0;min-height:320px}
+.pane{display:flex;flex-direction:column;overflow:hidden}
+.pane:first-child{border-right:1px solid #E2E8F0}
+.pane-header{padding:10px 16px;background:#F8FAFC;border-bottom:1px solid #E2E8F0;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-shrink:0}
+.pane-title{font-size:12px;font-weight:700;color:#1E3A5F}
+.pane-actions{display:flex;gap:8px}
+.pane-action-link{font-size:11px;color:#3B82F6;font-weight:600;cursor:pointer;white-space:nowrap}
+.pane-search{padding:8px 12px;border-bottom:1px solid #E2E8F0;flex-shrink:0}
+.pane-search input{width:100%;padding:5px 10px;border:1px solid #CBD5E1;border-radius:6px;font-size:12px;font-family:'Plus Jakarta Sans',sans-serif;color:#1E293B;background:#fff;outline:none}
+.pane-search input:focus{border-color:#3B82F6}
+.pane-body{flex:1;overflow-y:auto;max-height:260px}
+
+/* COMPANY ROWS */
+.company-row{display:flex;align-items:center;gap:10px;padding:9px 16px;border-bottom:1px solid #F1F5F9;cursor:pointer}
+.company-row:hover{background:#F8FAFC}
+.company-row:last-child{border-bottom:none}
+.company-row input[type=checkbox]{accent-color:#3B82F6;width:14px;height:14px;cursor:pointer;flex-shrink:0}
+.company-info{flex:1;min-width:0}
+.company-name{font-size:13px;font-weight:600;color:#1E293B;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.company-meta{font-size:11px;color:#94A3B8;margin-top:1px;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.company-id{font-family:'IBM Plex Mono',monospace;font-size:10px;color:#94A3B8}
+.pill{display:inline-block;font-size:10px;font-weight:700;padding:1px 7px;border-radius:10px}
+.pill-hemp{background:#D1FAE5;color:#065F46}
+.pill-guns{background:#FEE2E2;color:#991B1B}
+.pill-retailer{background:#DBEAFE;color:#1E40AF}
+.pill-state{background:#F1F5F9;color:#475569}
+.pill-pending{background:#FEF3C7;color:#92400E}
+.pill-active{background:#DCFCE7;color:#166534}
+
+/* MATCH BADGES — search highlight context */
+.match-badge{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;background:#EDE9FE;color:#5B21B6;white-space:nowrap}
+.match-badge.mid-match{background:#FEF3C7;color:#92400E}
+.match-badge.dba-match{background:#DBEAFE;color:#1E40AF}
+.match-badge.web-match{background:#DCFCE7;color:#166534}
+
+/* SELECTED PANE ROWS */
+.selected-row{display:flex;align-items:center;gap:10px;padding:8px 16px;border-bottom:1px solid #F1F5F9}
+.selected-row:last-child{border-bottom:none}
+.deselect-btn{background:none;border:none;color:#94A3B8;cursor:pointer;font-size:14px;line-height:1;padding:2px;flex-shrink:0}
+.deselect-btn:hover{color:#DC2626}
+
+/* FILTER DROPDOWN MOCK */
+.dropdown-mock{background:#fff;border:1px solid #E2E8F0;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.1);padding:8px 0;min-width:220px;position:relative}
+.dropdown-header{padding:6px 14px;font-size:11px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.4px}
+.dropdown-item{display:flex;align-items:center;gap:10px;padding:7px 14px;font-size:13px;cursor:pointer}
+.dropdown-item:hover{background:#F8FAFC}
+.dropdown-item input[type=checkbox]{accent-color:#3B82F6;width:14px;height:14px}
+.dropdown-footer{padding:8px 14px;border-top:1px solid #F1F5F9;display:flex;justify-content:flex-end}
+
+/* DIVERGENCE BANNER */
+.divergence-bar{padding:8px 16px;background:#EFF6FF;border-bottom:1px solid #BFDBFE;display:flex;align-items:center;justify-content:space-between;font-size:12px;color:#1D4ED8}
+.divergence-bar strong{font-weight:700}
+
+/* EMPTY STATE */
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 20px;color:#94A3B8;text-align:center}
+.empty-state .es-icon{font-size:28px;margin-bottom:8px}
+.empty-state p{font-size:12px;color:#64748B}
+
+/* BUTTONS */
+.btn{padding:8px 18px;border-radius:6px;font-size:13px;font-weight:600;border:1px solid transparent;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.btn-primary{background:#1E3A5F;color:#fff;border-color:#1E3A5F}
+.btn-secondary{background:#fff;border-color:#E2E8F0;color:#475569}
+.btn-sm{padding:5px 12px;font-size:12px;border-radius:5px}
+
+/* CALLOUT */
+.callout{border-radius:8px;padding:11px 15px;font-size:12px;margin-bottom:14px;line-height:1.6}
+.callout-blue{background:#EFF6FF;border:1px solid #BFDBFE;border-left:4px solid #3B82F6;color:#1E40AF}
+.callout-amber{background:#FFFBEB;border:1px solid #FDE68A;border-left:4px solid #F59E0B;color:#78350F}
+
+/* DIVIDER */
+.divider{height:1px;background:#E2E8F0;margin:36px 0}
+
+/* TEST PANEL */
+.test-panel{background:#fff;border:1px solid #E2E8F0;border-radius:10px;overflow:hidden;margin-top:14px}
+.test-panel-header{background:#F8FAFC;padding:10px 16px;font-size:12px;font-weight:700;color:#1E3A5F;border-bottom:1px solid #E2E8F0}
+.test-row{padding:8px 16px;font-size:12px;color:#475569;border-bottom:1px solid #F1F5F9;display:flex;align-items:flex-start;gap:10px}
+.test-row:last-child{border-bottom:none}
+.test-row input[type=checkbox]{margin-top:2px;accent-color:#3B82F6;flex-shrink:0}
+</style>
+</head>
+<body>
+
+<!-- PROTO NAV -->
+<nav class="topnav">
+  <a href="https://jfloyd-qredible.netlify.app/">← All Mockups</a>
+  <span class="sep">/</span>
+  <span class="title">Bulk Assignment Filters</span>
+  <span class="sep">/</span>
+  <span class="ticket-badge">QP-3683</span>
+</nav>
+
+<div class="page">
+
+  <div class="page-header">
+    <h1>Bulk Team Member Assignment — Status Filters + Multi-Field Search</h1>
+    <p>Extends the company-selection step of the existing Bulk Team Member Assignment stepper modal with status/team-member filters and legal name / DBA / website / MID search.</p>
+  </div>
+
+  <!-- TOP INFO BLOCK -->
+  <div class="info-block">
+    <div class="info-pill">ℹ INFO — NOT IN BUILD</div>
+    <p><strong>How to read this mockup:</strong> Yellow dashed blocks are annotations — never rendered in the app. Everything outside yellow blocks is ship-ready copy. <code>[NEEDS COPY: …]</code> flags mark gaps needing a decision before build.</p>
+    <ul>
+      <li><strong>Scope:</strong> Only Step 1 (company selection) of the existing 3-step Bulk Team Member Assignment wizard changes. Steps 2 and 3 are unchanged.</li>
+      <li><strong>Filters are additive / composable:</strong> Status filter + team-member filter + search all narrow the list further when combined.</li>
+      <li><strong>Selections persist across filter changes.</strong> If a selected company falls outside the current filter view, it stays selected — the counter surfaces "X selected, Y visible" to prevent silent deselection.</li>
+      <li><strong>Clear filters</strong> resets all filters and search text but does NOT clear the selection.</li>
+      <li><strong>Search is multi-field:</strong> fans out across <code>pl_company.legal_name</code>, <code>pl_company_dba.dba_name</code>, <code>pl_company.website</code>, <code>pl_company_dba.merchant_identifier</code>. Results deduped at <code>pl_company_id</code> level.</li>
+      <li><strong>Default filter:</strong> Status = Active + Pending (Archived excluded by default).</li>
+    </ul>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       EXAMPLE 1 — Default state
+  ═══════════════════════════════════════ -->
+  <div class="section-block">
+    <div class="section-label label-blue">Example 1 — Step 1: Company selection · Default state</div>
+    <div class="section-title">Modal opens with Active + Pending filter pre-applied, no search, full list</div>
+
+    <div class="modal-wrap">
+      <div class="modal-header">
+        <div class="modal-header-icon">👤</div>
+        <div class="modal-header-text">
+          <h2>Assign Team Members</h2>
+          <p>Select companies, then choose team members to assign to them.</p>
+        </div>
+        <button class="modal-close">✕</button>
+      </div>
+
+      <!-- Stepper -->
+      <div class="stepper">
+        <div class="step">
+          <div class="step-circle active">1</div>
+          <span class="step-label active">Select Companies</span>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step">
+          <div class="step-circle inactive">2</div>
+          <span class="step-label inactive">Choose Team Members</span>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step">
+          <div class="step-circle inactive">3</div>
+          <span class="step-label inactive">Confirm</span>
+        </div>
+      </div>
+
+      <!-- Filter bar -->
+      <div class="filter-bar">
+        <div class="filter-row">
+          <input class="search-input" type="text" placeholder="Search by legal name, DBA, website, or MID…">
+          <select class="filter-select active-filter">
+            <option>Status: Active, Pending</option>
+          </select>
+          <select class="filter-select">
+            <option>Team member: Any</option>
+          </select>
+        </div>
+        <div class="result-count"><strong>1,204</strong> companies matching current filters</div>
+      </div>
+
+      <!-- Two-pane body -->
+      <div class="two-pane">
+        <!-- Available pane -->
+        <div class="pane">
+          <div class="pane-header">
+            <span class="pane-title">Available Companies</span>
+            <div class="pane-actions">
+              <span class="pane-action-link">Select All</span>
+            </div>
+          </div>
+          <div class="pane-body">
+            <div class="company-row">
+              <input type="checkbox">
+              <div class="company-info">
+                <div class="company-name">3rd Coast Blends</div>
+                <div class="company-meta">
+                  <span class="company-id">44298173</span>
+                  <span class="pill pill-hemp">Hemp/CBD</span>
+                  <span class="pill pill-retailer">Retailer</span>
+                  <span class="pill pill-active">Active</span>
+                </div>
+              </div>
+            </div>
+            <div class="company-row">
+              <input type="checkbox">
+              <div class="company-info">
+                <div class="company-name">Bulk Marijuana Seeds</div>
+                <div class="company-meta">
+                  <span class="company-id">55210488</span>
+                  <span class="pill pill-hemp">Hemp/CBD</span>
+                  <span class="pill pill-retailer">Wholesaler</span>
+                  <span class="pill pill-pending">Pending</span>
+                </div>
+              </div>
+            </div>
+            <div class="company-row">
+              <input type="checkbox">
+              <div class="company-info">
+                <div class="company-name">Hemp Depot</div>
+                <div class="company-meta">
+                  <span class="company-id">66329041</span>
+                  <span class="pill pill-hemp">Hemp/CBD</span>
+                  <span class="pill pill-retailer">Processor</span>
+                  <span class="pill pill-active">Active</span>
+                </div>
+              </div>
+            </div>
+            <div class="company-row">
+              <input type="checkbox">
+              <div class="company-info">
+                <div class="company-name">Rocky Seeds LLC</div>
+                <div class="company-meta">
+                  <span class="company-id">77130412</span>
+                  <span class="pill pill-hemp">Hemp/CBD</span>
+                  <span class="pill pill-retailer">Retailer</span>
+                  <span class="pill pill-pending">Pending</span>
+                </div>
+              </div>
+            </div>
+            <div class="company-row" style="color:#94A3B8;font-size:12px;justify-content:center">
+              + 1,200 more companies…
+            </div>
+          </div>
+        </div>
+        <!-- Selected pane -->
+        <div class="pane">
+          <div class="pane-header">
+            <span class="pane-title">Selected (0)</span>
+            <div class="pane-actions">
+              <span class="pane-action-link" style="color:#94A3B8">Deselect All</span>
+            </div>
+          </div>
+          <div class="pane-body">
+            <div class="empty-state">
+              <div class="es-icon">☐</div>
+              <p>No companies selected yet.<br>Check companies on the left to add them here.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <span class="step-counter">Step 1 of 3</span>
+        <div class="footer-actions">
+          <button class="btn btn-secondary">Cancel</button>
+          <button class="btn btn-primary" style="opacity:.45;cursor:not-allowed">Continue →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ═══════════════════════════════════════
+       EXAMPLE 2 — Search active ("hemp")
+  ═══════════════════════════════════════ -->
+  <div class="section-block">
+    <div class="section-label label-purple">Example 2 — Step 1 · Search active, multi-field match badges</div>
+    <div class="section-title">Query "hemp" — 34 results across legal name, DBA, and MID fields. Match context badges shown inline.</div>
+
+    <div class="modal-wrap">
+      <div class="modal-header">
+        <div class="modal-header-icon">👤</div>
+        <div class="modal-header-text">
+          <h2>Assign Team Members</h2>
+          <p>Select companies, then choose team members to assign to them.</p>
+        </div>
+        <button class="modal-close">✕</button>
+      </div>
+
+      <div class="stepper">
+        <div class="step"><div class="step-circle active">1</div><span class="step-label active">Select Companies</span></div>
+        <div class="step-connector"></div>
+        <div class="step"><div class="step-circle inactive">2</div><span class="step-label inactive">Choose Team Members</span></div>
+        <div class="step-connector"></div>
+        <div class="step"><div class="step-circle inactive">3</div><span class="step-label inactive">Confirm</span></div>
+      </div>
+
+      <div class="filter-bar">
+        <div class="filter-row">
+          <input class="search-input" type="text" value="hemp" style="border-color:#3B82F6;box-shadow:0 0 0 2px rgba(59,130,246,.12)">
+          <select class="filter-select active-filter"><option>Status: Active, Pending</option></select>
+          <select class="filter-select"><option>Team member: Any</option></select>
+          <span class="clear-filters">Clear</span>
+        </div>
+        <div class="result-count"><strong>34</strong> companies matching "hemp" · <a href="#" style="font-size:12px">show all 1,204</a></div>
+      </div>
+
+      <div class="two-pane">
+        <div class="pane">
+          <div class="pane-header">
+            <span class="pane-title">Available Companies</span>
+            <div class="pane-actions"><span class="pane-action-link">Select All</span></div>
+          </div>
+          <div class="pane-body">
+            <!-- Row 1: legal name match -->
+            <div class="company-row">
+              <input type="checkbox">
+              <div class="company-info">
+                <div class="company-name" style="display:flex;align-items:center;gap:6px">
+                  Hemp Depot
+                  <span class="match-badge">name match</span>
+                </div>
+                <div class="company-meta">
+                  <span class="company-id">66329041</span>
+                  <span class="pill pill-hemp">Hemp/CBD</span>
+                  <span class="pill pill-active">Active</span>
+                </div>
+              </div>
+            </div>
+            <!-- Row 2: DBA match -->
+            <div class="company-row">
+              <input type="checkbox">
+              <div class="company-info">
+                <div class="company-name" style="display:flex;align-items:center;gap:6px">
+                  Rocky Seeds LLC
+                  <span class="match-badge dba-match">DBA: Rocky Hemp</span>
+                </div>
+                <div class="company-meta">
+                  <span class="company-id">77130412</span>
+                  <span class="pill pill-hemp">Hemp/CBD</span>
+                  <span class="pill pill-pending">Pending</span>
+                </div>
+              </div>
+            </div>
+            <!-- Row 3: MID match -->
+            <div class="company-row">
+              <input type="checkbox">
+              <div class="company-info">
+                <div class="company-name" style="display:flex;align-items:center;gap:6px">
+                  Bulk Marijuana Seeds
+                  <span class="match-badge mid-match">MID: HEMP-003391</span>
+                </div>
+                <div class="company-meta">
+                  <span class="company-id">55210488</span>
+                  <span class="pill pill-hemp">Hemp/CBD</span>
+                  <span class="pill pill-active">Active</span>
+                </div>
+              </div>
+            </div>
+            <!-- Row 4: website match -->
+            <div class="company-row">
+              <input type="checkbox">
+              <div class="company-info">
+                <div class="company-name" style="display:flex;align-items:center;gap:6px">
+                  CBD North
+                  <span class="match-badge web-match">URL: hempnorth.com</span>
+                </div>
+                <div class="company-meta">
+                  <span class="company-id">81245019</span>
+                  <span class="pill pill-hemp">Hemp/CBD</span>
+                  <span class="pill pill-active">Active</span>
+                </div>
+              </div>
+            </div>
+            <div class="company-row" style="color:#94A3B8;font-size:12px;justify-content:center">
+              + 30 more results…
+            </div>
+          </div>
+        </div>
+        <div class="pane">
+          <div class="pane-header">
+            <span class="pane-title">Selected (0)</span>
+            <div class="pane-actions"><span class="pane-action-link" style="color:#94A3B8">Deselect All</span></div>
+          </div>
+          <div class="pane-body">
+            <div class="empty-state">
+              <div class="es-icon">☐</div>
+              <p>No companies selected yet.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <span class="step-counter">Step 1 of 3</span>
+        <div class="footer-actions">
+          <button class="btn btn-secondary">Cancel</button>
+          <button class="btn btn-primary" style="opacity:.45;cursor:not-allowed">Continue →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ═══════════════════════════════════════
+       EXAMPLE 3 — Status filter expanded
+  ═══════════════════════════════════════ -->
+  <div class="section-block">
+    <div class="section-label label-amber">Example 3 — Step 1 · Status filter dropdown open</div>
+    <div class="section-title">Multi-select status filter — Active and Pending checked by default; Archived available but not default</div>
+
+    <div style="max-width:820px;margin:0 auto">
+      <!-- Just the filter area context + dropdown -->
+      <div style="background:#fff;border:1px solid #E2E8F0;border-radius:10px;overflow:visible;padding:16px 22px 20px;position:relative">
+        <div style="font-size:12px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.4px;margin-bottom:12px">Filter bar — Status dropdown open</div>
+        <div class="filter-row" style="margin-bottom:14px">
+          <input class="search-input" type="text" placeholder="Search by legal name, DBA, website, or MID…" style="max-width:300px">
+          <select class="filter-select active-filter" style="pointer-events:none">
+            <option>Status ▾</option>
+          </select>
+          <select class="filter-select"><option>Team member: Any</option></select>
+        </div>
+        <!-- Dropdown open -->
+        <div class="dropdown-mock" style="margin-left:326px;margin-top:-8px">
+          <div class="dropdown-header">Status</div>
+          <div class="dropdown-item"><input type="checkbox" checked> Active</div>
+          <div class="dropdown-item"><input type="checkbox" checked> Pending</div>
+          <div class="dropdown-item"><input type="checkbox"> Archived</div>
+          <div class="dropdown-footer">
+            <span style="font-size:12px;color:#3B82F6;font-weight:600;cursor:pointer">Apply</span>
+          </div>
+        </div>
+      </div>
+      <div class="info-block" style="margin-top:14px;margin-bottom:0">
+        <div class="info-pill">ℹ INFO — NOT IN BUILD</div>
+        <p><strong>Default:</strong> Active + Pending pre-checked when modal opens. Archived is available but unchecked by default — operators must opt in to include archived companies.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ═══════════════════════════════════════
+       EXAMPLE 4 — Team member filter: Unassigned
+  ═══════════════════════════════════════ -->
+  <div class="section-block">
+    <div class="section-label label-purple">Example 4 — Step 1 · Team member filter · "Unassigned" selected</div>
+    <div class="section-title">List narrows to companies with zero current team-member assignees</div>
+
+    <div class="modal-wrap">
+      <div class="modal-header">
+        <div class="modal-header-icon">👤</div>
+        <div class="modal-header-text">
+          <h2>Assign Team Members</h2>
+          <p>Select companies, then choose team members to assign to them.</p>
+        </div>
+        <button class="modal-close">✕</button>
+      </div>
+
+      <div class="stepper">
+        <div class="step"><div class="step-circle active">1</div><span class="step-label active">Select Companies</span></div>
+        <div class="step-connector"></div>
+        <div class="step"><div class="step-circle inactive">2</div><span class="step-label inactive">Choose Team Members</span></div>
+        <div class="step-connector"></div>
+        <div class="step"><div class="step-circle inactive">3</div><span class="step-label inactive">Confirm</span></div>
+      </div>
+
+      <div class="filter-bar">
+        <div class="filter-row">
+          <input class="search-input" type="text" placeholder="Search by legal name, DBA, website, or MID…">
+          <select class="filter-select active-filter"><option>Status: Active, Pending</option></select>
+          <select class="filter-select active-filter"><option>Team: Unassigned</option></select>
+          <span class="clear-filters">Clear filters</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <div class="filter-chip">Team member: Unassigned <span class="chip-x">×</span></div>
+          <span class="result-count"><strong>87</strong> companies with no team member assigned</span>
+        </div>
+      </div>
+
+      <div class="two-pane">
+        <div class="pane">
+          <div class="pane-header">
+            <span class="pane-title">Available Companies (87)</span>
+            <div class="pane-actions"><span class="pane-action-link">Select All</span></div>
+          </div>
+          <div class="pane-body">
+            <div class="company-row">
+              <input type="checkbox">
+              <div class="company-info">
+                <div class="company-name">CBD North</div>
+                <div class="company-meta">
+                  <span class="company-id">81245019</span>
+                  <span class="pill pill-hemp">Hemp/CBD</span>
+                  <span class="pill pill-active">Active</span>
+                  <span style="font-size:11px;color:#DC2626">No assignees</span>
+                </div>
+              </div>
+            </div>
+            <div class="company-row">
+              <input type="checkbox" checked>
+              <div class="company-info">
+                <div class="company-name">USAG Merchant</div>
+                <div class="company-meta">
+                  <span class="company-id">77130412</span>
+                  <span class="pill pill-guns">Firearms</span>
+                  <span class="pill pill-active">Active</span>
+                  <span style="font-size:11px;color:#DC2626">No assignees</span>
+                </div>
+              </div>
+            </div>
+            <div class="company-row">
+              <input type="checkbox" checked>
+              <div class="company-info">
+                <div class="company-name">Mood LLC</div>
+                <div class="company-meta">
+                  <span class="company-id">33198821</span>
+                  <span class="pill pill-hemp">Hemp/CBD</span>
+                  <span class="pill pill-pending">Pending</span>
+                  <span style="font-size:11px;color:#DC2626">No assignees</span>
+                </div>
+              </div>
+            </div>
+            <div class="company-row" style="color:#94A3B8;font-size:12px;justify-content:center">+ 84 more unassigned companies…</div>
+          </div>
+        </div>
+        <div class="pane">
+          <div class="pane-header">
+            <span class="pane-title">Selected (2)</span>
+            <div class="pane-actions"><span class="pane-action-link">Deselect All</span></div>
+          </div>
+          <div class="pane-body">
+            <div class="selected-row">
+              <button class="deselect-btn">×</button>
+              <div class="company-info">
+                <div class="company-name">USAG Merchant</div>
+                <div class="company-meta"><span class="company-id">77130412</span></div>
+              </div>
+            </div>
+            <div class="selected-row">
+              <button class="deselect-btn">×</button>
+              <div class="company-info">
+                <div class="company-name">Mood LLC</div>
+                <div class="company-meta"><span class="company-id">33198821</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <span class="step-counter">Step 1 of 3</span>
+        <div class="footer-actions">
+          <button class="btn btn-secondary">Cancel</button>
+          <button class="btn btn-primary">Continue →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ═══════════════════════════════════════
+       EXAMPLE 5 — Selection divergence
+  ═══════════════════════════════════════ -->
+  <div class="section-block">
+    <div class="section-label label-amber">Example 5 — Step 1 · Selection divergence — selections outside current filter</div>
+    <div class="section-title">"15 selected, 3 visible" — a filter narrows the visible list but the 15 checked companies remain selected</div>
+
+    <div class="modal-wrap">
+      <div class="modal-header">
+        <div class="modal-header-icon">👤</div>
+        <div class="modal-header-text">
+          <h2>Assign Team Members</h2>
+          <p>Select companies, then choose team members to assign to them.</p>
+        </div>
+        <button class="modal-close">✕</button>
+      </div>
+
+      <div class="stepper">
+        <div class="step"><div class="step-circle active">1</div><span class="step-label active">Select Companies</span></div>
+        <div class="step-connector"></div>
+        <div class="step"><div class="step-circle inactive">2</div><span class="step-label inactive">Choose Team Members</span></div>
+        <div class="step-connector"></div>
+        <div class="step"><div class="step-circle inactive">3</div><span class="step-label inactive">Confirm</span></div>
+      </div>
+
+      <div class="filter-bar">
+        <div class="filter-row">
+          <input class="search-input" type="text" value="rocky" style="border-color:#3B82F6">
+          <select class="filter-select active-filter"><option>Status: Pending</option></select>
+          <select class="filter-select"><option>Team member: Any</option></select>
+          <span class="clear-filters">Clear filters</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <div class="filter-chip">Status: Pending <span class="chip-x">×</span></div>
+          <span class="result-count"><strong>3</strong> visible · <strong style="color:#3B82F6">15 selected total</strong> · <a href="#" style="font-size:12px">Show all 15 selected</a></span>
+        </div>
+      </div>
+
+      <!-- Divergence notice above two-pane -->
+      <div class="divergence-bar">
+        <span>ℹ <strong>15 companies selected,</strong> but only 3 match your current filters. The other 12 are still selected — they'll be included when you continue.</span>
+        <a href="#" style="font-size:12px;font-weight:700;color:#1D4ED8;white-space:nowrap">Show all 15 selected</a>
+      </div>
+
+      <div class="two-pane">
+        <div class="pane">
+          <div class="pane-header">
+            <span class="pane-title">Available (3 visible)</span>
+            <div class="pane-actions"><span class="pane-action-link">Select All Visible</span></div>
+          </div>
+          <div class="pane-body">
+            <div class="company-row">
+              <input type="checkbox" checked>
+              <div class="company-info">
+                <div class="company-name">Rocky Seeds LLC</div>
+                <div class="company-meta"><span class="company-id">77130412</span><span class="pill pill-pending">Pending</span></div>
+              </div>
+            </div>
+            <div class="company-row">
+              <input type="checkbox">
+              <div class="company-info">
+                <div class="company-name">Rocky Mountain Hemp</div>
+                <div class="company-meta"><span class="company-id">88301204</span><span class="pill pill-pending">Pending</span></div>
+              </div>
+            </div>
+            <div class="company-row">
+              <input type="checkbox">
+              <div class="company-info">
+                <div class="company-name">Rocky Buds Co.</div>
+                <div class="company-meta"><span class="company-id">91009876</span><span class="pill pill-pending">Pending</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="pane">
+          <div class="pane-header">
+            <span class="pane-title">Selected (15 total, 1 visible)</span>
+            <div class="pane-actions"><span class="pane-action-link">Deselect All</span></div>
+          </div>
+          <div class="pane-body">
+            <div class="selected-row">
+              <button class="deselect-btn">×</button>
+              <div class="company-info">
+                <div class="company-name">Rocky Seeds LLC</div>
+                <div class="company-meta"><span class="company-id">77130412</span></div>
+              </div>
+            </div>
+            <div style="padding:10px 16px;font-size:12px;color:#94A3B8;font-style:italic">
+              + 14 more selected (outside current filter view)
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <span class="step-counter">Step 1 of 3</span>
+        <div class="footer-actions">
+          <button class="btn btn-secondary">Cancel</button>
+          <button class="btn btn-primary">Continue with 15 companies →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ═══════════════════════════════════════
+       EXAMPLE 6 — Filters cleared
+  ═══════════════════════════════════════ -->
+  <div class="section-block">
+    <div class="section-label label-slate">Example 6 — Step 1 · Filters cleared — selections preserved</div>
+    <div class="section-title">"Clear filters" resets status/team/search to defaults. The 15 selected companies remain selected.</div>
+
+    <div class="modal-wrap">
+      <div class="modal-header">
+        <div class="modal-header-icon">👤</div>
+        <div class="modal-header-text">
+          <h2>Assign Team Members</h2>
+          <p>Select companies, then choose team members to assign to them.</p>
+        </div>
+        <button class="modal-close">✕</button>
+      </div>
+
+      <div class="stepper">
+        <div class="step"><div class="step-circle active">1</div><span class="step-label active">Select Companies</span></div>
+        <div class="step-connector"></div>
+        <div class="step"><div class="step-circle inactive">2</div><span class="step-label inactive">Choose Team Members</span></div>
+        <div class="step-connector"></div>
+        <div class="step"><div class="step-circle inactive">3</div><span class="step-label inactive">Confirm</span></div>
+      </div>
+
+      <div class="filter-bar">
+        <div class="filter-row">
+          <input class="search-input" type="text" placeholder="Search by legal name, DBA, website, or MID…">
+          <select class="filter-select active-filter"><option>Status: Active, Pending</option></select>
+          <select class="filter-select"><option>Team member: Any</option></select>
+        </div>
+        <div class="result-count">
+          <strong>1,204</strong> companies · <strong style="color:#3B82F6">15 selected</strong>
+          <span style="margin-left:8px;font-size:11px;color:#94A3B8">Filters cleared — your selections are intact</span>
+        </div>
+      </div>
+
+      <div class="two-pane">
+        <div class="pane">
+          <div class="pane-header">
+            <span class="pane-title">Available Companies (1,204)</span>
+            <div class="pane-actions"><span class="pane-action-link">Select All</span></div>
+          </div>
+          <div class="pane-body">
+            <div class="company-row">
+              <input type="checkbox" checked>
+              <div class="company-info">
+                <div class="company-name">3rd Coast Blends</div>
+                <div class="company-meta"><span class="company-id">44298173</span><span class="pill pill-hemp">Hemp/CBD</span><span class="pill pill-active">Active</span></div>
+              </div>
+            </div>
+            <div class="company-row">
+              <input type="checkbox">
+              <div class="company-info">
+                <div class="company-name">Bulk Marijuana Seeds</div>
+                <div class="company-meta"><span class="company-id">55210488</span><span class="pill pill-hemp">Hemp/CBD</span><span class="pill pill-pending">Pending</span></div>
+              </div>
+            </div>
+            <div class="company-row">
+              <input type="checkbox" checked>
+              <div class="company-info">
+                <div class="company-name">Rocky Seeds LLC</div>
+                <div class="company-meta"><span class="company-id">77130412</span><span class="pill pill-hemp">Hemp/CBD</span><span class="pill pill-pending">Pending</span></div>
+              </div>
+            </div>
+            <div class="company-row" style="color:#94A3B8;font-size:12px;justify-content:center">+ 1,201 more companies…</div>
+          </div>
+        </div>
+        <div class="pane">
+          <div class="pane-header">
+            <span class="pane-title">Selected (15)</span>
+            <div class="pane-actions"><span class="pane-action-link">Deselect All</span></div>
+          </div>
+          <div class="pane-body">
+            <div class="selected-row">
+              <button class="deselect-btn">×</button>
+              <div class="company-info"><div class="company-name">3rd Coast Blends</div><div class="company-meta"><span class="company-id">44298173</span></div></div>
+            </div>
+            <div class="selected-row">
+              <button class="deselect-btn">×</button>
+              <div class="company-info"><div class="company-name">Rocky Seeds LLC</div><div class="company-meta"><span class="company-id">77130412</span></div></div>
+            </div>
+            <div style="padding:10px 16px;font-size:12px;color:#94A3B8;font-style:italic">+ 13 more selected</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <span class="step-counter">Step 1 of 3</span>
+        <div class="footer-actions">
+          <button class="btn btn-secondary">Cancel</button>
+          <button class="btn btn-primary">Continue with 15 companies →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- BOTTOM INFO: ACCEPTANCE CRITERIA -->
+  <div class="info-block">
+    <div class="info-pill">ℹ INFO — NOT IN BUILD — Acceptance Criteria (from ticket)</div>
+    <div class="test-panel">
+      <div class="test-panel-header">QP-3683 — Test Panel</div>
+      <div class="test-row"><input type="checkbox"> Status filter renders with Active, Pending, Archived options; defaults to Active + Pending.</div>
+      <div class="test-row"><input type="checkbox"> Current team members filter renders as multi-select user picker with an Unassigned option.</div>
+      <div class="test-row"><input type="checkbox"> Search input visible above the company list; placeholder names all four searchable fields.</div>
+      <div class="test-row"><input type="checkbox"> Searching a substring of legal name returns matching companies.</div>
+      <div class="test-row"><input type="checkbox"> Searching a substring of a DBA returns matching companies.</div>
+      <div class="test-row"><input type="checkbox"> Searching a substring of a website URL returns matching companies.</div>
+      <div class="test-row"><input type="checkbox"> Searching a full or partial MID returns matching companies.</div>
+      <div class="test-row"><input type="checkbox"> A search matching a company via multiple fields returns the company once (deduped at pl_company_id).</div>
+      <div class="test-row"><input type="checkbox"> Filters and search compose — applying status filter on top of search narrows results further.</div>
+      <div class="test-row"><input type="checkbox"> Selecting Unassigned in team-member filter returns only companies with zero current assignees.</div>
+      <div class="test-row"><input type="checkbox"> Existing selections persist across filter changes; counter shows "X selected, Y visible" when they diverge.</div>
+      <div class="test-row"><input type="checkbox"> Clear filters resets all filters and search but does NOT clear the selection.</div>
+      <div class="test-row"><input type="checkbox"> Downstream assignment step (Step 2 + Step 3) still works end-to-end with new filters in place.</div>
+      <div class="test-row"><input type="checkbox"> Result count updates live as filters / search are applied.</div>
+    </div>
+  </div>
+
+  <div class="info-block" style="margin-top:20px">
+    <div class="info-pill">ℹ INFO — NOT IN BUILD — Future Considerations (v1 deferred)</div>
+    <ul>
+      <li><strong>Saving filter presets</strong> per operator (e.g. "my Pending bucket"). Not in v1.</li>
+      <li><strong>Server-side vs client-side search</strong> — depends on list size at runtime. May need server-side once list exceeds practical client threshold. Confirm with backend during implementation.</li>
+      <li><strong>MID match context inline</strong> — whether to show which DBA the matched MID belongs to in the result row. Deferred.</li>
+      <li><strong>Bulk-deselect within a filter view</strong> — "remove all currently visible" from selection. Not in v1.</li>
+      <li><strong>Additional searchable fields</strong> (phone, address, license number). Defer until requested.</li>
+    </ul>
+  </div>
+
+</div><!-- /page -->
+</body>
+</html>
