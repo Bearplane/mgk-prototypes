@@ -214,7 +214,7 @@ code,.mono{font-family:'IBM Plex Mono',monospace}
         <div>
           <div style="font-size:13px;font-weight:700;color:#1E3A5F;margin-bottom:8px">What is Track B?</div>
           <p style="font-size:13px;color:#1E293B;line-height:1.75">
-            <strong>Track B = card-present retail</strong> — physical dispensaries and storefront hemp/CBD retailers. Unlike Track A (ecommerce) merchants who have a live website to scan, Track B merchants sell products in-store. Their compliance footprint is their <strong>product catalog</strong>: the full list of SKUs they carry, with associated product attributes (THC/CBD %, category type, brand, barcode).
+            <strong>Track B = card-present retail</strong> — physical dispensaries and storefront hemp/CBD retailers. Unlike Track A (ecommerce) merchants who have a live website to scan, Track B merchants sell products in-store. Their compliance footprint is their <strong>product catalog</strong>: the full list of SKUs they carry, with associated product attributes (SKU, name, category type, brand, barcode, price). Analyte percentages are sourced from COAs, not the catalog.
           </p>
         </div>
         <div>
@@ -584,7 +584,7 @@ code,.mono{font-family:'IBM Plex Mono',monospace}
             </td>
             <td>47</td>
             <td><span class="pill-coa-cond">Conditional</span></td>
-            <td style="font-size:12px;color:#475569">COA required if THC content exceeds trace amounts per policy configuration. Products at 0.00% THC may proceed without COA; review will flag any above threshold.</td>
+            <td style="font-size:12px;color:#475569">COA required if the COA's extracted Δ9-THC value exceeds the trace-amount threshold defined in the merchant's active policy configuration. Evaluated at COA ingestion (not at catalog upload); catalog rows enter this branch based on classification alone.</td>
           </tr>
           <tr>
             <td><strong>Topicals</strong></td>
