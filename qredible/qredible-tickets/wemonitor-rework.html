@@ -108,17 +108,6 @@ tbody td:first-child{text-align:center}
 .comp-med{color:#D97706}
 .comp-ok{color:#16A34A}
 .comp-na{color:#94A3B8;font-style:italic}
-/* MRI */
-.mri{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;padding:3px 10px;border-radius:12px}
-.mri-clear{background:#DCFCE7;color:#166534}
-.mri-risk{background:#FEF3C7;color:#92400E}
-.mri-action{background:#FEE2E2;color:#991B1B}
-.mri-none{background:#F1F5F9;color:#94A3B8}
-.mri-dot{width:7px;height:7px;border-radius:50%;display:inline-block}
-.mri-dot-green{background:#16A34A}
-.mri-dot-amber{background:#D97706}
-.mri-dot-red{background:#DC2626}
-.mri-dot-gray{background:#94A3B8}
 /* TEAM */
 .team{display:flex;align-items:center;gap:4px}
 .avatar{width:26px;height:26px;border-radius:50%;background:#3B82F6;color:#fff;font-size:11px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
@@ -196,7 +185,7 @@ tbody td:first-child{text-align:center}
 <div class="page">
   <div class="page-header">
     <h1>WeMonitor UI Rework + Pending Companies</h1>
-    <p>Design proposal: Enhanced pipeline view with combined Industry Type + Type of Company pairing, bulk actions, MRI column, and underwriting queue tab.</p>
+    <p>Design proposal: Enhanced pipeline view with combined Industry Type + Type of Company pairing, bulk actions, and underwriting queue tab.</p>
   </div>
 
   <!-- ═══════════════════════════════════════════════
@@ -217,8 +206,7 @@ tbody td:first-child{text-align:center}
         <span class="pain">No Pending Companies tab (Active / Archived / Invites only)</span>
         <span class="pain">No bulk select or bulk actions</span>
         <span class="pain">No scan status indicators per industry</span>
-        <span class="pain">No MRI — only per-scan OFAC/license columns</span>
-        <span class="pain">No Team Member filter / My Queue view</span>
+<span class="pain">No Team Member filter / My Queue view</span>
       </div>
       <!-- Simulated old tab bar -->
       <div class="tabs" style="margin:0 -20px;padding:0 20px">
@@ -387,7 +375,6 @@ tbody td:first-child{text-align:center}
             <th>License Status</th>
             <th>Website Compliance</th>
             <th>Product Compliance</th>
-            <th>MRI</th>
             <th>Team</th>
             <th>Scans</th>
             <th>Actions</th>
@@ -408,7 +395,6 @@ tbody td:first-child{text-align:center}
             <td><span class="lic lic-active">● Active</span></td>
             <td><span class="comp comp-high">13 Findings <span style="font-size:11px;color:#991B1B">(11 High)</span></span></td>
             <td><span class="comp comp-high">8 Products <span style="font-size:11px;color:#991B1B">(4 Violative)</span></span></td>
-            <td><span class="mri mri-risk"><span class="mri-dot mri-dot-amber"></span>At Risk</span></td>
             <td><div class="team"><div class="avatar av-green">M</div><span class="team-more">+3</span></div></td>
             <td><span class="scan-date">Jan 30</span></td>
             <td><button class="act-btn">⋯</button></td>
@@ -427,7 +413,6 @@ tbody td:first-child{text-align:center}
             <td><span class="lic lic-active">● Active</span></td>
             <td><span class="comp comp-med">5 Findings <span style="font-size:11px;color:#D97706">(2 High)</span></span></td>
             <td><span class="comp comp-na">N/A</span></td>
-            <td><span class="mri mri-clear"><span class="mri-dot mri-dot-green"></span>Clear</span></td>
             <td><div class="team"><div class="avatar">R</div></div></td>
             <td><span class="scan-date">Mar 15</span></td>
             <td><button class="act-btn">⋯</button></td>
@@ -446,7 +431,6 @@ tbody td:first-child{text-align:center}
             <td><span class="lic lic-pending">● Pending</span></td>
             <td><span class="comp comp-ok">0 Findings</span></td>
             <td><span class="comp comp-med">12 Products</span></td>
-            <td><span class="mri mri-none"><span class="mri-dot mri-dot-gray"></span>Not Assessed</span></td>
             <td><span class="unassigned">Unassigned</span></td>
             <td><span class="scan-never">Never</span></td>
             <td><button class="act-btn">⋯</button></td>
@@ -466,7 +450,6 @@ tbody td:first-child{text-align:center}
             <td><span class="lic lic-active">● Active</span></td>
             <td><span class="comp comp-high">20 Findings <span style="font-size:11px;color:#991B1B">(15 High)</span></span></td>
             <td><span class="comp comp-high">15 Products <span style="font-size:11px;color:#991B1B">(9 Violative)</span></span></td>
-            <td><span class="mri mri-action"><span class="mri-dot mri-dot-red"></span>Action Required</span></td>
             <td><div class="team"><div class="avatar av-purple">D</div></div></td>
             <td><span class="scan-date">Feb 28</span></td>
             <td><button class="act-btn">⋯</button></td>
@@ -485,7 +468,6 @@ tbody td:first-child{text-align:center}
             <td><span class="lic lic-failed">● Failed</span></td>
             <td><span class="comp comp-high">11 Findings <span style="font-size:11px;color:#991B1B">(8 High)</span></span></td>
             <td><span class="comp comp-high">20+ Products</span></td>
-            <td><span class="mri mri-risk"><span class="mri-dot mri-dot-amber"></span>At Risk</span></td>
             <td><div class="team"><div class="avatar av-green">M</div></div></td>
             <td><span class="scan-date">Aug 21</span></td>
             <td><button class="act-btn">⋯</button></td>
@@ -501,7 +483,6 @@ tbody td:first-child{text-align:center}
         <div class="pager"><span class="page-btn">‹</span><span class="page-btn active">1</span><span class="page-btn">2</span><span class="page-btn">3</span><span class="page-btn ghost">…</span><span class="page-btn">49</span><span class="page-btn">›</span></div>
       </div>
     </div>
-    <div style="padding:8px 20px 12px;font-size:12px;color:#64748B">MRI = Merchant Risk Indicator (aggregated risk score per Brian's BRD — replaces standalone OFAC/license columns)</div>
   </div>
 
   <!-- ═══════════════════════════════════════════════
@@ -582,7 +563,6 @@ tbody td:first-child{text-align:center}
             <th>Website Scan</th>
             <th>Product Scan</th>
             <th>License Check</th>
-            <th>MRI</th>
             <th>Team</th>
             <th>Actions</th>
           </tr>
@@ -612,7 +592,6 @@ tbody td:first-child{text-align:center}
             </td>
             <td><div class="scan-status scan-pending">⏳ Pending</div></td>
             <td><div class="scan-status scan-done">✅ Verified</div></td>
-            <td><span class="mri mri-none"><span class="mri-dot mri-dot-gray"></span>Not Assessed</span></td>
             <td><div class="team"><div class="avatar av-green">M</div></div></td>
             <td><button class="act-btn">⋯</button></td>
           </tr>
@@ -635,7 +614,6 @@ tbody td:first-child{text-align:center}
               <div class="scan-status scan-pending">⏳ Pending</div>
               <div style="font-size:11px;color:#94A3B8;margin-top:2px">CannaSpyGlass lookup</div>
             </td>
-            <td><span class="mri mri-risk"><span class="mri-dot mri-dot-amber"></span>At Risk</span></td>
             <td><div class="team"><div class="avatar">R</div></div></td>
             <td><button class="act-btn">⋯</button></td>
           </tr>
@@ -655,7 +633,6 @@ tbody td:first-child{text-align:center}
             <td><div class="scan-status scan-none">❌ Not Started</div></td>
             <td><div class="scan-status scan-none">❌ Not Started</div></td>
             <td><div class="scan-status scan-none">❌ Not Started</div></td>
-            <td><span class="mri mri-none"><span class="mri-dot mri-dot-gray"></span>Not Assessed</span></td>
             <td><span class="unassigned">Unassigned</span></td>
             <td><button class="act-btn">⋯</button></td>
           </tr>
@@ -683,7 +660,6 @@ tbody td:first-child{text-align:center}
               </div>
             </td>
             <td><div class="scan-status scan-done">✅ Verified</div></td>
-            <td><span class="mri mri-none"><span class="mri-dot mri-dot-gray"></span>Not Assessed</span></td>
             <td><div class="team"><div class="avatar av-orange">K</div></div></td>
             <td><button class="act-btn">⋯</button></td>
           </tr>
@@ -737,7 +713,6 @@ tbody td:first-child{text-align:center}
                 <th><input type="checkbox" class="cb"></th>
                 <th>Legal Name</th>
                 <th>License Status</th>
-                <th>MRI</th>
                 <th>Team</th>
                 <th>Scans</th>
                 <th>Actions</th>
@@ -748,7 +723,6 @@ tbody td:first-child{text-align:center}
                 <td><input type="checkbox" class="cb"></td>
                 <td><div style="font-weight:700;margin-bottom:4px">3rd Coast Blends</div><div class="industry-pills"><span class="pill-pair"><span class="pill pill-hemp pill-industry">Hemp/CBD</span><span class="pill-connector">·</span><span class="pill pill-retailer pill-type">Retailer</span></span></div></td>
                 <td><span class="lic lic-active">● Active</span></td>
-                <td><span class="mri mri-risk"><span class="mri-dot mri-dot-amber"></span>At Risk</span></td>
                 <td><div class="team"><div class="avatar av-green">M</div><span class="team-more">+3</span></div></td>
                 <td><span class="scan-date">Jan 30</span></td>
                 <td><button class="act-btn">⋯</button></td>
@@ -757,7 +731,6 @@ tbody td:first-child{text-align:center}
                 <td><input type="checkbox" class="cb"></td>
                 <td><div style="font-weight:700;margin-bottom:4px">Joe's CBD &amp; Guns</div><div class="industry-pills"><span class="pill-pair"><span class="pill pill-hemp pill-industry">Hemp/CBD</span><span class="pill-connector">·</span><span class="pill pill-retailer pill-type">Retailer</span></span><span class="pill-pair"><span class="pill pill-guns pill-industry">Guns &amp; Ammo</span><span class="pill-connector">·</span><span class="pill pill-retailer pill-type">Retailer</span></span></div></td>
                 <td><span class="lic lic-active">● Active</span></td>
-                <td><span class="mri mri-action"><span class="mri-dot mri-dot-red"></span>Action Required</span></td>
                 <td><div class="team"><div class="avatar av-purple">D</div></div></td>
                 <td><span class="scan-date">Feb 28</span></td>
                 <td><button class="act-btn">⋯</button></td>
@@ -766,13 +739,12 @@ tbody td:first-child{text-align:center}
                 <td><input type="checkbox" class="cb"></td>
                 <td><div style="font-weight:700;margin-bottom:4px">Mood LLC</div><div class="industry-pills"><span class="pill-pair"><span class="pill pill-hemp pill-industry">Hemp/CBD</span><span class="pill-connector">·</span><span class="pill pill-retailer pill-type">Retailer</span></span></div></td>
                 <td><span class="lic lic-failed">● Failed</span></td>
-                <td><span class="mri mri-risk"><span class="mri-dot mri-dot-amber"></span>At Risk</span></td>
                 <td><div class="team"><div class="avatar av-green">M</div></div></td>
                 <td><span class="scan-date">Aug 21</span></td>
                 <td><button class="act-btn">⋯</button></td>
               </tr>
               <tr>
-                <td colspan="7" style="text-align:center;color:#94A3B8;font-style:italic;font-size:12px;padding:12px">+ 844 more Hemp/CBD companies…</td>
+                <td colspan="6" style="text-align:center;color:#94A3B8;font-style:italic;font-size:12px;padding:12px">+ 844 more Hemp/CBD companies…</td>
               </tr>
             </tbody>
           </table>
@@ -807,7 +779,6 @@ tbody td:first-child{text-align:center}
                 <th><input type="checkbox" class="cb"></th>
                 <th>Legal Name</th>
                 <th>License Status</th>
-                <th>MRI</th>
                 <th>Scans</th>
                 <th>Actions</th>
               </tr>
@@ -817,7 +788,6 @@ tbody td:first-child{text-align:center}
                 <td><input type="checkbox" class="cb"></td>
                 <td><div style="font-weight:700;margin-bottom:4px">Westtown Payment Solutions</div><div class="industry-pills"><span class="pill-pair"><span class="pill pill-lending pill-industry">Online Lending</span><span class="pill-connector">·</span><span class="pill pill-retailer pill-type">Retailer</span></span></div></td>
                 <td><span class="lic lic-active">● Active</span></td>
-                <td><span class="mri mri-clear"><span class="mri-dot mri-dot-green"></span>Clear</span></td>
                 <td><span class="scan-date">Mar 15</span></td>
                 <td><button class="act-btn">⋯</button></td>
               </tr>
@@ -825,12 +795,11 @@ tbody td:first-child{text-align:center}
                 <td><input type="checkbox" class="cb"></td>
                 <td><div style="font-weight:700;margin-bottom:4px">Sunrise Hemp Co.</div><div class="industry-pills"><span class="pill-pair"><span class="pill pill-hemp pill-industry">Hemp/CBD</span><span class="pill-connector">·</span><span class="pill pill-retailer pill-type">Retailer</span></span></div></td>
                 <td><span class="lic lic-active">● Active</span></td>
-                <td><span class="mri mri-risk"><span class="mri-dot mri-dot-amber"></span>At Risk</span></td>
                 <td><span class="scan-date">Mar 10</span></td>
                 <td><button class="act-btn">⋯</button></td>
               </tr>
               <tr>
-                <td colspan="6" style="text-align:center;color:#94A3B8;font-style:italic;font-size:12px;padding:12px">+ 21 more in Rick's queue…</td>
+                <td colspan="5" style="text-align:center;color:#94A3B8;font-style:italic;font-size:12px;padding:12px">+ 21 more in Rick's queue…</td>
               </tr>
             </tbody>
           </table>
@@ -878,11 +847,6 @@ tbody td:first-child{text-align:center}
             <td style="font-weight:600">Bulk actions</td>
             <td><span class="check-no">❌</span> Row-level only</td>
             <td><span class="check-yes">✅</span> Archive / Pending / Active / Assign</td>
-          </tr>
-          <tr>
-            <td style="font-weight:600">MRI column <span style="font-size:11px;font-weight:700;background:#DCFCE7;color:#166534;padding:1px 7px;border-radius:10px;margin-left:4px">NEW</span></td>
-            <td><span class="check-no">❌</span> Did not exist — OFAC only (no aggregation)</td>
-            <td><span class="check-yes">✅</span> Net-new column: Aggregated risk score — Clear / At Risk / Action Required</td>
           </tr>
           <tr>
             <td style="font-weight:600">Team Member filter</td>
