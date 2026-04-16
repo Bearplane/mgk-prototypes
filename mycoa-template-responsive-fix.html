@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MyCOA Template — Responsive Fix Reference (QP-3627)</title>
+  <style>
+    /* ===== RESET & BASE ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      color: #333;
+      background: #f5f5f5;
+      line-height: 1.6;
+    }
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+
+    /* ===== LAYOUT UTILITIES ===== */
+    .full-bleed { width: 100%; }
+    .content-bound {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ===== ANNOTATION BANNER ===== */
+    .annotation-banner {
+      background: #fff3cd;
+      border-bottom: 2px solid #ffc107;
+      padding: 12px 24px;
+      text-align: center;
+      font-size: 14px;
+      color: #856404;
+    }
+    .annotation-banner strong { color: #664d03; }
+
+    /* ===== HEADER ===== */
+    .header {
+      background: linear-gradient(135deg, #1a3c2a 0%, #2d5a3f 50%, #1a3c2a 100%);
+      color: #fff;
+      padding: 48px 0;
+    }
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 32px;
+    }
+    .header-text { flex: 1; }
+    .header-text h1 {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      letter-spacing: 0.5px;
+    }
+    .header-text p {
+      font-size: 15px;
+      line-height: 1.7;
+      opacity: 0.92;
+      margin-bottom: 24px;
+      max-width: 600px;
+    }
+    .header-logo {
+      flex-shrink: 0;
+      width: 180px;
+      height: 180px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      color: rgba(255,255,255,0.6);
+      text-align: center;
+      padding: 16px;
+    }
+    .header-logo .logo-icon {
+      font-size: 64px;
+      display: block;
+      margin-bottom: 8px;
+    }
+    .cta-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .btn-primary {
+      background: #b55000;
+      color: #fff;
+      border: 2px solid #b55000;
+      padding: 12px 28px;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      border-radius: 6px;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: background 0.2s;
+    }
+    .btn-primary:hover { background: #9a4400; border-color: #9a4400; }
+    .btn-outline {
+      background: transparent;
+      color: #fff;
+      border: 2px solid rgba(255,255,255,0.6);
+      padding: 12px 28px;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      border-radius: 6px;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: border-color 0.2s;
+    }
+    .btn-outline:hover { border-color: #fff; }
+
+    /* ===== SEARCH SECTION ===== */
+    .search-section {
+      background: #fff;
+      padding: 48px 0;
+    }
+    .search-section h2 {
+      font-size: 26px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #1a3c2a;
+    }
+    .search-section .subtitle {
+      font-size: 15px;
+      color: #666;
+      margin-bottom: 8px;
+      max-width: 800px;
+    }
+    .search-help {
+      font-size: 13px;
+      color: #999;
+      margin-bottom: 24px;
+    }
+    .search-help a { color: #b55000; text-decoration: underline; }
+
+    /* === SEARCH BAR — KEY FIX === */
+    .search-bar {
+      display: flex;
+      align-items: stretch;
+      gap: 0;
+      max-width: 720px;
+      margin-bottom: 40px;
+    }
+    .search-input {
+      flex: 1;
+      min-width: 0;
+      padding: 14px 18px;
+      font-size: 15px;
+      border: 2px solid #ddd;
+      border-right: none;
+      border-radius: 8px 0 0 8px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .search-input:focus { border-color: #b55000; }
+    .search-input::placeholder { color: #bbb; }
+    .search-btn {
+      flex-shrink: 0;
+      padding: 14px 32px;
+      background: #b55000;
+      color: #fff;
+      border: 2px solid #b55000;
+      border-radius: 0 8px 8px 0;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.2s;
+    }
+    .search-btn:hover { background: #9a4400; border-color: #9a4400; }
+
+    /* ===== INSTRUCTION CARDS ===== */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-bottom: 16px;
+    }
+    .card {
+      text-align: center;
+      padding: 32px 20px;
+      background: #fafafa;
+      border-radius: 12px;
+      border: 1px solid #eee;
+    }
+    .card-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      background: #b55000;
+      color: #fff;
+      border-radius: 50%;
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+    .card-icon {
+      font-size: 28px;
+      margin-bottom: 12px;
+      display: block;
+    }
+    .card h3 {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #1a3c2a;
+    }
+    .card p {
+      font-size: 14px;
+      color: #666;
+      line-height: 1.5;
+    }
+
+    /* ===== EDUCATIONAL SECTION ===== */
+    .education-section {
+      background: #fff;
+      padding: 48px 0;
+      border-top: 1px solid #eee;
+    }
+    .education-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      align-items: start;
+    }
+    .coa-example {
+      background: #f9f9f9;
+      border: 2px solid #eee;
+      border-radius: 12px;
+      padding: 32px;
+      min-height: 300px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #999;
+      font-size: 14px;
+      text-align: center;
+    }
+    .education-points h3 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #1a3c2a;
+      margin-bottom: 20px;
+    }
+    .edu-point {
+      margin-bottom: 16px;
+    }
+    .edu-point strong {
+      color: #1a3c2a;
+      display: block;
+      margin-bottom: 2px;
+      font-size: 15px;
+    }
+    .edu-point p {
+      font-size: 14px;
+      color: #555;
+      line-height: 1.5;
+    }
+
+    /* ===== FOOTER ===== */
+    .footer {
+      background: linear-gradient(135deg, #1a3c2a 0%, #14301f 100%);
+      color: #fff;
+      padding: 48px 0 24px;
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 40px;
+      margin-bottom: 32px;
+    }
+    .footer-brand .footer-logo-icon { font-size: 48px; margin-bottom: 12px; }
+    .footer-brand h3 {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .footer-brand .tagline {
+      font-size: 12px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      opacity: 0.7;
+      margin-bottom: 4px;
+    }
+    .footer h4 {
+      font-size: 14px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+      opacity: 0.7;
+    }
+    .footer p, .footer a {
+      font-size: 14px;
+      line-height: 1.8;
+      opacity: 0.85;
+    }
+    .footer a:hover { opacity: 1; text-decoration: underline; }
+    .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,0.15);
+      padding-top: 20px;
+      text-align: center;
+      font-size: 13px;
+      opacity: 0.6;
+    }
+
+    /* ===== RESPONSIVE: TABLET (600-960px) ===== */
+    @media (max-width: 960px) {
+      .header { padding: 36px 0; }
+      .header-inner {
+        flex-direction: column;
+        text-align: center;
+      }
+      .header-text p { margin-left: auto; margin-right: auto; }
+      .cta-row { justify-content: center; }
+      .header-logo { width: 140px; height: 140px; }
+
+      .search-bar {
+        flex-direction: column;
+        max-width: 100%;
+      }
+      .search-input {
+        border-right: 2px solid #ddd;
+        border-radius: 8px;
+        margin-bottom: 8px;
+      }
+      .search-input:focus { border-color: #b55000; }
+      .search-btn {
+        border-radius: 8px;
+        text-align: center;
+      }
+
+      .cards-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .education-inner {
+        grid-template-columns: 1fr;
+      }
+
+      .footer-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    /* ===== RESPONSIVE: MOBILE (<600px) ===== */
+    @media (max-width: 600px) {
+      .header { padding: 28px 0; }
+      .header-text h1 { font-size: 24px; }
+      .header-text p { font-size: 14px; }
+      .header-logo { width: 120px; height: 120px; }
+      .cta-row { flex-direction: column; }
+      .cta-row .btn-primary,
+      .cta-row .btn-outline {
+        width: 100%;
+        text-align: center;
+      }
+
+      .search-section h2 { font-size: 22px; }
+      .content-bound { padding: 0 16px; }
+
+      .cards-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .footer-grid {
+        grid-template-columns: 1fr;
+        gap: 28px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="annotation-banner">
+    <strong>QP-3627 Reference Mockup</strong> — Responsive layout fixes for the MyCOA reusable template. Resize your browser to see breakpoints at 960px and 600px.
+  </div>
+
+  <header class="header full-bleed">
+    <div class="content-bound">
+      <div class="header-inner">
+        <div class="header-text">
+          <h1>Certificate of Analysis</h1>
+          <p>At Black Bear Hemp Dispensary, we believe in full transparency and rigorous quality control. That's why every batch of our products is tested by accredited laboratories, and the results are made readily available for your review. Our Certificate of Analysis (COA) reports provide detailed insights into the purity, potency, and safety of our products, helping you make informed decisions with confidence.</p>
+          <p>Simply use the search feature below to find the COA for a product you've purchased or to explore lab results before making your next purchase.</p>
+          <div class="cta-row">
+            <button class="btn-primary">Understanding Your COA</button>
+            <button class="btn-outline">Resume Shopping</button>
+          </div>
+        </div>
+        <div class="header-logo">
+          <div>
+            <span class="logo-icon">&#x1F43B;</span>
+            <div>BLACK BEAR<br>DISPENSARY</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section class="search-section full-bleed">
+    <div class="content-bound">
+      <h2>Search By Batch/Name</h2>
+      <p class="subtitle">Find your lab report by entering the batch number or name of the product. Our Certificate of Analysis (COA) reports provide detailed insights into the purity, potency, and safety of our products, helping you make informed decisions with confidence.</p>
+      <p class="search-help">Still having trouble finding the batch number? <a href="#">See examples</a></p>
+
+      <div class="search-bar">
+        <input type="text" class="search-input" placeholder="Enter batch number or product name...">
+        <button class="search-btn">MyCOA</button>
+      </div>
+
+      <div class="cards-grid">
+        <div class="card">
+          <span class="card-number">1</span>
+          <span class="card-icon">&#x1F50D;</span>
+          <h3>Locate the Batch Number</h3>
+          <p>Find the batch number on the bottle label, box, or sticker on the bottom of the container.</p>
+        </div>
+        <div class="card">
+          <span class="card-number">2</span>
+          <span class="card-icon">&#x2328;</span>
+          <h3>Enter and Search</h3>
+          <p>Type the batch number or product name into the search bar above and click "MyCOA" to view the results.</p>
+        </div>
+        <div class="card">
+          <span class="card-number">3</span>
+          <span class="card-icon">&#x1F4F1;</span>
+          <h3>Quick QR Access</h3>
+          <p>Some products include a QR code for instant access. Simply scan with your smartphone camera.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="education-section full-bleed">
+    <div class="content-bound">
+      <div class="education-inner">
+        <div class="coa-example">
+          <div>
+            <div style="font-size: 48px; margin-bottom: 12px;">&#x1F4CB;</div>
+            <p>Annotated COA Example<br><small>(Lab report image with callouts)</small></p>
+          </div>
+        </div>
+        <div class="education-points">
+          <h3>Understanding Your COA</h3>
+          <div class="edu-point">
+            <strong>1. The Lab Report</strong>
+            <p>A lab report from a reputable laboratory will show the name, address, phone number, and any certifications earned. The COA will attest to the report's validity and is signed by a senior staff member.</p>
+          </div>
+          <div class="edu-point">
+            <strong>2. The Date</strong>
+            <p>Make sure the date is recent. When purchasing CBD, it is recommended the date on the COA be under one year.</p>
+          </div>
+          <div class="edu-point">
+            <strong>3. The lot or batch identifier</strong>
+            <p>Be sure the lot or batch on the COA matches the lot or batch on the product label, box, or sticker on the bottom of the container.</p>
+          </div>
+          <div class="edu-point">
+            <strong>4. Product name</strong>
+            <p>Confirm that the product name on the packaging matches the product name on the COA.</p>
+          </div>
+          <div class="edu-point">
+            <strong>5. THC</strong>
+            <p>Delta-9-tetrahydrocannabinol (THC) is the primary psychoactive cannabinoid extracted from the cannabis plant. By federal law, THC in CBD must be 0.3% or under to be sold in the United States.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer full-bleed">
+    <div class="content-bound">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="footer-logo-icon">&#x1F43B;</div>
+          <h3>Black Bear Dispensary</h3>
+          <p class="tagline">Built on Tradition, Recognized by Quality</p>
+        </div>
+        <div>
+          <h4>Locations</h4>
+          <p>Meadville, PA<br>Erie, PA<br>Titusville, PA</p>
+        </div>
+        <div>
+          <h4>Contact Us</h4>
+          <p>724-748-6061</p>
+          <p><a href="mailto:info@blackbeardispensary.com">info@blackbeardispensary.com</a></p>
+          <p><a href="https://www.blackbeardispensary.com">www.blackbeardispensary.com</a></p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        &copy; 2026 Black Bear Dispensary &nbsp;|&nbsp; Powered by MyCOA&reg;
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
