@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Policy-First Ecosystem — Qredible</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:'Plus Jakarta Sans',sans-serif;
+  background:#0f172a;
+  color:#e2e8f0;
+  font-size:13px;
+  line-height:1.45;
+  overflow-x:hidden;
+  background-image:
+    radial-gradient(circle at 20% 15%, rgba(59,130,246,.08), transparent 40%),
+    radial-gradient(circle at 80% 85%, rgba(139,92,246,.06), transparent 45%),
+    radial-gradient(circle at 50% 50%, rgba(16,185,129,.05), transparent 35%);
+}
+code,.mono{font-family:'IBM Plex Mono',monospace}
+
+/* ===== TOP BAR ===== */
+.topbar{
+  background:linear-gradient(180deg,#0b1225 0%,#0f172a 100%);
+  border-bottom:1px solid #1e293b;
+  padding:14px 28px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  position:sticky;top:0;z-index:50;
+  backdrop-filter:blur(10px);
+}
+.topbar-left{display:flex;align-items:center;gap:14px}
+.logo{
+  width:34px;height:34px;
+  background:linear-gradient(135deg,#3b82f6,#8b5cf6);
+  border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:16px;color:#fff;
+}
+.topbar h1{font-size:15px;font-weight:700;color:#f1f5f9}
+.topbar h1 .tag{font-size:10px;font-weight:600;background:#1e293b;color:#93c5fd;padding:2px 8px;border-radius:10px;margin-left:8px;vertical-align:1px;letter-spacing:.4px;text-transform:uppercase}
+.topbar p{font-size:11px;color:#64748b;margin-top:2px}
+.topbar-right{display:flex;align-items:center;gap:14px;font-size:11px}
+.meeting-chip{
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.35);
+  color:#93c5fd;padding:5px 11px;border-radius:999px;font-weight:600;font-size:11px;
+}
+.meeting-chip .dot{width:6px;height:6px;border-radius:50%;background:#3b82f6;box-shadow:0 0 8px #3b82f6}
+
+/* ===== LEGEND BAR ===== */
+.legend-bar{
+  background:#0b1225;
+  border-bottom:1px solid #1e293b;
+  padding:10px 28px;
+  display:flex;
+  align-items:center;
+  gap:20px;
+  flex-wrap:wrap;
+  font-size:11px;
+}
+.legend-bar strong{color:#94a3b8;font-weight:700;letter-spacing:.6px;text-transform:uppercase;font-size:10px;margin-right:4px}
+.lg-item{display:inline-flex;align-items:center;gap:6px;color:#cbd5e1}
+.lg-dot{width:9px;height:9px;border-radius:3px;display:inline-block}
+.lg-green{background:#10b981;box-shadow:0 0 8px rgba(16,185,129,.5)}
+.lg-amber{background:#f59e0b;box-shadow:0 0 8px rgba(245,158,11,.5)}
+.lg-blue{background:#3b82f6;box-shadow:0 0 8px rgba(59,130,246,.5)}
+.lg-slate{background:#64748b}
+.lg-outline{background:transparent;border:1.5px dashed #64748b}
+
+/* ===== STAGE ===== */
+.stage{
+  position:relative;
+  padding:40px 28px 20px;
+  min-height:calc(100vh - 120px);
+  overflow:hidden;
+}
+.stage-title{
+  text-align:center;
+  margin-bottom:28px;
+}
+.stage-title h2{
+  font-size:26px;font-weight:800;color:#f8fafc;letter-spacing:-.3px;margin-bottom:6px;
+  background:linear-gradient(90deg,#60a5fa,#a78bfa);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.stage-title p{font-size:13px;color:#94a3b8;max-width:720px;margin:0 auto}
+
+/* ===== GRID LAYOUT ===== */
+.eco-grid{
+  display:grid;
+  grid-template-columns:1fr 1.4fr 1fr;
+  grid-template-rows:auto auto auto;
+  grid-template-areas:
+    "auth  intel  assign"
+    "auth  nucleus assign"
+    "scans outputs payment";
+  gap:24px;
+  max-width:1720px;
+  margin:0 auto;
+  align-items:stretch;
+  position:relative;
+  z-index:2;
+}
+.area{
+  background:rgba(15,23,42,.7);
+  border:1px solid #1e293b;
+  border-radius:14px;
+  padding:16px 18px;
+  backdrop-filter:blur(4px);
+  position:relative;
+  transition:border-color .2s, transform .2s;
+}
+.area:hover{border-color:#334155}
+.area-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:12px;padding-bottom:10px;
+  border-bottom:1px dashed #1e293b;
+}
+.area-label{
+  font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;
+  padding:3px 9px;border-radius:10px;
+}
+.al-auth{background:rgba(139,92,246,.18);color:#c4b5fd}
+.al-intel{background:rgba(236,72,153,.18);color:#f9a8d4}
+.al-assign{background:rgba(20,184,166,.18);color:#5eead4}
+.al-scans{background:rgba(34,197,94,.18);color:#86efac}
+.al-output{background:rgba(59,130,246,.18);color:#93c5fd}
+.al-pay{background:rgba(249,115,22,.18);color:#fdba74}
+.area-count{font-size:10px;color:#475569;font-weight:600;font-family:'IBM Plex Mono',monospace}
+
+.node-list{display:flex;flex-direction:column;gap:8px}
+
+/* ===== NODE ===== */
+.node{
+  display:flex;
+  gap:10px;
+  align-items:flex-start;
+  padding:10px 12px;
+  background:#0b1225;
+  border:1px solid #1e293b;
+  border-left-width:3px;
+  border-radius:8px;
+  cursor:pointer;
+  transition:all .15s;
+  position:relative;
+}
+.node:hover{
+  background:#111c33;
+  border-color:#334155;
+  transform:translateX(2px);
+}
+.node-icon{
+  width:28px;height:28px;border-radius:7px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;flex-shrink:0;
+  background:#1e293b;color:#94a3b8;
+}
+.node-body{flex:1;min-width:0}
+.node-title{font-size:12.5px;font-weight:600;color:#f1f5f9;margin-bottom:2px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.node-ref{font-family:'IBM Plex Mono',monospace;font-size:10px;color:#64748b;font-weight:500}
+.node-desc{font-size:11px;color:#94a3b8;line-height:1.4}
+.node-status{
+  font-size:9.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;
+  padding:2px 7px;border-radius:8px;margin-left:auto;flex-shrink:0;
+}
+.status-built{background:rgba(16,185,129,.18);color:#6ee7b7;border:1px solid rgba(16,185,129,.35)}
+.status-progress{background:rgba(245,158,11,.18);color:#fcd34d;border:1px solid rgba(245,158,11,.35)}
+.status-planned{background:rgba(59,130,246,.18);color:#93c5fd;border:1px solid rgba(59,130,246,.35)}
+.status-notstarted{background:rgba(100,116,139,.22);color:#cbd5e1;border:1px solid rgba(100,116,139,.4)}
+.status-future{background:transparent;color:#94a3b8;border:1.5px dashed #475569}
+.status-human{background:rgba(236,72,153,.18);color:#f9a8d4;border:1px solid rgba(236,72,153,.35)}
+.status-required{background:rgba(239,68,68,.15);color:#fca5a5;border:1px solid rgba(239,68,68,.35)}
+.status-core{background:rgba(167,139,250,.18);color:#c4b5fd;border:1px solid rgba(167,139,250,.35)}
+.status-active{background:rgba(16,185,129,.18);color:#6ee7b7;border:1px solid rgba(16,185,129,.35)}
+
+.node-tooltip{
+  position:absolute;
+  left:calc(100% + 10px);
+  top:0;
+  background:#020617;
+  border:1px solid #334155;
+  border-radius:8px;
+  padding:10px 12px;
+  font-size:11px;
+  line-height:1.5;
+  color:#cbd5e1;
+  width:240px;
+  opacity:0;
+  pointer-events:none;
+  transform:translateX(-6px);
+  transition:all .18s;
+  z-index:40;
+  box-shadow:0 8px 32px rgba(0,0,0,.6);
+}
+.node-tooltip b{color:#f1f5f9}
+.node:hover .node-tooltip{opacity:1;transform:translateX(0)}
+.node.tt-left .node-tooltip{left:auto;right:calc(100% + 10px);transform:translateX(6px)}
+.node.tt-left:hover .node-tooltip{transform:translateX(0)}
+
+/* status colored left-borders */
+.node.st-built{border-left-color:#10b981}
+.node.st-progress{border-left-color:#f59e0b}
+.node.st-planned{border-left-color:#3b82f6}
+.node.st-notstarted{border-left-color:#64748b}
+.node.st-future{border-left-color:#475569;border-left-style:dashed}
+.node.st-human{border-left-color:#ec4899}
+.node.st-required{border-left-color:#ef4444}
+.node.st-core{border-left-color:#a78bfa}
+.node.st-active{border-left-color:#10b981}
+
+/* ===== NUCLEUS ===== */
+.nucleus-wrap{
+  grid-area:nucleus;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:0 8px;
+}
+.nucleus{
+  width:100%;max-width:520px;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(59,130,246,.25), transparent 60%),
+    linear-gradient(180deg, #111c33 0%, #0b1225 100%);
+  border:2px solid #3b82f6;
+  border-radius:20px;
+  padding:22px 22px 20px;
+  position:relative;
+  box-shadow:
+    0 0 0 1px rgba(59,130,246,.15),
+    0 0 40px rgba(59,130,246,.25),
+    0 20px 60px rgba(0,0,0,.4);
+  animation:pulse 3.5s ease-in-out infinite;
+}
+@keyframes pulse{
+  0%,100%{box-shadow:0 0 0 1px rgba(59,130,246,.15),0 0 40px rgba(59,130,246,.25),0 20px 60px rgba(0,0,0,.4)}
+  50%   {box-shadow:0 0 0 1px rgba(59,130,246,.35),0 0 60px rgba(59,130,246,.4), 0 20px 60px rgba(0,0,0,.4)}
+}
+.nucleus-crown{
+  position:absolute;top:-12px;left:50%;transform:translateX(-50%);
+  background:linear-gradient(135deg,#3b82f6,#8b5cf6);
+  color:#fff;font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;
+  padding:4px 14px;border-radius:999px;white-space:nowrap;
+  box-shadow:0 6px 20px rgba(59,130,246,.4);
+}
+.nucleus-title{
+  text-align:center;margin-bottom:4px;
+  font-size:17px;font-weight:800;color:#f8fafc;letter-spacing:-.2px;
+}
+.nucleus-sub{
+  text-align:center;
+  font-family:'IBM Plex Mono',monospace;font-size:11px;color:#7dd3fc;margin-bottom:14px;
+}
+.json-grid{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:6px;
+}
+.json-key{
+  background:rgba(30,58,95,.45);
+  border:1px solid rgba(59,130,246,.3);
+  border-radius:6px;
+  padding:7px 10px;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;
+  color:#bfdbfe;
+  display:flex;align-items:center;gap:6px;
+  transition:all .15s;
+  cursor:default;
+}
+.json-key:hover{background:rgba(59,130,246,.2);border-color:#60a5fa;color:#fff}
+.json-key::before{content:"";width:5px;height:5px;border-radius:50%;background:#60a5fa;flex-shrink:0}
+.nucleus-meta{
+  margin-top:14px;padding-top:12px;border-top:1px dashed #1e293b;
+  display:flex;justify-content:space-between;align-items:center;font-size:10.5px;
+}
+.nucleus-meta .mm{color:#94a3b8}
+.nucleus-meta .mm b{color:#f1f5f9}
+.nucleus-meta .pill{background:#1e293b;color:#93c5fd;padding:2px 8px;border-radius:10px;font-family:'IBM Plex Mono',monospace;font-size:10px}
+
+/* positioned grid areas */
+.area.auth{grid-area:auth}
+.area.intel{grid-area:intel}
+.area.assign{grid-area:assign}
+.area.scans{grid-area:scans}
+.area.outputs{grid-area:outputs}
+.area.payment{grid-area:payment}
+
+/* ===== FLOW ARROWS (SVG overlay) ===== */
+.flow-svg{
+  position:absolute;top:0;left:0;right:0;bottom:0;
+  width:100%;height:100%;
+  pointer-events:none;
+  z-index:1;
+}
+.flow-path{
+  fill:none;
+  stroke:url(#flowGrad);
+  stroke-width:1.5;
+  stroke-dasharray:4 6;
+  animation:flow 2s linear infinite;
+  opacity:.45;
+}
+@keyframes flow{to{stroke-dashoffset:-20}}
+
+/* ===== INDUSTRY RING ===== */
+.industries{
+  max-width:1720px;margin:28px auto 0;
+  background:rgba(15,23,42,.7);
+  border:1px solid #1e293b;
+  border-radius:14px;
+  padding:16px 20px;
+}
+.industries-header{
+  display:flex;align-items:center;gap:12px;margin-bottom:12px;
+}
+.industries-header .label{
+  font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;
+  padding:3px 9px;border-radius:10px;background:rgba(167,139,250,.18);color:#c4b5fd;
+}
+.industries-header h3{font-size:14px;font-weight:700;color:#f1f5f9}
+.industries-header .tag{font-size:11px;color:#94a3b8}
+.industries-header .tag b{color:#6ee7b7}
+.industry-chips{display:flex;flex-wrap:wrap;gap:8px}
+.ichip{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:8px 12px;
+  background:#0b1225;border:1px solid #1e293b;
+  border-radius:999px;
+  font-size:12px;color:#cbd5e1;font-weight:500;
+  transition:all .15s;cursor:pointer;
+}
+.ichip:hover{border-color:#475569;background:#111c33}
+.ichip .st{
+  width:7px;height:7px;border-radius:50%;
+}
+.ichip.st-built .st{background:#10b981;box-shadow:0 0 6px #10b981}
+.ichip.st-progress .st{background:#f59e0b;box-shadow:0 0 6px #f59e0b}
+.ichip.st-planned .st{background:#3b82f6;box-shadow:0 0 6px #3b82f6}
+.ichip.st-future .st{background:transparent;border:1.5px dashed #64748b}
+.ichip .meta{font-family:'IBM Plex Mono',monospace;font-size:10px;color:#64748b}
+
+/* ===== INFRASTRUCTURE BAR ===== */
+.infra{
+  max-width:1720px;margin:24px auto 0;
+  background:
+    linear-gradient(180deg, rgba(30,58,95,.35) 0%, rgba(15,23,42,.7) 100%);
+  border:1px solid #1e293b;
+  border-radius:14px;
+  padding:18px 22px 16px;
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:20px;
+}
+.infra-col{
+  border-right:1px dashed #1e293b;padding-right:20px;
+}
+.infra-col:last-child{border-right:none;padding-right:0}
+.infra-col h4{
+  font-size:10.5px;font-weight:800;letter-spacing:.9px;text-transform:uppercase;
+  color:#a5b4fc;margin-bottom:10px;
+  display:flex;align-items:center;gap:8px;
+}
+.infra-col h4 .num{background:#1e293b;color:#c7d2fe;padding:2px 7px;border-radius:6px;font-family:'IBM Plex Mono',monospace;font-size:10px}
+.infra-col ul{list-style:none;display:flex;flex-direction:column;gap:6px}
+.infra-col li{
+  font-family:'IBM Plex Mono',monospace;font-size:11px;color:#cbd5e1;
+  display:flex;gap:8px;align-items:center;
+}
+.infra-col li .b{color:#6ee7b7}
+.infra-col li .p{color:#93c5fd}
+.infra-col li .h{color:#fcd34d}
+.infra-col li::before{content:"▸";color:#475569;font-size:10px}
+.infra-col li i{color:#64748b;font-style:normal;font-size:10px;margin-left:auto}
+
+/* ===== FOOTER ===== */
+.eco-footer{
+  max-width:1720px;margin:28px auto 24px;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 20px;
+  background:rgba(15,23,42,.5);
+  border:1px dashed #1e293b;
+  border-radius:12px;
+  font-size:11px;color:#64748b;
+}
+.eco-footer a{color:#93c5fd;text-decoration:none;font-weight:600}
+.eco-footer a:hover{text-decoration:underline}
+
+/* smaller screens */
+@media (max-width: 1280px){
+  .eco-grid{grid-template-columns:1fr 1.2fr 1fr}
+  .node-tooltip{display:none}
+}
+@media (max-width: 960px){
+  .eco-grid{
+    grid-template-columns:1fr;
+    grid-template-areas:
+      "intel"
+      "nucleus"
+      "auth"
+      "assign"
+      "scans"
+      "outputs"
+      "payment";
+  }
+  .infra{grid-template-columns:1fr}
+  .infra-col{border-right:none;border-bottom:1px dashed #1e293b;padding:0 0 16px;margin-bottom:8px}
+  .infra-col:last-child{border-bottom:none;padding-bottom:0;margin-bottom:0}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== TOP BAR ===== -->
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="logo">Q</div>
+    <div>
+      <h1>Policy-First Compliance Ecosystem <span class="tag">Architecture v1</span></h1>
+      <p>Every surface, service, and scan — unified by a versioned JSON policy document</p>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <span class="meeting-chip"><span class="dot"></span> Meeting prep · 2026-04-17</span>
+    <a href="policy-first-meeting-prep.html" style="color:#93c5fd;text-decoration:none;font-weight:600">Open meeting notes →</a>
+    <a href="index.html" style="color:#64748b;text-decoration:none">All prototypes</a>
+  </div>
+</div>
+
+<!-- ===== LEGEND ===== -->
+<div class="legend-bar">
+  <strong>Legend</strong>
+  <span class="lg-item"><span class="lg-dot lg-green"></span> Built</span>
+  <span class="lg-item"><span class="lg-dot lg-amber"></span> In Progress / Partial</span>
+  <span class="lg-item"><span class="lg-dot lg-blue"></span> Planned</span>
+  <span class="lg-item"><span class="lg-dot lg-slate"></span> Not Started</span>
+  <span class="lg-item"><span class="lg-dot lg-outline"></span> Future</span>
+  <span style="margin-left:auto;color:#475569;font-family:'IBM Plex Mono',monospace;font-size:10px">hover any node for detail</span>
+</div>
+
+<!-- ===== STAGE ===== -->
+<div class="stage">
+  <div class="stage-title">
+    <h2>Policy Document = Single Source of Truth</h2>
+    <p>Compliance team authors policies. Engineering builds the renderer/evaluator once. New industries = new policy doc, not new code. This is the architecture we're building toward.</p>
+  </div>
+
+  <div class="eco-grid" id="ecoGrid">
+
+    <!-- ===== INTELLIGENCE (TOP) ===== -->
+    <div class="area intel">
+      <div class="area-header">
+        <span class="area-label al-intel">▲ Intelligence Layer</span>
+        <span class="area-count">3 nodes</span>
+      </div>
+      <div class="node-list">
+        <div class="node st-planned">
+          <div class="node-icon">🧠</div>
+          <div class="node-body">
+            <div class="node-title">Q AI Engine <span class="node-ref">pinned model + web_search</span></div>
+            <div class="node-desc">Evaluates policy rules against collected evidence. Never "latest" model — versioned and audited.</div>
+          </div>
+          <span class="node-status status-planned">Planned</span>
+          <div class="node-tooltip"><b>Q powers evaluation.</b> Policy JSON + evidence JSON → pass/fail/needs-review verdict with citations. Model ID, prompt version, and policy version all logged to SOC 2 audit table.</div>
+        </div>
+        <div class="node st-human">
+          <div class="node-icon">👤</div>
+          <div class="node-body">
+            <div class="node-title">Compliance Team</div>
+            <div class="node-desc">Human authors, reviewers, and approvers of every published policy version.</div>
+          </div>
+          <span class="node-status status-human">Human</span>
+          <div class="node-tooltip"><b>Compliance owns the policy.</b> Engineering never edits rules — they build the surfaces that render and evaluate them. Policies publish through an approval gate (decision #3).</div>
+        </div>
+        <div class="node st-required">
+          <div class="node-icon">🔒</div>
+          <div class="node-body">
+            <div class="node-title">SOC 2 Audit Trail</div>
+            <div class="node-desc">Raw Q input/output logged per evaluation. Prompt version × policy version × model ID.</div>
+          </div>
+          <span class="node-status status-required">Required</span>
+          <div class="node-tooltip"><b>Ronaldo's hard requirement.</b> Every AI decision must be reproducible years later. Retention, replay, and review queue are part of the table design (<code>pl_compliance_coverage_audit</code>).</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== AUTHORING (LEFT) ===== -->
+    <div class="area auth">
+      <div class="area-header">
+        <span class="area-label al-auth">◀ Authoring Layer</span>
+        <span class="area-count">3 nodes</span>
+      </div>
+      <div class="node-list">
+        <div class="node st-planned">
+          <div class="node-icon">✍️</div>
+          <div class="node-body">
+            <div class="node-title">Policy Editor <span class="node-ref">QP-3647</span></div>
+            <div class="node-desc">Form-driven editor with expert JSON mode. The default authoring surface.</div>
+          </div>
+          <span class="node-status status-planned">Planned</span>
+          <div class="node-tooltip"><b>Two modes side-by-side.</b> Form mode for compliance team, JSON mode for power users. Draft → Review → Publish with version diff preview.</div>
+        </div>
+        <div class="node st-planned">
+          <div class="node-icon">🎛️</div>
+          <div class="node-body">
+            <div class="node-title">Policy Wizard <span class="node-ref">QP-3703</span></div>
+            <div class="node-desc">Guided dials-and-levers stepper for non-technical authors building a first policy.</div>
+          </div>
+          <span class="node-status status-planned">Planned</span>
+          <div class="node-tooltip"><b>Lowers the bar to author a policy.</b> Industry template → dial in risk thresholds → select checklist items → preview rendered rules → commit as v1. Decision #4 covers wizard→JSON mapping.</div>
+        </div>
+        <div class="node st-planned">
+          <div class="node-icon">📣</div>
+          <div class="node-body">
+            <div class="node-title">Bulletin Authoring</div>
+            <div class="node-desc">Publish notifications to affected merchants when policy versions change.</div>
+          </div>
+          <span class="node-status status-planned">Planned</span>
+          <div class="node-tooltip"><b>Version deltas become merchant communications.</b> "Hemp v3 → v3.1 — COA must now include heavy-metals panel." Merchants see the change in their dashboard and email.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== NUCLEUS (CENTER) ===== -->
+    <div class="nucleus-wrap">
+      <div class="nucleus">
+        <div class="nucleus-crown">Core · Policy Document</div>
+        <div class="nucleus-title">Versioned JSON Policy</div>
+        <div class="nucleus-sub">pl_policy · policy_id · version · effective_at</div>
+        <div class="json-grid">
+          <div class="json-key">merchant_tiers</div>
+          <div class="json-key">checklist</div>
+          <div class="json-key">product_classification</div>
+          <div class="json-key">mri_configuration</div>
+          <div class="json-key">payment_rails</div>
+          <div class="json-key">scoring_model</div>
+          <div class="json-key">report_configuration</div>
+          <div class="json-key">enforcement_rules</div>
+        </div>
+        <div class="nucleus-meta">
+          <span class="mm">Schema: <b>8 top-level keys</b></span>
+          <span class="pill">merchant.policy_ids[]</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== ASSIGNMENT (RIGHT) ===== -->
+    <div class="area assign">
+      <div class="area-header">
+        <span class="area-label al-assign">▶ Assignment Layer</span>
+        <span class="area-count">4 nodes</span>
+      </div>
+      <div class="node-list">
+        <div class="node st-planned tt-left">
+          <div class="node-icon">⚙️</div>
+          <div class="node-body">
+            <div class="node-title">Auto from Q-Trust Intake</div>
+            <div class="node-desc">Intake Wizard answers drive initial policy assignment without analyst touch.</div>
+          </div>
+          <span class="node-status status-planned">Planned</span>
+          <div class="node-tooltip"><b>Intake answers → policy IDs.</b> Industry, products sold, states of operation, and payment rails map to a default policy set. Analyst can override.</div>
+        </div>
+        <div class="node st-planned tt-left">
+          <div class="node-icon">🧑‍💼</div>
+          <div class="node-body">
+            <div class="node-title">Analyst Manual Assignment</div>
+            <div class="node-desc">Override/add/remove policies per merchant from the compliance portal.</div>
+          </div>
+          <span class="node-status status-planned">Planned</span>
+          <div class="node-tooltip"><b>The escape hatch.</b> For edge cases the auto-assigner can't handle. Multi-policy conflict resolution (decision #1) determines behavior when two policies overlap.</div>
+        </div>
+        <div class="node st-future tt-left">
+          <div class="node-icon">🏛️</div>
+          <div class="node-body">
+            <div class="node-title">Inherited from Parent Org</div>
+            <div class="node-desc">Franchise model — child merchants inherit parent's policy set automatically.</div>
+          </div>
+          <span class="node-status status-future">Future</span>
+          <div class="node-tooltip"><b>Decision #7:</b> what inherits, and what can a child override? Not v1, but shape the data model now so we don't rework later.</div>
+        </div>
+        <div class="node st-core tt-left">
+          <div class="node-icon">🔗</div>
+          <div class="node-body">
+            <div class="node-title">Merchants carry <span class="mono">policy_ids[]</span></div>
+            <div class="node-desc">The linking table <span class="mono">pl_merchant_policies</span> is the truth. Multi-policy by default.</div>
+          </div>
+          <span class="node-status status-core">Core</span>
+          <div class="node-tooltip"><b>No policy hard-coded to merchant type.</b> A merchant can hold Hemp v3 + Tobacco v1 + a custom overlay simultaneously. Effective ruleset = merge (decision #1).</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== SCANS (BOTTOM LEFT) ===== -->
+    <div class="area scans">
+      <div class="area-header">
+        <span class="area-label al-scans">▼ Scan Pipelines <span style="color:#94a3b8;text-transform:none;font-weight:500;letter-spacing:0">— evidence sources</span></span>
+        <span class="area-count">6 nodes</span>
+      </div>
+      <div class="node-list">
+        <div class="node st-built">
+          <div class="node-icon">🌐</div>
+          <div class="node-body">
+            <div class="node-title">Website Scan <span class="node-ref">Puppeteer + AI</span></div>
+            <div class="node-desc">Crawls merchant site for required disclaimers, claim compliance, age-gates.</div>
+          </div>
+          <span class="node-status status-built">Built</span>
+          <div class="node-tooltip"><b>Production today.</b> Needs <code>evidence_tags[]</code> column so findings link to policy checklist items (Phase 0 / Phase 1 work).</div>
+        </div>
+        <div class="node st-built">
+          <div class="node-icon">🛒</div>
+          <div class="node-body">
+            <div class="node-title">Product Scan <span class="node-ref">Zyte</span></div>
+            <div class="node-desc">Harvests product listings, catalogs SKUs into <span class="mono">pl_category</span>.</div>
+          </div>
+          <span class="node-status status-built">Built</span>
+          <div class="node-tooltip"><b>Feeds COA requirements.</b> Detected product category → policy's <code>coa_requirement</code> → required COA artifacts — already landed in v3.</div>
+        </div>
+        <div class="node st-built">
+          <div class="node-icon">🧪</div>
+          <div class="node-body">
+            <div class="node-title">COA Extraction <span class="node-ref">Aluma / Cambridge</span></div>
+            <div class="node-desc">Parses PDF COAs into structured test results (potency, heavy metals, pesticides).</div>
+          </div>
+          <span class="node-status status-built">Built</span>
+          <div class="node-tooltip"><b>Already hooks into rules engine.</b> <code>resolveCoaValidationRule()</code> is a single-line swap to read from policy instead of hard-coded tier config.</div>
+        </div>
+        <div class="node st-built">
+          <div class="node-icon">🪪</div>
+          <div class="node-body">
+            <div class="node-title">License Scan <span class="node-ref">CannaSpyGlass</span></div>
+            <div class="node-desc">State license lookups for cannabis/hemp merchants.</div>
+          </div>
+          <span class="node-status status-built">Built</span>
+          <div class="node-tooltip"><b>Integrated.</b> Output already maps to checklist items. Will extend to generic license providers per vertical via <code>payment_rails</code> and MRI config.</div>
+        </div>
+        <div class="node st-progress">
+          <div class="node-icon">⭐</div>
+          <div class="node-body">
+            <div class="node-title">Reputation <span class="node-ref">BBB / Google / FDA</span></div>
+            <div class="node-desc">Public-facing signals: reviews, complaints, FDA warning letters.</div>
+          </div>
+          <span class="node-status status-progress">Partial</span>
+          <div class="node-tooltip"><b>Data in, surfacing partial.</b> FDA warning letter module shipped (QP-3660). BBB and Google review aggregation surfaced but not policy-linked.</div>
+        </div>
+        <div class="node st-progress">
+          <div class="node-icon">🛡️</div>
+          <div class="node-body">
+            <div class="node-title">MRI Checks <span class="node-ref">OFAC P1 built · P2–4 planned</span></div>
+            <div class="node-desc">OFAC sanctions screening shipped. Adverse media, PEP, business registries next.</div>
+          </div>
+          <span class="node-status status-progress">Partial</span>
+          <div class="node-tooltip"><b>Phase 1 live (OFAC).</b> Phase 2: adverse media. Phase 3: PEP/sanctions. Phase 4: business registry cross-check. All configured from policy's <code>mri_configuration</code>.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== OUTPUTS (BOTTOM CENTER) ===== -->
+    <div class="area outputs">
+      <div class="area-header">
+        <span class="area-label al-output">▼ Outputs & Surfaces</span>
+        <span class="area-count">5 nodes</span>
+      </div>
+      <div class="node-list">
+        <div class="node st-planned">
+          <div class="node-icon">📄</div>
+          <div class="node-body">
+            <div class="node-title">Compliance Reports <span class="node-ref">QP-3701</span></div>
+            <div class="node-desc">Single button → Q AI reads policy + evidence → PDF report, SOC 2 audited.</div>
+          </div>
+          <span class="node-status status-planned">Planned</span>
+          <div class="node-tooltip"><b>The headline deliverable.</b> Analyst clicks "Generate report" — Q evaluates every checklist item against evidence, writes the PDF, logs the prompt/response. No human spreadsheet work.</div>
+        </div>
+        <div class="node st-notstarted">
+          <div class="node-icon">🖥️</div>
+          <div class="node-body">
+            <div class="node-title">Merchant Dashboard</div>
+            <div class="node-desc">Net-new merchant-facing surface — see your assigned policies, open findings, bulletins.</div>
+          </div>
+          <span class="node-status status-notstarted">Not Started</span>
+          <div class="node-tooltip"><b>Doesn't exist today.</b> Phase 7 of the roadmap. Paired with self-service disagreement flow (decision #6) and customer-visible policy explainer (decision #5).</div>
+        </div>
+        <div class="node st-planned">
+          <div class="node-icon">🔁</div>
+          <div class="node-body">
+            <div class="node-title">Evidence Loop</div>
+            <div class="node-desc">Closed 5-node loop: Scan → Tag → Evaluate → Report → Remediate → re-scan.</div>
+          </div>
+          <span class="node-status status-planned">Planned</span>
+          <div class="node-tooltip"><b>Already mocked.</b> See <code>qredible-tickets/policy-evidence-loop.html</code>. Each node publishes events — the loop becomes the spine of the platform.</div>
+        </div>
+        <div class="node st-planned">
+          <div class="node-icon">📊</div>
+          <div class="node-body">
+            <div class="node-title">WeMonitor Rework <span class="node-ref">QP-3648</span></div>
+            <div class="node-desc">Analyst workspace re-rendered over policy model instead of tier-based filters.</div>
+          </div>
+          <span class="node-status status-planned">Planned</span>
+          <div class="node-tooltip"><b>One of the 7 disconnected modules consolidates here.</b> Filters, queues, and dashboards all key off <code>policy_id</code>, not the retired tier system.</div>
+        </div>
+        <div class="node st-progress">
+          <div class="node-icon">🎯</div>
+          <div class="node-body">
+            <div class="node-title">MRI Scores</div>
+            <div class="node-desc">Risk score surface driven by <span class="mono">mri_configuration</span> in policy.</div>
+          </div>
+          <span class="node-status status-progress">Partial</span>
+          <div class="node-tooltip"><b>Compute exists, configuration is hard-coded.</b> Moving weights & thresholds into policy is the Phase 6 cut-over.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== PAYMENT PROCESSORS (BOTTOM RIGHT) ===== -->
+    <div class="area payment">
+      <div class="area-header">
+        <span class="area-label al-pay">▼ Payment Processors</span>
+        <span class="area-count">5 nodes</span>
+      </div>
+      <div class="node-list">
+        <div class="node st-progress tt-left">
+          <div class="node-icon">💳</div>
+          <div class="node-body">
+            <div class="node-title">Mastercard MMSP Certification</div>
+            <div class="node-desc">Merchant monitoring standard certification — directly maps to policy-first architecture.</div>
+          </div>
+          <span class="node-status status-progress">In Progress</span>
+          <div class="node-tooltip"><b>The business catalyst.</b> MMSP requires versioned policies, documented evaluation, and an audit trail — exactly what we're building.</div>
+        </div>
+        <div class="node st-active tt-left">
+          <div class="node-icon">⚡</div>
+          <div class="node-body">
+            <div class="node-title">FlexPay · Westtown</div>
+            <div class="node-desc">Current processor partners. Each one = a different <span class="mono">payment_rails</span> config.</div>
+          </div>
+          <span class="node-status status-active">Active</span>
+          <div class="node-tooltip"><b>Processor requirements live in policy, not code.</b> Each rail can dictate MCC ranges, MRI cadence, bulletin routing.</div>
+        </div>
+        <div class="node st-planned tt-left">
+          <div class="node-icon">🧾</div>
+          <div class="node-body">
+            <div class="node-title"><span class="mono">payment_rails</span> in policy JSON</div>
+            <div class="node-desc">Top-level policy key — lists processors the merchant is eligible for.</div>
+          </div>
+          <span class="node-status status-planned">Planned</span>
+          <div class="node-tooltip"><b>Eligibility = policy query.</b> "Is this merchant eligible for Mastercard?" is answered by reading the effective policy, not by a hard-coded branch.</div>
+        </div>
+        <div class="node st-planned tt-left">
+          <div class="node-icon">🏷️</div>
+          <div class="node-body">
+            <div class="node-title">MID Management <span class="node-ref">QP-3677</span></div>
+            <div class="node-desc">Inline MID edit on Legal Name, searchable in WeMonitor. No new column.</div>
+          </div>
+          <span class="node-status status-planned">Planned</span>
+          <div class="node-tooltip"><b>Already re-scoped.</b> Mockup lives at <code>qredible-tickets/mid-management.html</code>. Commit <code>d67ff3a</code>.</div>
+        </div>
+        <div class="node st-notstarted tt-left">
+          <div class="node-icon">🔢</div>
+          <div class="node-body">
+            <div class="node-title">MCC Codes</div>
+            <div class="node-desc">Merchant Category Codes — live in policy's <span class="mono">product_classification</span>.</div>
+          </div>
+          <span class="node-status status-notstarted">Not Started</span>
+          <div class="node-tooltip"><b>Processor requirement.</b> MMSP expects MCC-level reasoning. The data model already has room — just needs to be populated and surfaced.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ===== INDUSTRY RING ===== -->
+  <div class="industries">
+    <div class="industries-header">
+      <span class="label">◎ Outer Ring · Industry Verticals</span>
+      <h3>Each vertical = one policy document</h3>
+      <span class="tag">New industries ship via <b>publish</b>, not release.</span>
+    </div>
+    <div class="industry-chips">
+      <span class="ichip st-built">
+        <span class="st"></span> Hemp / CBD
+        <span class="meta">v3</span>
+      </span>
+      <span class="ichip st-progress">
+        <span class="st"></span> Tobacco / Vape
+        <span class="meta">v1</span>
+      </span>
+      <span class="ichip st-planned">
+        <span class="st"></span> Peptides
+        <span class="meta">75 reqs mapped</span>
+      </span>
+      <span class="ichip st-planned">
+        <span class="st"></span> Nutraceuticals
+        <span class="meta">scoped</span>
+      </span>
+      <span class="ichip st-future">
+        <span class="st"></span> Firearms
+      </span>
+      <span class="ichip st-future">
+        <span class="st"></span> Medical Devices
+      </span>
+      <span class="ichip st-future">
+        <span class="st"></span> Gaming
+      </span>
+    </div>
+  </div>
+
+  <!-- ===== INFRASTRUCTURE BAR ===== -->
+  <div class="infra">
+    <div class="infra-col">
+      <h4><span class="num">4</span> New Tables</h4>
+      <ul>
+        <li><span class="b">pl_policy</span></li>
+        <li><span class="b">pl_merchant_policies</span></li>
+        <li><span class="b">pl_policy_coverage_signature</span></li>
+        <li><span class="b">pl_compliance_coverage_audit</span></li>
+      </ul>
+    </div>
+    <div class="infra-col">
+      <h4><span class="num">3</span> New Services</h4>
+      <ul>
+        <li><span class="p">EvidenceTaggingService</span> <i>Phase 0–1</i></li>
+        <li><span class="p">PolicyLookupService</span> <i>Phase 1</i></li>
+        <li><span class="p">ComplianceCoverageValidator</span> <i>Phase 2</i></li>
+      </ul>
+    </div>
+    <div class="infra-col">
+      <h4><span class="num">3</span> Existing Hooks (wire up)</h4>
+      <ul>
+        <li><span class="h">json-rules-engine</span> <i>already installed, unused</i></li>
+        <li><span class="h">resolveCoaValidationRule()</span> <i>single-line swap</i></li>
+        <li><span class="h">POLICY_VIOLATION enum</span> <i>start emitting</i></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="eco-footer">
+    <div>
+      <strong style="color:#cbd5e1">Everything above connects to the nucleus.</strong>
+      Compliance team publishes policies. Engineering builds the surfaces once.
+    </div>
+    <div>
+      <a href="policy-first-meeting-prep.html">Meeting prep →</a>
+      <span style="margin:0 10px;color:#1e293b">·</span>
+      <a href="index.html">All mockups</a>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
