@@ -203,22 +203,34 @@ code,.mono{font-family:'IBM Plex Mono',monospace}
 .node-tooltip code{background:#0f172a;padding:1px 5px;border-radius:3px;color:#7dd3fc;font-family:'IBM Plex Mono',monospace;font-size:10.5px}
 .node:hover > .node-tooltip{opacity:1;transform:translateX(0)}
 
-/* Intel (top panel) → tooltip forced BELOW node (never above; prevents viewport-top clipping) */
-/* The Intel panel has backdrop-filter which creates a stacking context; its sibling
-   nucleus-wrap contains the nucleus with its own transform/animation stacking contexts.
-   Without explicit z-index on .area.intel, the nucleus renders on top of tooltips that
-   extend below into row 2. Raise the whole Intel panel's stacking context. */
-.area.intel{z-index:30}
+/* Intel (top panel) → tooltip pinned to TOP-RIGHT of viewport (position:fixed).
+   NOTE: backdrop-filter on .area creates a containing block for position:fixed
+   descendants, breaking viewport-anchored positioning. We strip backdrop-filter
+   from .area.intel only so fixed-positioning anchors to the viewport. The blur
+   effect is imperceptible against the page's solid dark background. */
+.area.intel{backdrop-filter:none !important; -webkit-backdrop-filter:none !important}
 .area.intel .node-tooltip{
-  left:0 !important;
-  right:auto !important;
-  top:calc(100% + 14px) !important;
+  position:fixed !important;
+  top:96px !important;
+  right:24px !important;
+  left:auto !important;
   bottom:auto !important;
-  transform:translateY(-8px);
-  z-index:110;
-  max-width:min(320px, calc(100vw - 40px));
+  width:360px !important;
+  max-width:calc(100vw - 48px) !important;
+  transform:translateY(-6px) scale(.98);
+  transform-origin:top right;
+  z-index:9999 !important;
+  border:1px solid rgba(125,211,252,.5);
+  box-shadow:0 24px 64px rgba(0,0,0,.9), 0 0 0 1px rgba(59,130,246,.25);
 }
-.area.intel .node:hover > .node-tooltip{transform:translateY(0)}
+.area.intel .node-tooltip::before{
+  content:"Intelligence Layer detail";
+  display:block;
+  font-size:9.5px;font-weight:800;letter-spacing:.9px;text-transform:uppercase;
+  color:#7dd3fc;margin-bottom:8px;
+  padding-bottom:8px;border-bottom:1px dashed rgba(125,211,252,.25);
+}
+.area.intel .node:hover > .node-tooltip{transform:translateY(0) scale(1)}
 
 /* Auth (left middle) → tooltip to the RIGHT (default) — aligned to the bottom if node is in upper half */
 .area.auth .node-tooltip{top:0}
