@@ -355,6 +355,26 @@ details[open] .caret{transform:rotate(90deg)}
 .dcard .tech{font-size:11.5px;color:#94a3b8;line-height:1.5;margin:0 0 2px}
 .dcard .tech::before{content:"◆ Technical: ";color:#a5b4fc;font-weight:600}
 
+/* ===== STRENGTHS ===== */
+.strengths{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:4px}
+.scard{
+  background:#0b1225;border:1px solid #1e293b;border-left:3px solid #10b981;
+  border-radius:10px;padding:14px 16px;
+  display:grid;grid-template-columns:32px 1fr;gap:12px;align-items:start;
+  transition:border-color .15s, transform .12s;
+}
+.scard:hover{border-left-color:#6ee7b7;transform:translateY(-1px)}
+.scard .sidx{
+  font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:800;
+  background:rgba(16,185,129,.15);color:#6ee7b7;
+  border:1px solid rgba(16,185,129,.35);
+  padding:4px 6px;border-radius:6px;text-align:center;
+}
+.scard h4{font-size:13px;font-weight:700;color:#f1f5f9;margin:0 0 5px}
+.scard p{font-size:12px;color:#cbd5e1;line-height:1.55;margin:0}
+.scard p code{background:#020617;padding:1px 5px;border-radius:3px;color:#7dd3fc;font-family:'IBM Plex Mono',monospace;font-size:11px}
+.scard p b{color:#f8fafc}
+
 /* responsive */
 @media (max-width:1100px){
   .page{grid-template-columns:1fr}
@@ -363,7 +383,7 @@ details[open] .caret{transform:rotate(90deg)}
   .decisions{grid-template-columns:repeat(2,1fr)}
 }
 @media (max-width:640px){
-  .decisions{grid-template-columns:1fr}
+  .decisions, .strengths{grid-template-columns:1fr}
   .phase{grid-template-columns:1fr;gap:8px}
   .flow{flex-direction:column}
   .flow-arr{transform:rotate(90deg);padding:6px 0}
@@ -405,6 +425,7 @@ details[open] .caret{transform:rotate(90deg)}
       <li><a href="#s9">Mockup Index</a></li>
       <li><a href="#s10">Risks & Mitigations</a></li>
       <li><a href="#s11">Discrepancies</a></li>
+      <li><a href="#s12">Architectural Strengths</a></li>
     </ol>
   </nav>
 
@@ -830,8 +851,8 @@ details[open] .caret{transform:rotate(90deg)}
                 <div class="val">Any Q verdict marked <code>needs_review</code> routes to analyst. Override is logged with reason.</div>
               </div>
               <div class="q-item">
-                <div class="lbl">Cost guardrails</div>
-                <div class="val">Prompt caching on policy document reduces per-evaluation cost. Batch mode for scheduled re-evaluations.</div>
+                <div class="lbl">Cost guardrails · ~85k tokens/report</div>
+                <div class="val">Each compliance report is <b>~85k tokens</b> of Q input/output. At thousands of merchants × monthly cadence this compounds — mitigate with prompt caching on the policy document (~90% hit rate), batch mode for scheduled re-evaluations, and per-evaluation cost telemetry with budget alerts.</div>
               </div>
             </div>
           </div>
@@ -966,6 +987,16 @@ details[open] .caret{transform:rotate(90deg)}
                 <td>Decision #9 tomorrow. Lock retention window, replay mechanism, access controls before Phase 3 starts. Q integration work blocks on this — don't start without clarity.</td>
               </tr>
               <tr>
+                <td><b>No way to test a policy before publish</b></td>
+                <td><span class="risk-tag rt-high">High</span></td>
+                <td>Today there's no sandbox to preview how a policy change will score real merchants before it goes live. CIO raised this as a SOC 2 concern — an incorrect publish would cascade to every affected merchant. Ship a <b>policy sandbox</b> alongside Phase 3: evaluate a candidate policy against N sampled merchants, produce a diff vs. current, require sign-off before publish.</td>
+              </tr>
+              <tr>
+                <td><b>No merchant-facing dashboard yet (<code>client.tsx</code> is a stub)</b></td>
+                <td><span class="risk-tag rt-high">High</span></td>
+                <td>The merchant portal bundle exists as a shell — no compliance surfaces inside it. Phase 7 delivers the real dashboard. Decisions #5 and #6 shape what merchants will see and do. Until then, every merchant question routes to an analyst.</td>
+              </tr>
+              <tr>
                 <td><b>buildDisposition prerequisite bug</b></td>
                 <td><span class="risk-tag rt-high">High</span></td>
                 <td>Phase 0 fix. Today the code always emits a generic <code>VIOLATIVE</code> enum. The <code>POLICY_VIOLATION</code> enum already exists and is unused — switching is mechanical, but untested code paths will surface.</td>
@@ -984,6 +1015,21 @@ details[open] .caret{transform:rotate(90deg)}
                 <td><b>Q model version drift</b></td>
                 <td><span class="risk-tag rt-med">Medium</span></td>
                 <td>Pin explicitly. Never call "latest". Governance gate on model upgrade. Regression test set of known policies + evidence pairs with expected verdicts.</td>
+              </tr>
+              <tr>
+                <td><b>Operational complexity: 7 Bull queues + 23 cron jobs</b></td>
+                <td><span class="risk-tag rt-med">Medium</span></td>
+                <td>Compliance work is already fanned out across <b>7 Bull queues</b> and <b>23 scheduled cron jobs</b>. Policy-driven scans/evaluations add surface area. Phase 5 introduces a unified scheduler abstraction; don't add a new queue without retiring one. Monitor queue depth and job-success rate centrally.</td>
+              </tr>
+              <tr>
+                <td><b>No monitoring control center for automated scans</b></td>
+                <td><span class="risk-tag rt-med">Medium</span></td>
+                <td>Today there's no single pane-of-glass showing which merchants were scanned, when, and what failed. Monthly scan cadence will break quietly without this. Phase 7 includes an ops dashboard: scan coverage per merchant, queue health, exception routing. Ship it before scaling merchant count.</td>
+              </tr>
+              <tr>
+                <td><b>AI evaluation cost at scale</b></td>
+                <td><span class="risk-tag rt-med">Medium</span></td>
+                <td>A full report evaluation is ~<b>85k tokens</b> of Q input/output. At thousands of merchants × monthly cadence, cost compounds quickly. Mitigations: prompt caching on the policy document (~90% hit rate expected), batch mode for scheduled re-evaluations, per-evaluation cost telemetry + budget alerts.</td>
               </tr>
               <tr>
                 <td><b>Policy authoring friction (compliance can't use the editor)</b></td>
@@ -1061,6 +1107,99 @@ details[open] .caret{transform:rotate(90deg)}
           </table>
           <div class="callout amber" style="margin-top:14px">
             <b>Nothing in this list is surprising — but none of it has been explicitly decided.</b> Tomorrow we lock the token file, confirm the Uber Move license, and commit to the Phase 0 / Phase 1 swaps so Phase 2+ can assume policy-driven data sources.
+          </div>
+        </div>
+      </details>
+    </section>
+
+    <!-- ===== 12. ARCHITECTURAL STRENGTHS ===== -->
+    <section id="s12">
+      <details>
+        <summary>
+          <span class="sec-num">12</span>
+          <span class="sec-title">Architectural Strengths</span>
+          <span class="sec-meta">Why this plan lands — 10 reasons</span>
+          <span class="caret">▶</span>
+        </summary>
+        <div class="sec-body">
+          <div class="plain">
+            <span class="label">In plain English</span>
+            <b>We aren't starting from scratch — most of the pieces are already in place.</b> The hooks exist, the rule processor is installed, the enum vocabulary is defined. Policy-first threads them together into a coherent spine that the compliance team can drive without engineering touching code.
+          </div>
+          <div class="strengths">
+            <div class="scard">
+              <div class="sidx">01</div>
+              <div>
+                <h4><code>json-rules-engine</code> is already in the codebase</h4>
+                <p>The open-source rule processor is already listed in <code>package.json</code> — we just haven't wired it up. Phase 1 flips the switch. No new vendor, no new dependency, no procurement cycle.</p>
+              </div>
+            </div>
+            <div class="scard">
+              <div class="sidx">02</div>
+              <div>
+                <h4><code>resolveCoaValidationRule()</code> is a single-line swap</h4>
+                <p>One function decides which COA tests to require. Today it reads from the tier config table; switching it to read from the policy document is <b>literally a one-line change</b>. It's the first concrete proof that policy-first works.</p>
+              </div>
+            </div>
+            <div class="scard">
+              <div class="sidx">03</div>
+              <div>
+                <h4>Net-new infrastructure is small</h4>
+                <p>The whole architecture needs just <b>4 new tables, 2 new columns, and 3 new services</b>. Everything else reuses existing hooks. Small surface area means fast to build, fast to review, fast to test.</p>
+              </div>
+            </div>
+            <div class="scard">
+              <div class="sidx">04</div>
+              <div>
+                <h4>Two-layer storage is SOC 2 friendly</h4>
+                <p>Every policy is stored as both a <b>human-readable narrative</b> and a <b>machine-readable JSON</b>. Auditors get the prose; systems get the data. No sync burden — the narrative and JSON are the same record, different views.</p>
+              </div>
+            </div>
+            <div class="scard">
+              <div class="sidx">05</div>
+              <div>
+                <h4>Q AI evaluation loop is novel and scalable</h4>
+                <p>Combining a deterministic rules engine (for black-and-white checks) with Q (for judgment calls) on the same policy document is a pattern we haven't seen in market compliance tooling. It scales: add a rule, both layers pick it up.</p>
+              </div>
+            </div>
+            <div class="scard">
+              <div class="sidx">06</div>
+              <div>
+                <h4>New industry = new policy doc, not new code</h4>
+                <p>Peptides, firearms, nutraceuticals — each is a published JSON document, not a platform release. Time-to-launch for a new vertical drops from quarters to days. The moat grows with every policy published.</p>
+              </div>
+            </div>
+            <div class="scard">
+              <div class="sidx">07</div>
+              <div>
+                <h4>Existing hook points are clean</h4>
+                <p>The <code>POLICY_VIOLATION</code> enum is already defined (just unused). The <code>pl_compliance_element</code> table already models findings. Phase 0 wires these up — we're not inventing vocabulary, we're activating it.</p>
+              </div>
+            </div>
+            <div class="scard">
+              <div class="sidx">08</div>
+              <div>
+                <h4>Version bumps are policy edits — zero engineering</h4>
+                <p>Move a threshold from 95% to 97%? Edit the policy, publish v2, done. No pull request, no QA cycle, no release. Compliance ships changes the same day regulations change.</p>
+              </div>
+            </div>
+            <div class="scard">
+              <div class="sidx">09</div>
+              <div>
+                <h4>Bulletins give merchants a grace period</h4>
+                <p>When a policy updates, merchants get a bulletin with an explicit <b>grace period</b> before the rule is enforced. Nobody gets blindsided. Customer-friendly and defensible in a dispute.</p>
+              </div>
+            </div>
+            <div class="scard">
+              <div class="sidx">10</div>
+              <div>
+                <h4>Compliance iterates without code deploys</h4>
+                <p>The entire rule lifecycle — author, review, publish, retire — runs in the policy editor. Engineering's job ends at "the editor works"; compliance owns what it says. That's the decoupling the business has been asking for.</p>
+              </div>
+            </div>
+          </div>
+          <div class="callout green" style="margin-top:14px">
+            <b>Bottom line:</b> policy-first isn't a rewrite. It's a small, high-leverage set of activations that connects the parts we already have into a spine the business can drive directly.
           </div>
         </div>
       </details>
