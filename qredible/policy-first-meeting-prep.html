@@ -315,6 +315,46 @@ details[open] .caret{transform:rotate(90deg)}
 .callout.green{background:rgba(16,185,129,.08);border-color:rgba(16,185,129,.3);border-left-color:#10b981;color:#86efac}
 .callout b{color:#f1f5f9}
 
+/* ===== PLAIN ENGLISH ===== */
+.plain{
+  background:linear-gradient(135deg, rgba(125,211,252,.08), rgba(167,139,250,.06));
+  border:1px solid rgba(125,211,252,.28);
+  border-left:3px solid #7dd3fc;
+  border-radius:8px;
+  padding:12px 14px 14px;
+  margin:0 0 16px;
+  font-size:13px;color:#e2e8f0;line-height:1.55;
+}
+.plain .label{
+  display:inline-block;
+  font-size:10px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;
+  color:#7dd3fc;margin-bottom:6px;
+}
+.plain .label::before{content:"◇ "}
+.plain b{color:#f8fafc}
+.plain .tech-note{
+  display:block;
+  margin-top:8px;padding-top:8px;border-top:1px dashed rgba(125,211,252,.2);
+  font-size:11.5px;color:#94a3b8;
+}
+.plain .tech-note b{color:#bfdbfe;font-family:'IBM Plex Mono',monospace;font-size:11px}
+
+/* Phase plain-meaning */
+.phase .desc .means{
+  display:block;
+  margin-top:6px;
+  font-size:12px;color:#7dd3fc;font-style:italic;line-height:1.5;
+}
+.phase .desc .means::before{content:"◇ What this means: ";color:#a5b4fc;font-style:normal;font-weight:700}
+
+/* Decision business framing */
+.dcard .biz{
+  font-size:12px;color:#e2e8f0;line-height:1.55;margin:0 0 6px;font-weight:500;
+}
+.dcard .biz::before{content:"◇ ";color:#7dd3fc;font-weight:700}
+.dcard .tech{font-size:11.5px;color:#94a3b8;line-height:1.5;margin:0 0 2px}
+.dcard .tech::before{content:"◆ Technical: ";color:#a5b4fc;font-weight:600}
+
 /* responsive */
 @media (max-width:1100px){
   .page{grid-template-columns:1fr}
@@ -382,6 +422,12 @@ details[open] .caret{transform:rotate(90deg)}
       </div>
     </div>
 
+    <div class="plain">
+      <span class="label">Start here · Plain English for non-technical readers</span>
+      Today, compliance rules are scattered across code, tier tables, and analyst spreadsheets. <b>Policy-first puts every rule in one document — a reusable "rulebook" our compliance team can edit directly.</b> Our AI reads that rulebook, scans the merchant's website, catalog, lab reports, and licenses, then writes a compliance report automatically.
+      <span class="tech-note"><b>What this unlocks:</b> (1) Mastercard certification path — their certification requires exactly this architecture. (2) New industries in days, not release cycles. (3) Less manual analyst work — the AI drafts the first pass. (4) Merchants get a self-service dashboard.</span>
+    </div>
+
     <!-- ===== 1. EXECUTIVE SUMMARY ===== -->
     <section id="s1">
       <details open>
@@ -392,6 +438,11 @@ details[open] .caret{transform:rotate(90deg)}
           <span class="caret">▶</span>
         </summary>
         <div class="sec-body">
+          <div class="plain">
+            <span class="label">In plain English</span>
+            <b>One digital rulebook per industry, written by our compliance team.</b> Today, the rules for hemp, tobacco, peptides, etc. live in code that only engineers can change. With policy-first, compliance edits a document; the system reads it and applies it to every merchant in that industry. New regulations ship the day the rule changes — not the next release cycle.
+            <span class="tech-note"><b>How it reduces cost:</b> Less engineering time per new vertical. Less analyst spreadsheet work. Faster regulatory response. Clearer audit trail for Mastercard, SOC 2, and state regulators.</span>
+          </div>
           <p><strong>Policy-first means: versioned JSON policy documents are the single source of truth for all compliance logic.</strong> Every rule, every threshold, every MCC range, every COA requirement lives in one place — not scattered across code branches, tier tables, and analyst spreadsheets.</p>
           <p>Merchants carry <code>policy_ids[]</code>. The compliance team publishes policies. Engineering builds the renderer/evaluator once. <strong>New industries = new policy doc, not new code.</strong></p>
           <p>This replaces the never-implemented <code>QP-3603 / QP-3604</code> approach that tried to hard-code industry logic into the platform. It's simpler, faster, auditable, and — critically — aligns directly with Mastercard MMSP certification requirements.</p>
@@ -412,6 +463,10 @@ details[open] .caret{transform:rotate(90deg)}
           <span class="caret">▶</span>
         </summary>
         <div class="sec-body">
+          <div class="plain">
+            <span class="label">In plain English</span>
+            <b>Write the rules once. Scan the merchant. Let the AI decide. Tell the merchant. Repeat.</b> Seven steps, one continuous loop. Each time the rules change, every merchant is automatically re-checked and notified. The compliance team never waits for an engineering release to put a new rule in force.
+          </div>
           <div class="flow">
             <div class="flow-step">① Author</div>
             <span class="flow-arr">→</span>
@@ -428,13 +483,13 @@ details[open] .caret{transform:rotate(90deg)}
             <div class="flow-step">⑦ Bulletin</div>
           </div>
           <p style="margin-top:14px">
-            <strong>Author:</strong> Compliance writes/updates a policy in the editor or wizard.<br>
-            <strong>Assign:</strong> Auto via Q-Trust intake, or analyst manual, or parent inheritance.<br>
-            <strong>Scan:</strong> Website, product, COA, license, reputation, MRI pipelines produce evidence tagged to checklist items.<br>
-            <strong>Evaluate:</strong> <code>ComplianceCoverageValidator</code> + Q AI read policy + evidence → pass/fail/needs-review.<br>
-            <strong>Report:</strong> Single button generates a Q-authored PDF. SOC 2 audited.<br>
-            <strong>Evidence Loop:</strong> Findings flow into remediation, which triggers re-scan. Closed loop.<br>
-            <strong>Bulletin:</strong> Policy version changes notify merchants automatically. Repeat.
+            <strong>Author:</strong> Compliance writes or updates a rulebook in the editor or wizard.<br>
+            <strong>Assign:</strong> New merchants are matched to rulebooks automatically via Q-Trust intake; analysts can override; franchises inherit from parent org.<br>
+            <strong>Scan:</strong> Robots check the website, product catalog, lab test PDFs, state licenses, reputation signals, and sanctions watchlists.<br>
+            <strong>Evaluate:</strong> The system confirms every required check ran, then Q AI reads the rulebook + evidence and decides pass/fail/needs-review.<br>
+            <strong>Report:</strong> One button produces a full compliance report PDF — AI-drafted, SOC 2 audited.<br>
+            <strong>Evidence Loop:</strong> Findings flow into merchant remediation, which triggers a re-scan. Closed loop.<br>
+            <strong>Bulletin:</strong> When rules change, merchants are automatically notified. Cycle repeats.
           </p>
         </div>
       </details>
@@ -450,6 +505,10 @@ details[open] .caret{transform:rotate(90deg)}
           <span class="caret">▶</span>
         </summary>
         <div class="sec-body">
+          <div class="plain">
+            <span class="label">In plain English</span>
+            Today our compliance logic is spread across a dozen places — a change to one rule means hunting through code, config tables, and analyst checklists. <b>Target state: one digital rulebook per industry. Compliance edits it. The system applies it everywhere.</b>
+          </div>
           <div class="two-col">
             <div class="col-card current">
               <h5>▪ Current State</h5>
@@ -494,6 +553,10 @@ details[open] .caret{transform:rotate(90deg)}
           <span class="caret">▶</span>
         </summary>
         <div class="sec-body">
+          <div class="plain">
+            <span class="label">In plain English</span>
+            <b>Nine phases. Roughly 55 engineering days total, plus ongoing.</b> First two phases are plumbing — they don't produce visible features, but every later phase depends on them. Phase 3 is the flagship: AI-generated compliance reports. Phase 7 is the first merchant-facing surface.
+          </div>
           <div class="callout amber">
             <b>Caveat:</b> estimates are optimistic — they assume AI-assisted engineering throughout. Treat as planning baseline, not commitment. Shift risk lives in Phase 0 (<code>buildDisposition</code> fix) and Phase 3 (Q integration + SOC 2 audit table).
           </div>
@@ -501,47 +564,74 @@ details[open] .caret{transform:rotate(90deg)}
             <div class="phase">
               <div class="pnum">P0</div>
               <div class="days">~3 days</div>
-              <div class="desc"><b>buildDisposition bug fix</b> + add <code>evidence_tags[]</code> columns to scan result tables. Unblocks everything downstream.</div>
+              <div class="desc">
+                <b>buildDisposition bug fix</b> + add <code>evidence_tags[]</code> columns to scan result tables. Unblocks everything downstream.
+                <span class="means">Fix a labeling bug so scan findings can be tied to specific rules. Without this, nothing else works.</span>
+              </div>
             </div>
             <div class="phase">
               <div class="pnum">P1</div>
               <div class="days">~5 days</div>
-              <div class="desc"><b>pl_policy table + PolicyLookupService</b>. Swap <code>resolveCoaValidationRule()</code> to read from policy — first real policy-driven code path.</div>
+              <div class="desc">
+                <b>pl_policy table + PolicyLookupService</b>. Swap <code>resolveCoaValidationRule()</code> to read from policy — first real policy-driven code path.
+                <span class="means">Stand up the database where rulebooks live, and make the first compliance check read from it instead of hardcoded settings.</span>
+              </div>
             </div>
             <div class="phase">
               <div class="pnum">P2</div>
               <div class="days">~8 days</div>
-              <div class="desc"><b>Policy Editor UI</b> (QP-3647, form + JSON modes) and <b>Wizard mode</b> (QP-3703). Compliance team can author without engineering.</div>
+              <div class="desc">
+                <b>Policy Editor UI</b> (QP-3647, form + JSON modes) and <b>Wizard mode</b> (QP-3703). Compliance team can author without engineering.
+                <span class="means">Compliance team gets a tool to write and publish rulebooks themselves. No more engineering tickets to change a rule.</span>
+              </div>
             </div>
             <div class="phase">
               <div class="pnum">P3</div>
               <div class="days">~10 days</div>
-              <div class="desc"><b>Compliance Report Generation</b> (QP-3701). Q AI integration with pinned model, prompt versioning, SOC 2 audit table. The flagship deliverable.</div>
+              <div class="desc">
+                <b>Compliance Report Generation</b> (QP-3701). Q AI integration with pinned model, prompt versioning, SOC 2 audit table. The flagship deliverable.
+                <span class="means">One-click AI-generated compliance reports. The feature that makes the business case — and the Mastercard certification case.</span>
+              </div>
             </div>
             <div class="phase">
               <div class="pnum">P4</div>
               <div class="days">~5 days</div>
-              <div class="desc"><b>Multi-policy merchant assignment</b> + auto-assignment from Q-Trust intake. Unlocks merchants holding more than one policy.</div>
+              <div class="desc">
+                <b>Multi-policy merchant assignment</b> + auto-assignment from Q-Trust intake. Unlocks merchants holding more than one policy.
+                <span class="means">A single merchant can follow Hemp + Tobacco rules at once. New merchants are routed to the right rulebook automatically.</span>
+              </div>
             </div>
             <div class="phase">
               <div class="pnum">P5</div>
               <div class="days">~5 days</div>
-              <div class="desc"><b>Policy → Scanner bridge</b> + per-company overrides. Scans read their config from policy instead of tier tables.</div>
+              <div class="desc">
+                <b>Policy → Scanner bridge</b> + per-company overrides. Scans read their config from policy instead of tier tables.
+                <span class="means">Scans get their instructions from the rulebook. When compliance changes a rule, scans start checking for it on the next run.</span>
+              </div>
             </div>
             <div class="phase">
               <div class="pnum">P6</div>
               <div class="days">~8 days</div>
-              <div class="desc"><b>MRI Marketplace</b> + Phases 2–4 checks (adverse media, PEP, business registry). MRI becomes fully policy-driven.</div>
+              <div class="desc">
+                <b>MRI Marketplace</b> + Phases 2–4 checks (adverse media, PEP, business registry). MRI becomes fully policy-driven.
+                <span class="means">Merchant risk checks (sanctions, news, politically-exposed-persons, registrations) go live and become rulebook-driven.</span>
+              </div>
             </div>
             <div class="phase">
               <div class="pnum">P7</div>
               <div class="days">~8 days</div>
-              <div class="desc"><b>Merchant compliance dashboard</b> + bulletin delivery. First net-new merchant-facing surface.</div>
+              <div class="desc">
+                <b>Merchant compliance dashboard</b> + bulletin delivery. First net-new merchant-facing surface.
+                <span class="means">Merchants get a customer portal — see their own rules, findings, and notifications. The first product surface our customers use directly.</span>
+              </div>
             </div>
             <div class="phase">
               <div class="pnum">P8</div>
               <div class="days">ongoing</div>
-              <div class="desc"><b>Mastercard MMSP alignment</b>, MID management (QP-3677 already mocked), MCC code rollout. Business-driven cadence.</div>
+              <div class="desc">
+                <b>Mastercard MMSP alignment</b>, MID management (QP-3677 already mocked), MCC code rollout. Business-driven cadence.
+                <span class="means">Ongoing work tied to Mastercard certification milestones and processor expansion, paced by business priorities.</span>
+              </div>
             </div>
           </div>
         </div>
@@ -558,60 +648,73 @@ details[open] .caret{transform:rotate(90deg)}
           <span class="caret">▶</span>
         </summary>
         <div class="sec-body">
+          <div class="plain">
+            <span class="label">In plain English</span>
+            <b>Nine design questions we need to answer before engineering can move.</b> Each card lists the business question first, the technical implication second. Pick an option or defer; every answer shapes the next sprint.
+          </div>
           <div class="decisions">
             <div class="dcard">
               <div class="dnum">Decision 01</div>
               <h4>Multi-policy conflict resolution</h4>
-              <p>When a merchant holds two policies with overlapping rules (e.g. Hemp + Tobacco), which wins?</p>
+              <p class="biz">If a merchant sells both hemp and tobacco, and the two rulebooks disagree, which rule applies?</p>
+              <p class="tech">When a merchant holds two policies with overlapping rules (e.g. Hemp + Tobacco), which wins?</p>
               <div class="opts">strictest-wins · union · priority-ordered</div>
             </div>
             <div class="dcard">
               <div class="dnum">Decision 02</div>
               <h4>Per-merchant overlay model</h4>
-              <p>How do we handle merchant-specific exceptions — inline overlay on assignment, or variant policy document?</p>
+              <p class="biz">When a single merchant needs a one-off exception (e.g. grandfathered from an old rule), how do we track it?</p>
+              <p class="tech">How do we handle merchant-specific exceptions — inline overlay on assignment, or variant policy document?</p>
               <div class="opts">overlays · variants</div>
             </div>
             <div class="dcard">
               <div class="dnum">Decision 03</div>
               <h4>Policy publication approval gate</h4>
-              <p>Who signs off on a new policy version before it goes live — compliance only, or dual-key with legal?</p>
+              <p class="biz">Before a new rulebook version goes live, who has to sign off? Compliance lead alone, or two signatures (compliance + legal)?</p>
+              <p class="tech">Who signs off on a new policy version before it goes live — compliance only, or dual-key with legal?</p>
               <div class="opts">single-signer · dual-signer · role-matrix</div>
             </div>
             <div class="dcard">
               <div class="dnum">Decision 04</div>
               <h4>Wizard → policy mapping</h4>
-              <p>Does the wizard generate full JSON directly, or emit a simplified intermediate structure that a renderer expands?</p>
+              <p class="biz">Should the wizard produce the final rulebook directly, or a simplified draft that gets expanded behind the scenes?</p>
+              <p class="tech">Does the wizard generate full JSON directly, or emit a simplified intermediate structure that a renderer expands?</p>
               <div class="opts">direct-JSON · intermediate-DSL</div>
             </div>
             <div class="dcard">
               <div class="dnum">Decision 05</div>
-              <h4>Customer-visible policy explainer</h4>
-              <p>Do merchants see the full policy JSON, a plain-English rendering, or only the checklist items that apply to them?</p>
+              <h4>What merchants see of the rulebook</h4>
+              <p class="biz">When a merchant logs in, do they see the full rulebook, a plain-English summary, or just their own to-dos?</p>
+              <p class="tech">Full policy JSON, a plain-English rendering, or only the checklist items that apply to them?</p>
               <div class="opts">full · plain-english · scoped-checklist</div>
             </div>
             <div class="dcard">
               <div class="dnum">Decision 06</div>
               <h4>Self-service disagreement flow</h4>
-              <p>Can merchants challenge a finding without opening a ticket, or does every dispute require analyst review?</p>
+              <p class="biz">If a merchant thinks a finding is wrong, can they dispute it themselves in the portal, or must every dispute route through an analyst?</p>
+              <p class="tech">Self-serve dispute flow, analyst-gated ticket, or a hybrid triage?</p>
               <div class="opts">self-serve · analyst-gated · hybrid</div>
             </div>
             <div class="dcard">
               <div class="dnum">Decision 07</div>
               <h4>Franchise inheritance scope</h4>
-              <p>When a parent org has policies, what do children inherit by default — all, checklist-only, or none?</p>
+              <p class="biz">When a parent brand has rules, what do franchise locations inherit by default — everything, just the checklist, or nothing?</p>
+              <p class="tech">What do children inherit by default — all, checklist-only, or none?</p>
               <div class="opts">full · partial · opt-in</div>
             </div>
             <div class="dcard">
               <div class="dnum">Decision 08</div>
-              <h4>MRI configuration location</h4>
-              <p>Does <code>mri_configuration</code> live in the policy, or in a separate MRI Marketplace doc referenced by the policy?</p>
+              <h4>Where MRI settings live</h4>
+              <p class="biz">Do merchant risk settings (sanctions, news checks, watchlists) live inside each industry rulebook, or in a separate shared "marketplace" doc?</p>
+              <p class="tech">Does <code>mri_configuration</code> live in the policy, or in a separate MRI Marketplace doc referenced by the policy?</p>
               <div class="opts">inline · referenced · hybrid</div>
             </div>
             <div class="dcard">
               <div class="dnum">Decision 09</div>
-              <h4>Ronaldo's SOC 2 requirements</h4>
-              <p>Exact retention window, replay mechanism, and access controls for the <code>pl_compliance_coverage_audit</code> table.</p>
-              <div class="opts">owner: Ronaldo · blocks: Phase 3</div>
+              <h4>SOC 2 audit-trail requirements</h4>
+              <p class="biz">How long do we keep every AI decision? How do we replay one if an auditor asks? Who can see the log?</p>
+              <p class="tech">Retention window, replay mechanism, and access controls for the <code>pl_compliance_coverage_audit</code> table.</p>
+              <div class="opts">owner: CIO · blocks: Phase 3</div>
             </div>
           </div>
         </div>
@@ -628,6 +731,10 @@ details[open] .caret{transform:rotate(90deg)}
           <span class="caret">▶</span>
         </summary>
         <div class="sec-body">
+          <div class="plain">
+            <span class="label">In plain English</span>
+            <b>Mastercard certification isn't extra work — it's the same work.</b> Their MMSP certification demands exactly the capabilities we're building: documented rules, versioned history, reproducible AI decisions, and a complete audit trail. Finishing the policy-first spine IS the certification path.
+          </div>
           <p>Mastercard's Merchant Monitoring Service Provider (MMSP) certification requires that every monitored merchant's compliance posture be <strong>documented, versioned, reproducible, and auditable</strong>. Policy-first architecture satisfies each of these by design, not as an afterthought.</p>
           <div class="mmsp" style="margin-top:14px">
             <div class="mmsp-side">
@@ -666,6 +773,10 @@ details[open] .caret{transform:rotate(90deg)}
           <span class="caret">▶</span>
         </summary>
         <div class="sec-body">
+          <div class="plain">
+            <span class="label">In plain English</span>
+            <b>New industry = new rulebook, not new product release.</b> Today, launching peptides or firearms would be a multi-month engineering project. With policy-first, compliance writes the rulebook, assigns it to merchants, and the existing scanners and reports just work. Our time-to-launch for a new vertical drops from quarters to days.
+          </div>
           <p>The test of the architecture: can we add a new vertical without an engineering release? With policy-first, the answer is <strong>yes</strong>.</p>
           <ol>
             <li><strong>Publish policy document.</strong> Compliance writes a new policy in the editor (e.g. <code>peptides-v1.json</code>).</li>
@@ -688,6 +799,11 @@ details[open] .caret{transform:rotate(90deg)}
           <span class="caret">▶</span>
         </summary>
         <div class="sec-body">
+          <div class="plain">
+            <span class="label">In plain English</span>
+            <b>Q is our AI evaluator.</b> It reads the rulebook, reads the evidence we've collected about a merchant, and writes a reasoned verdict — with receipts. We pin the exact AI model version (never "latest") and log every input and output, so an auditor three years from now can replay any decision we made.
+            <span class="tech-note">Splitting work: the <b>rules engine</b> handles black-and-white checks (Is the license expired? Is the COA present?). <b>Q</b> handles judgment calls (Does this disclaimer actually convey the required warning?). Both run; the evaluator orchestrates them.</span>
+          </div>
           <p>Q is how we turn a policy document + evidence into a verdict. Every evaluation Q performs produces a reproducible artifact.</p>
           <div class="q-block">
             <h5>▸ Q integration pattern</h5>
@@ -835,13 +951,17 @@ details[open] .caret{transform:rotate(90deg)}
           <span class="caret">▶</span>
         </summary>
         <div class="sec-body">
+          <div class="plain">
+            <span class="label">In plain English</span>
+            <b>Seven risks, ranked.</b> The two high-risk items both block Phase 3 (the flagship AI reports). Everything else is manageable with clear decisions tomorrow.
+          </div>
           <table class="risk-table">
             <thead>
               <tr><th style="width:28%">Risk</th><th style="width:12%">Level</th><th>Mitigation</th></tr>
             </thead>
             <tbody>
               <tr>
-                <td><b>Ronaldo's SOC 2 concerns unresolved</b></td>
+                <td><b>CIO's SOC 2 concerns unresolved</b></td>
                 <td><span class="risk-tag rt-high">High</span></td>
                 <td>Decision #9 tomorrow. Lock retention window, replay mechanism, access controls before Phase 3 starts. Q integration work blocks on this — don't start without clarity.</td>
               </tr>
@@ -891,6 +1011,10 @@ details[open] .caret{transform:rotate(90deg)}
           <span class="caret">▶</span>
         </summary>
         <div class="sec-body">
+          <div class="plain">
+            <span class="label">In plain English</span>
+            <b>Six places where the mockups and the live code say different things.</b> None are blockers, but each is a small decision that keeps engineering from merging the prototypes cleanly. Pick once, ship the answer in Phase 1.
+          </div>
           <p>Surfaced while auditing the mockup set against production. Each of these will bite someone at handoff if we don't decide now.</p>
           <table class="risk-table" style="margin-top:12px">
             <thead>
