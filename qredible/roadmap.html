@@ -798,7 +798,7 @@ section{
     </div>
 
     <div style="padding:10px 14px;background:rgba(236,72,153,.06);border:1px dashed rgba(236,72,153,.3);border-radius:10px;font-size:11.5px;color:#f9a8d4;line-height:1.55">
-      <b style="color:#fbcfe8">Naming key · read the tech names as drafts.</b> References below to items like <code style="background:#020617;color:#7dd3fc;padding:1px 5px;border-radius:4px;font-size:10.5px">pl_policy</code>, <code style="background:#020617;color:#7dd3fc;padding:1px 5px;border-radius:4px;font-size:10.5px">PolicyResolverService</code>, <code style="background:#020617;color:#7dd3fc;padding:1px 5px;border-radius:4px;font-size:10.5px">pl_check_definition</code>, <code style="background:#020617;color:#7dd3fc;padding:1px 5px;border-radius:4px;font-size:10.5px">CheckRegistryService</code> — <b style="color:#fbcfe8">none of these exist today.</b> They are proposed names used consistently so the two tracks can coordinate vocabulary. Huy and Mike choose final names, columns, files, and shape during implementation.
+      <b style="color:#fbcfe8">Naming key · read the tech names as drafts.</b> References below to items like <code style="background:#020617;color:#7dd3fc;padding:1px 5px;border-radius:4px;font-size:10.5px">pl_policy</code>, <code style="background:#020617;color:#7dd3fc;padding:1px 5px;border-radius:4px;font-size:10.5px">PolicyResolverService</code>, <code style="background:#020617;color:#7dd3fc;padding:1px 5px;border-radius:4px;font-size:10.5px">pl_check_definition</code>, <code style="background:#020617;color:#7dd3fc;padding:1px 5px;border-radius:4px;font-size:10.5px">CheckRegistryService</code> — <b style="color:#fbcfe8">none of these exist today.</b> They are proposed names used consistently so the two tracks can coordinate vocabulary. The Policy and Q-ScanAI teams choose final names, columns, files, and shape during implementation.
     </div>
   </div>
 </div>
@@ -822,14 +822,14 @@ section{
     <div class="track-card policy">
       <div class="track-badge policy">🏛 Track 1 — Policy</div>
       <h3>Policy Lifecycle MVP</h3>
-      <div class="track-owner">Team Lead: <b>Huy Nguyen</b> · Vietnam dev team · Q-Trust / Q-Audit</div>
+      <div class="track-owner"><b>Policy team</b> · Q-Trust / Q-Audit</div>
       <div class="track-one-sentence">
         <b>An admin authors a policy from a five-rule vocabulary</b>, scopes it to a set of merchants
         (global · industry · tier · merchant list), and on the next evaluation cycle violations surface in
         the Compliance Cases Portal tagged with the policy that fired them.
       </div>
       <div class="track-stats">
-        <div class="track-stat"><b>9</b>tickets (T1 → T9)</div>
+        <div class="track-stat"><b>9</b>tickets (Pol-1 → Pol-9)</div>
         <div class="track-stat"><b>~10</b>working days</div>
         <div class="track-stat"><b>6</b>new UI surfaces</div>
         <div class="track-stat"><b>2</b>new tables</div>
@@ -840,7 +840,7 @@ section{
     <div class="track-card scanner">
       <div class="track-badge scanner">🔍 Track 2 — Scanner</div>
       <h3>Check Registry MVP</h3>
-      <div class="track-owner">Team Lead: <b>Mike</b> · Scanner / Middleware · Q-ScanAI</div>
+      <div class="track-owner"><b>Q-ScanAI team</b> · Scanner / Middleware</div>
       <div class="track-one-sentence">
         <b>Every currently-shipping scanner check is retrofitted with a structured check code</b>
         (<code style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#f9a8d4">INDUSTRY-CATEGORY-ELEMENT</code>),
@@ -848,7 +848,7 @@ section{
         so a new keyword check is one config row, not one code deploy.
       </div>
       <div class="track-stats">
-        <div class="track-stat"><b>8</b>tickets (S1 → S8)</div>
+        <div class="track-stat"><b>8</b>tickets (Scan-1 → Scan-8)</div>
         <div class="track-stat"><b>~10</b>working days</div>
         <div class="track-stat"><b>30</b>check codes seeded</div>
         <div class="track-stat"><b>3</b>new tables</div>
@@ -884,10 +884,10 @@ section{
 
     <!-- POLICY -->
     <div class="first-step policy">
-      <div class="first-step-stamp"><span class="dot"></span> Huy's Day 1</div>
+      <div class="first-step-stamp"><span class="dot"></span> Policy · Day 1</div>
       <div class="fs-team">Policy Track · opens the week</div>
       <h3>Make "a compliance rule" a thing the platform can hold</h3>
-      <div class="fs-ticket">Proposed tickets T1 → T3 · foundation stretch</div>
+      <div class="fs-ticket">Proposed tickets Pol-1 → Pol-3 · foundation stretch</div>
 
       <div class="fs-why" style="background:rgba(59,130,246,.07);border-color:rgba(59,130,246,.25)">
         <div class="pp-label biz">① Business requirement</div>
@@ -932,7 +932,7 @@ section{
           returns the <b>one effective policy</b> using <b>merchant &gt; tier &gt; industry &gt; global</b> precedence with a
           <code>publishedAt</code> tiebreaker. Proposed names for shared coordination: <code>pl_policy</code> <span class="proposed-tag">proposed</span> and
           <code>pl_merchant_policy</code> <span class="proposed-tag">proposed</span>, wrapped by a
-          <code>PolicyResolverService</code> <span class="proposed-tag">proposed</span>. <b>Huy's team owns final names and shape.</b>
+          <code>PolicyResolverService</code> <span class="proposed-tag">proposed</span>. <b>The Policy team owns final names and shape.</b>
           Rule payload stored as JSON (five rule types — COA expiration, Delta-9 max, THC-O max, license expiration, scan checks).
         </div>
       </div>
@@ -948,10 +948,10 @@ section{
 
     <!-- SCANNER -->
     <div class="first-step scanner">
-      <div class="first-step-stamp"><span class="dot"></span> Mike's Day 1</div>
+      <div class="first-step-stamp"><span class="dot"></span> Q-ScanAI · Day 1</div>
       <div class="fs-team">Scanner Track · opens the week</div>
       <h3>Give every scanner check a stable name</h3>
-      <div class="fs-ticket">Proposed ticket S1 · ~2 working days</div>
+      <div class="fs-ticket">Proposed ticket Scan-1 · ~2 working days</div>
 
       <div class="fs-why" style="background:rgba(16,185,129,.07);border-color:rgba(16,185,129,.25)">
         <div class="pp-label biz">① Business requirement</div>
@@ -999,7 +999,7 @@ section{
           migration that inserts a row for each of the 30 currently-shipping checks (14 automated + 16 manual-review).
           Proposed names for shared coordination: <code>pl_check_definition</code> <span class="proposed-tag">proposed</span>,
           <code>pl_check_definition_version</code> <span class="proposed-tag">proposed</span>,
-          <code>pl_company_check_override</code> <span class="proposed-tag">proposed</span>. <b>Mike's team owns final
+          <code>pl_company_check_override</code> <span class="proposed-tag">proposed</span>. <b>The Q-ScanAI team owns final
           names, columns, file layout.</b> Feature-flag-off (<code>SCANNER_USE_CHECK_REGISTRY</code>) so landing is dormant.
         </div>
       </div>
@@ -1032,8 +1032,8 @@ section{
   <div class="parallel-wrap">
     <div class="parallel-header">
       <div>Window</div>
-      <div class="ph-policy">🏛 Policy track · Huy's team</div>
-      <div class="ph-scanner">🔍 Scanner track · Mike's team</div>
+      <div class="ph-policy">🏛 Policy track</div>
+      <div class="ph-scanner">🔍 Q-ScanAI track</div>
     </div>
 
     <!-- BAND 1: Days 1-2 -->
@@ -1043,14 +1043,14 @@ section{
         <div class="pb-phase">Migrations land</div>
       </div>
       <div class="pb-cell p">
-        <div class="pb-t"><span class="pb-ticket">T1</span> Policy tables + entities</div>
+        <div class="pb-t"><span class="pb-ticket">Pol-1</span> Policy tables + entities</div>
         <div class="pb-sub">
           <code>pl_policy</code>, <code>pl_merchant_policy</code>, <code>PolicyRulesDocument</code> interface.
           Pure additive schema, feature-flag-off, safe parallel to v1.3.3.
         </div>
       </div>
       <div class="pb-cell s">
-        <div class="pb-t"><span class="pb-ticket">S1</span> Check registry tables + seed</div>
+        <div class="pb-t"><span class="pb-ticket">Scan-1</span> Check registry tables + seed</div>
         <div class="pb-sub">
           <code>pl_check_definition</code>, <code>pl_check_definition_version</code>, <code>pl_company_check_override</code>.
           <b>Seed migration assigns codes to all 30 shipping checks.</b>
@@ -1069,7 +1069,7 @@ section{
         <div class="pb-phase">Core services</div>
       </div>
       <div class="pb-cell p">
-        <div class="pb-t"><span class="pb-ticket">T2</span> <span class="pb-ticket">T3</span> Policy CRUD + Resolver</div>
+        <div class="pb-t"><span class="pb-ticket">Pol-2</span> <span class="pb-ticket">Pol-3</span> Policy CRUD + Resolver</div>
         <div class="pb-sub">
           <code>PolicyService</code> (create/list/get/update/publish/archive) and the load-bearing
           <code>PolicyResolverService.getEffectivePolicy()</code> with <b>merchant &gt; tier &gt; industry &gt; global</b> precedence
@@ -1077,7 +1077,7 @@ section{
         </div>
       </div>
       <div class="pb-cell s">
-        <div class="pb-t"><span class="pb-ticket">S2</span> <span class="pb-ticket">S3</span> Registry service + column</div>
+        <div class="pb-t"><span class="pb-ticket">Scan-2</span> <span class="pb-ticket">Scan-3</span> Registry service + column</div>
         <div class="pb-sub">
           <code>CheckRegistryService.getActiveChecksForMerchant()</code> with resolution order:
           registry default → per-company override → (stubbed) policy override. <code>check_code</code> column added to
@@ -1085,7 +1085,7 @@ section{
         </div>
       </div>
       <div class="pb-interlock">
-        <div><b>Interlock · column coordination</b> — Scanner S3 adds <code style="font-family:'IBM Plex Mono',monospace">check_code</code>
+        <div><b>Interlock · column coordination</b> — Q-ScanAI Scan-3 adds <code style="font-family:'IBM Plex Mono',monospace">check_code</code>
         to <code style="font-family:'IBM Plex Mono',monospace">pl_compliance_finding</code> the same week policy adds
         <code style="font-family:'IBM Plex Mono',monospace">policy_id</code> + <code style="font-family:'IBM Plex Mono',monospace">policy_rule_key</code>.
         Coordinated review — each team drafts their migration, other team reviews before merge.</div>
@@ -1099,25 +1099,25 @@ section{
         <div class="pb-phase">Integration via contract</div>
       </div>
       <div class="pb-cell p">
-        <div class="pb-t"><span class="pb-ticket">T4</span> <span class="pb-ticket">T5</span> <span class="pb-ticket">T6</span> <span class="pb-ticket">T7</span> <span class="pb-ticket">T8</span> <span class="pb-ticket">T9</span> Integration + UI</div>
+        <div class="pb-t"><span class="pb-ticket">Pol-4</span> <span class="pb-ticket">Pol-5</span> <span class="pb-ticket">Pol-6</span> <span class="pb-ticket">Pol-7</span> <span class="pb-ticket">Pol-8</span> <span class="pb-ticket">Pol-9</span> Integration + UI</div>
         <div class="pb-sub">
-          <code>CoaHelper</code> reads thresholds from the effective policy and applies them to <b>aluma-extracted COA fields</b> (T4),
-          scan config read-path (T5), license evaluator (T6), re-evaluate endpoint (T7), admin authoring UI (T8 parallel),
-          case detail attribution badge (T9). <b>No PDF parsing introduced — compliance logic on already-extracted values.</b>
+          <code>CoaHelper</code> reads thresholds from the effective policy and applies them to <b>aluma-extracted COA fields</b> (Pol-4),
+          scan config read-path (Pol-5), license evaluator (Pol-6), re-evaluate endpoint (Pol-7), admin authoring UI (Pol-8 parallel),
+          case detail attribution badge (Pol-9). <b>No PDF parsing introduced — compliance logic on already-extracted values.</b>
         </div>
       </div>
       <div class="pb-cell s">
-        <div class="pb-t"><span class="pb-ticket">S4</span> <span class="pb-ticket">S5</span> <span class="pb-ticket">S6</span> <span class="pb-ticket">S7</span> <span class="pb-ticket">S8</span> Integration + UI</div>
+        <div class="pb-t"><span class="pb-ticket">Scan-4</span> <span class="pb-ticket">Scan-5</span> <span class="pb-ticket">Scan-6</span> <span class="pb-ticket">Scan-7</span> <span class="pb-ticket">Scan-8</span> Integration + UI</div>
         <div class="pb-sub">
-          <code>ComplianceAnalyzer</code> via registry (S4), custom elements via registry (S5), CoaHelper mapping review (S6),
-          license stamp review (S7), read-only registry admin page (S8 parallel).
+          <code>ComplianceAnalyzer</code> via registry (Scan-4), custom elements via registry (Scan-5), CoaHelper mapping review (Scan-6),
+          license stamp review (Scan-7), read-only registry admin page (Scan-8 parallel).
         </div>
       </div>
       <div class="pb-interlock">
         <div><b>Interlock · shared code paths</b> — Three files touched by both teams:
-        <b>CoaHelper</b> (policy T4 owns the rewrite, scanner S6 provides a 5-line mapping constant + reviews),
-        <b>LicenseExpirationEvaluator</b> (policy T6/S7 end-to-end; scanner reviews),
-        and <b>ScanUrl.dto.ts</b> (scanner S4 lands first as the broader refactor; policy T5 rebases).
+        <b>CoaHelper</b> (Policy Pol-4 owns the rewrite, Q-ScanAI Scan-6 provides a 5-line mapping constant + reviews),
+        <b>LicenseExpirationEvaluator</b> (Policy Pol-6 / Q-ScanAI Scan-7 end-to-end; Q-ScanAI reviews),
+        and <b>ScanUrl.dto.ts</b> (Q-ScanAI Scan-4 lands first as the broader refactor; Policy Pol-5 rebases).
         Ownership pre-split — no parallel writes.</div>
       </div>
     </div>
@@ -1148,16 +1148,16 @@ section{
 <section id="policy-track">
   <div class="section-head">
     <div class="section-eyebrow" style="color:#93c5fd">§ 3 — Track 1 Detail</div>
-    <h2 class="section-title">Policy MVP — Huy's team</h2>
+    <h2 class="section-title">Policy MVP — Policy team</h2>
     <p class="section-sub">Business requirements in plain English, technical roadmap as a visual timeline, evolution through the 8-phase trajectory.</p>
   </div>
 
   <div class="track-detail policy">
 
     <div class="track-detail-head">
-      <span class="track-marker">T1 → T9</span>
+      <span class="track-marker">Pol-1 → Pol-9</span>
       <h3>Policy Lifecycle MVP</h3>
-      <div class="owner">Lead: <b>Huy Nguyen</b> · Repos: RTQ-Admin-API, RTQ-Admin-UI</div>
+      <div class="owner">Repos: RTQ-Admin-API, RTQ-Admin-UI</div>
     </div>
 
     <!-- BUSINESS REQUIREMENTS (five-part) -->
@@ -1247,7 +1247,7 @@ section{
         <div class="reco-frame-label">Read this timeline as proposed sequencing · guidance only</div>
         <div class="reco-frame-body">
           Tickets, day counts, and ticket boundaries below are a <b>suggested shape</b> to show scope and critical path.
-          Ticket IDs (T1–T9, S1–S8) are <span class="proposed-tag">proposed</span> handles used for cross-track coordination in this document only.
+          Ticket IDs (Pol-1 – Pol-9, Scan-1 – Scan-8) are <span class="proposed-tag">proposed</span> handles used for cross-track coordination in this document only.
           The dev team owns <b>how to slice these into actual tickets</b>, <b>how to sequence them</b>, and <b>how to estimate them</b>. The
           business requirement above is what is fixed.
         </div>
@@ -1270,64 +1270,64 @@ section{
           </div>
 
           <div class="tl-row p first">
-            <div class="tl-label"><span class="tl-ticket">T1</span> Schema + entities</div>
-            <div class="tl-bar-cell" style="--start:2;--span:1" title="T1 · ~1 day · Policy + merchant_policy tables, TypeORM entities, PolicyRulesDocument type. Unblocks T2-T9.">
+            <div class="tl-label"><span class="tl-ticket">Pol-1</span> Schema + entities</div>
+            <div class="tl-bar-cell" style="--start:2;--span:1" title="Pol-1 · ~1 day · Policy + merchant_policy tables, TypeORM entities, PolicyRulesDocument type. Unblocks Pol-2 – Pol-9.">
               🏁 Start here · tables + entities <span class="tl-days">1 day</span>
             </div>
           </div>
 
           <div class="tl-row p">
-            <div class="tl-label"><span class="tl-ticket">T2</span> CRUD service + controller</div>
-            <div class="tl-bar-cell" style="--start:3;--span:2" title="T2 · 2 days · PolicyService (create, list, get, update, publish, archive) + admin controller.">
+            <div class="tl-label"><span class="tl-ticket">Pol-2</span> CRUD service + controller</div>
+            <div class="tl-bar-cell" style="--start:3;--span:2" title="Pol-2 · 2 days · PolicyService (create, list, get, update, publish, archive) + admin controller.">
               CRUD endpoints <span class="tl-days">2 days</span>
             </div>
           </div>
 
           <div class="tl-row p">
-            <div class="tl-label"><span class="tl-ticket">T3</span> Effective-policy resolver</div>
-            <div class="tl-bar-cell" style="--start:4;--span:2" title="T3 · 2 days · PolicyResolverService.getEffectivePolicy() with merchant>tier>industry>global precedence + publishedAt tiebreaker.">
+            <div class="tl-label"><span class="tl-ticket">Pol-3</span> Effective-policy resolver</div>
+            <div class="tl-bar-cell" style="--start:4;--span:2" title="Pol-3 · 2 days · PolicyResolverService.getEffectivePolicy() with merchant>tier>industry>global precedence + publishedAt tiebreaker.">
               Resolver service <span class="tl-days">2 days</span>
             </div>
           </div>
 
           <div class="tl-row p interlock">
-            <div class="tl-label"><span class="tl-ticket">T4</span> CoaHelper refactor</div>
-            <div class="tl-bar-cell" style="--start:6;--span:2" title="T4 · 2 days · SHARED TOUCH with scanner S6. Policy team owns end-to-end. Scanner provides 5-line check-code mapping constant.">
+            <div class="tl-label"><span class="tl-ticket">Pol-4</span> CoaHelper refactor</div>
+            <div class="tl-bar-cell" style="--start:6;--span:2" title="Pol-4 · 2 days · SHARED TOUCH with Q-ScanAI Scan-6. Policy team owns end-to-end. Q-ScanAI provides 5-line check-code mapping constant.">
               Read from effective policy <span class="tl-days">2 days</span>
             </div>
           </div>
 
           <div class="tl-row p interlock">
-            <div class="tl-label"><span class="tl-ticket">T5</span> Scan config read path</div>
-            <div class="tl-bar-cell" style="--start:6;--span:2" title="T5 · 2 days · ScanService + ScanUrl.dto.ts. Rebases on scanner S4. Interlock: both add fields to same DTO.">
+            <div class="tl-label"><span class="tl-ticket">Pol-5</span> Scan config read path</div>
+            <div class="tl-bar-cell" style="--start:6;--span:2" title="Pol-5 · 2 days · ScanService + ScanUrl.dto.ts. Rebases on Q-ScanAI Scan-4. Interlock: both add fields to same DTO.">
               Scan config via policy <span class="tl-days">2 days</span>
             </div>
           </div>
 
           <div class="tl-row p interlock">
-            <div class="tl-label"><span class="tl-ticket">T6</span> License expiration evaluator</div>
-            <div class="tl-bar-cell" style="--start:6;--span:2" title="T6 · 1.5 days · LicenseExpirationEvaluator. SHARED with scanner S7; policy team owns end-to-end.">
+            <div class="tl-label"><span class="tl-ticket">Pol-6</span> License expiration evaluator</div>
+            <div class="tl-bar-cell" style="--start:6;--span:2" title="Pol-6 · 1.5 days · LicenseExpirationEvaluator. SHARED with Q-ScanAI Scan-7; Policy team owns end-to-end.">
               License evaluator <span class="tl-days">1.5 days</span>
             </div>
           </div>
 
           <div class="tl-row p">
-            <div class="tl-label"><span class="tl-ticket">T7</span> Re-evaluate endpoint</div>
-            <div class="tl-bar-cell" style="--start:8;--span:1" title="T7 · 1 day · POST /admin/merchants/:id/re-evaluate — runs all applicable policies for a merchant.">
+            <div class="tl-label"><span class="tl-ticket">Pol-7</span> Re-evaluate endpoint</div>
+            <div class="tl-bar-cell" style="--start:8;--span:1" title="Pol-7 · 1 day · POST /admin/merchants/:id/re-evaluate — runs all applicable policies for a merchant.">
               Re-evaluate button <span class="tl-days">1 day</span>
             </div>
           </div>
 
           <div class="tl-row p">
-            <div class="tl-label"><span class="tl-ticket">T8</span> Admin UI (list + form)</div>
-            <div class="tl-bar-cell" style="--start:4;--span:4" title="T8 · 3 days · /backend/policies list + new/edit form with 6 rule cards. Runs parallel to T3-T7.">
+            <div class="tl-label"><span class="tl-ticket">Pol-8</span> Admin UI (list + form)</div>
+            <div class="tl-bar-cell" style="--start:4;--span:4" title="Pol-8 · 3 days · /backend/policies list + new/edit form with 6 rule cards. Runs parallel to Pol-3 – Pol-7.">
               Admin authoring UI (parallel) <span class="tl-days">3 days</span>
             </div>
           </div>
 
           <div class="tl-row p">
-            <div class="tl-label"><span class="tl-ticket">T9</span> Case detail attribution</div>
-            <div class="tl-bar-cell" style="--start:9;--span:1" title="T9 · 0.5 day · 'Triggered by: [policy name] v[version] / [ruleKey]' row on case detail.">
+            <div class="tl-label"><span class="tl-ticket">Pol-9</span> Case detail attribution</div>
+            <div class="tl-bar-cell" style="--start:9;--span:1" title="Pol-9 · 0.5 day · 'Triggered by: [policy name] v[version] / [ruleKey]' row on case detail.">
               Case detail badge <span class="tl-days">0.5 day</span>
             </div>
           </div>
@@ -1336,9 +1336,9 @@ section{
       </div>
 
       <div class="dep-caption">
-        <b>Critical path:</b> T1 → T2 → T3 → (T4 · T5 · T6 parallel) → T7 → T9 &nbsp;·&nbsp;
-        <b>Parallel track:</b> T8 opens once T2 endpoints are live &nbsp;·&nbsp;
-        <b>Interlock tickets</b> (⚮) touch code also touched by the scanner team — ownership is pre-split, no double-writes.
+        <b>Critical path:</b> Pol-1 → Pol-2 → Pol-3 → (Pol-4 · Pol-5 · Pol-6 parallel) → Pol-7 → Pol-9 &nbsp;·&nbsp;
+        <b>Parallel track:</b> Pol-8 opens once Pol-2 endpoints are live &nbsp;·&nbsp;
+        <b>Interlock tickets</b> (⚮) touch code also touched by the Q-ScanAI team — ownership is pre-split, no double-writes.
       </div>
     </div>
 
@@ -1390,16 +1390,16 @@ section{
 <section id="scanner-track">
   <div class="section-head">
     <div class="section-eyebrow" style="color:#86efac">§ 4 — Track 2 Detail</div>
-    <h2 class="section-title">Scanner MVP — Mike's team</h2>
+    <h2 class="section-title">Scanner MVP — Q-ScanAI team</h2>
     <p class="section-sub">Retrofit every shipping check with a stable identity, move configuration out of code into a versioned registry, preserve everything.</p>
   </div>
 
   <div class="track-detail scanner">
 
     <div class="track-detail-head">
-      <span class="track-marker">S1 → S8</span>
+      <span class="track-marker">Scan-1 → Scan-8</span>
       <h3>Check Registry MVP</h3>
-      <div class="owner">Lead: <b>Mike</b> · Repos: RTQ-Admin-API, Middleware, RTQ-Admin-UI</div>
+      <div class="owner">Repos: RTQ-Admin-API, Middleware, RTQ-Admin-UI</div>
     </div>
 
     <!-- BUSINESS REQUIREMENTS (five-part) -->
@@ -1465,7 +1465,7 @@ section{
       <div class="reco-frame">
         <div class="reco-frame-label">④ Recommended technical approach · guidance, not directive</div>
         <div class="reco-frame-body">
-          The shape (offered so the two tracks can coordinate vocabulary; <b>Mike's team owns final names and layout</b>):
+          The shape (offered so the two tracks can coordinate vocabulary; <b>the Q-ScanAI team owns final names and layout</b>):
           <ul style="margin-top:6px;padding-left:20px">
             <li>Three additive tables — definitions (<code>pl_check_definition</code> <span class="proposed-tag">proposed</span>), versioned configs (<code>pl_check_definition_version</code> <span class="proposed-tag">proposed</span>), per-company overrides (<code>pl_company_check_override</code> <span class="proposed-tag">proposed</span>).</li>
             <li>A seed migration that inserts a row for each of the 30 currently-shipping checks — <b>14 automated</b> (KEYWORD / DOCUMENT_PARSE fed by aluma-extracted fields / LINK_MAP) + <b>16 manual-review</b> (status <code>manual_review</code>, code registered but automation pending).</li>
@@ -1498,7 +1498,7 @@ section{
         <div class="reco-frame-label">Read this timeline as proposed sequencing · guidance only</div>
         <div class="reco-frame-body">
           Tickets, day counts, and ticket boundaries below are a <b>suggested shape</b> to show scope and critical path.
-          Ticket IDs (T1–T9, S1–S8) are <span class="proposed-tag">proposed</span> handles used for cross-track coordination in this document only.
+          Ticket IDs (Pol-1 – Pol-9, Scan-1 – Scan-8) are <span class="proposed-tag">proposed</span> handles used for cross-track coordination in this document only.
           The dev team owns <b>how to slice these into actual tickets</b>, <b>how to sequence them</b>, and <b>how to estimate them</b>. The
           business requirement above is what is fixed.
         </div>
@@ -1521,57 +1521,57 @@ section{
           </div>
 
           <div class="tl-row s first">
-            <div class="tl-label"><span class="tl-ticket">S1</span> Registry schema + seed</div>
-            <div class="tl-bar-cell" style="--start:2;--span:2" title="S1 · 2 days · 3 new tables + migration that inserts all 30 check definitions (14 automated + 16 manual-review). Every shipping check gets a code.">
+            <div class="tl-label"><span class="tl-ticket">Scan-1</span> Registry schema + seed</div>
+            <div class="tl-bar-cell" style="--start:2;--span:2" title="Scan-1 · 2 days · 3 new tables + migration that inserts all 30 check definitions (14 automated + 16 manual-review). Every shipping check gets a code.">
               🏁 Start here · 30 codes seeded <span class="tl-days">2 days</span>
             </div>
           </div>
 
           <div class="tl-row s">
-            <div class="tl-label"><span class="tl-ticket">S2</span> CheckRegistryService</div>
-            <div class="tl-bar-cell" style="--start:3;--span:2" title="S2 · 2 days · getActiveChecksForMerchant() with resolution order: registry default → per-company override → (stubbed) policy override.">
+            <div class="tl-label"><span class="tl-ticket">Scan-2</span> CheckRegistryService</div>
+            <div class="tl-bar-cell" style="--start:3;--span:2" title="Scan-2 · 2 days · getActiveChecksForMerchant() with resolution order: registry default → per-company override → (stubbed) policy override.">
               Registry service <span class="tl-days">2 days</span>
             </div>
           </div>
 
           <div class="tl-row s interlock">
-            <div class="tl-label"><span class="tl-ticket">S3</span> check_code column + backfill</div>
-            <div class="tl-bar-cell" style="--start:4;--span:1" title="S3 · 1 day · Adds check_code to PlComplianceFinding + backfill migration. Coordinated with policy T4 (same table).">
+            <div class="tl-label"><span class="tl-ticket">Scan-3</span> check_code column + backfill</div>
+            <div class="tl-bar-cell" style="--start:4;--span:1" title="Scan-3 · 1 day · Adds check_code to PlComplianceFinding + backfill migration. Coordinated with Policy Pol-4 (same table).">
               Column + backfill <span class="tl-days">1 day</span>
             </div>
           </div>
 
           <div class="tl-row s">
-            <div class="tl-label"><span class="tl-ticket">S4</span> ComplianceAnalyzer refactor</div>
-            <div class="tl-bar-cell" style="--start:5;--span:3" title="S4 · 3 days · Middleware analyzer reads from registry. Behind feature flag SCANNER_USE_CHECK_REGISTRY. Most behavior-sensitive ticket.">
+            <div class="tl-label"><span class="tl-ticket">Scan-4</span> ComplianceAnalyzer refactor</div>
+            <div class="tl-bar-cell" style="--start:5;--span:3" title="Scan-4 · 3 days · Middleware analyzer reads from registry. Behind feature flag SCANNER_USE_CHECK_REGISTRY. Most behavior-sensitive ticket.">
               Middleware · analyzers via registry <span class="tl-days">3 days</span>
             </div>
           </div>
 
           <div class="tl-row s">
-            <div class="tl-label"><span class="tl-ticket">S5</span> Custom elements via registry</div>
-            <div class="tl-bar-cell" style="--start:6;--span:2" title="S5 · 2 days · CustomComplianceAnalyzer + ElementExtractor via registry. Parallel to S4.">
+            <div class="tl-label"><span class="tl-ticket">Scan-5</span> Custom elements via registry</div>
+            <div class="tl-bar-cell" style="--start:6;--span:2" title="Scan-5 · 2 days · CustomComplianceAnalyzer + ElementExtractor via registry. Parallel to Scan-4.">
               Custom checks via registry <span class="tl-days">2 days</span>
             </div>
           </div>
 
           <div class="tl-row s interlock">
-            <div class="tl-label"><span class="tl-ticket">S6</span> CoaHelper check_code stamping</div>
-            <div class="tl-bar-cell" style="--start:7;--span:1" title="S6 · 0.5 day · Scanner provides check-code mapping constant; policy team does the actual rewrite in T4.">
+            <div class="tl-label"><span class="tl-ticket">Scan-6</span> CoaHelper check_code stamping</div>
+            <div class="tl-bar-cell" style="--start:7;--span:1" title="Scan-6 · 0.5 day · Q-ScanAI provides check-code mapping constant; Policy team does the actual rewrite in Pol-4.">
               Mapping + review <span class="tl-days">0.5 day</span>
             </div>
           </div>
 
           <div class="tl-row s interlock">
-            <div class="tl-label"><span class="tl-ticket">S7</span> License evaluator review</div>
-            <div class="tl-bar-cell" style="--start:8;--span:1" title="S7 · 0.25 day · Scanner code-reviews policy T6's license evaluator stamping. Policy owns the file.">
+            <div class="tl-label"><span class="tl-ticket">Scan-7</span> License evaluator review</div>
+            <div class="tl-bar-cell" style="--start:8;--span:1" title="Scan-7 · 0.25 day · Q-ScanAI code-reviews Policy Pol-6's license evaluator stamping. Policy owns the file.">
               Review license stamp <span class="tl-days">¼ day</span>
             </div>
           </div>
 
           <div class="tl-row s">
-            <div class="tl-label"><span class="tl-ticket">S8</span> Read-only registry admin UI</div>
-            <div class="tl-bar-cell" style="--start:8;--span:2" title="S8 · 2 days · /backend/check-registry — list, detail, version history. Read-only (editing = Phase 2 AI NL).">
+            <div class="tl-label"><span class="tl-ticket">Scan-8</span> Read-only registry admin UI</div>
+            <div class="tl-bar-cell" style="--start:8;--span:2" title="Scan-8 · 2 days · /backend/check-registry — list, detail, version history. Read-only (editing = Phase 2 AI NL).">
               Registry admin page <span class="tl-days">2 days</span>
             </div>
           </div>
@@ -1580,9 +1580,9 @@ section{
       </div>
 
       <div class="dep-caption">
-        <b>Critical path:</b> S1 → S2 → (S4 · S5 · S8 parallel) → finish &nbsp;·&nbsp;
+        <b>Critical path:</b> Scan-1 → Scan-2 → (Scan-4 · Scan-5 · Scan-8 parallel) → finish &nbsp;·&nbsp;
         <b>Rollout:</b> feature-flag-off land · staging regression · pilot merchants · global enable.
-        S8 admin UI ships in parallel and becomes visible only when the flag flips.
+        Scan-8 admin UI ships in parallel and becomes visible only when the flag flips.
       </div>
     </div>
 
@@ -1684,7 +1684,7 @@ section{
   <div class="cohesion-grid">
 
     <div class="code-card policy">
-      <h4>Policy rule — owned by Huy's team</h4>
+      <h4>Policy rule — owned by Policy team</h4>
 <pre><span class="c">// From a published policy document</span>
 {
   <span class="k">"delta9Thc"</span>: {
@@ -1696,7 +1696,7 @@ section{
     </div>
 
     <div class="code-card scanner">
-      <h4>Check definition — owned by Mike's team</h4>
+      <h4>Check definition — owned by Q-ScanAI team</h4>
 <pre><span class="c">// From the pl_check_definition registry</span>
 {
   <span class="k">"check_code"</span>: <span class="b">"GEN-COA-DELTA9"</span>,
@@ -1789,8 +1789,8 @@ section{
     </div>
 
     <div class="flow-legend">
-      <span><span class="flow-legend-dot" style="background:rgba(59,130,246,.6);border:1.5px solid rgba(59,130,246,.8)"></span>Owned by Huy's team</span>
-      <span><span class="flow-legend-dot" style="background:rgba(16,185,129,.55);border:1.5px solid rgba(16,185,129,.8)"></span>Owned by Mike's team</span>
+      <span><span class="flow-legend-dot" style="background:rgba(59,130,246,.6);border:1.5px solid rgba(59,130,246,.8)"></span>Owned by Policy team</span>
+      <span><span class="flow-legend-dot" style="background:rgba(16,185,129,.55);border:1.5px solid rgba(16,185,129,.8)"></span>Owned by Q-ScanAI team</span>
       <span><span class="flow-legend-dot" style="background:rgba(236,72,153,.55);border:1.5px solid rgba(236,72,153,.8)"></span>Shared surface</span>
     </div>
   </div>
@@ -1825,7 +1825,7 @@ section{
     <div class="anti-card">
       <div class="anti-label">Anti-pattern · Scanner side</div>
       <div class="anti-title">Skipping a check code</div>
-      <div class="anti-body">Every shipping check gets a code at seed. No exceptions. A check without a code today is a <b>database rewrite in Phase 8</b>. The S1 seed migration is the load-bearing Phase 1 artifact for exactly this reason.</div>
+      <div class="anti-body">Every shipping check gets a code at seed. No exceptions. A check without a code today is a <b>database rewrite in Phase 8</b>. The Scan-1 seed migration is the load-bearing Phase 1 artifact for exactly this reason.</div>
     </div>
   </div>
 
@@ -1849,7 +1849,7 @@ section{
       <div class="phase-num"><span class="pnum-pill">Phase 1</span> <span>MVP · Today</span></div>
       <div class="phase-title">Check-code system in place · Policies authored</div>
       <div class="phase-sub">
-        <b style="color:#93c5fd">Policy T1–T9</b> + <b style="color:#6ee7b7">Scanner S1–S8</b> ship in parallel.
+        <b style="color:#93c5fd">Policy Pol-1 – Pol-9</b> + <b style="color:#6ee7b7">Q-ScanAI Scan-1 – Scan-8</b> ship in parallel.
         Every shipping check has a code. Findings carry both <code>policy_id</code> and <code>check_code</code>.
       </div>
       <div class="phase-landing">Landing pad: the contract itself</div>
@@ -1950,7 +1950,7 @@ section{
       <div class="decision-check">✓</div>
       <div>
         <div class="decision-title">CoaHelper rewrite → policy team owns end-to-end</div>
-        <div class="decision-body">T4 already plans the restructure. Scanner team provides a 5-line <code>coa-check-code.mapping.ts</code> constant and code-reviews the stamping. S6 collapses from 1 day to 0.5 day of review.</div>
+        <div class="decision-body">Pol-4 already plans the restructure. Q-ScanAI team provides a 5-line <code>coa-check-code.mapping.ts</code> constant and code-reviews the stamping. Scan-6 collapses from 1 day to 0.5 day of review.</div>
       </div>
     </div>
 
@@ -1958,7 +1958,7 @@ section{
       <div class="decision-check">✓</div>
       <div>
         <div class="decision-title">Migration ordering → policy first, scanner second</div>
-        <div class="decision-body">Policy T1 → T4 adds <code>policy_id</code> + <code>policy_rule_key</code>. Scanner S1 → S3 adds <code>check_code</code> + backfill. Back-to-back; no merge conflict on the entity file.</div>
+        <div class="decision-body">Policy Pol-1 → Pol-4 adds <code>policy_id</code> + <code>policy_rule_key</code>. Q-ScanAI Scan-1 → Scan-3 adds <code>check_code</code> + backfill. Back-to-back; no merge conflict on the entity file.</div>
       </div>
     </div>
 
@@ -1966,7 +1966,7 @@ section{
       <div class="decision-check">✓</div>
       <div>
         <div class="decision-title">ScanUrl.dto.ts → scanner refactor first</div>
-        <div class="decision-body">S4's broader refactor lands first. Policy T5 rebases and adds its <code>policy_id</code> / <code>policy_rule_key</code> fields on top. Both additive to the same DTO — one merge order, no clash.</div>
+        <div class="decision-body">Scan-4's broader refactor lands first. Policy Pol-5 rebases and adds its <code>policy_id</code> / <code>policy_rule_key</code> fields on top. Both additive to the same DTO — one merge order, no clash.</div>
       </div>
     </div>
 
