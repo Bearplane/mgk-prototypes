@@ -1,0 +1,1637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Q-Trust Roadmaps — Policy + Scanner MVPs</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:64px}
+body{
+  font-family:'Plus Jakarta Sans',sans-serif;
+  background:#0b1120;
+  color:#e2e8f0;
+  font-size:14px;
+  line-height:1.55;
+  overflow-x:hidden;
+  background-image:
+    radial-gradient(circle at 20% 8%, rgba(59,130,246,.10), transparent 45%),
+    radial-gradient(circle at 85% 90%, rgba(236,72,153,.08), transparent 45%),
+    radial-gradient(circle at 50% 50%, rgba(16,185,129,.04), transparent 60%);
+}
+code,.mono{font-family:'IBM Plex Mono',monospace}
+a{color:inherit}
+
+/* =========================================================
+   TOP NAV
+   ========================================================= */
+.topnav{
+  position:sticky;top:0;z-index:100;
+  background:rgba(11,17,32,.88);
+  border-bottom:1px solid #1e293b;
+  backdrop-filter:blur(14px);
+  padding:10px 20px;
+}
+.topnav-inner{
+  max-width:1320px;margin:0 auto;
+  display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+}
+.brand{display:flex;align-items:center;gap:10px}
+.brand-logo{
+  width:30px;height:30px;border-radius:7px;
+  background:linear-gradient(135deg,#3b82f6,#8b5cf6);
+  display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:14px;color:#fff;
+}
+.brand-title{font-size:13px;font-weight:700;letter-spacing:.2px;color:#f1f5f9}
+.brand-title .tag{font-size:9px;font-weight:700;background:#1e293b;color:#93c5fd;padding:2px 7px;border-radius:10px;margin-left:6px;vertical-align:2px;letter-spacing:.5px;text-transform:uppercase}
+.brand-sub{font-size:10.5px;color:#64748b;margin-top:1px}
+.topnav-links{
+  margin-left:auto;display:flex;gap:4px;flex-wrap:wrap;
+}
+.topnav-links a{
+  font-size:11.5px;font-weight:600;color:#94a3b8;
+  padding:6px 12px;border-radius:999px;text-decoration:none;
+  transition:all .15s;
+}
+.topnav-links a:hover{color:#e2e8f0;background:#1e293b}
+.topnav-links a.accent-policy{color:#93c5fd}
+.topnav-links a.accent-scanner{color:#86efac}
+.topnav-links a.accent-cohesion{color:#f9a8d4}
+
+/* =========================================================
+   HERO
+   ========================================================= */
+.hero{
+  padding:60px 24px 40px;
+  max-width:1320px;margin:0 auto;text-align:center;
+}
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+  color:#7dd3fc;
+  background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.3);
+  padding:5px 14px;border-radius:999px;margin-bottom:18px;
+}
+.hero-eyebrow .pulse{width:7px;height:7px;border-radius:50%;background:#3b82f6;box-shadow:0 0 10px #3b82f6;animation:pulse 1.8s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
+.hero h1{
+  font-size:clamp(28px,4.6vw,48px);font-weight:800;letter-spacing:-.8px;line-height:1.1;
+  color:#f8fafc;margin-bottom:14px;
+  background:linear-gradient(90deg,#60a5fa 0%,#a78bfa 50%,#f472b6 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.hero p.lede{
+  font-size:clamp(14px,1.6vw,17px);color:#cbd5e1;max-width:780px;margin:0 auto;line-height:1.6;
+}
+.hero-meta{
+  display:flex;justify-content:center;gap:22px;flex-wrap:wrap;margin-top:24px;
+  font-size:11.5px;color:#64748b;
+}
+.hero-meta b{color:#cbd5e1;font-weight:700}
+
+/* =========================================================
+   SECTION BOILERPLATE
+   ========================================================= */
+section{
+  max-width:1320px;margin:0 auto;padding:50px 24px;
+}
+.section-head{margin-bottom:32px;text-align:center}
+.section-eyebrow{
+  font-size:10.5px;font-weight:800;letter-spacing:1.6px;text-transform:uppercase;
+  color:#64748b;margin-bottom:8px;
+}
+.section-title{font-size:clamp(22px,3vw,32px);font-weight:800;color:#f8fafc;letter-spacing:-.3px;line-height:1.2;margin-bottom:8px}
+.section-sub{font-size:14px;color:#94a3b8;max-width:720px;margin:0 auto}
+
+/* =========================================================
+   OVERVIEW — Two-track parallel visualization
+   ========================================================= */
+.overview-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:18px;
+  position:relative;
+}
+@media (max-width:800px){.overview-grid{grid-template-columns:1fr}}
+.track-card{
+  padding:24px;border-radius:14px;
+  background:linear-gradient(180deg,rgba(15,23,42,.75),rgba(11,17,32,.55));
+  border:1px solid #1e293b;
+  position:relative;overflow:hidden;
+}
+.track-card.policy{border-color:rgba(59,130,246,.35);box-shadow:0 0 0 1px rgba(59,130,246,.08),0 20px 60px rgba(0,0,0,.3)}
+.track-card.scanner{border-color:rgba(16,185,129,.3);box-shadow:0 0 0 1px rgba(16,185,129,.08),0 20px 60px rgba(0,0,0,.3)}
+.track-card::before{
+  content:"";position:absolute;inset:0;
+  background:radial-gradient(circle at 0% 0%,rgba(59,130,246,.09),transparent 55%);
+  pointer-events:none;
+}
+.track-card.scanner::before{background:radial-gradient(circle at 0% 0%,rgba(16,185,129,.08),transparent 55%)}
+.track-badge{
+  display:inline-flex;align-items:center;gap:7px;
+  font-size:10.5px;font-weight:800;letter-spacing:1.3px;text-transform:uppercase;
+  padding:4px 11px;border-radius:999px;margin-bottom:14px;
+}
+.track-badge.policy{background:rgba(59,130,246,.14);color:#93c5fd;border:1px solid rgba(59,130,246,.35)}
+.track-badge.scanner{background:rgba(16,185,129,.14);color:#6ee7b7;border:1px solid rgba(16,185,129,.35)}
+.track-card h3{font-size:22px;font-weight:800;color:#f8fafc;letter-spacing:-.3px;line-height:1.2;margin-bottom:4px}
+.track-owner{font-size:12px;color:#94a3b8;margin-bottom:14px;font-weight:500}
+.track-owner b{color:#cbd5e1}
+.track-one-sentence{
+  font-size:13.5px;color:#cbd5e1;line-height:1.6;
+  padding:14px 0;border-top:1px dashed #1e293b;border-bottom:1px dashed #1e293b;margin-bottom:14px;
+}
+.track-one-sentence b{color:#f1f5f9}
+.track-stats{display:flex;gap:20px;flex-wrap:wrap}
+.track-stat{font-size:11px;color:#64748b}
+.track-stat b{display:block;font-size:18px;color:#f1f5f9;font-weight:700;font-family:'IBM Plex Mono',monospace;margin-bottom:2px}
+.track-card.policy .track-stat b{color:#93c5fd}
+.track-card.scanner .track-stat b{color:#6ee7b7}
+
+/* Interlock rope (visual) */
+.interlock-rope{
+  grid-column:1 / -1;
+  position:relative;padding:22px 18px;
+  background:linear-gradient(90deg,rgba(59,130,246,.06),rgba(236,72,153,.06),rgba(16,185,129,.06));
+  border:1px dashed #334155;border-radius:12px;
+  display:flex;align-items:center;gap:18px;flex-wrap:wrap;justify-content:center;
+  font-size:13px;color:#cbd5e1;text-align:center;
+}
+.interlock-rope code{
+  background:#020617;color:#f9a8d4;padding:3px 9px;border-radius:6px;font-size:12.5px;font-weight:600;border:1px solid rgba(236,72,153,.3);
+}
+.rope-icon{font-size:18px}
+
+/* =========================================================
+   FIRST STEP — Big visual callout
+   ========================================================= */
+.first-step-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:20px;
+}
+@media (max-width:900px){.first-step-grid{grid-template-columns:1fr}}
+.first-step{
+  position:relative;
+  padding:28px 26px;border-radius:16px;
+  background:linear-gradient(180deg,#111c33 0%,#0b1225 100%);
+  border:2px solid;
+  overflow:hidden;
+}
+.first-step.policy{border-color:#3b82f6;box-shadow:0 0 0 1px rgba(59,130,246,.2),0 0 40px rgba(59,130,246,.18),0 20px 60px rgba(0,0,0,.4)}
+.first-step.scanner{border-color:#10b981;box-shadow:0 0 0 1px rgba(16,185,129,.2),0 0 40px rgba(16,185,129,.15),0 20px 60px rgba(0,0,0,.4)}
+.first-step-stamp{
+  position:absolute;top:16px;right:16px;
+  font-size:9.5px;font-weight:800;letter-spacing:1.6px;text-transform:uppercase;
+  padding:5px 10px;border-radius:6px;
+  display:flex;align-items:center;gap:6px;
+}
+.first-step.policy .first-step-stamp{background:rgba(59,130,246,.18);color:#93c5fd;border:1px solid rgba(59,130,246,.4)}
+.first-step.scanner .first-step-stamp{background:rgba(16,185,129,.18);color:#6ee7b7;border:1px solid rgba(16,185,129,.4)}
+.first-step-stamp .dot{width:6px;height:6px;border-radius:50%}
+.first-step.policy .first-step-stamp .dot{background:#3b82f6;box-shadow:0 0 8px #3b82f6}
+.first-step.scanner .first-step-stamp .dot{background:#10b981;box-shadow:0 0 8px #10b981}
+.fs-team{font-size:11.5px;font-weight:600;color:#94a3b8;margin-bottom:8px}
+.first-step h3{
+  font-size:26px;font-weight:800;color:#f8fafc;letter-spacing:-.4px;line-height:1.15;margin-bottom:4px;
+}
+.fs-ticket{
+  display:inline-block;
+  font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:700;
+  padding:3px 10px;border-radius:6px;margin-bottom:14px;
+}
+.first-step.policy .fs-ticket{background:rgba(59,130,246,.14);color:#bfdbfe;border:1px solid rgba(59,130,246,.3)}
+.first-step.scanner .fs-ticket{background:rgba(16,185,129,.14);color:#a7f3d0;border:1px solid rgba(16,185,129,.3)}
+.fs-why{
+  font-size:13px;color:#cbd5e1;line-height:1.65;
+  padding:14px;border-radius:10px;background:rgba(15,23,42,.55);border:1px solid #1e293b;margin-bottom:18px;
+}
+.fs-why b{color:#f1f5f9;font-weight:700}
+.fs-unblocks-label{
+  font-size:10.5px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;
+  color:#94a3b8;margin-bottom:10px;display:flex;align-items:center;gap:8px;
+}
+.fs-unblocks-label::before{content:"⚡";color:#fcd34d}
+.fs-unblocks{list-style:none;display:flex;flex-direction:column;gap:6px}
+.fs-unblocks li{
+  font-size:12.5px;color:#cbd5e1;line-height:1.45;
+  padding:7px 11px;background:rgba(15,23,42,.55);border-radius:8px;border-left:3px solid;
+  display:flex;gap:10px;align-items:flex-start;
+}
+.first-step.policy .fs-unblocks li{border-left-color:rgba(59,130,246,.5)}
+.first-step.scanner .fs-unblocks li{border-left-color:rgba(16,185,129,.5)}
+.fs-unblocks li code{background:#020617;color:#7dd3fc;padding:1px 5px;border-radius:4px;font-size:11px}
+.fs-check{color:#10b981;flex-shrink:0;font-weight:800}
+
+/* =========================================================
+   PARALLEL MOTION — How these move together
+   ========================================================= */
+.parallel-wrap{
+  padding:24px 20px;border-radius:16px;
+  background:linear-gradient(180deg,rgba(15,23,42,.7),rgba(11,17,32,.5));
+  border:1px solid #1e293b;
+  position:relative;overflow:hidden;
+}
+.parallel-wrap::before{
+  content:"";position:absolute;inset:0;
+  background:
+    linear-gradient(90deg,transparent 0,rgba(59,130,246,.05) 30%,rgba(236,72,153,.05) 50%,rgba(16,185,129,.05) 70%,transparent 100%);
+  pointer-events:none;
+}
+.parallel-header{
+  display:grid;grid-template-columns:160px 1fr 1fr;gap:10px;
+  margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid #1e293b;
+  font-size:11px;font-weight:800;letter-spacing:1.1px;text-transform:uppercase;
+  color:#94a3b8;
+}
+.parallel-header .ph-policy{color:#93c5fd}
+.parallel-header .ph-scanner{color:#6ee7b7}
+.parallel-band{
+  display:grid;grid-template-columns:160px 1fr 1fr;gap:10px;
+  padding:14px 0;border-top:1px dashed #1e293b;
+  align-items:stretch;
+}
+.parallel-band:first-of-type{border-top:none}
+.pb-label{
+  padding:10px 12px;border-radius:10px;
+  background:rgba(15,23,42,.7);border:1px solid #1e293b;
+  display:flex;flex-direction:column;justify-content:center;gap:2px;
+}
+.pb-label .pb-days{
+  font-size:11px;font-weight:800;letter-spacing:1.1px;text-transform:uppercase;color:#cbd5e1;
+}
+.pb-label .pb-phase{
+  font-size:10.5px;color:#64748b;font-weight:600;
+}
+.pb-cell{
+  padding:12px 14px;border-radius:10px;
+  display:flex;flex-direction:column;gap:6px;
+  position:relative;
+}
+.pb-cell.p{
+  background:linear-gradient(180deg,rgba(59,130,246,.13),rgba(59,130,246,.04));
+  border:1px solid rgba(59,130,246,.35);
+}
+.pb-cell.s{
+  background:linear-gradient(180deg,rgba(16,185,129,.12),rgba(16,185,129,.04));
+  border:1px solid rgba(16,185,129,.35);
+}
+.pb-cell .pb-t{
+  font-size:12.5px;font-weight:700;color:#f1f5f9;line-height:1.3;display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+}
+.pb-cell .pb-ticket{
+  font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:700;
+  padding:2px 7px;border-radius:5px;letter-spacing:.2px;
+}
+.pb-cell.p .pb-ticket{background:rgba(59,130,246,.2);color:#bfdbfe;border:1px solid rgba(59,130,246,.5)}
+.pb-cell.s .pb-ticket{background:rgba(16,185,129,.2);color:#a7f3d0;border:1px solid rgba(16,185,129,.5)}
+.pb-cell .pb-sub{font-size:11px;color:#94a3b8;line-height:1.5}
+.pb-cell .pb-sub code{background:#020617;color:#7dd3fc;padding:1px 4px;border-radius:3px;font-size:10.5px;font-family:'IBM Plex Mono',monospace}
+.pb-interlock{
+  grid-column:2 / -1;
+  padding:10px 14px;
+  background:linear-gradient(90deg,rgba(236,72,153,.08),transparent);
+  border:1px dashed rgba(236,72,153,.3);border-radius:10px;
+  font-size:11px;color:#f9a8d4;font-weight:600;line-height:1.5;
+  display:flex;align-items:flex-start;gap:8px;
+}
+.pb-interlock::before{content:"⚮";font-size:14px;flex-shrink:0}
+.pb-interlock b{color:#fbcfe8}
+@media (max-width:800px){
+  .parallel-header{grid-template-columns:1fr;gap:4px}
+  .parallel-band{grid-template-columns:1fr;gap:8px}
+  .pb-interlock{grid-column:1}
+}
+
+/* =========================================================
+   TRACK DETAIL SECTIONS
+   ========================================================= */
+.track-detail{
+  background:rgba(11,17,32,.6);
+  border:1px solid #1e293b;border-radius:16px;
+  padding:0;overflow:hidden;
+}
+.track-detail-head{
+  padding:22px 26px;
+  border-bottom:1px solid #1e293b;
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+}
+.track-detail.policy .track-detail-head{background:linear-gradient(90deg,rgba(59,130,246,.12),transparent 70%)}
+.track-detail.scanner .track-detail-head{background:linear-gradient(90deg,rgba(16,185,129,.10),transparent 70%)}
+.track-marker{
+  font-size:13px;font-weight:800;letter-spacing:.3px;
+  padding:6px 12px;border-radius:8px;
+  font-family:'IBM Plex Mono',monospace;
+}
+.track-detail.policy .track-marker{background:rgba(59,130,246,.18);color:#bfdbfe;border:1px solid rgba(59,130,246,.4)}
+.track-detail.scanner .track-marker{background:rgba(16,185,129,.18);color:#a7f3d0;border:1px solid rgba(16,185,129,.4)}
+.track-detail-head h3{font-size:20px;font-weight:800;color:#f8fafc;letter-spacing:-.2px}
+.track-detail-head .owner{font-size:11.5px;color:#94a3b8;margin-left:auto;font-weight:500}
+.track-detail-head .owner b{color:#e2e8f0}
+
+.track-detail-body{padding:0}
+
+.td-section{padding:24px 26px;border-bottom:1px solid #1e293b}
+.td-section:last-child{border-bottom:none}
+.td-section-title{
+  font-size:10.5px;font-weight:800;letter-spacing:1.6px;text-transform:uppercase;
+  color:#64748b;margin-bottom:14px;
+}
+
+/* Business requirements grid */
+.biz-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;
+}
+.biz-cell{
+  padding:14px;border-radius:10px;background:rgba(15,23,42,.55);border:1px solid #1e293b;
+}
+.biz-cell-label{
+  font-size:10px;font-weight:800;letter-spacing:1.3px;text-transform:uppercase;
+  color:#64748b;margin-bottom:6px;
+}
+.biz-cell-content{font-size:12.5px;color:#e2e8f0;line-height:1.55}
+.biz-cell-content b{color:#f8fafc;font-weight:700}
+
+/* =========================================================
+   TIMELINE — Technical roadmap visualization
+   ========================================================= */
+.timeline{
+  position:relative;
+  padding:20px 0 10px;
+  overflow-x:auto;
+}
+.timeline-scroll{min-width:880px;padding:0 4px 10px}
+.day-axis{
+  display:grid;
+  grid-template-columns:140px repeat(10,1fr);
+  gap:3px;
+  margin-bottom:10px;
+  font-size:10px;font-weight:700;color:#64748b;letter-spacing:.5px;text-transform:uppercase;
+}
+.day-axis .axis-label{padding:4px 6px}
+.day-axis .axis-tick{
+  text-align:center;padding:4px 0;
+  border-bottom:1px solid #1e293b;color:#475569;
+}
+.day-axis .axis-tick.week-mark{color:#cbd5e1;font-weight:800;background:rgba(59,130,246,.06)}
+.tl-row{
+  display:grid;grid-template-columns:140px repeat(10,1fr);gap:3px;align-items:center;
+  padding:3px 0;
+}
+.tl-label{
+  font-size:12px;font-weight:700;color:#e2e8f0;padding:10px 10px;
+  display:flex;align-items:center;gap:8px;line-height:1.3;
+}
+.tl-ticket{
+  font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:11px;
+  padding:2px 7px;border-radius:5px;letter-spacing:.2px;flex-shrink:0;
+}
+.tl-row.p .tl-ticket{background:rgba(59,130,246,.18);color:#bfdbfe;border:1px solid rgba(59,130,246,.4)}
+.tl-row.s .tl-ticket{background:rgba(16,185,129,.18);color:#a7f3d0;border:1px solid rgba(16,185,129,.4)}
+.tl-bar-cell{
+  position:relative;grid-column:var(--start) / span var(--span);
+  height:36px;border-radius:7px;
+  padding:7px 11px;
+  display:flex;align-items:center;gap:8px;
+  font-size:11.5px;font-weight:600;color:#f1f5f9;line-height:1.3;overflow:hidden;
+  cursor:help;
+  transition:transform .15s,box-shadow .15s;
+}
+.tl-bar-cell:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,0,0,.5)}
+.tl-row.p .tl-bar-cell{
+  background:linear-gradient(90deg,rgba(59,130,246,.6),rgba(99,102,241,.5));
+  border:1px solid rgba(59,130,246,.8);
+}
+.tl-row.s .tl-bar-cell{
+  background:linear-gradient(90deg,rgba(16,185,129,.55),rgba(5,150,105,.55));
+  border:1px solid rgba(16,185,129,.8);
+}
+.tl-row.first .tl-bar-cell{
+  background:linear-gradient(90deg,#3b82f6,#6366f1);
+  box-shadow:0 0 0 2px rgba(255,255,255,.12),0 0 20px rgba(59,130,246,.5);
+}
+.tl-row.s.first .tl-bar-cell{
+  background:linear-gradient(90deg,#10b981,#059669);
+  box-shadow:0 0 0 2px rgba(255,255,255,.12),0 0 20px rgba(16,185,129,.5);
+}
+.tl-row.interlock{position:relative}
+.tl-row.interlock::after{
+  content:"⚮ interlock";
+  position:absolute;right:6px;top:-10px;
+  font-size:9px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;
+  color:#f9a8d4;
+}
+.tl-days{
+  font-size:9.5px;font-weight:700;opacity:.85;letter-spacing:.4px;margin-left:auto;
+  background:rgba(0,0,0,.3);padding:1px 6px;border-radius:4px;
+}
+.tl-hint{
+  font-size:11px;color:#64748b;margin-top:14px;text-align:center;font-style:italic;
+}
+
+/* Dep graph caption */
+.dep-caption{
+  margin-top:18px;padding:12px 16px;background:rgba(15,23,42,.55);
+  border:1px solid #1e293b;border-radius:10px;
+  font-size:11.5px;color:#94a3b8;line-height:1.6;
+}
+.dep-caption b{color:#e2e8f0}
+
+/* =========================================================
+   PHASE LADDER — 8-phase evolution
+   ========================================================= */
+.phase-ladder{
+  display:flex;gap:10px;overflow-x:auto;padding:8px 0 14px;
+}
+.phase-card{
+  flex:1 1 0;min-width:230px;
+  padding:16px;border-radius:12px;
+  background:linear-gradient(180deg,rgba(15,23,42,.85),rgba(11,17,32,.6));
+  border:1px solid #1e293b;position:relative;
+  display:flex;flex-direction:column;gap:10px;
+}
+.phase-card.current{border-color:#3b82f6;box-shadow:0 0 0 1px rgba(59,130,246,.3),0 0 22px rgba(59,130,246,.2)}
+.phase-card.future{border-style:dashed;opacity:.85}
+.phase-card.merge{border-color:#ec4899;box-shadow:0 0 0 1px rgba(236,72,153,.3),0 0 22px rgba(236,72,153,.2)}
+.phase-num{
+  font-size:10.5px;font-weight:800;letter-spacing:1.6px;text-transform:uppercase;
+  color:#64748b;display:flex;align-items:center;gap:8px;
+}
+.phase-num .pnum-pill{
+  background:rgba(15,23,42,.8);border:1px solid #334155;color:#cbd5e1;
+  padding:3px 8px;border-radius:999px;font-size:10px;letter-spacing:.4px;
+}
+.phase-card.current .pnum-pill{background:rgba(59,130,246,.18);color:#bfdbfe;border-color:rgba(59,130,246,.4)}
+.phase-card.merge .pnum-pill{background:rgba(236,72,153,.15);color:#f9a8d4;border-color:rgba(236,72,153,.4)}
+.phase-card.future .pnum-pill{background:transparent;color:#64748b}
+.phase-title{font-size:13.5px;font-weight:800;color:#f8fafc;line-height:1.25}
+.phase-sub{font-size:11.5px;color:#94a3b8;line-height:1.5;flex:1}
+.phase-landing{
+  font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;
+  color:#7dd3fc;padding-top:8px;border-top:1px dashed #1e293b;
+  display:flex;align-items:center;gap:6px;
+}
+.phase-landing::before{content:"◉";opacity:.8}
+.phase-est{
+  font-family:'IBM Plex Mono',monospace;font-size:10px;color:#64748b;font-weight:600;
+}
+.phase-mcard{
+  display:inline-flex;align-items:center;gap:5px;font-size:9.5px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;
+  color:#f59e0b;padding:2px 7px;border-radius:999px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);
+  width:fit-content;
+}
+
+/* =========================================================
+   COHESION — Check code contract + data flow
+   ========================================================= */
+.cohesion-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-bottom:26px;
+}
+@media (max-width:900px){.cohesion-grid{grid-template-columns:1fr}}
+.code-card{
+  padding:18px;border-radius:12px;background:rgba(11,17,32,.7);
+  border:1px solid #1e293b;
+}
+.code-card.policy{border-color:rgba(59,130,246,.3)}
+.code-card.scanner{border-color:rgba(16,185,129,.3)}
+.code-card h4{font-size:11.5px;font-weight:800;letter-spacing:1.3px;text-transform:uppercase;color:#94a3b8;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.code-card.policy h4::before{content:"";display:inline-block;width:8px;height:8px;border-radius:2px;background:#3b82f6;box-shadow:0 0 8px rgba(59,130,246,.6)}
+.code-card.scanner h4::before{content:"";display:inline-block;width:8px;height:8px;border-radius:2px;background:#10b981;box-shadow:0 0 8px rgba(16,185,129,.6)}
+.code-card pre{
+  background:#020617;border:1px solid #1e293b;border-radius:8px;padding:14px;
+  font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#e2e8f0;line-height:1.6;overflow-x:auto;
+}
+.code-card pre .k{color:#7dd3fc}
+.code-card pre .s{color:#fde68a}
+.code-card pre .n{color:#a5b4fc}
+.code-card pre .c{color:#64748b;font-style:italic}
+.code-card pre .b{color:#f9a8d4;font-weight:700}
+
+/* Data flow diagram */
+.dataflow{
+  position:relative;
+  padding:28px 20px;
+  background:rgba(11,17,32,.6);
+  border:1px solid #1e293b;border-radius:14px;
+  margin-bottom:26px;
+}
+.flow-row{
+  display:grid;grid-template-columns:repeat(5,1fr);gap:10px;align-items:center;margin-bottom:18px;
+}
+@media (max-width:900px){.flow-row{grid-template-columns:1fr 1fr;gap:14px}.flow-arrow{display:none}}
+.flow-node{
+  padding:14px 12px;border-radius:10px;
+  background:rgba(15,23,42,.8);border:1.5px solid #334155;
+  text-align:center;position:relative;min-height:84px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+}
+.flow-node.p{border-color:rgba(59,130,246,.5);background:linear-gradient(180deg,rgba(59,130,246,.1),rgba(15,23,42,.8))}
+.flow-node.s{border-color:rgba(16,185,129,.5);background:linear-gradient(180deg,rgba(16,185,129,.1),rgba(15,23,42,.8))}
+.flow-node.x{border-color:rgba(236,72,153,.55);background:linear-gradient(180deg,rgba(236,72,153,.12),rgba(15,23,42,.8))}
+.flow-node .fn-owner{font-size:9px;font-weight:800;letter-spacing:1.1px;text-transform:uppercase;color:#64748b;margin-bottom:2px}
+.flow-node.p .fn-owner{color:#93c5fd}
+.flow-node.s .fn-owner{color:#6ee7b7}
+.flow-node.x .fn-owner{color:#f9a8d4}
+.flow-node .fn-title{font-size:12.5px;font-weight:700;color:#f8fafc;line-height:1.25}
+.flow-node .fn-sub{font-size:10.5px;color:#94a3b8;line-height:1.35}
+.flow-arrow{
+  text-align:center;font-size:20px;color:#475569;font-weight:400;
+}
+.flow-legend{
+  display:flex;justify-content:center;gap:22px;flex-wrap:wrap;
+  padding-top:16px;border-top:1px dashed #1e293b;
+  font-size:11px;color:#94a3b8;
+}
+.flow-legend-dot{width:11px;height:11px;border-radius:3px;display:inline-block;margin-right:6px;vertical-align:-1px}
+
+/* Anti-patterns */
+.anti-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.anti-card{
+  padding:16px;border-radius:10px;background:rgba(15,23,42,.55);border:1px solid #1e293b;
+  border-left:3px solid #ef4444;
+}
+.anti-label{
+  font-size:10px;font-weight:800;letter-spacing:1.3px;text-transform:uppercase;
+  color:#fca5a5;margin-bottom:6px;display:flex;align-items:center;gap:6px;
+}
+.anti-label::before{content:"✕";color:#ef4444;font-weight:800}
+.anti-title{font-size:13.5px;font-weight:700;color:#f8fafc;margin-bottom:5px;line-height:1.3}
+.anti-body{font-size:11.5px;color:#94a3b8;line-height:1.55}
+.anti-body b{color:#e2e8f0}
+
+/* =========================================================
+   DECISIONS BAR
+   ========================================================= */
+.decisions-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;
+}
+.decision{
+  padding:16px 18px;border-radius:11px;
+  background:linear-gradient(180deg,rgba(16,185,129,.08),rgba(15,23,42,.6));
+  border:1px solid rgba(16,185,129,.35);
+  display:flex;gap:12px;align-items:flex-start;
+}
+.decision-check{
+  width:26px;height:26px;border-radius:8px;flex-shrink:0;
+  background:rgba(16,185,129,.18);border:1px solid rgba(16,185,129,.5);
+  color:#6ee7b7;font-weight:800;font-size:14px;
+  display:flex;align-items:center;justify-content:center;
+}
+.decision-title{font-size:13px;font-weight:700;color:#f1f5f9;margin-bottom:4px;line-height:1.3}
+.decision-body{font-size:11.5px;color:#94a3b8;line-height:1.55}
+.decision-body code{background:#020617;color:#7dd3fc;padding:1px 5px;border-radius:4px;font-size:10.5px}
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+.page-footer{
+  margin:50px auto 0;padding:32px 24px 40px;
+  max-width:1320px;
+  border-top:1px solid #1e293b;
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:22px;
+}
+.footer-col h5{
+  font-size:10.5px;font-weight:800;letter-spacing:1.3px;text-transform:uppercase;
+  color:#94a3b8;margin-bottom:10px;
+}
+.footer-col a{
+  display:block;font-size:12px;color:#7dd3fc;text-decoration:none;padding:3px 0;
+  transition:color .15s;
+}
+.footer-col a:hover{color:#bae6fd;text-decoration:underline}
+.footer-col p{font-size:11px;color:#64748b;line-height:1.55}
+
+/* =========================================================
+   SMALL HELPERS
+   ========================================================= */
+.pill{
+  display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:700;
+  padding:2px 8px;border-radius:999px;letter-spacing:.4px;text-transform:uppercase;
+}
+.pill.blue{background:rgba(59,130,246,.14);color:#93c5fd;border:1px solid rgba(59,130,246,.35)}
+.pill.green{background:rgba(16,185,129,.14);color:#6ee7b7;border:1px solid rgba(16,185,129,.35)}
+.pill.amber{background:rgba(245,158,11,.14);color:#fcd34d;border:1px solid rgba(245,158,11,.35)}
+.pill.pink{background:rgba(236,72,153,.14);color:#f9a8d4;border:1px solid rgba(236,72,153,.35)}
+.pill.slate{background:rgba(100,116,139,.18);color:#cbd5e1;border:1px solid rgba(100,116,139,.4)}
+
+/* Mobile tweaks */
+@media (max-width:640px){
+  section{padding:36px 16px}
+  .hero{padding:40px 16px 28px}
+  .topnav-links a{font-size:11px;padding:5px 9px}
+  .track-card,.first-step,.track-detail-head,.td-section{padding:18px}
+  .first-step h3{font-size:22px}
+  .hero h1{font-size:30px}
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================== -->
+<!-- TOP NAV                                        -->
+<!-- ============================================== -->
+<nav class="topnav">
+  <div class="topnav-inner">
+    <a href="../" class="brand" style="text-decoration:none">
+      <div class="brand-logo">Q</div>
+      <div>
+        <div class="brand-title">Q-Trust Roadmaps <span class="tag">v1.0</span></div>
+        <div class="brand-sub">Policy + Scanner MVPs · 2026-04-20</div>
+      </div>
+    </a>
+    <div class="topnav-links">
+      <a href="#overview">Overview</a>
+      <a href="#first-step">First Steps</a>
+      <a href="#together" class="accent-cohesion">Together</a>
+      <a href="#policy-track" class="accent-policy">Policy</a>
+      <a href="#scanner-track" class="accent-scanner">Scanner</a>
+      <a href="#cohesion" class="accent-cohesion">Cohesion</a>
+      <a href="#evolution">8-Phase Evolution</a>
+      <a href="#decisions">Decisions</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ============================================== -->
+<!-- HERO                                           -->
+<!-- ============================================== -->
+<div class="hero">
+  <div class="hero-eyebrow"><span class="pulse"></span> Two parallel MVPs — one shared system</div>
+  <h1>Policy + Scanner Roadmaps</h1>
+  <p class="lede">
+    Two development tracks. Both start the same Monday. Both ship in roughly ten working days.
+    They interlock at a single shared contract — the <b style="color:#f9a8d4">check&nbsp;code</b> — which turns today's
+    parallel work into a clean merger eight phases from now. This page is the shape of that plan.
+  </p>
+  <div class="hero-meta">
+    <span>📌 Last synthesized <b>2026-04-20</b></span>
+    <span>👥 Audience: <b>executive · business · engineering</b></span>
+    <span>📖 Read in 2 minutes · grasp in 10 seconds</span>
+  </div>
+</div>
+
+<!-- ============================================== -->
+<!-- OVERVIEW                                       -->
+<!-- ============================================== -->
+<section id="overview">
+  <div class="section-head">
+    <div class="section-eyebrow">§ 1 — Overview</div>
+    <h2 class="section-title">Two tracks, running in parallel</h2>
+    <p class="section-sub">
+      Each track has a one-sentence MVP, a dedicated team lead, and a ~10-working-day critical path.
+      Neither blocks the other. They meet at the check-code contract.
+    </p>
+  </div>
+
+  <div class="overview-grid">
+
+    <!-- POLICY TRACK CARD -->
+    <div class="track-card policy">
+      <div class="track-badge policy">🏛 Track 1 — Policy</div>
+      <h3>Policy Lifecycle MVP</h3>
+      <div class="track-owner">Team Lead: <b>Huy Nguyen</b> · Vietnam dev team · Q-Trust / Q-Audit</div>
+      <div class="track-one-sentence">
+        <b>An admin authors a policy from a five-rule vocabulary</b>, scopes it to a set of merchants
+        (global · industry · tier · merchant list), and on the next evaluation cycle violations surface in
+        the Compliance Cases Portal tagged with the policy that fired them.
+      </div>
+      <div class="track-stats">
+        <div class="track-stat"><b>9</b>tickets (T1 → T9)</div>
+        <div class="track-stat"><b>~10</b>working days</div>
+        <div class="track-stat"><b>6</b>new UI surfaces</div>
+        <div class="track-stat"><b>2</b>new tables</div>
+      </div>
+    </div>
+
+    <!-- SCANNER TRACK CARD -->
+    <div class="track-card scanner">
+      <div class="track-badge scanner">🔍 Track 2 — Scanner</div>
+      <h3>Check Registry MVP</h3>
+      <div class="track-owner">Team Lead: <b>Mike</b> · Scanner / Middleware · Q-ScanAI</div>
+      <div class="track-one-sentence">
+        <b>Every currently-shipping scanner check is retrofitted with a structured check code</b>
+        (<code style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#f9a8d4">INDUSTRY-CATEGORY-ELEMENT</code>),
+        registered in a new versioned configuration store, and read at runtime in place of hardcoded thresholds —
+        so a new keyword check is one config row, not one code deploy.
+      </div>
+      <div class="track-stats">
+        <div class="track-stat"><b>8</b>tickets (S1 → S8)</div>
+        <div class="track-stat"><b>~10</b>working days</div>
+        <div class="track-stat"><b>30</b>check codes seeded</div>
+        <div class="track-stat"><b>3</b>new tables</div>
+      </div>
+    </div>
+
+    <!-- INTERLOCK ROPE -->
+    <div class="interlock-rope">
+      <span class="rope-icon">🔗</span>
+      <span>The contract between them is a single shared string:
+        <code>INDUSTRY-CATEGORY-ELEMENT</code> — e.g. <code>GEN-COA-DELTA9</code>.
+        Policy rules reference it. Scanner registry defines it. Findings carry both stamps.</span>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============================================== -->
+<!-- FIRST STEP — the big one                       -->
+<!-- ============================================== -->
+<section id="first-step">
+  <div class="section-head">
+    <div class="section-eyebrow">§ 2 — The first step · promised to both team leads</div>
+    <h2 class="section-title">Day 1 · Monday of MVP week</h2>
+    <p class="section-sub">
+      Both teams open with <b style="color:#f1f5f9">pure-schema work</b>: new tables, new entities,
+      no wiring into production code. Safe to land parallel to v1.3.3 shipping Friday.
+      Zero regression risk. Maximum unblocking power.
+    </p>
+  </div>
+
+  <div class="first-step-grid">
+
+    <!-- T1 — POLICY -->
+    <div class="first-step policy">
+      <div class="first-step-stamp"><span class="dot"></span> Huy's Day 1</div>
+      <div class="fs-team">Policy Track · opens the week</div>
+      <h3>Schema + resolver — the contract</h3>
+      <div class="fs-ticket">T1 → T3 · foundation stretch</div>
+
+      <div class="fs-why">
+        <b>Why this first?</b>  T1 lands the two new tables —
+        <code style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#7dd3fc">pl_policy</code> and
+        <code style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#7dd3fc">pl_merchant_policy</code>
+        — plus TypeORM entities and the TypeScript interface for the five-rule JSON shape. It is pure additive
+        schema: zero risk to v1.3.3 shipping Friday, zero regression risk. <b>The foundation stretch ends with T3
+        — the <code style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#7dd3fc">PolicyResolverService</code>
+        with <span style="color:#f1f5f9">merchant &gt; tier &gt; industry &gt; global</span> precedence.</b>
+        That resolver is the contract the Compliance Portal calls, the refactored CoaHelper calls, the scan pipeline
+        calls, the license evaluator calls. Without it, every downstream ticket has no stable anchor. With it,
+        the roadmap locks in.
+      </div>
+
+      <div class="fs-unblocks-label">What T1 → T3 unblocks</div>
+      <ul class="fs-unblocks">
+        <li><span class="fs-check">✓</span> <span><b>T2</b> — Policy CRUD service &amp; controller (needs the tables to write into)</span></li>
+        <li><span class="fs-check">✓</span> <span><b>T3</b> — <code>PolicyResolverService.getEffectivePolicy()</code> — the contract every other ticket calls</span></li>
+        <li><span class="fs-check">✓</span> <span><b>T4</b> — <code>CoaHelper</code> rewrite (needs resolver to be real)</span></li>
+        <li><span class="fs-check">✓</span> <span><b>T5 · T6 · T7</b> — scan config, license evaluator, re-evaluate endpoint (all read through the resolver)</span></li>
+        <li><span class="fs-check">✓</span> <span><b>T8</b> — Admin UI policy authoring form (needs CRUD endpoints live)</span></li>
+        <li><span class="fs-check">✓</span> <span><b>Every</b> subsequent MVP ticket. T1 → T3 is the root of the dependency tree.</span></li>
+      </ul>
+    </div>
+
+    <!-- S1 — SCANNER -->
+    <div class="first-step scanner">
+      <div class="first-step-stamp"><span class="dot"></span> Mike's Day 1</div>
+      <div class="fs-team">Scanner Track · opens the week</div>
+      <h3>Check registry schema + seed migration</h3>
+      <div class="fs-ticket">S1 · ~2 working days</div>
+
+      <div class="fs-why">
+        <b>Why this first?</b>  Per Brian's Q-ScanAI Enhancement Spec v4, <b>the check code is the
+        load-bearing integration contract for every one of the next eight phases</b>. Getting it right and getting
+        codes assigned to all 30 currently-shipping checks on day one turns Phase 8 (full Policy Configurator
+        integration) from a re-engineering into a connection. A check without a code today is a database rewrite
+        tomorrow. S1 lands all three new tables plus the seed migration — additive, feature-flag-off, safe parallel to v1.3.3.
+      </div>
+
+      <div class="fs-unblocks-label">What S1 unblocks</div>
+      <ul class="fs-unblocks">
+        <li><span class="fs-check">✓</span> <span><b>S2</b> — <code>CheckRegistryService</code> (needs tables to query)</span></li>
+        <li><span class="fs-check">✓</span> <span><b>S3</b> — <code>check_code</code> column + historical backfill (needs codes to reference)</span></li>
+        <li><span class="fs-check">✓</span> <span><b>S4 / S5</b> — Middleware analyzer refactors (read from registry)</span></li>
+        <li><span class="fs-check">✓</span> <span><b>S8</b> — Read-only registry admin page</span></li>
+        <li><span class="fs-check">✓</span> <span><b>Every Phase 2–8 capability</b>. Miss a code now — rework in Phase 8.</span></li>
+      </ul>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============================================== -->
+<!-- HOW THESE MOVE TOGETHER                        -->
+<!-- ============================================== -->
+<section id="together">
+  <div class="section-head">
+    <div class="section-eyebrow" style="color:#f9a8d4">§ 2.5 — How these move together</div>
+    <h2 class="section-title">The first two weeks · both teams · in parallel</h2>
+    <p class="section-sub">
+      Reading across this view: what each team is doing on the same days, and where the interlock coordination
+      happens. Equal weight, equal pace, shared contract.
+    </p>
+  </div>
+
+  <div class="parallel-wrap">
+    <div class="parallel-header">
+      <div>Window</div>
+      <div class="ph-policy">🏛 Policy track · Huy's team</div>
+      <div class="ph-scanner">🔍 Scanner track · Mike's team</div>
+    </div>
+
+    <!-- BAND 1: Days 1-2 -->
+    <div class="parallel-band">
+      <div class="pb-label">
+        <div class="pb-days">Days 1 – 2</div>
+        <div class="pb-phase">Migrations land</div>
+      </div>
+      <div class="pb-cell p">
+        <div class="pb-t"><span class="pb-ticket">T1</span> Policy tables + entities</div>
+        <div class="pb-sub">
+          <code>pl_policy</code>, <code>pl_merchant_policy</code>, <code>PolicyRulesDocument</code> interface.
+          Pure additive schema, feature-flag-off, safe parallel to v1.3.3.
+        </div>
+      </div>
+      <div class="pb-cell s">
+        <div class="pb-t"><span class="pb-ticket">S1</span> Check registry tables + seed</div>
+        <div class="pb-sub">
+          <code>pl_check_definition</code>, <code>pl_check_definition_version</code>, <code>pl_company_check_override</code>.
+          <b>Seed migration assigns codes to all 30 shipping checks.</b>
+        </div>
+      </div>
+      <div class="pb-interlock">
+        <div><b>Interlock · migration ordering</b> — Decision locked: policy migration lands first, scanner second.
+        Coordinated sequence numbers; both purely additive. No merge conflict on the entity file.</div>
+      </div>
+    </div>
+
+    <!-- BAND 2: Days 3-5 -->
+    <div class="parallel-band">
+      <div class="pb-label">
+        <div class="pb-days">Days 3 – 5</div>
+        <div class="pb-phase">Core services</div>
+      </div>
+      <div class="pb-cell p">
+        <div class="pb-t"><span class="pb-ticket">T2</span> <span class="pb-ticket">T3</span> Policy CRUD + Resolver</div>
+        <div class="pb-sub">
+          <code>PolicyService</code> (create/list/get/update/publish/archive) and the load-bearing
+          <code>PolicyResolverService.getEffectivePolicy()</code> with <b>merchant &gt; tier &gt; industry &gt; global</b> precedence
+          + <code>publishedAt</code> tiebreaker.
+        </div>
+      </div>
+      <div class="pb-cell s">
+        <div class="pb-t"><span class="pb-ticket">S2</span> <span class="pb-ticket">S3</span> Registry service + column</div>
+        <div class="pb-sub">
+          <code>CheckRegistryService.getActiveChecksForMerchant()</code> with resolution order:
+          registry default → per-company override → (stubbed) policy override. <code>check_code</code> column added to
+          <code>pl_compliance_finding</code> + backfill migration.
+        </div>
+      </div>
+      <div class="pb-interlock">
+        <div><b>Interlock · column coordination</b> — Scanner S3 adds <code style="font-family:'IBM Plex Mono',monospace">check_code</code>
+        to <code style="font-family:'IBM Plex Mono',monospace">pl_compliance_finding</code> the same week policy adds
+        <code style="font-family:'IBM Plex Mono',monospace">policy_id</code> + <code style="font-family:'IBM Plex Mono',monospace">policy_rule_key</code>.
+        Coordinated review — each team drafts their migration, other team reviews before merge.</div>
+      </div>
+    </div>
+
+    <!-- BAND 3: Days 6-10 -->
+    <div class="parallel-band">
+      <div class="pb-label">
+        <div class="pb-days">Days 6 – 10</div>
+        <div class="pb-phase">Integration via contract</div>
+      </div>
+      <div class="pb-cell p">
+        <div class="pb-t"><span class="pb-ticket">T4</span> <span class="pb-ticket">T5</span> <span class="pb-ticket">T6</span> <span class="pb-ticket">T7</span> <span class="pb-ticket">T8</span> <span class="pb-ticket">T9</span> Integration + UI</div>
+        <div class="pb-sub">
+          <code>CoaHelper</code> reads from resolver (T4), scan config read-path (T5), license evaluator (T6),
+          re-evaluate endpoint (T7), admin authoring UI (T8 parallel), case detail attribution badge (T9).
+        </div>
+      </div>
+      <div class="pb-cell s">
+        <div class="pb-t"><span class="pb-ticket">S4</span> <span class="pb-ticket">S5</span> <span class="pb-ticket">S6</span> <span class="pb-ticket">S7</span> <span class="pb-ticket">S8</span> Integration + UI</div>
+        <div class="pb-sub">
+          <code>ComplianceAnalyzer</code> via registry (S4), custom elements via registry (S5), CoaHelper mapping review (S6),
+          license stamp review (S7), read-only registry admin page (S8 parallel).
+        </div>
+      </div>
+      <div class="pb-interlock">
+        <div><b>Interlock · shared code paths</b> — Three files touched by both teams:
+        <b>CoaHelper</b> (policy T4 owns the rewrite, scanner S6 provides a 5-line mapping constant + reviews),
+        <b>LicenseExpirationEvaluator</b> (policy T6/S7 end-to-end; scanner reviews),
+        and <b>ScanUrl.dto.ts</b> (scanner S4 lands first as the broader refactor; policy T5 rebases).
+        Ownership pre-split — no parallel writes.</div>
+      </div>
+    </div>
+
+    <!-- OUTCOME BAND -->
+    <div class="parallel-band" style="background:linear-gradient(90deg,rgba(59,130,246,.05),rgba(236,72,153,.07),rgba(16,185,129,.05));border-radius:10px;margin-top:6px;padding:16px 12px">
+      <div class="pb-label" style="background:rgba(236,72,153,.1);border-color:rgba(236,72,153,.35)">
+        <div class="pb-days" style="color:#f9a8d4">End of Day 10</div>
+        <div class="pb-phase">MVP shipped</div>
+      </div>
+      <div class="pb-cell p" style="grid-column:2 / -1;border-color:rgba(236,72,153,.3);background:linear-gradient(90deg,rgba(59,130,246,.08),rgba(236,72,153,.06),rgba(16,185,129,.08))">
+        <div class="pb-t">🎯 Both MVPs live · behind their own feature flags · findings carry both stamps</div>
+        <div class="pb-sub">
+          An admin creates a policy referencing <code>GEN-COA-DELTA9</code>. A merchant uploads a non-compliant COA.
+          The evaluator reads the effective policy, fires the check, writes a finding with <b>both</b>
+          <code>policy_id = [policy]</code> and <code>check_code = "GEN-COA-DELTA9"</code>. The Cases Portal shows
+          "Triggered by: Cannabis Hemp Baseline v1 / delta9Thc." Four steps. One round-trip. No regressions.
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============================================== -->
+<!-- POLICY TRACK DETAIL                            -->
+<!-- ============================================== -->
+<section id="policy-track">
+  <div class="section-head">
+    <div class="section-eyebrow" style="color:#93c5fd">§ 3 — Track 1 Detail</div>
+    <h2 class="section-title">Policy MVP — Huy's team</h2>
+    <p class="section-sub">Business requirements in plain English, technical roadmap as a visual timeline, evolution through the 8-phase trajectory.</p>
+  </div>
+
+  <div class="track-detail policy">
+
+    <div class="track-detail-head">
+      <span class="track-marker">T1 → T9</span>
+      <h3>Policy Lifecycle MVP</h3>
+      <div class="owner">Lead: <b>Huy Nguyen</b> · Repos: RTQ-Admin-API, RTQ-Admin-UI</div>
+    </div>
+
+    <!-- BUSINESS REQUIREMENTS -->
+    <div class="td-section">
+      <div class="td-section-title">Business requirements · plain English</div>
+      <div class="biz-grid">
+        <div class="biz-cell">
+          <div class="biz-cell-label">What problem</div>
+          <div class="biz-cell-content">Compliance rules live today as hard-coded thresholds and per-merchant toggles scattered across the code. <b>Changing a rule requires a developer and a deploy.</b> That does not scale to 29 industries.</div>
+        </div>
+        <div class="biz-cell">
+          <div class="biz-cell-label">For whom</div>
+          <div class="biz-cell-content"><b>Compliance admins</b> inside Qredible — internal Q-Audit users who need to define, edit, and roll out rules without engineering involvement. Merchants see the resulting enforcement through the existing Cases Portal.</div>
+        </div>
+        <div class="biz-cell">
+          <div class="biz-cell-label">Why now</div>
+          <div class="biz-cell-content">The 2026-04-12 pivot made the platform <b>policy-first</b>. Industry-keyed attribute tables (QP-3603 / QP-3604) are dead. The MVP proves the policy-first model end-to-end before scaling to the full 29-industry vision.</div>
+        </div>
+        <div class="biz-cell">
+          <div class="biz-cell-label">"Done" looks like</div>
+          <div class="biz-cell-content">An admin creates "Cannabis Hemp Baseline v1" with Delta-9 ≤ 0.3% and THC-O = 0%, scopes it to Hemp CBD, publishes. A merchant uploads a non-compliant COA. The case appears in the portal tagged <b>Triggered by: Cannabis Hemp Baseline v1 / delta9Thc</b>. Four steps. One round-trip.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TECHNICAL ROADMAP TIMELINE -->
+    <div class="td-section">
+      <div class="td-section-title">Technical roadmap · timeline (ticket × day)</div>
+      <div class="timeline">
+        <div class="timeline-scroll">
+
+          <div class="day-axis">
+            <div class="axis-label">Ticket</div>
+            <div class="axis-tick">D1</div>
+            <div class="axis-tick">D2</div>
+            <div class="axis-tick">D3</div>
+            <div class="axis-tick">D4</div>
+            <div class="axis-tick week-mark">D5</div>
+            <div class="axis-tick">D6</div>
+            <div class="axis-tick">D7</div>
+            <div class="axis-tick">D8</div>
+            <div class="axis-tick">D9</div>
+            <div class="axis-tick">D10</div>
+          </div>
+
+          <div class="tl-row p first">
+            <div class="tl-label"><span class="tl-ticket">T1</span> Schema + entities</div>
+            <div class="tl-bar-cell" style="--start:2;--span:1" title="T1 · ~1 day · Policy + merchant_policy tables, TypeORM entities, PolicyRulesDocument type. Unblocks T2-T9.">
+              🏁 Start here · tables + entities <span class="tl-days">1 day</span>
+            </div>
+          </div>
+
+          <div class="tl-row p">
+            <div class="tl-label"><span class="tl-ticket">T2</span> CRUD service + controller</div>
+            <div class="tl-bar-cell" style="--start:3;--span:2" title="T2 · 2 days · PolicyService (create, list, get, update, publish, archive) + admin controller.">
+              CRUD endpoints <span class="tl-days">2 days</span>
+            </div>
+          </div>
+
+          <div class="tl-row p">
+            <div class="tl-label"><span class="tl-ticket">T3</span> Effective-policy resolver</div>
+            <div class="tl-bar-cell" style="--start:4;--span:2" title="T3 · 2 days · PolicyResolverService.getEffectivePolicy() with merchant>tier>industry>global precedence + publishedAt tiebreaker.">
+              Resolver service <span class="tl-days">2 days</span>
+            </div>
+          </div>
+
+          <div class="tl-row p interlock">
+            <div class="tl-label"><span class="tl-ticket">T4</span> CoaHelper refactor</div>
+            <div class="tl-bar-cell" style="--start:6;--span:2" title="T4 · 2 days · SHARED TOUCH with scanner S6. Policy team owns end-to-end. Scanner provides 5-line check-code mapping constant.">
+              Read from effective policy <span class="tl-days">2 days</span>
+            </div>
+          </div>
+
+          <div class="tl-row p interlock">
+            <div class="tl-label"><span class="tl-ticket">T5</span> Scan config read path</div>
+            <div class="tl-bar-cell" style="--start:6;--span:2" title="T5 · 2 days · ScanService + ScanUrl.dto.ts. Rebases on scanner S4. Interlock: both add fields to same DTO.">
+              Scan config via policy <span class="tl-days">2 days</span>
+            </div>
+          </div>
+
+          <div class="tl-row p interlock">
+            <div class="tl-label"><span class="tl-ticket">T6</span> License expiration evaluator</div>
+            <div class="tl-bar-cell" style="--start:6;--span:2" title="T6 · 1.5 days · LicenseExpirationEvaluator. SHARED with scanner S7; policy team owns end-to-end.">
+              License evaluator <span class="tl-days">1.5 days</span>
+            </div>
+          </div>
+
+          <div class="tl-row p">
+            <div class="tl-label"><span class="tl-ticket">T7</span> Re-evaluate endpoint</div>
+            <div class="tl-bar-cell" style="--start:8;--span:1" title="T7 · 1 day · POST /admin/merchants/:id/re-evaluate — runs all applicable policies for a merchant.">
+              Re-evaluate button <span class="tl-days">1 day</span>
+            </div>
+          </div>
+
+          <div class="tl-row p">
+            <div class="tl-label"><span class="tl-ticket">T8</span> Admin UI (list + form)</div>
+            <div class="tl-bar-cell" style="--start:4;--span:4" title="T8 · 3 days · /backend/policies list + new/edit form with 6 rule cards. Runs parallel to T3-T7.">
+              Admin authoring UI (parallel) <span class="tl-days">3 days</span>
+            </div>
+          </div>
+
+          <div class="tl-row p">
+            <div class="tl-label"><span class="tl-ticket">T9</span> Case detail attribution</div>
+            <div class="tl-bar-cell" style="--start:9;--span:1" title="T9 · 0.5 day · 'Triggered by: [policy name] v[version] / [ruleKey]' row on case detail.">
+              Case detail badge <span class="tl-days">0.5 day</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="dep-caption">
+        <b>Critical path:</b> T1 → T2 → T3 → (T4 · T5 · T6 parallel) → T7 → T9 &nbsp;·&nbsp;
+        <b>Parallel track:</b> T8 opens once T2 endpoints are live &nbsp;·&nbsp;
+        <b>Interlock tickets</b> (⚮) touch code also touched by the scanner team — ownership is pre-split, no double-writes.
+      </div>
+    </div>
+
+    <!-- 8-PHASE LADDER FOR POLICY -->
+    <div class="td-section">
+      <div class="td-section-title">Evolution · how the Policy MVP grows into the full Policy Configurator</div>
+      <div class="phase-ladder">
+
+        <div class="phase-card current">
+          <div class="phase-num"><span class="pnum-pill">Phase 1</span> <span>MVP</span></div>
+          <div class="phase-title">Authored policies, 5 rule types, 4 scope modes</div>
+          <div class="phase-sub">Admin creates rules from a fixed vocabulary. Evaluator reads effective policy; findings stamped with policy attribution.</div>
+          <div class="phase-est">~10 working days</div>
+        </div>
+
+        <div class="phase-card">
+          <div class="phase-num"><span class="pnum-pill">Phase 2</span></div>
+          <div class="phase-title">Contextual scanner checks</div>
+          <div class="phase-sub">First contextual rule — statutory-language FDA disclaimer matching. Existing <code>"mode": "presence"</code> knob extends to <code>"contextual"</code>; no schema change.</div>
+          <div class="phase-landing">Landing pad: mode field</div>
+          <div class="phase-est">5–8 days</div>
+        </div>
+
+        <div class="phase-card">
+          <div class="phase-num"><span class="pnum-pill">Phase 3</span></div>
+          <div class="phase-title">Overlays + merchant dashboard + approval gating</div>
+          <div class="phase-sub">Per-merchant overlay CRUD, policy-driven merchant-facing dashboard replacing Findings view, draft→review→active state machine.</div>
+          <div class="phase-landing">Landing pad: overlay schema</div>
+          <div class="phase-est">3–4 weeks</div>
+        </div>
+
+        <div class="phase-card future">
+          <div class="phase-num"><span class="pnum-pill">Phase 4+</span></div>
+          <div class="phase-title">Scoring, bulletins, diff, simulator, more contextual checks</div>
+          <div class="phase-sub">Weighted scoring tiers, merchant bulletin inbox, policy version diff, test-mode simulator, expanding contextual vocabulary.</div>
+          <div class="phase-landing">Landing pad: evidence tags</div>
+          <div class="phase-est">Quarter-scale</div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============================================== -->
+<!-- SCANNER TRACK DETAIL                           -->
+<!-- ============================================== -->
+<section id="scanner-track">
+  <div class="section-head">
+    <div class="section-eyebrow" style="color:#86efac">§ 4 — Track 2 Detail</div>
+    <h2 class="section-title">Scanner MVP — Mike's team</h2>
+    <p class="section-sub">Retrofit every shipping check with a stable identity, move configuration out of code into a versioned registry, preserve everything.</p>
+  </div>
+
+  <div class="track-detail scanner">
+
+    <div class="track-detail-head">
+      <span class="track-marker">S1 → S8</span>
+      <h3>Check Registry MVP</h3>
+      <div class="owner">Lead: <b>Mike</b> · Repos: RTQ-Admin-API, Middleware, RTQ-Admin-UI</div>
+    </div>
+
+    <!-- BUSINESS REQUIREMENTS -->
+    <div class="td-section">
+      <div class="td-section-title">Business requirements · plain English</div>
+      <div class="biz-grid">
+        <div class="biz-cell">
+          <div class="biz-cell-label">What problem</div>
+          <div class="biz-cell-content">Every scanner check today is <b>hardcoded</b> — FDA disclaimer patterns, COA expiration thresholds, payment-method regex all baked into source. Adding a new check means a sprint ticket, code review, and a deploy.</div>
+        </div>
+        <div class="biz-cell">
+          <div class="biz-cell-label">For whom</div>
+          <div class="biz-cell-content"><b>Compliance staff</b> (long term) and the <b>scanner developer team</b> (short term). MVP enables config-driven checks today; Phase 2's AI NL interface turns compliance staff into check authors without code.</div>
+        </div>
+        <div class="biz-cell">
+          <div class="biz-cell-label">Why now</div>
+          <div class="biz-cell-content">Brian's Q-ScanAI Enhancement Spec v4 calls Phase 1 "load-bearing for every subsequent phase." Missing codes now are Phase 8 rewrites later. <b>And Mastercard-mandated capabilities (authenticated scanning, cart checks) are queued behind this.</b></div>
+        </div>
+        <div class="biz-cell">
+          <div class="biz-cell-label">"Done" looks like</div>
+          <div class="biz-cell-content">A developer inserts one row into <code>pl_check_definition_version</code> for a new keyword check. On the next scan, it fires. Finding stamped with the new check code. <b>No code change. No deploy.</b> Every existing check works unchanged behind the feature flag.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TECHNICAL ROADMAP TIMELINE -->
+    <div class="td-section">
+      <div class="td-section-title">Technical roadmap · timeline (ticket × day)</div>
+      <div class="timeline">
+        <div class="timeline-scroll">
+
+          <div class="day-axis">
+            <div class="axis-label">Ticket</div>
+            <div class="axis-tick">D1</div>
+            <div class="axis-tick">D2</div>
+            <div class="axis-tick">D3</div>
+            <div class="axis-tick">D4</div>
+            <div class="axis-tick week-mark">D5</div>
+            <div class="axis-tick">D6</div>
+            <div class="axis-tick">D7</div>
+            <div class="axis-tick">D8</div>
+            <div class="axis-tick">D9</div>
+            <div class="axis-tick">D10</div>
+          </div>
+
+          <div class="tl-row s first">
+            <div class="tl-label"><span class="tl-ticket">S1</span> Registry schema + seed</div>
+            <div class="tl-bar-cell" style="--start:2;--span:2" title="S1 · 2 days · 3 new tables + migration that inserts all 30 check definitions (14 automated + 16 manual-review). Every shipping check gets a code.">
+              🏁 Start here · 30 codes seeded <span class="tl-days">2 days</span>
+            </div>
+          </div>
+
+          <div class="tl-row s">
+            <div class="tl-label"><span class="tl-ticket">S2</span> CheckRegistryService</div>
+            <div class="tl-bar-cell" style="--start:3;--span:2" title="S2 · 2 days · getActiveChecksForMerchant() with resolution order: registry default → per-company override → (stubbed) policy override.">
+              Registry service <span class="tl-days">2 days</span>
+            </div>
+          </div>
+
+          <div class="tl-row s interlock">
+            <div class="tl-label"><span class="tl-ticket">S3</span> check_code column + backfill</div>
+            <div class="tl-bar-cell" style="--start:4;--span:1" title="S3 · 1 day · Adds check_code to PlComplianceFinding + backfill migration. Coordinated with policy T4 (same table).">
+              Column + backfill <span class="tl-days">1 day</span>
+            </div>
+          </div>
+
+          <div class="tl-row s">
+            <div class="tl-label"><span class="tl-ticket">S4</span> ComplianceAnalyzer refactor</div>
+            <div class="tl-bar-cell" style="--start:5;--span:3" title="S4 · 3 days · Middleware analyzer reads from registry. Behind feature flag SCANNER_USE_CHECK_REGISTRY. Most behavior-sensitive ticket.">
+              Middleware · analyzers via registry <span class="tl-days">3 days</span>
+            </div>
+          </div>
+
+          <div class="tl-row s">
+            <div class="tl-label"><span class="tl-ticket">S5</span> Custom elements via registry</div>
+            <div class="tl-bar-cell" style="--start:6;--span:2" title="S5 · 2 days · CustomComplianceAnalyzer + ElementExtractor via registry. Parallel to S4.">
+              Custom checks via registry <span class="tl-days">2 days</span>
+            </div>
+          </div>
+
+          <div class="tl-row s interlock">
+            <div class="tl-label"><span class="tl-ticket">S6</span> CoaHelper check_code stamping</div>
+            <div class="tl-bar-cell" style="--start:7;--span:1" title="S6 · 0.5 day · Scanner provides check-code mapping constant; policy team does the actual rewrite in T4.">
+              Mapping + review <span class="tl-days">0.5 day</span>
+            </div>
+          </div>
+
+          <div class="tl-row s interlock">
+            <div class="tl-label"><span class="tl-ticket">S7</span> License evaluator review</div>
+            <div class="tl-bar-cell" style="--start:8;--span:1" title="S7 · 0.25 day · Scanner code-reviews policy T6's license evaluator stamping. Policy owns the file.">
+              Review license stamp <span class="tl-days">¼ day</span>
+            </div>
+          </div>
+
+          <div class="tl-row s">
+            <div class="tl-label"><span class="tl-ticket">S8</span> Read-only registry admin UI</div>
+            <div class="tl-bar-cell" style="--start:8;--span:2" title="S8 · 2 days · /backend/check-registry — list, detail, version history. Read-only (editing = Phase 2 AI NL).">
+              Registry admin page <span class="tl-days">2 days</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="dep-caption">
+        <b>Critical path:</b> S1 → S2 → (S4 · S5 · S8 parallel) → finish &nbsp;·&nbsp;
+        <b>Rollout:</b> feature-flag-off land · staging regression · pilot merchants · global enable.
+        S8 admin UI ships in parallel and becomes visible only when the flag flips.
+      </div>
+    </div>
+
+    <!-- 8-PHASE LADDER FOR SCANNER -->
+    <div class="td-section">
+      <div class="td-section-title">Evolution · Brian's 8-phase Q-ScanAI trajectory</div>
+      <div class="phase-ladder">
+
+        <div class="phase-card current">
+          <div class="phase-num"><span class="pnum-pill">Phase 1</span> <span>MVP</span></div>
+          <div class="phase-title">Check registry + retrofitted codes</div>
+          <div class="phase-sub">Every check has a code. Config lives in a versioned registry. Findings stamp their code. Foundation for every later phase.</div>
+          <div class="phase-est">~10 days</div>
+        </div>
+
+        <div class="phase-card">
+          <div class="phase-num"><span class="pnum-pill">Phase 2</span></div>
+          <div class="phase-title">AI NL config interface — "the inflection point"</div>
+          <div class="phase-sub">Compliance staff type a plain-English description. Claude proposes a check-definition row. Reviewer approves. <b>Live in hours, not sprints.</b></div>
+          <div class="phase-landing">Landing pad: registry table exists</div>
+          <div class="phase-est">8–12 days</div>
+        </div>
+
+        <div class="phase-card">
+          <div class="phase-num"><span class="pnum-pill">Phase 3</span></div>
+          <div class="phase-title">First INTERACTIVE check</div>
+          <div class="phase-sub">Subscription-default detection — highest-leverage Mastercard mandate. Playwright executor added. <code>check_type = INTERACTIVE</code> already a valid enum.</div>
+          <div class="phase-landing">Landing pad: check_type enum</div>
+          <span class="phase-mcard">⚡ Mastercard</span>
+          <div class="phase-est">10–15 days</div>
+        </div>
+
+        <div class="phase-card">
+          <div class="phase-num"><span class="pnum-pill">Phase 4</span></div>
+          <div class="phase-title">DOCUMENT_PARSE — Agentic clause matching</div>
+          <div class="phase-sub">Full policy-document reading for required / prohibited clauses, beyond presence checks. Config shape already holds the fields.</div>
+          <div class="phase-landing">Landing pad: required_clauses[]</div>
+          <div class="phase-est">3–4 weeks</div>
+        </div>
+
+        <div class="phase-card future">
+          <div class="phase-num"><span class="pnum-pill">Phase 5</span></div>
+          <div class="phase-title">Site change detection reports</div>
+          <div class="phase-sub">Macro-level change maps, visual diffs across scan cycles. Active retention driver. SHA-256 fingerprinting already in place.</div>
+          <div class="phase-landing">Landing pad: finding hash</div>
+          <div class="phase-est">3–4 weeks</div>
+        </div>
+
+        <div class="phase-card future">
+          <div class="phase-num"><span class="pnum-pill">Phase 6</span></div>
+          <div class="phase-title">Continuous improvement loop</div>
+          <div class="phase-sub">False-positive flagging → AI re-review → reviewer approval → config tweak. ML dataset foundation.</div>
+          <div class="phase-landing">Landing pad: versioned config</div>
+          <div class="phase-est">4–5 weeks</div>
+        </div>
+
+        <div class="phase-card future">
+          <div class="phase-num"><span class="pnum-pill">Phase 7</span></div>
+          <div class="phase-title">Authenticated scanning</div>
+          <div class="phase-sub">Vaulted credentials, login flows, AUTH_SCAN tag. <code>check_type = AUTHENTICATED</code> already valid.</div>
+          <div class="phase-landing">Landing pad: check_type enum</div>
+          <span class="phase-mcard">⚡ Mastercard</span>
+          <div class="phase-est">3–4 weeks</div>
+        </div>
+
+        <div class="phase-card merge">
+          <div class="phase-num"><span class="pnum-pill">Phase 8</span> <span style="color:#f9a8d4">merge</span></div>
+          <div class="phase-title">Policy Configurator integration</div>
+          <div class="phase-sub">Scanner reads check config from Policy Configurator. <b>A connection, not a re-engineering</b> — because the check code has been the contract from day one.</div>
+          <div class="phase-landing">Landing pad: check code = contract</div>
+          <div class="phase-est">2–3 weeks given prep</div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============================================== -->
+<!-- COHESION                                       -->
+<!-- ============================================== -->
+<section id="cohesion">
+  <div class="section-head">
+    <div class="section-eyebrow" style="color:#f9a8d4">§ 5 — Cohesion</div>
+    <h2 class="section-title">How the two paths interlock</h2>
+    <p class="section-sub">
+      The check code is the contract. Both teams reference it; neither team reaches into the other's internals.
+      Every finding can carry both stamps. Phase 8's "merge" is already pre-wired.
+    </p>
+  </div>
+
+  <!-- Check code contract shown as code on both sides -->
+  <div class="cohesion-grid">
+
+    <div class="code-card policy">
+      <h4>Policy rule — owned by Huy's team</h4>
+<pre><span class="c">// From a published policy document</span>
+{
+  <span class="k">"delta9Thc"</span>: {
+    <span class="k">"check_code"</span>: <span class="b">"GEN-COA-DELTA9"</span>,  <span class="c">// ← the contract</span>
+    <span class="k">"enabled"</span>: <span class="n">true</span>,
+    <span class="k">"maxPercent"</span>: <span class="n">0.3</span>
+  }
+}</pre>
+    </div>
+
+    <div class="code-card scanner">
+      <h4>Check definition — owned by Mike's team</h4>
+<pre><span class="c">// From the pl_check_definition registry</span>
+{
+  <span class="k">"check_code"</span>: <span class="b">"GEN-COA-DELTA9"</span>,
+  <span class="k">"title"</span>: <span class="s">"Delta-9 THC max percentage"</span>,
+  <span class="k">"check_type"</span>: <span class="s">"DOCUMENT_PARSE"</span>,
+  <span class="k">"current_version"</span>: {
+    <span class="k">"config_json"</span>: { <span class="k">"max_percent"</span>: <span class="n">0.3</span> }
+  }
+}</pre>
+    </div>
+
+  </div>
+
+  <!-- DATA FLOW DIAGRAM -->
+  <div class="dataflow">
+    <div style="text-align:center;margin-bottom:20px">
+      <div style="font-size:10.5px;font-weight:800;letter-spacing:1.3px;text-transform:uppercase;color:#94a3b8;margin-bottom:6px">Runtime data flow</div>
+      <div style="font-size:13px;color:#cbd5e1">A COA upload travels through both systems; the finding lands stamped with attribution from each.</div>
+    </div>
+
+    <div class="flow-row">
+      <div class="flow-node p">
+        <div class="fn-owner">Policy side</div>
+        <div class="fn-title">1. Admin authors policy</div>
+        <div class="fn-sub">References check codes</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node p">
+        <div class="fn-owner">Policy side</div>
+        <div class="fn-title">2. Resolver</div>
+        <div class="fn-sub">Merges policies → effective policy</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node x">
+        <div class="fn-owner">Interlock</div>
+        <div class="fn-title">3. Evaluator reads</div>
+        <div class="fn-sub">Policy value OR registry default</div>
+      </div>
+    </div>
+
+    <div class="flow-row">
+      <div class="flow-node s">
+        <div class="fn-owner">Scanner side</div>
+        <div class="fn-title">a. Seed migration</div>
+        <div class="fn-sub">30 codes registered</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node s">
+        <div class="fn-owner">Scanner side</div>
+        <div class="fn-title">b. Registry service</div>
+        <div class="fn-sub">Returns active checks for merchant</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node x">
+        <div class="fn-owner">Interlock</div>
+        <div class="fn-title">3. Evaluator reads</div>
+        <div class="fn-sub">Same evaluator as above</div>
+      </div>
+    </div>
+
+    <div style="text-align:center;font-size:18px;color:#475569;margin:4px 0">↓</div>
+
+    <div class="flow-row" style="grid-template-columns:1fr 1fr 1fr">
+      <div></div>
+      <div class="flow-node x" style="min-height:92px">
+        <div class="fn-owner">Shared output</div>
+        <div class="fn-title">4. PlComplianceFinding</div>
+        <div class="fn-sub">stamps both <code style="font-family:'IBM Plex Mono',monospace;color:#7dd3fc;font-size:10px">policy_id</code> + <code style="font-family:'IBM Plex Mono',monospace;color:#7dd3fc;font-size:10px">check_code</code></div>
+      </div>
+      <div></div>
+    </div>
+
+    <div style="text-align:center;font-size:18px;color:#475569;margin:4px 0">↓</div>
+
+    <div class="flow-row" style="grid-template-columns:1fr 1fr 1fr">
+      <div></div>
+      <div class="flow-node" style="min-height:84px">
+        <div class="fn-owner">Merchant-visible</div>
+        <div class="fn-title">5. Compliance Cases Portal</div>
+        <div class="fn-sub">"Triggered by: [policy]" attribution</div>
+      </div>
+      <div></div>
+    </div>
+
+    <div class="flow-legend">
+      <span><span class="flow-legend-dot" style="background:rgba(59,130,246,.6);border:1.5px solid rgba(59,130,246,.8)"></span>Owned by Huy's team</span>
+      <span><span class="flow-legend-dot" style="background:rgba(16,185,129,.55);border:1.5px solid rgba(16,185,129,.8)"></span>Owned by Mike's team</span>
+      <span><span class="flow-legend-dot" style="background:rgba(236,72,153,.55);border:1.5px solid rgba(236,72,153,.8)"></span>Shared surface</span>
+    </div>
+  </div>
+
+  <!-- ANTI-PATTERNS -->
+  <div style="margin-bottom:14px;text-align:center">
+    <div class="section-eyebrow" style="color:#fca5a5">What neither team will do</div>
+    <h3 style="font-size:20px;font-weight:800;color:#f8fafc;letter-spacing:-.2px">Five anti-patterns · guardrails for both sides</h3>
+  </div>
+
+  <div class="anti-grid">
+    <div class="anti-card">
+      <div class="anti-label">Anti-pattern · Scanner side</div>
+      <div class="anti-title">Building a parallel rules engine</div>
+      <div class="anti-body">The existing <code style="background:#020617;color:#7dd3fc;padding:1px 5px;border-radius:4px;font-size:10.5px">json-rules-engine</code> stays unused. The registry holds <b>definitions</b>; existing evaluators run the logic. A second rules layer contradicts the 2026-04-12 policy-first pivot.</div>
+    </div>
+    <div class="anti-card">
+      <div class="anti-label">Anti-pattern · Policy side</div>
+      <div class="anti-title">Reaching into scanner internals</div>
+      <div class="anti-body">Policy rules reference check codes as <b>opaque strings</b>. Policy does not need to know if a check is KEYWORD vs DOCUMENT_PARSE — that is scanner-implementation detail. Publish validation confirms the code exists; nothing more.</div>
+    </div>
+    <div class="anti-card">
+      <div class="anti-label">Anti-pattern · Both sides</div>
+      <div class="anti-title">Duplicating the config store</div>
+      <div class="anti-body">One store for check config: <code style="background:#020617;color:#7dd3fc;padding:1px 5px;border-radius:4px;font-size:10.5px">pl_check_definition_version</code>. One store for merchant overrides: <code style="background:#020617;color:#7dd3fc;padding:1px 5px;border-radius:4px;font-size:10.5px">pl_company_check_override</code>. Policy overlays write to the shared override table. <b>No parallel policy-only config table exists.</b></div>
+    </div>
+    <div class="anti-card">
+      <div class="anti-label">Anti-pattern · Timing</div>
+      <div class="anti-title">Merging the two MVPs now</div>
+      <div class="anti-body">Brian's spec is explicit: <b>both ship in parallel</b>. Phase 8 merges them — but because the check code has been the contract from day one, the merge is a connection, not a rewrite. Forcing an early merge only creates coordination overhead.</div>
+    </div>
+    <div class="anti-card">
+      <div class="anti-label">Anti-pattern · Scanner side</div>
+      <div class="anti-title">Skipping a check code</div>
+      <div class="anti-body">Every shipping check gets a code at seed. No exceptions. A check without a code today is a <b>database rewrite in Phase 8</b>. The S1 seed migration is the load-bearing Phase 1 artifact for exactly this reason.</div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ============================================== -->
+<!-- UNIFIED EVOLUTION                              -->
+<!-- ============================================== -->
+<section id="evolution">
+  <div class="section-head">
+    <div class="section-eyebrow">§ 6 — Unified Evolution</div>
+    <h2 class="section-title">MVP → full system — where we are going</h2>
+    <p class="section-sub">
+      Both tracks advance independently through their own phase sequences. They converge at Brian's Phase 8 of the scanner roadmap, where the Policy Configurator becomes the source of truth for check config — because the check code has been the contract from the beginning.
+    </p>
+  </div>
+
+  <div class="phase-ladder" style="gap:12px;flex-wrap:wrap">
+
+    <div class="phase-card current" style="flex:1 1 300px">
+      <div class="phase-num"><span class="pnum-pill">Phase 1</span> <span>MVP · Today</span></div>
+      <div class="phase-title">Check-code system in place · Policies authored</div>
+      <div class="phase-sub">
+        <b style="color:#93c5fd">Policy T1–T9</b> + <b style="color:#6ee7b7">Scanner S1–S8</b> ship in parallel.
+        Every shipping check has a code. Findings carry both <code>policy_id</code> and <code>check_code</code>.
+      </div>
+      <div class="phase-landing">Landing pad: the contract itself</div>
+      <div class="phase-est">~10 working days each</div>
+    </div>
+
+    <div class="phase-card" style="flex:1 1 240px">
+      <div class="phase-num"><span class="pnum-pill">Phase 2</span></div>
+      <div class="phase-title">AI natural-language config</div>
+      <div class="phase-sub">Brian's "inflection point." Compliance staff describe a check in plain English; Claude proposes a row; reviewer approves. Live in hours, not sprints. Policy side adds first contextual rule (statutory FDA disclaimer) reusing the same <code>mode</code> knob.</div>
+      <div class="phase-landing">Landing pad: registry + <code>mode</code> field</div>
+      <div class="phase-est">8–12 days</div>
+    </div>
+
+    <div class="phase-card" style="flex:1 1 240px">
+      <div class="phase-num"><span class="pnum-pill">Phase 3</span></div>
+      <div class="phase-title">Cart interaction + policy overlays</div>
+      <div class="phase-sub">Scanner: first INTERACTIVE check — subscription default detection (Mastercard mandate). Playwright executor added. Policy: per-merchant overlays + merchant-facing dashboard + approval gating.</div>
+      <div class="phase-landing">Landing pad: <code>check_type = INTERACTIVE</code> enum</div>
+      <span class="phase-mcard">⚡ Mastercard</span>
+      <div class="phase-est">10–15 days</div>
+    </div>
+
+    <div class="phase-card future" style="flex:1 1 240px">
+      <div class="phase-num"><span class="pnum-pill">Phase 4</span></div>
+      <div class="phase-title">Document parse · Agentic clause matching</div>
+      <div class="phase-sub">Beyond presence-only — read full policy documents for required/prohibited clauses. Scoring model + bulletins on the policy side.</div>
+      <div class="phase-landing">Landing pad: <code>required_clauses[]</code> in config</div>
+      <div class="phase-est">3–4 weeks</div>
+    </div>
+
+    <div class="phase-card future" style="flex:1 1 240px">
+      <div class="phase-num"><span class="pnum-pill">Phase 5</span></div>
+      <div class="phase-title">Site change detection</div>
+      <div class="phase-sub">Macro-level change maps, visual diffs across scan cycles. Active retention driver. SHA-256 fingerprinting infrastructure already in place since MVP.</div>
+      <div class="phase-landing">Landing pad: finding hash + fingerprint</div>
+      <div class="phase-est">3–4 weeks</div>
+    </div>
+
+    <div class="phase-card future" style="flex:1 1 240px">
+      <div class="phase-num"><span class="pnum-pill">Phase 6</span></div>
+      <div class="phase-title">Continuous improvement · feedback loop</div>
+      <div class="phase-sub">False-positive flagging → AI re-review → reviewer approval → config tweak without code deploy. ML dataset foundation. Policy simulator + test mode on the policy side.</div>
+      <div class="phase-landing">Landing pad: versioned config + rollback</div>
+      <div class="phase-est">4–5 weeks</div>
+    </div>
+
+    <div class="phase-card future" style="flex:1 1 240px">
+      <div class="phase-num"><span class="pnum-pill">Phase 7</span></div>
+      <div class="phase-title">Authenticated scanning</div>
+      <div class="phase-sub">Vaulted credentials, Playwright login flows, <code>AUTH_SCAN</code> tag. Enables scanning inside logged-in sections — Mastercard mandate.</div>
+      <div class="phase-landing">Landing pad: <code>check_type = AUTHENTICATED</code> enum</div>
+      <span class="phase-mcard">⚡ Mastercard</span>
+      <div class="phase-est">3–4 weeks</div>
+    </div>
+
+    <div class="phase-card merge" style="flex:1 1 300px">
+      <div class="phase-num"><span class="pnum-pill">Phase 8</span> <span style="color:#f9a8d4">merge</span></div>
+      <div class="phase-title">Full Policy Configurator integration</div>
+      <div class="phase-sub">The scanner reads check config from the Policy Configurator. The registry becomes a lookup layer over policy-owned per-merchant config. <b>Connection, not rewrite</b> — enabled by the check code being the contract since Phase 1.</div>
+      <div class="phase-landing">Landing pad: the contract from Day 1</div>
+      <div class="phase-est">2–3 weeks given prep</div>
+    </div>
+
+  </div>
+
+  <div style="margin-top:24px;padding:18px 22px;background:rgba(236,72,153,.07);border:1px dashed rgba(236,72,153,.3);border-radius:12px;text-align:center">
+    <div style="font-size:11px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:#f9a8d4;margin-bottom:6px">The architectural payoff</div>
+    <div style="font-size:13.5px;color:#e2e8f0;line-height:1.6;max-width:820px;margin:0 auto">
+      Phase 1 ships two systems that already know how to talk to each other.
+      Every later phase is strictly additive — a new rule type, a new executor, a new UI, a new source of config —
+      <b>never a rewrite of what was already shipped</b>. That is the definition of a smart first step.
+    </div>
+  </div>
+
+</section>
+
+<!-- ============================================== -->
+<!-- DECISIONS ALREADY MADE                          -->
+<!-- ============================================== -->
+<section id="decisions">
+  <div class="section-head">
+    <div class="section-eyebrow" style="color:#6ee7b7">§ 7 — Decisions</div>
+    <h2 class="section-title">Three decisions · already locked</h2>
+    <p class="section-sub">
+      Joseph has already approved these three ownership and ordering calls. They are not open questions on either roadmap.
+    </p>
+  </div>
+
+  <div class="decisions-grid">
+
+    <div class="decision">
+      <div class="decision-check">✓</div>
+      <div>
+        <div class="decision-title">CoaHelper rewrite → policy team owns end-to-end</div>
+        <div class="decision-body">T4 already plans the restructure. Scanner team provides a 5-line <code>coa-check-code.mapping.ts</code> constant and code-reviews the stamping. S6 collapses from 1 day to 0.5 day of review.</div>
+      </div>
+    </div>
+
+    <div class="decision">
+      <div class="decision-check">✓</div>
+      <div>
+        <div class="decision-title">Migration ordering → policy first, scanner second</div>
+        <div class="decision-body">Policy T1 → T4 adds <code>policy_id</code> + <code>policy_rule_key</code>. Scanner S1 → S3 adds <code>check_code</code> + backfill. Back-to-back; no merge conflict on the entity file.</div>
+      </div>
+    </div>
+
+    <div class="decision">
+      <div class="decision-check">✓</div>
+      <div>
+        <div class="decision-title">ScanUrl.dto.ts → scanner refactor first</div>
+        <div class="decision-body">S4's broader refactor lands first. Policy T5 rebases and adds its <code>policy_id</code> / <code>policy_rule_key</code> fields on top. Both additive to the same DTO — one merge order, no clash.</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============================================== -->
+<!-- FOOTER                                         -->
+<!-- ============================================== -->
+<footer class="page-footer">
+  <div class="footer-col">
+    <h5>Source documents</h5>
+    <p style="margin-bottom:10px">Full authored MVP bundle lives in <code style="font-family:'IBM Plex Mono',monospace;color:#7dd3fc;background:#020617;padding:1px 5px;border-radius:4px">qredible-brain/wiki/policy-mvp/</code> — seven files covering reconciliation, MVP definitions, team roadmaps, design prompt, and interlock spec.</p>
+  </div>
+  <div class="footer-col">
+    <h5>For Huy's team</h5>
+    <a>01 · Reconciliation — where we are</a>
+    <a>02 · Policy MVP definition</a>
+    <a>03 · Policy team roadmap (T1–T9)</a>
+    <a>04 · Claude Design prompt (six surfaces)</a>
+  </div>
+  <div class="footer-col">
+    <h5>For Mike's team</h5>
+    <a>05 · Scanner MVP definition</a>
+    <a>06 · Scanner team roadmap (S1–S8)</a>
+    <a>07 · Policy ↔ Scanner interlock</a>
+  </div>
+  <div class="footer-col">
+    <h5>Prototype index</h5>
+    <a href="../">← All prototypes</a>
+    <a href="./">← Qredible prototypes</a>
+    <a href="policy-first-ecosystem.html">→ Policy-first ecosystem</a>
+    <a href="policy-first-meeting-prep.html">→ Policy-first meeting prep</a>
+  </div>
+</footer>
+
+</body>
+</html>
