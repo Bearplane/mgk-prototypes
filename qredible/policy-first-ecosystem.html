@@ -703,12 +703,12 @@ code,.mono{font-family:'IBM Plex Mono',monospace}
         <div class="node st-built">
           <div class="node-icon">🧪</div>
           <div class="node-body">
-            <div class="node-title">COA Extraction <span class="node-ref">Aluma / Cambridge</span></div>
-            <div class="node-plain">Reads lab test PDFs (potency, heavy metals, pesticides) and pulls the numbers into our database automatically.</div>
-            <div class="node-desc">Parses PDF COAs into structured test results (potency, heavy metals, pesticides).</div>
+            <div class="node-title">COA Extraction <span class="node-ref">aluma · Project Cambridge</span></div>
+            <div class="node-plain">External OCR/ML + BPO pipeline. Reads lab test PDFs (Delta-9 %, THC-O %, cannabinoids, potency, pesticides) and stores the numbers on each COA record automatically.</div>
+            <div class="node-desc"><b>Existing integration.</b> Scanner + policy evaluators are <b>consumers</b> of these fields — they do not parse PDFs. A policy rule like <code>delta9Thc</code> applies a threshold to the already-extracted value.</div>
           </div>
           <span class="node-status status-built">Built</span>
-          <div class="node-tooltip"><b>Already hooks into rules engine.</b> <code>resolveCoaValidationRule()</code> is a single-line swap to read from policy instead of hard-coded tier config.</div>
+          <div class="node-tooltip"><b>Upstream of both tracks.</b> aluma extracts → Cambridge BPO validates → structured fields land on the COA record. Phase 4 DOCUMENT_PARSE for COAs is a business decision (keep / augment / replace) — not greenfield. Non-COA document parsing (site policy pages, statutory language) is separate and greenfield.</div>
         </div>
         <div class="node st-built">
           <div class="node-icon">🪪</div>

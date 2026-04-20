@@ -611,6 +611,96 @@ section{
 .pill.pink{background:rgba(236,72,153,.14);color:#f9a8d4;border:1px solid rgba(236,72,153,.35)}
 .pill.slate{background:rgba(100,116,139,.18);color:#cbd5e1;border:1px solid rgba(100,116,139,.4)}
 
+/* =========================================================
+   HOW TO READ THIS PLAN — framing banner
+   ========================================================= */
+.how-to-read{
+  max-width:1320px;margin:0 auto;padding:0 24px 10px;
+}
+.htr-wrap{
+  padding:22px 24px;border-radius:14px;
+  background:linear-gradient(180deg,rgba(15,23,42,.85),rgba(11,17,32,.6));
+  border:1px solid #1e293b;
+  display:grid;grid-template-columns:1fr;gap:16px;
+}
+.htr-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;
+}
+.htr-cell{
+  padding:14px;border-radius:10px;background:rgba(11,17,32,.55);border:1px solid #1e293b;
+}
+.htr-num{
+  font-size:11px;font-weight:800;letter-spacing:1.3px;text-transform:uppercase;color:#7dd3fc;
+  margin-bottom:6px;display:flex;align-items:center;gap:6px;
+}
+.htr-num .n{background:#1e293b;color:#f1f5f9;padding:1px 7px;border-radius:999px;font-size:10px}
+.htr-title{font-size:13px;font-weight:700;color:#f1f5f9;margin-bottom:4px;line-height:1.3}
+.htr-body{font-size:11.5px;color:#94a3b8;line-height:1.55}
+.htr-body b{color:#e2e8f0}
+.htr-body code{background:#020617;color:#7dd3fc;padding:1px 5px;border-radius:4px;font-size:10.5px;font-family:'IBM Plex Mono',monospace}
+
+.proposed-tag{
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:9.5px;font-weight:800;letter-spacing:1px;text-transform:uppercase;
+  padding:1px 7px;border-radius:999px;margin-left:6px;vertical-align:1px;
+  background:rgba(148,163,184,.12);color:#94a3b8;border:1px solid rgba(148,163,184,.3);
+}
+.proposed-tag::before{content:"✎";font-size:9px;opacity:.8}
+
+/* Mockup chips */
+.mockup-chips{
+  display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;
+}
+.mockup-chip{
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:10.5px;font-weight:600;letter-spacing:.2px;
+  padding:4px 9px;border-radius:999px;text-decoration:none;
+  background:rgba(125,211,252,.1);color:#7dd3fc;border:1px solid rgba(125,211,252,.3);
+  transition:all .15s;
+}
+.mockup-chip:hover{background:rgba(125,211,252,.18);color:#bae6fd}
+.mockup-chip.tbd{background:rgba(245,158,11,.08);color:#fcd34d;border-color:rgba(245,158,11,.3);cursor:default}
+.mockup-chip.tbd:hover{background:rgba(245,158,11,.12)}
+.mockup-chip.existing{background:rgba(16,185,129,.08);color:#6ee7b7;border-color:rgba(16,185,129,.3)}
+.mockup-chip.existing:hover{background:rgba(16,185,129,.15);color:#a7f3d0}
+.mockup-chip::before{content:"▸";font-size:9px;opacity:.7}
+.mockup-chip.tbd::before{content:"✎"}
+.mockup-chip.existing::before{content:"✓"}
+
+/* Recommendation frame */
+.reco-frame{
+  margin-top:10px;padding:12px 14px;border-radius:10px;
+  background:rgba(148,163,184,.06);border:1px dashed rgba(148,163,184,.3);
+}
+.reco-frame-label{
+  font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;
+  color:#94a3b8;margin-bottom:6px;display:flex;align-items:center;gap:6px;
+}
+.reco-frame-label::before{content:"◆";color:#94a3b8;font-size:9px}
+.reco-frame-body{font-size:11.5px;color:#cbd5e1;line-height:1.6}
+.reco-frame-body b{color:#f1f5f9}
+.reco-frame-body code{background:#020617;color:#7dd3fc;padding:1px 5px;border-radius:4px;font-size:10.5px;font-family:'IBM Plex Mono',monospace}
+
+/* Per-phase business-first block */
+.pp-block{
+  padding:16px;border-radius:10px;background:rgba(15,23,42,.5);border:1px solid #1e293b;
+  margin-bottom:10px;
+}
+.pp-label{
+  font-size:10px;font-weight:800;letter-spacing:1.3px;text-transform:uppercase;
+  color:#7dd3fc;margin-bottom:6px;
+}
+.pp-label.biz{color:#f9a8d4}
+.pp-label.ui{color:#93c5fd}
+.pp-label.hook{color:#c4b5fd}
+.pp-label.tech{color:#94a3b8}
+.pp-label.ac{color:#6ee7b7}
+.pp-body{font-size:12px;color:#e2e8f0;line-height:1.6}
+.pp-body b{color:#f8fafc}
+.pp-body code{background:#020617;color:#7dd3fc;padding:1px 5px;border-radius:4px;font-size:10.5px;font-family:'IBM Plex Mono',monospace}
+.pp-body ul{margin-top:6px;padding-left:20px}
+.pp-body li{margin-bottom:3px}
+
 /* Mobile tweaks */
 @media (max-width:640px){
   section{padding:36px 16px}
@@ -664,6 +754,52 @@ section{
     <span>📌 Last synthesized <b>2026-04-20</b></span>
     <span>👥 Audience: <b>executive · business · engineering</b></span>
     <span>📖 Read in 2 minutes · grasp in 10 seconds</span>
+  </div>
+</div>
+
+<!-- ============================================== -->
+<!-- HOW TO READ THIS PLAN                          -->
+<!-- ============================================== -->
+<div class="how-to-read">
+  <div class="htr-wrap">
+    <div>
+      <div class="section-eyebrow" style="text-align:left;margin-bottom:6px">How to read this plan</div>
+      <div style="font-size:13px;color:#cbd5e1;line-height:1.6">
+        Every section below leads with the <b style="color:#f9a8d4">business requirement</b> — what Qredible is asking its customers and compliance team to be able to do. Technical naming is offered as a <b style="color:#cbd5e1">recommendation</b>, not a directive; the dev team owns implementation details.
+      </div>
+    </div>
+
+    <div class="htr-grid">
+      <div class="htr-cell">
+        <div class="htr-num"><span class="n">1</span> Business requirement</div>
+        <div class="htr-title">Why we are building this</div>
+        <div class="htr-body">Plain English. No class names, no table names. The outcome a compliance admin or merchant experiences.</div>
+      </div>
+      <div class="htr-cell">
+        <div class="htr-num"><span class="n">2</span> What the user sees</div>
+        <div class="htr-title">Screen · role · action</div>
+        <div class="htr-body">Which page, which role, which click. <b>Mockup links</b> where one exists on <code>jfloyd-qredible.netlify.app</code>; <span style="color:#fcd34d">"mockup: TBD from Brian"</span> where one does not.</div>
+      </div>
+      <div class="htr-cell">
+        <div class="htr-num"><span class="n">3</span> What it hooks into</div>
+        <div class="htr-title">Upstream · downstream</div>
+        <div class="htr-body">Existing screens (Q-Audit Global Settings, Compliance Cases Portal) vs. new surfaces. Parent hypotheses flagged as hypotheses.</div>
+      </div>
+      <div class="htr-cell">
+        <div class="htr-num"><span class="n">4</span> Recommended approach</div>
+        <div class="htr-title">Guidance, not prescription</div>
+        <div class="htr-body">Proposed entity / service / column names carry a <span class="proposed-tag">proposed</span> tag. <b>The dev team decides actual names, files, and shape.</b></div>
+      </div>
+      <div class="htr-cell">
+        <div class="htr-num"><span class="n">5</span> Acceptance</div>
+        <div class="htr-title">Business-observable</div>
+        <div class="htr-body">"Admin creates policy, case appears in portal tagged to it." Not "service X returns object Y with property Z."</div>
+      </div>
+    </div>
+
+    <div style="padding:10px 14px;background:rgba(236,72,153,.06);border:1px dashed rgba(236,72,153,.3);border-radius:10px;font-size:11.5px;color:#f9a8d4;line-height:1.55">
+      <b style="color:#fbcfe8">Naming key · read the tech names as drafts.</b> References below to items like <code style="background:#020617;color:#7dd3fc;padding:1px 5px;border-radius:4px;font-size:10.5px">pl_policy</code>, <code style="background:#020617;color:#7dd3fc;padding:1px 5px;border-radius:4px;font-size:10.5px">PolicyResolverService</code>, <code style="background:#020617;color:#7dd3fc;padding:1px 5px;border-radius:4px;font-size:10.5px">pl_check_definition</code>, <code style="background:#020617;color:#7dd3fc;padding:1px 5px;border-radius:4px;font-size:10.5px">CheckRegistryService</code> — <b style="color:#fbcfe8">none of these exist today.</b> They are proposed names used consistently so the two tracks can coordinate vocabulary. Huy and Mike choose final names, columns, files, and shape during implementation.
+    </div>
   </div>
 </div>
 
@@ -738,67 +874,142 @@ section{
     <div class="section-eyebrow">§ 2 — The first step · promised to both team leads</div>
     <h2 class="section-title">Day 1 · Monday of MVP week</h2>
     <p class="section-sub">
-      Both teams open with <b style="color:#f1f5f9">pure-schema work</b>: new tables, new entities,
-      no wiring into production code. Safe to land parallel to v1.3.3 shipping Friday.
-      Zero regression risk. Maximum unblocking power.
+      Both teams open with <b style="color:#f1f5f9">foundation work</b> that carries no regression risk to the
+      product merchants use today. Land it parallel to v1.3.3 shipping Friday, then every subsequent ticket has a
+      stable anchor.
     </p>
   </div>
 
   <div class="first-step-grid">
 
-    <!-- T1 — POLICY -->
+    <!-- POLICY -->
     <div class="first-step policy">
       <div class="first-step-stamp"><span class="dot"></span> Huy's Day 1</div>
       <div class="fs-team">Policy Track · opens the week</div>
-      <h3>Schema + resolver — the contract</h3>
-      <div class="fs-ticket">T1 → T3 · foundation stretch</div>
+      <h3>Make "a compliance rule" a thing the platform can hold</h3>
+      <div class="fs-ticket">Proposed tickets T1 → T3 · foundation stretch</div>
 
-      <div class="fs-why">
-        <b>Why this first?</b>  T1 lands the two new tables —
-        <code style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#7dd3fc">pl_policy</code> and
-        <code style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#7dd3fc">pl_merchant_policy</code>
-        — plus TypeORM entities and the TypeScript interface for the five-rule JSON shape. It is pure additive
-        schema: zero risk to v1.3.3 shipping Friday, zero regression risk. <b>The foundation stretch ends with T3
-        — the <code style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#7dd3fc">PolicyResolverService</code>
-        with <span style="color:#f1f5f9">merchant &gt; tier &gt; industry &gt; global</span> precedence.</b>
-        That resolver is the contract the Compliance Portal calls, the refactored CoaHelper calls, the scan pipeline
-        calls, the license evaluator calls. Without it, every downstream ticket has no stable anchor. With it,
-        the roadmap locks in.
+      <div class="fs-why" style="background:rgba(59,130,246,.07);border-color:rgba(59,130,246,.25)">
+        <div class="pp-label biz">① Business requirement</div>
+        <div class="pp-body" style="margin-top:4px">
+          A compliance admin needs to be able to <b>author a named compliance rule</b> (e.g. "Cannabis Hemp Baseline")
+          and say <b>who it applies to</b> (all merchants, an industry, a tier, or a specific merchant list). When a
+          merchant matches more than one, <b>the most specific one wins</b>. Today the platform has no concept of a
+          policy as a first-class object — rules are scattered across code and per-merchant toggles. The first step
+          gives the platform a place to put a policy and a way to ask "which policy applies to this merchant right now?"
+        </div>
       </div>
 
-      <div class="fs-unblocks-label">What T1 → T3 unblocks</div>
+      <div class="fs-why" style="margin-top:10px">
+        <div class="pp-label ui">② What the admin will see</div>
+        <div class="pp-body" style="margin-top:4px">
+          A new <b>"Policies"</b> tile on the existing <b>Q-Audit &rarr; Global Settings</b> grid (hypothesis — sits alongside
+          Document Types, Industry Types, COA Field Library, Tiers). Tile click opens a Policy list page; list row
+          click opens the authoring form. By end of Day 1–3 the list + tile are visible and a policy can be created
+          from a form — publishing it has no downstream effect yet because the evaluator hasn't been wired.
+          <div class="mockup-chips">
+            <a class="mockup-chip existing" href="qredible-tickets/policy-editor.html" target="_blank">Existing mockup: Policy Editor (full v3)</a>
+            <a class="mockup-chip existing" href="qredible-tickets/policy-authoring-wizard.html" target="_blank">Existing mockup: Policy Authoring Wizard</a>
+            <span class="mockup-chip tbd">MVP carve-out: 6 Claude Design surfaces pending</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="fs-why" style="margin-top:10px">
+        <div class="pp-label hook">③ What it hooks into</div>
+        <div class="pp-body" style="margin-top:4px">
+          <b>Upstream:</b> Q-Audit Global Settings (exists today — 17 tiles, a Policy tile already exists in that grid).
+          <b>Downstream:</b> every subsequent policy ticket (CRUD, resolver, CoaHelper rewrite, scan config, license
+          evaluator, re-evaluate button, admin UI form, case detail attribution). Without the foundation stretch,
+          none of the downstream tickets have a stable anchor to call.
+        </div>
+      </div>
+
+      <div class="reco-frame">
+        <div class="reco-frame-label">④ Recommended technical approach · guidance only</div>
+        <div class="reco-frame-body">
+          Two additive tables holding policies and merchant-to-policy assignments; a thin service that, given a merchant id,
+          returns the <b>one effective policy</b> using <b>merchant &gt; tier &gt; industry &gt; global</b> precedence with a
+          <code>publishedAt</code> tiebreaker. Proposed names for shared coordination: <code>pl_policy</code> <span class="proposed-tag">proposed</span> and
+          <code>pl_merchant_policy</code> <span class="proposed-tag">proposed</span>, wrapped by a
+          <code>PolicyResolverService</code> <span class="proposed-tag">proposed</span>. <b>Huy's team owns final names and shape.</b>
+          Rule payload stored as JSON (five rule types — COA expiration, Delta-9 max, THC-O max, license expiration, scan checks).
+        </div>
+      </div>
+
+      <div class="fs-unblocks-label" style="margin-top:14px">⑤ Acceptance — business-observable</div>
       <ul class="fs-unblocks">
-        <li><span class="fs-check">✓</span> <span><b>T2</b> — Policy CRUD service &amp; controller (needs the tables to write into)</span></li>
-        <li><span class="fs-check">✓</span> <span><b>T3</b> — <code>PolicyResolverService.getEffectivePolicy()</code> — the contract every other ticket calls</span></li>
-        <li><span class="fs-check">✓</span> <span><b>T4</b> — <code>CoaHelper</code> rewrite (needs resolver to be real)</span></li>
-        <li><span class="fs-check">✓</span> <span><b>T5 · T6 · T7</b> — scan config, license evaluator, re-evaluate endpoint (all read through the resolver)</span></li>
-        <li><span class="fs-check">✓</span> <span><b>T8</b> — Admin UI policy authoring form (needs CRUD endpoints live)</span></li>
-        <li><span class="fs-check">✓</span> <span><b>Every</b> subsequent MVP ticket. T1 → T3 is the root of the dependency tree.</span></li>
+        <li><span class="fs-check">✓</span> <span>Compliance admin can click into a Policies list and see 2–3 seeded example policies.</span></li>
+        <li><span class="fs-check">✓</span> <span>Admin opens "Cannabis Hemp Baseline v1", edits Delta-9 max %, saves — change persists.</span></li>
+        <li><span class="fs-check">✓</span> <span>Given a merchant id, the platform can answer: "What policy currently applies to this merchant?"</span></li>
+        <li><span class="fs-check">✓</span> <span>Zero user-facing regression on v1.3.3 features — policy data is dormant until the evaluator is wired later in the week.</span></li>
       </ul>
     </div>
 
-    <!-- S1 — SCANNER -->
+    <!-- SCANNER -->
     <div class="first-step scanner">
       <div class="first-step-stamp"><span class="dot"></span> Mike's Day 1</div>
       <div class="fs-team">Scanner Track · opens the week</div>
-      <h3>Check registry schema + seed migration</h3>
-      <div class="fs-ticket">S1 · ~2 working days</div>
+      <h3>Give every scanner check a stable name</h3>
+      <div class="fs-ticket">Proposed ticket S1 · ~2 working days</div>
 
-      <div class="fs-why">
-        <b>Why this first?</b>  Per Brian's Q-ScanAI Enhancement Spec v4, <b>the check code is the
-        load-bearing integration contract for every one of the next eight phases</b>. Getting it right and getting
-        codes assigned to all 30 currently-shipping checks on day one turns Phase 8 (full Policy Configurator
-        integration) from a re-engineering into a connection. A check without a code today is a database rewrite
-        tomorrow. S1 lands all three new tables plus the seed migration — additive, feature-flag-off, safe parallel to v1.3.3.
+      <div class="fs-why" style="background:rgba(16,185,129,.07);border-color:rgba(16,185,129,.25)">
+        <div class="pp-label biz">① Business requirement</div>
+        <div class="pp-body" style="margin-top:4px">
+          Today every scanner check (FDA disclaimer, COA expiration, payment-method regex, privacy-policy presence, and
+          27 more) is a unique block of hardcoded logic. There is no shared vocabulary — no way to say "this finding
+          came from check X" in a stable way. The first step <b>gives every currently-shipping check a stable identity
+          code</b> in the shape <code>INDUSTRY-CATEGORY-ELEMENT</code> (e.g. <code>GEN-COA-DELTA9</code>). Once every check
+          has a code, adding a new check becomes a config row instead of a code deploy, and the Policy track has
+          something to reference.
+        </div>
       </div>
 
-      <div class="fs-unblocks-label">What S1 unblocks</div>
+      <div class="fs-why" style="margin-top:10px">
+        <div class="pp-label ui">② What the developer / admin will see</div>
+        <div class="pp-body" style="margin-top:4px">
+          Day-1 surface is <b>not visual</b> — it is the seed migration. By end of week, a new
+          <b>read-only Check Registry admin page</b> lands at Q-Audit (hypothesis — <b>Q-Audit &rarr; Global Settings &rarr;
+          Check Registry</b>, sibling tile to Compliance Elements). Rows show check code, title, type (KEYWORD /
+          DOCUMENT_PARSE / INTERACTIVE / AUTHENTICATED / LINK_MAP), current version. Editing this registry from the UI
+          arrives in Phase 2 (AI NL config); for now it is a lookup surface only.
+          <div class="mockup-chips">
+            <a class="mockup-chip existing" href="qredible-tickets/scanner-industry-config.html" target="_blank">Existing mockup: Policy-Driven Scanner Configuration</a>
+            <a class="mockup-chip existing" href="qredible-tickets/regulatory-rules-engine.html" target="_blank">Existing mockup: Rules Engine (Phase 4 landing pad)</a>
+            <span class="mockup-chip tbd">Mockup TBD from Brian: read-only Check Registry admin</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="fs-why" style="margin-top:10px">
+        <div class="pp-label hook">③ What it hooks into</div>
+        <div class="pp-body" style="margin-top:4px">
+          <b>Upstream:</b> the existing scanner pipeline that produces findings today (Middleware analyzers, CoaHelper,
+          License evaluator). <b>Downstream:</b> every Phase 2–8 capability in Brian's Q-ScanAI Enhancement Spec v4 —
+          AI NL config, cart INTERACTIVE checks, DOCUMENT_PARSE, site change detection, feedback loop, authenticated
+          scanning, and ultimately the Policy Configurator merge. A check without a code on Day 1 becomes a database
+          rewrite in Phase 8 per Brian's spec.
+        </div>
+      </div>
+
+      <div class="reco-frame">
+        <div class="reco-frame-label">④ Recommended technical approach · guidance only</div>
+        <div class="reco-frame-body">
+          Three additive tables (a definition table, a version table, a per-company override table) plus a seed
+          migration that inserts a row for each of the 30 currently-shipping checks (14 automated + 16 manual-review).
+          Proposed names for shared coordination: <code>pl_check_definition</code> <span class="proposed-tag">proposed</span>,
+          <code>pl_check_definition_version</code> <span class="proposed-tag">proposed</span>,
+          <code>pl_company_check_override</code> <span class="proposed-tag">proposed</span>. <b>Mike's team owns final
+          names, columns, file layout.</b> Feature-flag-off (<code>SCANNER_USE_CHECK_REGISTRY</code>) so landing is dormant.
+        </div>
+      </div>
+
+      <div class="fs-unblocks-label" style="margin-top:14px">⑤ Acceptance — business-observable</div>
       <ul class="fs-unblocks">
-        <li><span class="fs-check">✓</span> <span><b>S2</b> — <code>CheckRegistryService</code> (needs tables to query)</span></li>
-        <li><span class="fs-check">✓</span> <span><b>S3</b> — <code>check_code</code> column + historical backfill (needs codes to reference)</span></li>
-        <li><span class="fs-check">✓</span> <span><b>S4 / S5</b> — Middleware analyzer refactors (read from registry)</span></li>
-        <li><span class="fs-check">✓</span> <span><b>S8</b> — Read-only registry admin page</span></li>
-        <li><span class="fs-check">✓</span> <span><b>Every Phase 2–8 capability</b>. Miss a code now — rework in Phase 8.</span></li>
+        <li><span class="fs-check">✓</span> <span>Every one of the 30 shipping checks has a unique identity code, visible in the read-only registry page by Friday.</span></li>
+        <li><span class="fs-check">✓</span> <span>A new keyword check can be added to the registry via one config row (without a code deploy) behind the flag.</span></li>
+        <li><span class="fs-check">✓</span> <span>Existing scanner behavior is byte-identical when the flag is off — zero regression to v1.3.3.</span></li>
+        <li><span class="fs-check">✓</span> <span>Brian's Phase 8 merge becomes a connection (the contract exists) rather than a rewrite (the contract didn't exist).</span></li>
       </ul>
     </div>
 
@@ -890,8 +1101,9 @@ section{
       <div class="pb-cell p">
         <div class="pb-t"><span class="pb-ticket">T4</span> <span class="pb-ticket">T5</span> <span class="pb-ticket">T6</span> <span class="pb-ticket">T7</span> <span class="pb-ticket">T8</span> <span class="pb-ticket">T9</span> Integration + UI</div>
         <div class="pb-sub">
-          <code>CoaHelper</code> reads from resolver (T4), scan config read-path (T5), license evaluator (T6),
-          re-evaluate endpoint (T7), admin authoring UI (T8 parallel), case detail attribution badge (T9).
+          <code>CoaHelper</code> reads thresholds from the effective policy and applies them to <b>aluma-extracted COA fields</b> (T4),
+          scan config read-path (T5), license evaluator (T6), re-evaluate endpoint (T7), admin authoring UI (T8 parallel),
+          case detail attribution badge (T9). <b>No PDF parsing introduced — compliance logic on already-extracted values.</b>
         </div>
       </div>
       <div class="pb-cell s">
@@ -948,25 +1160,82 @@ section{
       <div class="owner">Lead: <b>Huy Nguyen</b> · Repos: RTQ-Admin-API, RTQ-Admin-UI</div>
     </div>
 
-    <!-- BUSINESS REQUIREMENTS -->
+    <!-- BUSINESS REQUIREMENTS (five-part) -->
     <div class="td-section">
-      <div class="td-section-title">Business requirements · plain English</div>
-      <div class="biz-grid">
-        <div class="biz-cell">
-          <div class="biz-cell-label">What problem</div>
-          <div class="biz-cell-content">Compliance rules live today as hard-coded thresholds and per-merchant toggles scattered across the code. <b>Changing a rule requires a developer and a deploy.</b> That does not scale to 29 industries.</div>
+      <div class="td-section-title">Per-phase format · business-first</div>
+
+      <div class="pp-block">
+        <div class="pp-label biz">① Business requirement</div>
+        <div class="pp-body">
+          A compliance admin at Qredible needs to <b>define what "compliant" means for a group of merchants</b> —
+          expressed as a named, versioned, scoped rule set — and change those rules <b>without requiring a developer
+          or a deploy</b>. A merchant must receive a clear, attributable case when their COA, license, or site content
+          falls outside the rules that apply to them. Today rules are hardcoded thresholds and per-merchant toggles
+          scattered across the code; there is no durable object called "a policy." This MVP makes the platform
+          understand a policy as a first-class thing.
         </div>
-        <div class="biz-cell">
-          <div class="biz-cell-label">For whom</div>
-          <div class="biz-cell-content"><b>Compliance admins</b> inside Qredible — internal Q-Audit users who need to define, edit, and roll out rules without engineering involvement. Merchants see the resulting enforcement through the existing Cases Portal.</div>
+      </div>
+
+      <div class="pp-block">
+        <div class="pp-label ui">② What the user will see</div>
+        <div class="pp-body">
+          <b>Primary user:</b> Qredible compliance admin (single role for MVP — no approval gating, no author/approver split).
+          <b>Merchants</b> see the downstream case in the existing Compliance Cases Portal.
+          <ul>
+            <li><b>Q-Audit &rarr; Global Settings</b> gains a <b>"Policies"</b> tile — click it to reach the policy list (hypothesis: lives in the existing 17-tile grid next to Document Types, Industry Types, Tiers).</li>
+            <li>The <b>policy list</b> shows name, version, status, scope summary, published date. Row click opens the authoring form.</li>
+            <li>The <b>policy authoring form</b> has five enable-able rule cards (COA expiration, Delta-9 max, THC-O max, license expiration, scan checks) and a scope picker with four modes.</li>
+            <li>On the <b>merchant detail page</b>, a new <b>"Re-evaluate policies"</b> button in the actions area.</li>
+            <li>On a <b>case detail page</b> in the Compliance Cases Portal, one new row: <b>Triggered by: [policy name] v[version] / [rule key]</b> — linking back to the policy.</li>
+          </ul>
+          <div class="mockup-chips">
+            <a class="mockup-chip existing" href="qredible-tickets/policy-editor.html" target="_blank">Policy Editor (full v3 — authoring surface)</a>
+            <a class="mockup-chip existing" href="qredible-tickets/policy-authoring-wizard.html" target="_blank">Policy Authoring Wizard (Noah's guided stepper)</a>
+            <a class="mockup-chip existing" href="qredible-tickets/multi-industry-type.html" target="_blank">Multi-Policy Merchant Assignment</a>
+            <span class="mockup-chip tbd">MVP carve-out: 6 surfaces (policy-list-mvp, policy-edit-mvp, policy-scope-preview, merchant-reevaluate-trigger, case-detail-policy-stamp, q-audit-policies-tile) commissioned to Claude Design</span>
+          </div>
         </div>
-        <div class="biz-cell">
-          <div class="biz-cell-label">Why now</div>
-          <div class="biz-cell-content">The 2026-04-12 pivot made the platform <b>policy-first</b>. Industry-keyed attribute tables (QP-3603 / QP-3604) are dead. The MVP proves the policy-first model end-to-end before scaling to the full 29-industry vision.</div>
+      </div>
+
+      <div class="pp-block">
+        <div class="pp-label hook">③ What it hooks into</div>
+        <div class="pp-body">
+          <b>Upstream / existing screens this extends:</b>
+          <ul>
+            <li><b>Q-Audit Global Settings</b> — the 17-tile admin configuration grid (already has a "Policy" tile; this MVP fills it in).</li>
+            <li><b>Merchant detail page</b> in Q-Monitor admin — gains the "Re-evaluate policies" action button.</li>
+            <li><b>Compliance Cases Portal</b> — nothing built yet in code, but the outcome surface for this MVP lands here as policy-attributed findings once the portal is built.</li>
+          </ul>
+          <b>Downstream / new surfaces this MVP adds:</b> policy list, policy authoring form, scope preview modal, re-evaluate confirmation modal.
+          <b>Integration touch points (not user-visible):</b> the existing CoaHelper logic that determines COA disposition, the scan pipeline that reads per-merchant scan config, the license expiration evaluator — all of these start reading from the published policy instead of from per-merchant toggles.
         </div>
-        <div class="biz-cell">
-          <div class="biz-cell-label">"Done" looks like</div>
-          <div class="biz-cell-content">An admin creates "Cannabis Hemp Baseline v1" with Delta-9 ≤ 0.3% and THC-O = 0%, scopes it to Hemp CBD, publishes. A merchant uploads a non-compliant COA. The case appears in the portal tagged <b>Triggered by: Cannabis Hemp Baseline v1 / delta9Thc</b>. Four steps. One round-trip.</div>
+      </div>
+
+      <div class="reco-frame">
+        <div class="reco-frame-label">④ Recommended technical approach · guidance, not directive</div>
+        <div class="reco-frame-body">
+          The shape of the work (offered so the two tracks can coordinate; <b>dev team chooses final names</b>):
+          <ul style="margin-top:6px;padding-left:20px">
+            <li>Two additive tables — one for policies (<code>pl_policy</code> <span class="proposed-tag">proposed</span>), one for merchant-to-policy assignments (<code>pl_merchant_policy</code> <span class="proposed-tag">proposed</span>).</li>
+            <li>A rules payload stored as JSON on the policy row (five rule keys: <code>coaExpiration</code>, <code>delta9Thc</code>, <code>thcO</code>, <code>licenseExpiration</code>, <code>scanChecks</code>).</li>
+            <li>A service that, given a merchant id, returns the <b>one effective policy</b> using <b>merchant &gt; tier &gt; industry &gt; global</b> precedence with a <code>publishedAt</code> tiebreaker — proposed as <code>PolicyResolverService</code> <span class="proposed-tag">proposed</span>.</li>
+            <li>Existing rule-consuming code paths (CoaHelper, scan config, license evaluator) refactored to read through that resolver instead of per-merchant columns.</li>
+            <li>A new column on findings (<code>policy_id</code> <span class="proposed-tag">proposed</span> + <code>policy_rule_key</code> <span class="proposed-tag">proposed</span>) so cases can be attributed back.</li>
+          </ul>
+          <b>What the dev team owns entirely:</b> final entity names, file layouts, migration structure, TypeORM vs. raw SQL, caching strategy, JSON vs. JSONB, how to model the four scope modes.
+        </div>
+      </div>
+
+      <div class="pp-block" style="border-left:3px solid rgba(16,185,129,.5)">
+        <div class="pp-label ac">⑤ Acceptance · business-observable</div>
+        <div class="pp-body">
+          <ul>
+            <li>An admin can create "Cannabis Hemp Baseline v1" with Delta-9 ≤ 0.3% and THC-O = 0%, scope it to Hemp CBD, and publish it — all from one surface.</li>
+            <li>A merchant in the Hemp CBD industry uploads a COA showing 0.45% Delta-9. On the next evaluation (or via the admin's "Re-evaluate" button), a Compliance Case appears.</li>
+            <li>The case detail page shows <b>"Triggered by: Cannabis Hemp Baseline v1 / delta9Thc"</b> — hyperlinked back to the policy.</li>
+            <li>An admin can change the threshold to 0.2%, publish v2, re-evaluate that merchant, and see the case update to reference v2.</li>
+            <li>Zero regressions on existing COA disposition, scan, or license-expiration behavior for merchants not covered by a policy.</li>
+          </ul>
         </div>
       </div>
     </div>
@@ -974,6 +1243,15 @@ section{
     <!-- TECHNICAL ROADMAP TIMELINE -->
     <div class="td-section">
       <div class="td-section-title">Technical roadmap · timeline (ticket × day)</div>
+      <div class="reco-frame" style="margin-bottom:14px">
+        <div class="reco-frame-label">Read this timeline as proposed sequencing · guidance only</div>
+        <div class="reco-frame-body">
+          Tickets, day counts, and ticket boundaries below are a <b>suggested shape</b> to show scope and critical path.
+          Ticket IDs (T1–T9, S1–S8) are <span class="proposed-tag">proposed</span> handles used for cross-track coordination in this document only.
+          The dev team owns <b>how to slice these into actual tickets</b>, <b>how to sequence them</b>, and <b>how to estimate them</b>. The
+          business requirement above is what is fixed.
+        </div>
+      </div>
       <div class="timeline">
         <div class="timeline-scroll">
 
@@ -1124,25 +1402,91 @@ section{
       <div class="owner">Lead: <b>Mike</b> · Repos: RTQ-Admin-API, Middleware, RTQ-Admin-UI</div>
     </div>
 
-    <!-- BUSINESS REQUIREMENTS -->
+    <!-- BUSINESS REQUIREMENTS (five-part) -->
     <div class="td-section">
-      <div class="td-section-title">Business requirements · plain English</div>
-      <div class="biz-grid">
-        <div class="biz-cell">
-          <div class="biz-cell-label">What problem</div>
-          <div class="biz-cell-content">Every scanner check today is <b>hardcoded</b> — FDA disclaimer patterns, COA expiration thresholds, payment-method regex all baked into source. Adding a new check means a sprint ticket, code review, and a deploy.</div>
+      <div class="td-section-title">Per-phase format · business-first</div>
+
+      <div class="pp-block">
+        <div class="pp-label biz">① Business requirement</div>
+        <div class="pp-body">
+          Today every scanner check (FDA disclaimer presence, COA expiration threshold, payment-method regex, privacy-policy
+          presence, and about 27 more) lives as a unique block of hardcoded logic — <b>adding a new check requires a
+          sprint ticket, code review, and a deploy</b>. There is no shared vocabulary, no way to say "this case came from
+          check X" in a stable way, no way for the Policy track to reference a specific check by name. This MVP
+          <b>gives every currently-shipping check a stable identity code</b> and <b>moves configuration out of code into a
+          versioned registry</b>, so compliance capabilities become data instead of releases.
+          <div style="margin-top:8px;padding:10px 12px;background:rgba(245,158,11,.06);border:1px dashed rgba(245,158,11,.3);border-radius:8px">
+            <b style="color:#fcd34d">Important clarification · upstream data dependencies.</b> COA-derived values (Delta-9 THC %,
+            THC-O %, cannabinoid profile) <b>are already extracted today</b> by the external <b>aluma (Project Cambridge)</b>
+            OCR/ML + BPO pipeline and stored on the COA record. The scanner is a <b>consumer</b> of those fields —
+            it <b>does not parse COA PDFs</b>. A policy rule like <code>delta9Thc</code> reads the stored value and applies
+            the compliance threshold. This shapes Phase 4 scope below.
+          </div>
         </div>
-        <div class="biz-cell">
-          <div class="biz-cell-label">For whom</div>
-          <div class="biz-cell-content"><b>Compliance staff</b> (long term) and the <b>scanner developer team</b> (short term). MVP enables config-driven checks today; Phase 2's AI NL interface turns compliance staff into check authors without code.</div>
+      </div>
+
+      <div class="pp-block">
+        <div class="pp-label ui">② What the user will see</div>
+        <div class="pp-body">
+          <b>Primary user (MVP):</b> scanner developer + compliance team read-only. <b>Primary user (Phase 2 onwards):</b>
+          compliance staff author new checks in plain English, no code.
+          <ul>
+            <li><b>Q-Audit &rarr; Global Settings &rarr; Check Registry</b> (hypothesis — new tile, sibling to Compliance Elements)
+              shows a read-only registry of every shipping check: code, title, type (KEYWORD / DOCUMENT_PARSE /
+              INTERACTIVE / AUTHENTICATED / LINK_MAP), current version, status (active automated / manual review).</li>
+            <li>A <b>Compliance Case detail</b> (in the Cases Portal — eventual) carries the <b>check code</b> alongside the
+              policy attribution: <i>"Triggered by Cannabis Hemp Baseline v1 / delta9Thc · Check: GEN-COA-DELTA9."</i></li>
+            <li>On the <b>COA view</b>, the aluma-extracted field values remain the source of truth; the scanner adds a
+              compliance evaluation badge next to each policy-referenced field.</li>
+          </ul>
+          <div class="mockup-chips">
+            <a class="mockup-chip existing" href="qredible-tickets/scanner-industry-config.html" target="_blank">Policy-Driven Scanner Configuration</a>
+            <a class="mockup-chip existing" href="qredible-tickets/regulatory-rules-engine.html" target="_blank">Rules Engine (Section 2 canonical tile grid)</a>
+            <a class="mockup-chip existing" href="qredible-tickets/mri-marketplace.html" target="_blank">MRI Marketplace (false-positive UX pattern reference)</a>
+            <span class="mockup-chip tbd">Mockup TBD from Brian: read-only Check Registry admin page</span>
+          </div>
         </div>
-        <div class="biz-cell">
-          <div class="biz-cell-label">Why now</div>
-          <div class="biz-cell-content">Brian's Q-ScanAI Enhancement Spec v4 calls Phase 1 "load-bearing for every subsequent phase." Missing codes now are Phase 8 rewrites later. <b>And Mastercard-mandated capabilities (authenticated scanning, cart checks) are queued behind this.</b></div>
+      </div>
+
+      <div class="pp-block">
+        <div class="pp-label hook">③ What it hooks into</div>
+        <div class="pp-body">
+          <b>Upstream / existing systems this builds on:</b>
+          <ul>
+            <li><b>aluma (Project Cambridge) integration</b> — already extracts COA structured fields (Delta-9 %, THC-O %, cannabinoids, batch number) and populates <code>VaultCoa</code> / <code>PlMpCoaManage</code> on the COA record. Scanner reads these, does not re-extract.</li>
+            <li><b>Existing scanner pipeline</b> — Middleware analyzers, <code>CoaHelper</code>, license expiration evaluator. These start reading their check list from the registry instead of from hardcoded arrays.</li>
+            <li><b>Existing findings store</b> — <code>PlComplianceFinding</code>. This MVP adds a <code>check_code</code> column and backfills history.</li>
+          </ul>
+          <b>Downstream / new surfaces this MVP adds:</b> read-only check registry admin page; <code>check_code</code> on every finding; per-merchant override table (stubbed for policy integration).
+          <b>Every Phase 2–8 capability</b> (AI NL config, cart INTERACTIVE, DOCUMENT_PARSE of non-COA sources, site change detection, feedback loop, authenticated scanning, Policy Configurator merge) reads from the registry the Phase 1 MVP lands.
         </div>
-        <div class="biz-cell">
-          <div class="biz-cell-label">"Done" looks like</div>
-          <div class="biz-cell-content">A developer inserts one row into <code>pl_check_definition_version</code> for a new keyword check. On the next scan, it fires. Finding stamped with the new check code. <b>No code change. No deploy.</b> Every existing check works unchanged behind the feature flag.</div>
+      </div>
+
+      <div class="reco-frame">
+        <div class="reco-frame-label">④ Recommended technical approach · guidance, not directive</div>
+        <div class="reco-frame-body">
+          The shape (offered so the two tracks can coordinate vocabulary; <b>Mike's team owns final names and layout</b>):
+          <ul style="margin-top:6px;padding-left:20px">
+            <li>Three additive tables — definitions (<code>pl_check_definition</code> <span class="proposed-tag">proposed</span>), versioned configs (<code>pl_check_definition_version</code> <span class="proposed-tag">proposed</span>), per-company overrides (<code>pl_company_check_override</code> <span class="proposed-tag">proposed</span>).</li>
+            <li>A seed migration that inserts a row for each of the 30 currently-shipping checks — <b>14 automated</b> (KEYWORD / DOCUMENT_PARSE fed by aluma-extracted fields / LINK_MAP) + <b>16 manual-review</b> (status <code>manual_review</code>, code registered but automation pending).</li>
+            <li>A service returning <b>active checks for a merchant</b> — resolution order registry default → per-company override → (Phase 8) policy override. Proposed as <code>CheckRegistryService.getActiveChecksForMerchant()</code> <span class="proposed-tag">proposed</span>.</li>
+            <li>Existing Middleware analyzers refactored behind <code>SCANNER_USE_CHECK_REGISTRY</code> flag to read from the registry instead of hardcoded arrays. Behavior byte-identical when flag off.</li>
+            <li>New <code>check_code</code> column on <code>PlComplianceFinding</code> plus a historical backfill.</li>
+          </ul>
+          <b>What the dev team owns entirely:</b> entity names, file/migration layout, caching, five enum values for <code>check_type</code>, read-only admin UI framework choice, how to coordinate the backfill migration with production data.
+        </div>
+      </div>
+
+      <div class="pp-block" style="border-left:3px solid rgba(16,185,129,.5)">
+        <div class="pp-label ac">⑤ Acceptance · business-observable</div>
+        <div class="pp-body">
+          <ul>
+            <li>Every one of the 30 currently-shipping checks has a unique identity code, visible in the read-only Check Registry admin page by end of Week 2.</li>
+            <li>A developer can add a new keyword check by inserting one configuration row (behind the flag); it fires on the next scan cycle without a code deploy.</li>
+            <li>Every new finding (and every historical finding via backfill) carries its originating check code.</li>
+            <li>With the flag off, scanner behavior is byte-identical to v1.3.3 — no regression to existing merchants.</li>
+            <li>Brian's Phase 8 Policy Configurator integration becomes a <b>connection</b> (the contract exists) rather than a <b>re-engineering</b> (the contract would not have existed).</li>
+          </ul>
         </div>
       </div>
     </div>
@@ -1150,6 +1494,15 @@ section{
     <!-- TECHNICAL ROADMAP TIMELINE -->
     <div class="td-section">
       <div class="td-section-title">Technical roadmap · timeline (ticket × day)</div>
+      <div class="reco-frame" style="margin-bottom:14px">
+        <div class="reco-frame-label">Read this timeline as proposed sequencing · guidance only</div>
+        <div class="reco-frame-body">
+          Tickets, day counts, and ticket boundaries below are a <b>suggested shape</b> to show scope and critical path.
+          Ticket IDs (T1–T9, S1–S8) are <span class="proposed-tag">proposed</span> handles used for cross-track coordination in this document only.
+          The dev team owns <b>how to slice these into actual tickets</b>, <b>how to sequence them</b>, and <b>how to estimate them</b>. The
+          business requirement above is what is fixed.
+        </div>
+      </div>
       <div class="timeline">
         <div class="timeline-scroll">
 
@@ -1264,10 +1617,15 @@ section{
 
         <div class="phase-card">
           <div class="phase-num"><span class="pnum-pill">Phase 4</span></div>
-          <div class="phase-title">DOCUMENT_PARSE — Agentic clause matching</div>
-          <div class="phase-sub">Full policy-document reading for required / prohibited clauses, beyond presence checks. Config shape already holds the fields.</div>
-          <div class="phase-landing">Landing pad: required_clauses[]</div>
-          <div class="phase-est">3–4 weeks</div>
+          <div class="phase-title">DOCUMENT_PARSE — non-COA agentic clause matching</div>
+          <div class="phase-sub">
+            <b style="color:#fcd34d">Business decision pending.</b> For COAs, aluma already extracts structured fields today —
+            Phase 4 is <b>not greenfield</b>. Open question: keep consuming aluma, augment it, or replace it? For
+            <b>non-COA documents</b> (site policy pages, terms, statutory FDA disclaimer language), Phase 4 is genuinely
+            greenfield — reading full documents for required / prohibited clauses.
+          </div>
+          <div class="phase-landing">Landing pad: <code>required_clauses[]</code> config; <code>check_type = DOCUMENT_PARSE</code> enum</div>
+          <div class="phase-est">3–4 weeks (non-COA scope)</div>
         </div>
 
         <div class="phase-card future">
@@ -1356,7 +1714,14 @@ section{
   <div class="dataflow">
     <div style="text-align:center;margin-bottom:20px">
       <div style="font-size:10.5px;font-weight:800;letter-spacing:1.3px;text-transform:uppercase;color:#94a3b8;margin-bottom:6px">Runtime data flow</div>
-      <div style="font-size:13px;color:#cbd5e1">A COA upload travels through both systems; the finding lands stamped with attribution from each.</div>
+      <div style="font-size:13px;color:#cbd5e1">A COA upload travels through an existing external extractor, then both systems; the finding lands stamped with attribution from each side.</div>
+    </div>
+
+    <!-- UPSTREAM ROW: aluma exists TODAY -->
+    <div style="padding:10px 14px;margin-bottom:16px;background:rgba(245,158,11,.06);border:1px dashed rgba(245,158,11,.3);border-radius:10px;font-size:11.5px;color:#fcd34d;line-height:1.5;text-align:center">
+      <b style="color:#fde68a">Upstream · exists today.</b> Merchant uploads COA → Qredible sends COA to
+      <b style="color:#fde68a">aluma (Project Cambridge)</b> OCR/ML + BPO pipeline → structured fields extracted
+      (Delta-9 %, THC-O %, cannabinoids, batch number) → stored on the COA record. <b>Scanner consumes these fields; it does not re-extract.</b>
     </div>
 
     <div class="flow-row">
@@ -1375,7 +1740,7 @@ section{
       <div class="flow-node x">
         <div class="fn-owner">Interlock</div>
         <div class="fn-title">3. Evaluator reads</div>
-        <div class="fn-sub">Policy value OR registry default</div>
+        <div class="fn-sub">Policy threshold vs. aluma-extracted field OR registry default</div>
       </div>
     </div>
 
@@ -1510,10 +1875,15 @@ section{
 
     <div class="phase-card future" style="flex:1 1 240px">
       <div class="phase-num"><span class="pnum-pill">Phase 4</span></div>
-      <div class="phase-title">Document parse · Agentic clause matching</div>
-      <div class="phase-sub">Beyond presence-only — read full policy documents for required/prohibited clauses. Scoring model + bulletins on the policy side.</div>
-      <div class="phase-landing">Landing pad: <code>required_clauses[]</code> in config</div>
-      <div class="phase-est">3–4 weeks</div>
+      <div class="phase-title">Document parse · non-COA clause matching</div>
+      <div class="phase-sub">
+        <b style="color:#fcd34d">Business decision pending for COAs.</b> aluma (Project Cambridge) already extracts COA
+        fields today — Phase 4 on that lane is <b>keep aluma / augment / replace</b>, not greenfield. For <b>non-COA
+        documents</b> (site policy pages, terms, statutory FDA disclaimer language) Phase 4 is greenfield: read full
+        documents for required / prohibited clauses. Scoring + bulletins land on the policy side alongside.
+      </div>
+      <div class="phase-landing">Landing pad: <code>required_clauses[]</code> + <code>check_type = DOCUMENT_PARSE</code></div>
+      <div class="phase-est">3–4 weeks (non-COA scope)</div>
     </div>
 
     <div class="phase-card future" style="flex:1 1 240px">
@@ -1610,19 +1980,24 @@ section{
   <div class="footer-col">
     <h5>Source documents</h5>
     <p style="margin-bottom:10px">Full authored MVP bundle lives in <code style="font-family:'IBM Plex Mono',monospace;color:#7dd3fc;background:#020617;padding:1px 5px;border-radius:4px">qredible-brain/wiki/policy-mvp/</code> — seven files covering reconciliation, MVP definitions, team roadmaps, design prompt, and interlock spec.</p>
+    <p style="margin-top:8px;font-size:10.5px"><b style="color:#fcd34d">Upstream noted:</b> COA field extraction = aluma (Project Cambridge). See <code style="font-family:'IBM Plex Mono',monospace;color:#7dd3fc;background:#020617;padding:1px 5px;border-radius:4px">wiki/qredible/coa-system-flagged.md</code>.</p>
   </div>
   <div class="footer-col">
-    <h5>For Huy's team</h5>
-    <a>01 · Reconciliation — where we are</a>
-    <a>02 · Policy MVP definition</a>
-    <a>03 · Policy team roadmap (T1–T9)</a>
-    <a>04 · Claude Design prompt (six surfaces)</a>
+    <h5>Existing mockups · policy-first</h5>
+    <a href="qredible-tickets/policy-editor.html">→ Policy Editor (full v3)</a>
+    <a href="qredible-tickets/policy-authoring-wizard.html">→ Policy Authoring Wizard</a>
+    <a href="qredible-tickets/multi-industry-type.html">→ Multi-Policy Merchant Assignment</a>
+    <a href="qredible-tickets/bulletin-authoring.html">→ Bulletin Authoring</a>
+    <a href="qredible-tickets/policy-evidence-loop.html">→ Policy Evidence Loop</a>
   </div>
   <div class="footer-col">
-    <h5>For Mike's team</h5>
-    <a>05 · Scanner MVP definition</a>
-    <a>06 · Scanner team roadmap (S1–S8)</a>
-    <a>07 · Policy ↔ Scanner interlock</a>
+    <h5>Existing mockups · scanner + reports</h5>
+    <a href="qredible-tickets/scanner-industry-config.html">→ Policy-Driven Scanner Configuration</a>
+    <a href="qredible-tickets/regulatory-rules-engine.html">→ Rules Engine (Section 2 tile grid)</a>
+    <a href="qredible-tickets/mri-marketplace.html">→ MRI Marketplace</a>
+    <a href="qredible-tickets/report-generation.html">→ Compliance Report Generation</a>
+    <a href="qredible-tickets/report-rendered.html">→ Rendered Compliance Report</a>
+    <a href="qredible-tickets/track-b-catalog-upload.html">→ Track B Catalog Upload</a>
   </div>
   <div class="footer-col">
     <h5>Prototype index</h5>
