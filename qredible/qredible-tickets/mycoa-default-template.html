@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MyCOA Default Template — QP-3713 | Qredible Prototypes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      /* Prototype chrome */
+      --chrome-bg: #F3F4F6;
+      --chrome-text: #111827;
+      --chrome-muted: #6B7280;
+      --chrome-border: #E5E7EB;
+      --font-sans: 'Plus Jakarta Sans', sans-serif;
+      --font-mono: 'IBM Plex Mono', monospace;
+    }
+
+    /* ─────────────────────────────────────────────────────────
+       MYCOA DEFAULT TEMPLATE TOKENS — QP-3713
+       These are the plug-in points the Display Tab (QP-3626)
+       will eventually override per-merchant. For v1 they are
+       the Qredible-default palette and cannot be customized.
+       ──────────────────────────────────────────────────────── */
+    .mycoa-template {
+      --mycoa-primary:        #123F4D;   /* dark teal hero + footer */
+      --mycoa-primary-2:      #0E3540;   /* darker teal for gradient base */
+      --mycoa-accent:         #2F80ED;   /* primary CTA / submit blue */
+      --mycoa-accent-hover:   #1E6BD8;
+      --mycoa-surface:        #FFFFFF;
+      --mycoa-surface-soft:   #F7FAFC;
+      --mycoa-border:         #E2E8F0;
+      --mycoa-text:           #0F1B26;
+      --mycoa-text-muted:     #56657A;
+      --mycoa-text-on-dark:   #FFFFFF;
+      --mycoa-text-on-dark-muted: rgba(255,255,255,.72);
+      --mycoa-radius-pill:    999px;
+      --mycoa-radius-card:    10px;
+      --mycoa-radius-btn:     10px;
+      --mycoa-font:           'Plus Jakarta Sans', sans-serif;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--chrome-bg);
+      color: var(--chrome-text);
+      font-size: 14px;
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+
+    /* ─── Prototype Annotation Bar (not part of template) ─── */
+    .proto-bar {
+      background: #FEFCE8;
+      border-bottom: 1px solid #FEF08A;
+      padding: 10px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 13px;
+      color: #854D0E;
+    }
+    .proto-bar strong { color: #713F12; }
+    .proto-bar a { color: #713F12; font-weight: 700; }
+    .proto-bar .spacer { flex: 1; }
+    .proto-bar .back {
+      text-decoration: none;
+      color: #713F12;
+      font-weight: 600;
+      padding: 4px 10px;
+      border: 1px solid #FDE68A;
+      border-radius: 6px;
+      background: #FEF9C3;
+      font-size: 12px;
+    }
+
+    /* ─── Prototype "device frame" ─── */
+    .device-frame {
+      max-width: 1100px;
+      margin: 28px auto 60px;
+      background: var(--mycoa-surface);
+      border: 1px solid var(--chrome-border);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(15,23,42,.08);
+    }
+    .browser-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      background: #F8FAFC;
+      border-bottom: 1px solid var(--chrome-border);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--chrome-muted);
+    }
+    .browser-dots { display: flex; gap: 6px; }
+    .browser-dots span {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: #CBD5E1;
+    }
+    .browser-dots span:nth-child(1) { background: #F87171; }
+    .browser-dots span:nth-child(2) { background: #FBBF24; }
+    .browser-dots span:nth-child(3) { background: #34D399; }
+    .browser-url {
+      flex: 1;
+      background: #FFFFFF;
+      border: 1px solid var(--chrome-border);
+      border-radius: 6px;
+      padding: 4px 10px;
+      color: #475569;
+    }
+
+    /* ═════════════════════════════════════════════════════════
+       [data-component="mycoa-hero"]
+       ───────────────────────────────────────────────────────── */
+    .mycoa-template { font-family: var(--mycoa-font); color: var(--mycoa-text); }
+
+    .mycoa-hero {
+      position: relative;
+      background: linear-gradient(135deg, var(--mycoa-primary-2) 0%, var(--mycoa-primary) 60%, #1A5A6D 100%);
+      color: var(--mycoa-text-on-dark);
+      padding: 36px 40px 44px;
+      overflow: hidden;
+    }
+    .mycoa-hero::before {
+      content: "";
+      position: absolute;
+      inset: auto -120px -120px auto;
+      width: 320px;
+      height: 320px;
+      border-radius: 50%;
+      background: radial-gradient(circle at center, rgba(255,255,255,.08), rgba(255,255,255,0));
+      pointer-events: none;
+    }
+    .mycoa-hero-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 24px;
+      position: relative;
+      z-index: 1;
+    }
+    .mycoa-merchant {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .mycoa-merchant-logo {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: #FFFFFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      color: var(--mycoa-primary);
+      font-size: 18px;
+      letter-spacing: -.02em;
+      box-shadow: 0 2px 8px rgba(0,0,0,.15);
+      overflow: hidden;
+    }
+    .mycoa-merchant-logo img {
+      width: 100%; height: 100%; object-fit: cover;
+    }
+    .mycoa-merchant-name {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: -.01em;
+    }
+    .mycoa-wordmark {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 2px;
+    }
+    .mycoa-wordmark-logo {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -.02em;
+    }
+    .mycoa-wordmark-logo sup {
+      font-size: 10px;
+      font-weight: 600;
+      opacity: .7;
+      margin-left: 1px;
+    }
+    .mycoa-wordmark-tag {
+      font-size: 11px;
+      color: var(--mycoa-text-on-dark-muted);
+      letter-spacing: .02em;
+    }
+    .mycoa-hero-title {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -.02em;
+      margin-bottom: 14px;
+      position: relative;
+      z-index: 1;
+    }
+    .mycoa-hero-lead {
+      font-size: 14px;
+      line-height: 1.75;
+      max-width: 720px;
+      color: var(--mycoa-text-on-dark-muted);
+      margin-bottom: 24px;
+      position: relative;
+      z-index: 1;
+    }
+    .mycoa-hero-ctas {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      position: relative;
+      z-index: 1;
+    }
+    .mycoa-btn {
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 12px 22px;
+      border-radius: var(--mycoa-radius-pill);
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: transform .12s, background .15s, border-color .15s, color .15s;
+      border: 1.5px solid transparent;
+      letter-spacing: .01em;
+    }
+    .mycoa-btn-primary {
+      background: var(--mycoa-accent);
+      color: #FFFFFF;
+      border-color: var(--mycoa-accent);
+    }
+    .mycoa-btn-primary:hover { background: var(--mycoa-accent-hover); border-color: var(--mycoa-accent-hover); transform: translateY(-1px); }
+    .mycoa-btn-ghost {
+      background: transparent;
+      color: #FFFFFF;
+      border-color: rgba(255,255,255,.55);
+    }
+    .mycoa-btn-ghost:hover { background: rgba(255,255,255,.08); border-color: #FFFFFF; }
+
+    /* ═════════════════════════════════════════════════════════
+       [data-component="mycoa-search"]
+       ───────────────────────────────────────────────────────── */
+    .mycoa-search-section {
+      background: var(--mycoa-surface);
+      padding: 44px 40px 36px;
+    }
+    .mycoa-search-title {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -.02em;
+      margin-bottom: 10px;
+      color: var(--mycoa-text);
+    }
+    .mycoa-search-help {
+      font-size: 13px;
+      color: var(--mycoa-text-muted);
+      max-width: 720px;
+      line-height: 1.6;
+      margin-bottom: 22px;
+    }
+    .mycoa-search-help a { color: var(--mycoa-accent); text-decoration: none; font-weight: 600; }
+    .mycoa-search-help a:hover { text-decoration: underline; }
+
+    .mycoa-search-trouble {
+      font-size: 12px;
+      color: var(--mycoa-text-muted);
+      margin-bottom: 10px;
+    }
+    .mycoa-search-trouble a { color: var(--mycoa-accent); font-weight: 600; text-decoration: none; }
+    .mycoa-search-trouble a:hover { text-decoration: underline; }
+
+    .mycoa-search-form {
+      display: flex;
+      gap: 10px;
+      align-items: stretch;
+      max-width: 720px;
+      margin-bottom: 28px;
+    }
+    .mycoa-search-input {
+      flex: 1;
+      padding: 12px 14px;
+      border: 1.5px solid var(--mycoa-border);
+      border-radius: var(--mycoa-radius-btn);
+      font-family: inherit;
+      font-size: 13px;
+      color: var(--mycoa-text);
+      background: var(--mycoa-surface);
+      outline: none;
+      transition: border-color .12s, box-shadow .12s;
+    }
+    .mycoa-search-input:focus {
+      border-color: var(--mycoa-accent);
+      box-shadow: 0 0 0 3px rgba(47,128,237,.15);
+    }
+    .mycoa-search-input::placeholder { color: #9AA6B8; }
+    .mycoa-search-submit {
+      background: var(--mycoa-accent);
+      color: #FFFFFF;
+      border: none;
+      border-radius: var(--mycoa-radius-btn);
+      padding: 0 22px;
+      font-family: inherit;
+      font-weight: 800;
+      font-size: 14px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      letter-spacing: -.01em;
+      transition: background .12s;
+    }
+    .mycoa-search-submit:hover { background: var(--mycoa-accent-hover); }
+    .mycoa-search-submit sup { font-size: 9px; opacity: .75; font-weight: 600; }
+
+    /* ═════════════════════════════════════════════════════════
+       [data-component="mycoa-guide"]  ── 3-step numbered guide
+       ───────────────────────────────────────────────────────── */
+    .mycoa-guide {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+    .mycoa-guide-card {
+      background: var(--mycoa-surface-soft);
+      border: 1px solid var(--mycoa-border);
+      border-radius: var(--mycoa-radius-card);
+      padding: 18px 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      position: relative;
+    }
+    .mycoa-guide-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }
+    .mycoa-guide-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--mycoa-accent);
+      color: #FFFFFF;
+      font-size: 13px;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .mycoa-guide-icon {
+      width: 32px;
+      height: 32px;
+      color: var(--mycoa-text-muted);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .mycoa-guide-icon svg { width: 24px; height: 24px; }
+    .mycoa-guide-title {
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: -.01em;
+      color: var(--mycoa-text);
+    }
+    .mycoa-guide-desc {
+      font-size: 12.5px;
+      line-height: 1.55;
+      color: var(--mycoa-text-muted);
+    }
+
+    /* ═════════════════════════════════════════════════════════
+       [data-component="mycoa-explainer"]
+       ───────────────────────────────────────────────────────── */
+    .mycoa-explainer-section {
+      background: var(--mycoa-surface-soft);
+      padding: 40px;
+    }
+    .mycoa-explainer {
+      background: var(--mycoa-surface);
+      border: 1px solid var(--mycoa-border);
+      border-radius: var(--mycoa-radius-card);
+      padding: 28px;
+      display: grid;
+      grid-template-columns: minmax(260px, 0.8fr) 1.2fr;
+      gap: 32px;
+      align-items: start;
+    }
+    .mycoa-lab-illustration {
+      background: #FFFFFF;
+      border: 1px solid var(--mycoa-border);
+      border-radius: var(--mycoa-radius-card);
+      padding: 10px;
+      position: relative;
+    }
+    .mycoa-lab-illustration svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .mycoa-lab-annot {
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #EF4444;
+      color: #FFFFFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 800;
+      box-shadow: 0 2px 6px rgba(239,68,68,.4);
+      border: 2px solid #FFFFFF;
+    }
+    .mycoa-lab-annot.a1 { top: 8%;  left: 6%; }
+    .mycoa-lab-annot.a2 { top: 14%; right: 28%; }
+    .mycoa-lab-annot.a3 { top: 30%; left: 10%; }
+    .mycoa-lab-annot.a4 { top: 46%; right: 8%; }
+    .mycoa-lab-annot.a5 { top: 62%; left: 8%; }
+    .mycoa-lab-annot.a6 { top: 74%; right: 10%; }
+    .mycoa-lab-annot.a7 { bottom: 6%; left: 46%; }
+
+    .mycoa-explain-list {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .mycoa-explain-item h4 {
+      font-size: 13.5px;
+      font-weight: 800;
+      letter-spacing: -.01em;
+      color: var(--mycoa-text);
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .mycoa-explain-item .bullet {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #EF4444;
+      color: #FFFFFF;
+      font-size: 10px;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+    .mycoa-explain-item p {
+      font-size: 12.5px;
+      line-height: 1.65;
+      color: var(--mycoa-text-muted);
+    }
+
+    /* ═════════════════════════════════════════════════════════
+       [data-component="mycoa-footer"]
+       ───────────────────────────────────────────────────────── */
+    .mycoa-footer {
+      background: var(--mycoa-primary);
+      color: var(--mycoa-text-on-dark);
+      padding: 22px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+    .mycoa-footer-left {
+      font-size: 12px;
+      color: var(--mycoa-text-on-dark-muted);
+    }
+    .mycoa-footer-right {
+      font-size: 12px;
+      color: var(--mycoa-text-on-dark-muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .mycoa-footer-right strong {
+      color: #FFFFFF;
+      font-weight: 800;
+    }
+
+    /* ═════════════════════════════════════════════════════════
+       Plug-in-point callouts (prototype only, toggleable)
+       ───────────────────────────────────────────────────────── */
+    .callouts-toggle {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #111827;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-family: var(--font-sans);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(0,0,0,.3);
+      z-index: 50;
+    }
+    .callouts-toggle:hover { background: #1F2937; }
+    body.show-callouts .mycoa-template [data-component] {
+      outline: 2px dashed #F59E0B;
+      outline-offset: 2px;
+      position: relative;
+    }
+    body.show-callouts .mycoa-template [data-component]::after {
+      content: attr(data-component);
+      position: absolute;
+      top: 0;
+      left: 0;
+      background: #F59E0B;
+      color: #111827;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 0 0 6px 0;
+      z-index: 10;
+    }
+
+    @media (max-width: 820px) {
+      .mycoa-hero { padding: 28px 22px 32px; }
+      .mycoa-search-section, .mycoa-explainer-section { padding: 28px 22px; }
+      .mycoa-guide { grid-template-columns: 1fr; }
+      .mycoa-explainer { grid-template-columns: 1fr; padding: 20px; }
+      .mycoa-hero-title { font-size: 22px; }
+      .mycoa-footer { padding: 18px 22px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="proto-bar">
+    <strong>Prototype · QP-3713 MyCOA Default Template</strong>
+    <span>Placeholder merchant: <strong>JC Green</strong>. Sections are componentized for Display Tab (QP-3626) plug-in.</span>
+    <span class="spacer"></span>
+    <a class="back" href="../index.html">← All mockups</a>
+  </div>
+
+  <div class="device-frame">
+    <div class="browser-bar">
+      <div class="browser-dots"><span></span><span></span><span></span></div>
+      <div class="browser-url">https://jcgreen.mycoa.com/</div>
+    </div>
+
+    <div class="mycoa-template">
+
+      <!-- ═════ HERO ═════ -->
+      <section class="mycoa-hero" data-component="mycoa-hero">
+        <div class="mycoa-hero-top">
+          <div class="mycoa-merchant">
+            <div class="mycoa-merchant-logo" id="mycoa-merchant-logo">JC</div>
+            <div class="mycoa-merchant-name" id="mycoa-merchant-name">JC Green</div>
+          </div>
+          <div class="mycoa-wordmark">
+            <div class="mycoa-wordmark-logo">MyCOA<sup>®</sup></div>
+            <div class="mycoa-wordmark-tag">Transparency you can trust</div>
+          </div>
+        </div>
+
+        <h1 class="mycoa-hero-title">Certificate of Analysis</h1>
+        <p class="mycoa-hero-lead">
+          At JC Green, we believe in full transparency and rigorous quality control. That's why every
+          batch of our products is tested by accredited laboratories, and the results are made readily
+          available for your review. Our Certificate of Analysis (COA) reports provide detailed insights
+          into the purity, potency, and safety of our products, helping you make informed decisions with confidence.
+        </p>
+        <p class="mycoa-hero-lead" style="margin-bottom:22px">
+          Simply use the search feature below to find the COA for a product you've purchased or to explore lab
+          results before making your next purchase.
+        </p>
+        <div class="mycoa-hero-ctas">
+          <a href="#guide" class="mycoa-btn mycoa-btn-primary">Understanding Your COA</a>
+          <a href="#" id="mycoa-resume-shopping" class="mycoa-btn mycoa-btn-ghost">Resume Shopping</a>
+        </div>
+      </section>
+
+      <!-- ═════ SEARCH + GUIDE ═════ -->
+      <section class="mycoa-search-section">
+        <div data-component="mycoa-search">
+          <h2 class="mycoa-search-title">Search By Batch/Name</h2>
+          <p class="mycoa-search-help">
+            Find your lab report by entering the batch number or name of the product. Our Certificate of Analysis
+            (COA) reports provide detailed insights into the purity, potency, and safety of our products, helping you
+            make informed decisions with confidence.
+          </p>
+          <p class="mycoa-search-trouble">Still having trouble finding the batch number? <a href="#guide">See the guide below.</a></p>
+          <form class="mycoa-search-form" onsubmit="event.preventDefault();">
+            <input class="mycoa-search-input" type="text" placeholder="Enter batch number or product name…" />
+            <button class="mycoa-search-submit" type="submit">MyCOA<sup>®</sup></button>
+          </form>
+        </div>
+
+        <div id="guide" data-component="mycoa-guide">
+          <div class="mycoa-guide">
+            <div class="mycoa-guide-card">
+              <div class="mycoa-guide-head">
+                <span class="mycoa-guide-num">1</span>
+                <span class="mycoa-guide-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 7h6M9 11h6M9 15h4"/></svg>
+                </span>
+              </div>
+              <div class="mycoa-guide-title">Locate the Batch Number</div>
+              <p class="mycoa-guide-desc">Find the batch number on the bottle label, box, or sticker on the bottom of the container.</p>
+            </div>
+            <div class="mycoa-guide-card">
+              <div class="mycoa-guide-head">
+                <span class="mycoa-guide-num">2</span>
+                <span class="mycoa-guide-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+                </span>
+              </div>
+              <div class="mycoa-guide-title">Enter and Search</div>
+              <p class="mycoa-guide-desc">Type the batch number or product name into the search bar above and click "MyCOA" to view the results.</p>
+            </div>
+            <div class="mycoa-guide-card">
+              <div class="mycoa-guide-head">
+                <span class="mycoa-guide-num">3</span>
+                <span class="mycoa-guide-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14h1M14 20h3M20 17v4"/></svg>
+                </span>
+              </div>
+              <div class="mycoa-guide-title">Quick QR Access</div>
+              <p class="mycoa-guide-desc">Some products include a QR code for instant access. Simply scan with your smartphone camera.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═════ EXPLAINER ═════ -->
+      <section class="mycoa-explainer-section" data-component="mycoa-explainer">
+        <div class="mycoa-explainer">
+          <div class="mycoa-lab-illustration" aria-label="Example Certificate of Analysis">
+            <!-- Stylized lab-report placeholder SVG -->
+            <svg viewBox="0 0 340 440" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true">
+              <defs>
+                <linearGradient id="paper" x1="0" x2="0" y1="0" y2="1">
+                  <stop offset="0" stop-color="#FBFEFB"/>
+                  <stop offset="1" stop-color="#F0F6F2"/>
+                </linearGradient>
+              </defs>
+              <rect x="1" y="1" width="338" height="438" rx="6" fill="url(#paper)" stroke="#D0D7DE"/>
+              <!-- Lab header -->
+              <rect x="12" y="14" width="32" height="32" rx="4" fill="#D1FAE5"/>
+              <text x="50" y="28" font-family="Plus Jakarta Sans" font-size="11" font-weight="800" fill="#065F46">DB LABS</text>
+              <text x="50" y="40" font-family="Plus Jakarta Sans" font-size="7" fill="#6B7280">ISO 17025 ACCREDITED</text>
+              <text x="240" y="22" font-family="Plus Jakarta Sans" font-size="9" font-weight="700" fill="#111827">Certificate of Analysis</text>
+              <text x="240" y="34" font-family="IBM Plex Mono" font-size="7" fill="#6B7280">Report · 0248-C</text>
+              <line x1="12" y1="54" x2="328" y2="54" stroke="#E2E8F0"/>
+              <!-- Sample info rows -->
+              <g font-family="Plus Jakarta Sans" font-size="7" fill="#374151">
+                <text x="12" y="70">Created: 03/12/2025</text>
+                <text x="12" y="84">Client: JC Green Inc.</text>
+                <text x="180" y="70">Batch: JC-2025-0312-A</text>
+                <text x="180" y="84">Product: Broad Spectrum Tincture</text>
+              </g>
+              <rect x="12" y="96" width="316" height="18" fill="#065F46"/>
+              <text x="20" y="108" font-family="Plus Jakarta Sans" font-size="9" font-weight="700" fill="#FFFFFF">Broad Spectrum Cannabinoids</text>
+              <!-- Cannabinoid chart rows -->
+              <g font-family="IBM Plex Mono" font-size="6" fill="#374151">
+                <rect x="12" y="120" width="316" height="10" fill="#F3F4F6"/>
+                <text x="16" y="128">CBD</text><text x="120" y="128">48.2 mg/g</text><text x="210" y="128">ND LOQ</text>
+                <rect x="12" y="132" width="316" height="10" fill="#FFFFFF"/>
+                <text x="16" y="140">CBDa</text><text x="120" y="140">&lt;0.05 mg/g</text><text x="210" y="140">ND LOQ</text>
+                <rect x="12" y="144" width="316" height="10" fill="#F3F4F6"/>
+                <text x="16" y="152">CBG</text><text x="120" y="152">1.12 mg/g</text><text x="210" y="152">ND LOQ</text>
+                <rect x="12" y="156" width="316" height="10" fill="#FFFFFF"/>
+                <text x="16" y="164">CBN</text><text x="120" y="164">0.34 mg/g</text><text x="210" y="164">ND LOQ</text>
+                <rect x="12" y="168" width="316" height="10" fill="#F3F4F6"/>
+                <text x="16" y="176">∆9-THC</text><text x="120" y="176">0.18 mg/g</text><text x="210" y="176">0.28 %</text>
+                <rect x="12" y="180" width="316" height="10" fill="#FFFFFF"/>
+                <text x="16" y="188">THCa</text><text x="120" y="188">&lt;0.05 mg/g</text><text x="210" y="188">ND LOQ</text>
+                <rect x="12" y="192" width="316" height="10" fill="#F3F4F6"/>
+                <text x="16" y="200">Total THC</text><text x="120" y="200">0.18 mg/g</text><text x="210" y="200">0.28 %</text>
+              </g>
+              <!-- Potency block -->
+              <rect x="12" y="216" width="316" height="14" fill="#065F46"/>
+              <text x="20" y="226" font-family="Plus Jakarta Sans" font-size="8" font-weight="700" fill="#FFFFFF">Potency Summary</text>
+              <g font-family="IBM Plex Mono" font-size="6" fill="#374151">
+                <rect x="12" y="232" width="316" height="42" fill="#FFFFFF" stroke="#E5E7EB"/>
+                <text x="20" y="244">Total CBD .................. 48.2 mg/g</text>
+                <text x="20" y="256">Total THC .................. 0.18 mg/g (0.28 %)</text>
+                <text x="20" y="268">Total Cannabinoids ........ 50.1 mg/g</text>
+              </g>
+              <!-- Residuals chart bars -->
+              <rect x="12" y="284" width="316" height="14" fill="#065F46"/>
+              <text x="20" y="294" font-family="Plus Jakarta Sans" font-size="8" font-weight="700" fill="#FFFFFF">Residual Testing</text>
+              <g>
+                <rect x="12" y="302" width="316" height="90" fill="#FFFFFF" stroke="#E5E7EB"/>
+                <g font-family="IBM Plex Mono" font-size="6" fill="#374151">
+                  <text x="20" y="316">Pesticides</text>
+                  <rect x="90" y="311" width="100" height="5" fill="#DCFCE7"/>
+                  <rect x="90" y="311" width="6"   height="5" fill="#22C55E"/>
+                  <text x="200" y="316">PASS</text>
+
+                  <text x="20" y="330">Heavy Metals</text>
+                  <rect x="90" y="325" width="100" height="5" fill="#DCFCE7"/>
+                  <rect x="90" y="325" width="10"  height="5" fill="#22C55E"/>
+                  <text x="200" y="330">PASS</text>
+
+                  <text x="20" y="344">Microbials</text>
+                  <rect x="90" y="339" width="100" height="5" fill="#DCFCE7"/>
+                  <rect x="90" y="339" width="4"   height="5" fill="#22C55E"/>
+                  <text x="200" y="344">PASS</text>
+
+                  <text x="20" y="358">Mycotoxins</text>
+                  <rect x="90" y="353" width="100" height="5" fill="#DCFCE7"/>
+                  <rect x="90" y="353" width="2"   height="5" fill="#22C55E"/>
+                  <text x="200" y="358">PASS</text>
+
+                  <text x="20" y="372">Solvents</text>
+                  <rect x="90" y="367" width="100" height="5" fill="#DCFCE7"/>
+                  <rect x="90" y="367" width="0.1" height="5" fill="#22C55E"/>
+                  <text x="200" y="372">PASS</text>
+                </g>
+              </g>
+              <!-- Footer -->
+              <text x="12" y="410" font-family="Plus Jakarta Sans" font-size="7" fill="#6B7280">Signed: Dr. A. Reyes, PhD</text>
+              <text x="12" y="422" font-family="Plus Jakarta Sans" font-size="7" fill="#6B7280">DB Labs · 1820 Industrial Pkwy · License #DB-2041</text>
+              <rect x="260" y="398" width="60" height="32" fill="#0F2F3A"/>
+              <text x="268" y="418" font-family="Plus Jakarta Sans" font-size="8" font-weight="800" fill="#FFFFFF">DB LABS</text>
+            </svg>
+
+            <!-- Annotation dots referenced in the explainer list -->
+            <span class="mycoa-lab-annot a1">1</span>
+            <span class="mycoa-lab-annot a2">2</span>
+            <span class="mycoa-lab-annot a3">3</span>
+            <span class="mycoa-lab-annot a4">4</span>
+            <span class="mycoa-lab-annot a5">5</span>
+            <span class="mycoa-lab-annot a6">6</span>
+            <span class="mycoa-lab-annot a7">7</span>
+          </div>
+
+          <div class="mycoa-explain-list">
+            <div class="mycoa-explain-item">
+              <h4><span class="bullet">1</span>The Lab Report</h4>
+              <p>A lab report from a reputable laboratory will show the name, address, phone number, and any certifications earned. The COA will attest to the report's validity and is signed by a senior staff member.</p>
+            </div>
+            <div class="mycoa-explain-item">
+              <h4><span class="bullet">2</span>The Date</h4>
+              <p>Make sure the date is recent. When purchasing CBD, it is recommended the date on the COA be under one year.</p>
+            </div>
+            <div class="mycoa-explain-item">
+              <h4><span class="bullet">3</span>The lot or batch identifier</h4>
+              <p>Be sure the lot or batch on the COA matches the lot or batch on the product label, box, or sticker on the bottom of the container.</p>
+            </div>
+            <div class="mycoa-explain-item">
+              <h4><span class="bullet">4</span>Product name</h4>
+              <p>Confirm that the product name on the packaging matches the product name on the COA.</p>
+            </div>
+            <div class="mycoa-explain-item">
+              <h4><span class="bullet">5</span>THC</h4>
+              <p>Delta 9-tetrahydrocannabinol (THC) is the primary psychoactive cannabinoid extracted from the cannabis (marijuana) plant. Historically THC in marijuana is used recreationally due to its psychoactive effects. Recently there has been significant interest in exploring its medical utility. By federal law, THC in CBD must be 0.3% or under to be sold in the United States and Canada.</p>
+            </div>
+            <div class="mycoa-explain-item">
+              <h4><span class="bullet">6</span>CBD Spectrum</h4>
+              <p>CBD is commonly called full spectrum CBD. When THC is present in CBD, it enhances the combination of cannabinoids and terpenes to create what is called the entourage effect. You may also wish to purchase THC-free CBD (non-detectable amounts of THC), also called broad spectrum CBD.</p>
+            </div>
+            <div class="mycoa-explain-item">
+              <h4><span class="bullet">7</span>Residual Testing</h4>
+              <p>A reputable COA will report residual testing for pesticides, heavy metals, microbials, mycotoxins, and residual solvents. Every category should show a "PASS" result to confirm product safety.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═════ FOOTER ═════ -->
+      <footer class="mycoa-footer" data-component="mycoa-footer">
+        <div class="mycoa-footer-left">© 2026 <span id="mycoa-footer-merchant">JC Green</span>. All rights reserved.</div>
+        <div class="mycoa-footer-right">Powered by <strong>MyCOA<sup>®</sup></strong></div>
+      </footer>
+
+    </div>
+  </div>
+
+  <button class="callouts-toggle" onclick="document.body.classList.toggle('show-callouts')">Toggle component outlines</button>
+
+</body>
+</html>

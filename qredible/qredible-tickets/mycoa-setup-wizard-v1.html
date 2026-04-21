@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MyCOA Setup Wizard v1 — QP-3714 | Qredible Prototypes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --font-sans: 'Plus Jakarta Sans', sans-serif;
+      --font-mono: 'IBM Plex Mono', monospace;
+
+      --q-blue:         #2563EB;
+      --q-blue-hover:   #1D4ED8;
+      --q-blue-soft:    #EFF6FF;
+      --q-blue-border:  #BFDBFE;
+      --q-navy:         #1E3A5F;
+
+      --text:          #0F172A;
+      --text-muted:    #64748B;
+      --text-subtle:   #94A3B8;
+      --border:        #E2E8F0;
+      --border-soft:   #F1F5F9;
+      --surface:       #FFFFFF;
+      --bg:            #F3F4F6;
+      --bg-scrim:      rgba(15,23,42,.78);
+
+      --radius-card:   14px;
+      --radius-input:  8px;
+      --radius-btn:    8px;
+
+      --red:           #DC2626;
+      --green:         #16A34A;
+      --amber:         #D97706;
+
+      --mycoa-primary: #123F4D;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg);
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+
+    /* ─── Prototype annotation bar ─── */
+    .proto-bar {
+      background: #FEFCE8;
+      border-bottom: 1px solid #FEF08A;
+      padding: 10px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 13px;
+      color: #854D0E;
+    }
+    .proto-bar strong { color: #713F12; }
+    .proto-bar .spacer { flex: 1; }
+    .proto-bar a.back, .proto-bar a.nav {
+      text-decoration: none;
+      color: #713F12;
+      font-weight: 600;
+      padding: 4px 10px;
+      border: 1px solid #FDE68A;
+      border-radius: 6px;
+      background: #FEF9C3;
+      font-size: 12px;
+    }
+    .proto-bar a.nav:hover { background: #FDE68A; }
+
+    /* ─── Prototype state chooser ─── */
+    .state-tabs {
+      display: flex;
+      gap: 8px;
+      padding: 14px 24px 0;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+    }
+    .state-tab {
+      background: var(--surface);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      border-bottom: none;
+      padding: 8px 14px;
+      border-radius: 8px 8px 0 0;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: .02em;
+    }
+    .state-tab:hover { background: var(--border-soft); }
+    .state-tab.active {
+      background: var(--q-navy);
+      color: #FFFFFF;
+      border-color: var(--q-navy);
+    }
+
+    /* ─── Wizard stage (merchant portal background peek) ─── */
+    .stage {
+      min-height: calc(100vh - 84px);
+      position: relative;
+      padding: 48px 24px 80px;
+    }
+
+    /* Faux portal background for modal peek */
+    .faux-portal {
+      position: absolute;
+      inset: 0;
+      padding: 24px 40px;
+      opacity: .5;
+      filter: blur(2px);
+      pointer-events: none;
+      user-select: none;
+    }
+    .faux-portal .fp-top {
+      background: var(--q-navy);
+      color: #FFFFFF;
+      padding: 12px 20px;
+      border-radius: 10px 10px 0 0;
+      font-size: 14px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .faux-portal .fp-body {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-top: none;
+      border-radius: 0 0 10px 10px;
+      padding: 40px;
+      height: 420px;
+      background-image:
+        linear-gradient(90deg, #E5E7EB 1px, transparent 1px),
+        linear-gradient(0deg, #E5E7EB 1px, transparent 1px);
+      background-size: 60px 40px;
+    }
+
+    /* ─── Modal scrim + dialog ─── */
+    .scrim {
+      position: absolute;
+      inset: 0;
+      background: var(--bg-scrim);
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 48px 24px 80px;
+      overflow-y: auto;
+    }
+    .wizard {
+      width: 100%;
+      max-width: 620px;
+      background: var(--surface);
+      border-radius: var(--radius-card);
+      box-shadow: 0 40px 80px rgba(2,6,23,.45);
+      overflow: hidden;
+      animation: pop .35s cubic-bezier(.22,1,.36,1);
+    }
+    @keyframes pop {
+      from { opacity: 0; transform: translateY(14px) scale(.98); }
+      to   { opacity: 1; transform: none; }
+    }
+
+    .wiz-header {
+      padding: 22px 28px 14px;
+      border-bottom: 1px solid var(--border-soft);
+    }
+    .wiz-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--q-blue);
+      background: var(--q-blue-soft);
+      border: 1px solid var(--q-blue-border);
+      padding: 4px 8px;
+      border-radius: 999px;
+      margin-bottom: 12px;
+    }
+    .wiz-eyebrow .dot { width: 6px; height: 6px; background: var(--q-blue); border-radius: 50%; }
+    .wiz-title {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -.02em;
+    }
+    .wiz-sub {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 4px;
+      line-height: 1.55;
+    }
+
+    /* Stepper */
+    .stepper {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 28px;
+      border-bottom: 1px solid var(--border-soft);
+      background: #FAFBFC;
+    }
+    .stepper .step {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .step-num {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--border);
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .step.active .step-num { background: var(--q-blue); color: #FFFFFF; }
+    .step.done .step-num { background: var(--green); color: #FFFFFF; }
+    .step-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+      letter-spacing: .01em;
+    }
+    .step.active .step-label { color: var(--text); }
+    .step.done .step-label { color: var(--green); }
+    .step-sep {
+      flex: 1;
+      height: 2px;
+      background: var(--border);
+      border-radius: 2px;
+      position: relative;
+      overflow: hidden;
+    }
+    .step-sep.filled::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: var(--green);
+    }
+
+    /* Body + form fields */
+    .wiz-body { padding: 22px 28px 24px; }
+    .slide { display: none; }
+    .slide.active { display: block; }
+
+    .field { margin-bottom: 18px; }
+    .field-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .02em;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .field-label .req { color: var(--red); font-weight: 800; }
+    .field-lock {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      background: var(--border-soft);
+      color: var(--text-muted);
+      padding: 2px 6px;
+      border-radius: 4px;
+      margin-left: 4px;
+    }
+    .field-lock svg { width: 10px; height: 10px; }
+
+    .input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-input);
+      font-family: inherit;
+      font-size: 13.5px;
+      color: var(--text);
+      background: var(--surface);
+      outline: none;
+      transition: border-color .12s, box-shadow .12s;
+    }
+    .input:focus {
+      border-color: var(--q-blue);
+      box-shadow: 0 0 0 3px rgba(37,99,235,.15);
+    }
+    .input:read-only, .input[readonly] {
+      background: var(--border-soft);
+      color: var(--text-muted);
+      cursor: not-allowed;
+      border-color: var(--border);
+    }
+    .input.invalid {
+      border-color: var(--red);
+      box-shadow: 0 0 0 3px rgba(220,38,38,.12);
+    }
+    .field-help {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      margin-top: 6px;
+      line-height: 1.55;
+    }
+    .field-error {
+      font-size: 11.5px;
+      color: var(--red);
+      margin-top: 6px;
+      font-weight: 600;
+      display: none;
+    }
+    .field-error.show { display: block; }
+    .input-prefix {
+      display: flex;
+      align-items: stretch;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-input);
+      overflow: hidden;
+      transition: border-color .12s, box-shadow .12s;
+    }
+    .input-prefix:focus-within {
+      border-color: var(--q-blue);
+      box-shadow: 0 0 0 3px rgba(37,99,235,.15);
+    }
+    .input-prefix .prefix {
+      background: var(--border-soft);
+      color: var(--text-muted);
+      padding: 10px 12px;
+      font-family: var(--font-mono);
+      font-size: 12.5px;
+      border-right: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+    }
+    .input-prefix .input {
+      border: none;
+      border-radius: 0;
+      box-shadow: none;
+    }
+    .input-prefix .input:focus { box-shadow: none; }
+
+    /* Logo uploader */
+    .dropzone {
+      border: 2px dashed var(--border);
+      border-radius: var(--radius-card);
+      padding: 28px 22px;
+      text-align: center;
+      background: #FAFBFC;
+      cursor: pointer;
+      transition: border-color .15s, background .15s;
+      position: relative;
+    }
+    .dropzone:hover { border-color: var(--q-blue); background: var(--q-blue-soft); }
+    .dropzone.drag { border-color: var(--q-blue); background: var(--q-blue-soft); }
+    .dropzone.has-file { padding: 18px 22px; text-align: left; }
+    .dz-icon {
+      width: 40px; height: 40px;
+      margin: 0 auto 10px;
+      background: var(--q-blue-soft);
+      color: var(--q-blue);
+      border-radius: 10px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .dz-icon svg { width: 22px; height: 22px; }
+    .dz-title {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+    .dz-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.55;
+    }
+    .dz-sub strong { color: var(--q-blue); font-weight: 700; }
+    .dz-file { display: flex; align-items: center; gap: 14px; }
+    .dz-preview {
+      width: 64px; height: 64px;
+      border-radius: 10px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .dz-preview img { width: 100%; height: 100%; object-fit: cover; }
+    .dz-meta { flex: 1; }
+    .dz-meta .fname { font-size: 13px; font-weight: 700; color: var(--text); }
+    .dz-meta .fsize { font-size: 11.5px; color: var(--text-muted); margin-top: 2px; }
+    .dz-meta .status {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 11px; font-weight: 700;
+      color: var(--green);
+      margin-top: 6px;
+    }
+    .dz-replace {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 11.5px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .dz-replace:hover { color: var(--text); border-color: var(--text-subtle); }
+
+    .help-callout {
+      background: var(--q-blue-soft);
+      border: 1px solid var(--q-blue-border);
+      border-radius: var(--radius-input);
+      padding: 12px 14px;
+      margin-top: 14px;
+      font-size: 12px;
+      color: #1E40AF;
+      line-height: 1.6;
+      display: flex;
+      gap: 10px;
+    }
+    .help-callout svg { flex-shrink: 0; margin-top: 2px; }
+
+    /* Footer + buttons */
+    .wiz-footer {
+      padding: 16px 28px;
+      border-top: 1px solid var(--border-soft);
+      background: #FAFBFC;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .wiz-footer .left { font-size: 11.5px; color: var(--text-subtle); }
+    .wiz-footer .right { display: flex; gap: 8px; }
+
+    .btn {
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 9px 18px;
+      border-radius: var(--radius-btn);
+      cursor: pointer;
+      border: 1.5px solid transparent;
+      transition: background .12s, border-color .12s, transform .12s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-primary { background: var(--q-blue); color: #FFFFFF; border-color: var(--q-blue); }
+    .btn-primary:hover { background: var(--q-blue-hover); border-color: var(--q-blue-hover); }
+    .btn-primary:disabled {
+      background: var(--border);
+      border-color: var(--border);
+      color: var(--text-subtle);
+      cursor: not-allowed;
+    }
+    .btn-ghost { background: var(--surface); color: var(--text); border-color: var(--border); }
+    .btn-ghost:hover { background: var(--border-soft); border-color: var(--text-subtle); }
+    .btn-success { background: var(--green); color: #FFFFFF; border-color: var(--green); }
+    .btn-success:hover { background: #15803D; border-color: #15803D; }
+
+    /* ─── Post-completion preview state ─── */
+    .preview-wrap { display: none; }
+    .preview-wrap.active { display: block; }
+    .preview-bar {
+      background: #ECFDF5;
+      border-bottom: 1px solid #BBF7D0;
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 13px;
+      color: #065F46;
+    }
+    .preview-bar .check {
+      width: 22px; height: 22px; border-radius: 50%;
+      background: var(--green); color: white;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 800; flex-shrink: 0;
+    }
+    .preview-bar strong { color: #064E3B; }
+    .preview-bar .spacer { flex: 1; }
+    .preview-bar .reopen {
+      background: var(--surface); border: 1px solid #BBF7D0;
+      color: #065F46; padding: 6px 12px; border-radius: 6px;
+      font-family: inherit; font-size: 12px; font-weight: 700; cursor: pointer;
+    }
+    .preview-bar .reopen:hover { background: #D1FAE5; }
+
+    .preview-frame-wrap {
+      max-width: 1100px;
+      margin: 24px auto 60px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(15,23,42,.10);
+    }
+    .browser-bar {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 14px; background: #F8FAFC;
+      border-bottom: 1px solid var(--border);
+      font-family: var(--font-mono); font-size: 11px; color: var(--text-muted);
+    }
+    .browser-dots { display: flex; gap: 6px; }
+    .browser-dots span { width: 10px; height: 10px; border-radius: 50%; background: #CBD5E1; }
+    .browser-dots span:nth-child(1) { background: #F87171; }
+    .browser-dots span:nth-child(2) { background: #FBBF24; }
+    .browser-dots span:nth-child(3) { background: #34D399; }
+    .browser-url { flex: 1; background: #FFFFFF; border: 1px solid var(--border); border-radius: 6px; padding: 4px 10px; color: #475569; }
+
+    /* ═════ Inlined MyCOA default template (component classes match mycoa-default-template.html) ═════ */
+    .mycoa-template {
+      --mycoa-primary:        #123F4D;
+      --mycoa-primary-2:      #0E3540;
+      --mycoa-accent:         #2F80ED;
+      --mycoa-accent-hover:   #1E6BD8;
+      --mycoa-surface:        #FFFFFF;
+      --mycoa-surface-soft:   #F7FAFC;
+      --mycoa-border:         #E2E8F0;
+      --mycoa-text:           #0F1B26;
+      --mycoa-text-muted:     #56657A;
+      --mycoa-text-on-dark:   #FFFFFF;
+      --mycoa-text-on-dark-muted: rgba(255,255,255,.72);
+      --mycoa-radius-pill:    999px;
+      --mycoa-radius-card:    10px;
+      --mycoa-radius-btn:     10px;
+      font-family: var(--font-sans);
+      color: var(--mycoa-text);
+    }
+    .mycoa-hero {
+      position: relative;
+      background: linear-gradient(135deg, var(--mycoa-primary-2) 0%, var(--mycoa-primary) 60%, #1A5A6D 100%);
+      color: var(--mycoa-text-on-dark);
+      padding: 36px 40px 44px;
+      overflow: hidden;
+    }
+    .mycoa-hero::before {
+      content: ""; position: absolute; inset: auto -120px -120px auto;
+      width: 320px; height: 320px; border-radius: 50%;
+      background: radial-gradient(circle at center, rgba(255,255,255,.08), rgba(255,255,255,0));
+      pointer-events: none;
+    }
+    .mycoa-hero-top { display: flex; align-items: center; justify-content: space-between; gap: 24px; margin-bottom: 24px; position: relative; z-index: 1; }
+    .mycoa-merchant { display: flex; align-items: center; gap: 12px; }
+    .mycoa-merchant-logo {
+      width: 44px; height: 44px; border-radius: 10px; background: #FFFFFF;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; color: var(--mycoa-primary); font-size: 18px;
+      letter-spacing: -.02em; box-shadow: 0 2px 8px rgba(0,0,0,.15);
+      overflow: hidden;
+    }
+    .mycoa-merchant-logo img { width: 100%; height: 100%; object-fit: cover; }
+    .mycoa-merchant-name { font-size: 14px; font-weight: 700; letter-spacing: -.01em; }
+    .mycoa-wordmark { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
+    .mycoa-wordmark-logo { font-size: 22px; font-weight: 800; letter-spacing: -.02em; }
+    .mycoa-wordmark-logo sup { font-size: 10px; font-weight: 600; opacity: .7; margin-left: 1px; }
+    .mycoa-wordmark-tag { font-size: 11px; color: var(--mycoa-text-on-dark-muted); letter-spacing: .02em; }
+    .mycoa-hero-title { font-size: 28px; font-weight: 800; letter-spacing: -.02em; margin-bottom: 14px; position: relative; z-index: 1; }
+    .mycoa-hero-lead { font-size: 14px; line-height: 1.75; max-width: 720px; color: var(--mycoa-text-on-dark-muted); margin-bottom: 24px; position: relative; z-index: 1; }
+    .mycoa-hero-ctas { display: flex; gap: 12px; flex-wrap: wrap; position: relative; z-index: 1; }
+    .mycoa-btn {
+      font-family: inherit; font-size: 13px; font-weight: 700;
+      padding: 12px 22px; border-radius: var(--mycoa-radius-pill);
+      cursor: pointer; text-decoration: none;
+      display: inline-flex; align-items: center; gap: 8px;
+      transition: transform .12s, background .15s, border-color .15s, color .15s;
+      border: 1.5px solid transparent; letter-spacing: .01em;
+    }
+    .mycoa-btn-primary { background: var(--mycoa-accent); color: #FFFFFF; border-color: var(--mycoa-accent); }
+    .mycoa-btn-primary:hover { background: var(--mycoa-accent-hover); border-color: var(--mycoa-accent-hover); transform: translateY(-1px); }
+    .mycoa-btn-ghost { background: transparent; color: #FFFFFF; border-color: rgba(255,255,255,.55); }
+    .mycoa-btn-ghost:hover { background: rgba(255,255,255,.08); border-color: #FFFFFF; }
+    .mycoa-search-section { background: var(--mycoa-surface); padding: 44px 40px 36px; }
+    .mycoa-search-title { font-size: 22px; font-weight: 800; letter-spacing: -.02em; margin-bottom: 10px; color: var(--mycoa-text); }
+    .mycoa-search-help { font-size: 13px; color: var(--mycoa-text-muted); max-width: 720px; line-height: 1.6; margin-bottom: 22px; }
+    .mycoa-search-trouble { font-size: 12px; color: var(--mycoa-text-muted); margin-bottom: 10px; }
+    .mycoa-search-trouble a { color: var(--mycoa-accent); font-weight: 600; text-decoration: none; }
+    .mycoa-search-form { display: flex; gap: 10px; align-items: stretch; max-width: 720px; margin-bottom: 28px; }
+    .mycoa-search-input {
+      flex: 1; padding: 12px 14px; border: 1.5px solid var(--mycoa-border);
+      border-radius: var(--mycoa-radius-btn); font-family: inherit; font-size: 13px;
+      color: var(--mycoa-text); background: var(--mycoa-surface); outline: none;
+    }
+    .mycoa-search-submit {
+      background: var(--mycoa-accent); color: #FFFFFF; border: none;
+      border-radius: var(--mycoa-radius-btn); padding: 0 22px;
+      font-family: inherit; font-weight: 800; font-size: 14px; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 6px; letter-spacing: -.01em;
+    }
+    .mycoa-search-submit sup { font-size: 9px; opacity: .75; font-weight: 600; }
+    .mycoa-guide { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .mycoa-guide-card {
+      background: var(--mycoa-surface-soft); border: 1px solid var(--mycoa-border);
+      border-radius: var(--mycoa-radius-card); padding: 18px 18px 20px;
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .mycoa-guide-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+    .mycoa-guide-num {
+      width: 28px; height: 28px; border-radius: 50%; background: var(--mycoa-accent);
+      color: #FFFFFF; font-size: 13px; font-weight: 800;
+      display: inline-flex; align-items: center; justify-content: center;
+    }
+    .mycoa-guide-icon { width: 32px; height: 32px; color: var(--mycoa-text-muted); display: inline-flex; align-items: center; justify-content: center; }
+    .mycoa-guide-icon svg { width: 24px; height: 24px; }
+    .mycoa-guide-title { font-size: 14px; font-weight: 800; letter-spacing: -.01em; }
+    .mycoa-guide-desc { font-size: 12.5px; line-height: 1.55; color: var(--mycoa-text-muted); }
+    .mycoa-footer {
+      background: var(--mycoa-primary); color: var(--mycoa-text-on-dark);
+      padding: 22px 40px; display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 14px;
+    }
+    .mycoa-footer-left { font-size: 12px; color: var(--mycoa-text-on-dark-muted); }
+    .mycoa-footer-right { font-size: 12px; color: var(--mycoa-text-on-dark-muted); display: inline-flex; align-items: center; gap: 6px; }
+    .mycoa-footer-right strong { color: #FFFFFF; font-weight: 800; }
+
+    .preview-note {
+      max-width: 1100px;
+      margin: 18px auto 0;
+      padding: 14px 18px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      font-size: 12.5px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      line-height: 1.6;
+    }
+    .preview-note .dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--green); flex-shrink: 0; margin-top: 6px;
+    }
+    .preview-note strong { color: var(--text); font-weight: 700; }
+    .preview-note code {
+      font-family: var(--font-mono); font-size: 11.5px;
+      background: var(--border-soft); padding: 1px 6px; border-radius: 4px;
+      color: var(--text);
+    }
+    .preview-note a { color: var(--q-blue); font-weight: 600; text-decoration: none; }
+
+    @media (max-width: 720px) {
+      .wiz-header, .wiz-body, .wiz-footer, .stepper { padding-left: 20px; padding-right: 20px; }
+      .mycoa-search-section { padding: 28px 22px; }
+      .mycoa-hero { padding: 28px 22px 32px; }
+      .mycoa-guide { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="proto-bar">
+    <strong>Prototype · QP-3714 MyCOA Setup Wizard v1</strong>
+    <span>Gated first-run modal for <strong>JC Green</strong>. Two slides, then post-completion preview of the Default Template (QP-3713).</span>
+    <span class="spacer"></span>
+    <a class="nav" href="mycoa-default-template.html">View template standalone →</a>
+    <a class="back" href="../index.html">← All mockups</a>
+  </div>
+
+  <div class="state-tabs">
+    <button class="state-tab active" onclick="goTo(1)">Slide 1 · Site Identity</button>
+    <button class="state-tab" onclick="goTo(2)">Slide 2 · Branding</button>
+    <button class="state-tab" onclick="goTo('done')">After Finish · Preview</button>
+  </div>
+
+  <!-- ═════════════════ WIZARD STATE ═════════════════ -->
+  <div class="stage" id="wizardStage">
+    <!-- Faux portal peek behind the scrim -->
+    <div class="faux-portal" aria-hidden="true">
+      <div class="fp-top">
+        <span style="width:24px;height:24px;border-radius:6px;background:#2563EB;display:inline-flex;align-items:center;justify-content:center;font-weight:800;">Q</span>
+        <span>Qredible Merchant Portal · JC Green</span>
+      </div>
+      <div class="fp-body"></div>
+    </div>
+
+    <div class="scrim">
+      <div class="wizard" role="dialog" aria-modal="true" aria-labelledby="wizTitle">
+
+        <!-- Header -->
+        <div class="wiz-header">
+          <span class="wiz-eyebrow"><span class="dot"></span> First-time setup · required</span>
+          <div class="wiz-title" id="wizTitle">Set up your MyCOA site</div>
+          <div class="wiz-sub">Two quick steps. We'll publish your default MyCOA site at the dynamic URL below — you can customize colors, text, and fonts later from the Display tab.</div>
+        </div>
+
+        <!-- Stepper -->
+        <div class="stepper" id="stepper">
+          <div class="step active" data-step="1">
+            <span class="step-num">1</span>
+            <span class="step-label">Site Identity</span>
+          </div>
+          <div class="step-sep" id="sep1"></div>
+          <div class="step" data-step="2">
+            <span class="step-num">2</span>
+            <span class="step-label">Branding</span>
+          </div>
+        </div>
+
+        <!-- Body -->
+        <div class="wiz-body">
+
+          <!-- ───── Slide 1 ───── -->
+          <div class="slide active" data-slide="1">
+            <div class="field">
+              <div class="field-label">
+                Your company name
+                <span class="field-lock" title="Read-only. Matches your Qredible account.">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+                  Read-only
+                </span>
+              </div>
+              <input class="input" type="text" value="JC Green" readonly />
+              <div class="field-help">Pulled from your Qredible account. Contact support to change it.</div>
+            </div>
+
+            <div class="field">
+              <div class="field-label">
+                Resume shopping URL <span class="req">*</span>
+              </div>
+              <input
+                class="input"
+                id="shoppingUrl"
+                type="url"
+                placeholder="https://shop.jcgreen.com"
+                oninput="validateShoppingUrl()"
+                required
+              />
+              <div class="field-help">Where customers will be sent when they click <strong>Resume Shopping</strong> from your MyCOA site. Must start with <code style="font-family:var(--font-mono)">https://</code>.</div>
+              <div class="field-error" id="shoppingUrlError">Enter a valid URL starting with http:// or https://</div>
+            </div>
+
+            <div class="field">
+              <div class="field-label">
+                Your dynamic URL
+                <span class="field-lock" title="Read-only. Auto-generated from your account.">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+                  Read-only
+                </span>
+              </div>
+              <div class="input-prefix">
+                <span class="prefix">https://</span>
+                <input class="input" type="text" value="jcgreen.mycoa.com" readonly />
+              </div>
+              <div class="field-help">Your published MyCOA site. Custom CNAME mapping is available later from the Display tab.</div>
+            </div>
+          </div>
+
+          <!-- ───── Slide 2 ───── -->
+          <div class="slide" data-slide="2">
+            <div class="field">
+              <div class="field-label">
+                Primary logo <span class="req">*</span>
+              </div>
+              <div class="dropzone" id="dropzone" tabindex="0">
+                <div class="dz-empty" id="dzEmpty">
+                  <div class="dz-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                      <polyline points="17 8 12 3 7 8"/>
+                      <line x1="12" y1="3" x2="12" y2="15"/>
+                    </svg>
+                  </div>
+                  <div class="dz-title">Drop a logo file, or <strong style="color:var(--q-blue)">click to browse</strong></div>
+                  <div class="dz-sub">Recommended: <strong>512×512 PNG</strong>, square, transparent background, max 2 MB. Minimum 256×256.</div>
+                </div>
+                <div class="dz-file" id="dzFile" style="display:none;">
+                  <div class="dz-preview" id="dzPreview"></div>
+                  <div class="dz-meta">
+                    <div class="fname" id="dzName">logo.png</div>
+                    <div class="fsize" id="dzSize">— · —</div>
+                    <div class="status">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                      Looks good
+                    </div>
+                  </div>
+                  <button class="dz-replace" type="button" onclick="event.stopPropagation(); resetLogo();">Replace</button>
+                </div>
+                <input type="file" id="logoInput" accept="image/png,image/jpeg,image/svg+xml" style="display:none;" />
+              </div>
+            </div>
+
+            <div class="help-callout">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+              <div>
+                <strong>Color, text, font size, and template customizations come in a later release.</strong>
+                For now, we'll publish your MyCOA site with the Qredible default template.
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Footer -->
+        <div class="wiz-footer">
+          <div class="left">Step <span id="stepLabel">1</span> of 2</div>
+          <div class="right">
+            <button class="btn btn-ghost" id="backBtn" onclick="goTo(1)" style="display:none;">Back</button>
+            <button class="btn btn-primary" id="nextBtn" onclick="goTo(2)" disabled>Next</button>
+            <button class="btn btn-success" id="finishBtn" onclick="goTo('done')" disabled style="display:none;">Finish setup</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ═════════════════ POST-COMPLETION PREVIEW STATE ═════════════════ -->
+  <div class="preview-wrap" id="previewWrap">
+    <div class="preview-bar">
+      <span class="check">✓</span>
+      <div><strong>Setup complete.</strong> Your MyCOA site is live at <code style="font-family:var(--font-mono);background:rgba(255,255,255,.55);padding:1px 6px;border-radius:4px;">https://<span id="pbHost">jcgreen.mycoa.com</span></code>. Preview below reflects the captured logo and shopping URL.</div>
+      <span class="spacer"></span>
+      <button class="reopen" onclick="goTo(1)">Re-open wizard</button>
+    </div>
+
+    <div class="preview-note">
+      <span class="dot"></span>
+      <div>
+        <strong>Captured from wizard:</strong>
+        Logo wired into the hero · "Resume Shopping" CTA links to <code id="pbShoppingUrl">https://shop.jcgreen.com</code> ·
+        Everything else is the Qredible default template — customizable later via the Display tab (<a href="../mycoa-display-tab-mockup.html">QP-3626</a>).
+      </div>
+    </div>
+
+    <div class="preview-frame-wrap">
+      <div class="browser-bar">
+        <div class="browser-dots"><span></span><span></span><span></span></div>
+        <div class="browser-url">https://jcgreen.mycoa.com/</div>
+      </div>
+
+      <div class="mycoa-template">
+        <!-- HERO -->
+        <section class="mycoa-hero" data-component="mycoa-hero">
+          <div class="mycoa-hero-top">
+            <div class="mycoa-merchant">
+              <div class="mycoa-merchant-logo" id="previewMerchantLogo">JC</div>
+              <div class="mycoa-merchant-name">JC Green</div>
+            </div>
+            <div class="mycoa-wordmark">
+              <div class="mycoa-wordmark-logo">MyCOA<sup>®</sup></div>
+              <div class="mycoa-wordmark-tag">Transparency you can trust</div>
+            </div>
+          </div>
+          <h1 class="mycoa-hero-title">Certificate of Analysis</h1>
+          <p class="mycoa-hero-lead">
+            At JC Green, we believe in full transparency and rigorous quality control. That's why every
+            batch of our products is tested by accredited laboratories, and the results are made readily
+            available for your review.
+          </p>
+          <div class="mycoa-hero-ctas">
+            <a href="#guide" class="mycoa-btn mycoa-btn-primary">Understanding Your COA</a>
+            <a href="#" id="previewResumeShopping" target="_blank" rel="noopener" class="mycoa-btn mycoa-btn-ghost">Resume Shopping</a>
+          </div>
+        </section>
+
+        <!-- SEARCH + GUIDE (condensed) -->
+        <section class="mycoa-search-section">
+          <div data-component="mycoa-search">
+            <h2 class="mycoa-search-title">Search By Batch/Name</h2>
+            <p class="mycoa-search-help">Find your lab report by entering the batch number or name of the product.</p>
+            <p class="mycoa-search-trouble">Still having trouble finding the batch number? <a href="#">See the guide below.</a></p>
+            <form class="mycoa-search-form" onsubmit="event.preventDefault();">
+              <input class="mycoa-search-input" type="text" placeholder="Enter batch number or product name…" />
+              <button class="mycoa-search-submit" type="submit">MyCOA<sup>®</sup></button>
+            </form>
+          </div>
+
+          <div id="guide" data-component="mycoa-guide">
+            <div class="mycoa-guide">
+              <div class="mycoa-guide-card">
+                <div class="mycoa-guide-head">
+                  <span class="mycoa-guide-num">1</span>
+                  <span class="mycoa-guide-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 7h6M9 11h6M9 15h4"/></svg></span>
+                </div>
+                <div class="mycoa-guide-title">Locate the Batch Number</div>
+                <p class="mycoa-guide-desc">Find the batch number on the bottle label, box, or sticker on the bottom of the container.</p>
+              </div>
+              <div class="mycoa-guide-card">
+                <div class="mycoa-guide-head">
+                  <span class="mycoa-guide-num">2</span>
+                  <span class="mycoa-guide-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></span>
+                </div>
+                <div class="mycoa-guide-title">Enter and Search</div>
+                <p class="mycoa-guide-desc">Type the batch number or product name into the search bar above and click "MyCOA" to view the results.</p>
+              </div>
+              <div class="mycoa-guide-card">
+                <div class="mycoa-guide-head">
+                  <span class="mycoa-guide-num">3</span>
+                  <span class="mycoa-guide-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14h1M14 20h3M20 17v4"/></svg></span>
+                </div>
+                <div class="mycoa-guide-title">Quick QR Access</div>
+                <p class="mycoa-guide-desc">Some products include a QR code for instant access. Simply scan with your smartphone camera.</p>
+              </div>
+            </div>
+          </div>
+
+          <div style="text-align:center;margin-top:28px;">
+            <a href="mycoa-default-template.html" style="color:var(--q-blue);font-size:12.5px;font-weight:700;text-decoration:none;">
+              View the full default template (with COA explainer) →
+            </a>
+          </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="mycoa-footer" data-component="mycoa-footer">
+          <div class="mycoa-footer-left">© 2026 JC Green. All rights reserved.</div>
+          <div class="mycoa-footer-right">Powered by <strong>MyCOA<sup>®</sup></strong></div>
+        </footer>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ─── State ───
+    const state = {
+      slide: 1,
+      shoppingUrl: '',
+      shoppingUrlValid: false,
+      logoDataUrl: null,
+      logoName: null,
+      logoSize: null,
+    };
+
+    // ─── URL validation ───
+    function validateShoppingUrl() {
+      const input = document.getElementById('shoppingUrl');
+      const errEl = document.getElementById('shoppingUrlError');
+      const val = input.value.trim();
+      state.shoppingUrl = val;
+      if (!val) {
+        state.shoppingUrlValid = false;
+        input.classList.remove('invalid');
+        errEl.classList.remove('show');
+      } else {
+        let ok = false;
+        try {
+          const u = new URL(val);
+          ok = u.protocol === 'http:' || u.protocol === 'https:';
+        } catch (_) { ok = false; }
+        state.shoppingUrlValid = ok;
+        input.classList.toggle('invalid', !ok);
+        errEl.classList.toggle('show', !ok);
+      }
+      updateCtas();
+    }
+
+    // ─── Logo upload ───
+    const dz = document.getElementById('dropzone');
+    const dzEmpty = document.getElementById('dzEmpty');
+    const dzFile = document.getElementById('dzFile');
+    const dzPreview = document.getElementById('dzPreview');
+    const dzName = document.getElementById('dzName');
+    const dzSize = document.getElementById('dzSize');
+    const logoInput = document.getElementById('logoInput');
+
+    dz.addEventListener('click', () => logoInput.click());
+    dz.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); logoInput.click(); } });
+    dz.addEventListener('dragover', (e) => { e.preventDefault(); dz.classList.add('drag'); });
+    dz.addEventListener('dragleave', () => dz.classList.remove('drag'));
+    dz.addEventListener('drop', (e) => {
+      e.preventDefault(); dz.classList.remove('drag');
+      if (e.dataTransfer.files && e.dataTransfer.files[0]) handleLogo(e.dataTransfer.files[0]);
+    });
+    logoInput.addEventListener('change', (e) => {
+      if (e.target.files && e.target.files[0]) handleLogo(e.target.files[0]);
+    });
+
+    function handleLogo(file) {
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        state.logoDataUrl = ev.target.result;
+        state.logoName = file.name;
+        state.logoSize = file.size;
+        dzName.textContent = file.name;
+        dzSize.textContent = formatSize(file.size) + ' · ' + (file.type || 'image');
+        dzPreview.innerHTML = '<img src="' + ev.target.result + '" alt="logo preview">';
+        dzEmpty.style.display = 'none';
+        dzFile.style.display = 'flex';
+        dz.classList.add('has-file');
+        updateCtas();
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function resetLogo() {
+      state.logoDataUrl = null;
+      state.logoName = null;
+      state.logoSize = null;
+      dzEmpty.style.display = 'block';
+      dzFile.style.display = 'none';
+      dz.classList.remove('has-file');
+      logoInput.value = '';
+      updateCtas();
+    }
+
+    function formatSize(bytes) {
+      if (bytes < 1024) return bytes + ' B';
+      if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+      return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+    }
+
+    // ─── Navigation ───
+    function updateCtas() {
+      const nextBtn = document.getElementById('nextBtn');
+      const finishBtn = document.getElementById('finishBtn');
+      if (state.slide === 1) {
+        nextBtn.disabled = !state.shoppingUrlValid;
+      } else if (state.slide === 2) {
+        finishBtn.disabled = !state.logoDataUrl;
+      }
+    }
+
+    function goTo(target) {
+      // State tabs
+      document.querySelectorAll('.state-tab').forEach((t, i) => {
+        const map = [1, 2, 'done'];
+        t.classList.toggle('active', map[i] === target);
+      });
+
+      // Show wizard vs preview
+      const wizardStage = document.getElementById('wizardStage');
+      const previewWrap = document.getElementById('previewWrap');
+      if (target === 'done') {
+        wizardStage.style.display = 'none';
+        previewWrap.classList.add('active');
+        applyToPreview();
+        return;
+      } else {
+        wizardStage.style.display = 'block';
+        previewWrap.classList.remove('active');
+      }
+
+      state.slide = target;
+
+      // Slides
+      document.querySelectorAll('.slide').forEach(s => s.classList.toggle('active', parseInt(s.dataset.slide) === target));
+
+      // Stepper
+      document.querySelectorAll('.step').forEach(s => {
+        const stepNum = parseInt(s.dataset.step);
+        s.classList.toggle('active', stepNum === target);
+        s.classList.toggle('done', stepNum < target);
+      });
+      document.getElementById('sep1').classList.toggle('filled', target > 1);
+
+      // Footer
+      document.getElementById('stepLabel').textContent = target;
+      document.getElementById('backBtn').style.display = target === 2 ? 'inline-flex' : 'none';
+      document.getElementById('nextBtn').style.display = target === 1 ? 'inline-flex' : 'none';
+      document.getElementById('finishBtn').style.display = target === 2 ? 'inline-flex' : 'none';
+
+      updateCtas();
+    }
+
+    function applyToPreview() {
+      // Logo
+      const logoEl = document.getElementById('previewMerchantLogo');
+      if (state.logoDataUrl) {
+        logoEl.innerHTML = '<img src="' + state.logoDataUrl + '" alt="JC Green logo">';
+      } else {
+        logoEl.innerHTML = 'JC';
+      }
+      // Shopping URL
+      const shop = state.shoppingUrl || 'https://shop.jcgreen.com';
+      const resume = document.getElementById('previewResumeShopping');
+      resume.href = shop;
+      document.getElementById('pbShoppingUrl').textContent = shop;
+    }
+
+    // Prime on load
+    validateShoppingUrl();
+  </script>
+
+</body>
+</html>
