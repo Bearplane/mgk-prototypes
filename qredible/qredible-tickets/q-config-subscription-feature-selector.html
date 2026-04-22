@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Q-Config Subscription Builder — Feature Selector (MyCOA first)</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:#F1F5F9;color:#1E293B;font-size:14px;line-height:1.5}
+a{color:#3B82F6;text-decoration:none}a:hover{text-decoration:underline}
+code,.mono{font-family:'IBM Plex Mono',monospace}
+
+.topnav{background:#1E3A5F;padding:12px 24px;display:flex;align-items:center;gap:8px;font-size:13px;color:#94A3B8;position:sticky;top:0;z-index:100}
+.topnav a{color:#93C5FD}.topnav .sep{color:#475569}
+.topnav .ticket-badge{background:#3B82F6;color:#fff;font-size:11px;font-weight:600;padding:2px 8px;border-radius:4px;font-family:'IBM Plex Mono',monospace}
+.topnav .title{color:#fff;font-weight:600}
+
+.page{max-width:1180px;margin:0 auto;padding:32px 24px 64px}
+.page-header{margin-bottom:28px}
+.page-header h1{font-size:22px;font-weight:700;color:#1E3A5F;margin-bottom:6px}
+.page-header p{color:#64748B;font-size:13px}
+
+.info-block{background:#FFFBEB;border:2px dashed #FCD34D;border-radius:10px;padding:16px 20px;margin-bottom:28px}
+.info-block .info-pill{display:inline-flex;align-items:center;gap:5px;background:#F59E0B;color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;letter-spacing:.5px;text-transform:uppercase;margin-bottom:10px}
+.info-block p,.info-block li{font-size:12px;color:#78350F;line-height:1.65}
+.info-block ul{padding-left:18px;margin-top:6px}
+.info-block strong{color:#92400E}
+.info-block code{background:#FEF3C7;padding:1px 5px;border-radius:3px;font-size:11px}
+
+.section-label{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:4px 12px;border-radius:20px;margin-bottom:14px}
+.label-blue{background:#DBEAFE;color:#1E40AF}
+.label-green{background:#DCFCE7;color:#166534}
+.label-amber{background:#FEF3C7;color:#92400E}
+.label-purple{background:#EDE9FE;color:#4C1D95}
+.section-block{margin-bottom:44px}
+.section-title{font-size:14px;font-weight:700;color:#1E3A5F;margin-bottom:14px}
+
+.divider{height:1px;background:#E2E8F0;margin:36px 0}
+
+/* APP SHELL */
+.app-shell{background:#fff;border:1px solid #E2E8F0;border-radius:10px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.app-topbar{background:#1E3A5F;color:#fff;padding:12px 20px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:14px}
+.app-topbar .crumb{color:#93C5FD;font-weight:500;font-size:12px}
+.app-topbar .spacer{flex:1}
+
+/* Q-CONFIG SIDEBAR + MAIN */
+.qc-layout{display:grid;grid-template-columns:200px 1fr;min-height:560px}
+.qc-side{background:#F8FAFC;border-right:1px solid #E2E8F0;padding:14px 0}
+.qc-side-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#94A3B8;padding:4px 18px 10px}
+.qc-side-item{padding:8px 18px;font-size:12px;color:#475569;font-weight:500;cursor:pointer;border-left:3px solid transparent}
+.qc-side-item.active{background:#EFF6FF;color:#1E40AF;font-weight:700;border-left-color:#3B82F6}
+.qc-main{padding:22px 26px}
+
+/* BREADCRUMB HEADER */
+.qc-crumb{font-size:11px;color:#94A3B8;margin-bottom:4px}
+.qc-crumb a{color:#3B82F6}
+.qc-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid #E2E8F0}
+.qc-head h2{font-size:18px;font-weight:700;color:#1E3A5F}
+.qc-head .qc-sub{font-size:12px;color:#64748B;margin-top:4px}
+.qc-actions{display:flex;gap:8px}
+
+/* BUTTONS */
+.btn{padding:8px 16px;border-radius:6px;font-size:12px;font-weight:600;border:1px solid transparent;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-family:inherit}
+.btn-primary{background:#1E3A5F;color:#fff;border-color:#1E3A5F}
+.btn-primary:hover{background:#1E40AF}
+.btn-secondary{background:#fff;border-color:#CBD5E1;color:#475569}
+.btn-success{background:#16A34A;color:#fff}
+.btn-sm{padding:5px 11px;font-size:11px}
+
+/* FORM */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px 28px}
+.field-group{margin-bottom:18px}
+.field-group.full{grid-column:1 / -1}
+.field-group label{display:block;font-size:12px;font-weight:600;color:#334155;margin-bottom:5px}
+.field-group .helper{font-size:11px;color:#94A3B8;margin-top:4px;line-height:1.5}
+.form-input,.form-select,.form-textarea{width:100%;border:1px solid #CBD5E1;border-radius:6px;padding:9px 12px;font-size:13px;font-family:inherit;color:#1E293B;background:#fff;outline:none}
+.form-textarea{min-height:80px;resize:vertical}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:#3B82F6;box-shadow:0 0 0 2px rgba(59,130,246,.12)}
+.input-prefix{position:relative}
+.input-prefix span{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#94A3B8;font-size:13px;pointer-events:none}
+.input-prefix input{padding-left:26px}
+
+.placeholder-pill{display:inline-flex;align-items:center;gap:4px;font-size:9px;font-weight:700;color:#94A3B8;background:#F1F5F9;padding:1px 7px;border-radius:10px;margin-left:4px;letter-spacing:.04em;text-transform:uppercase}
+.new-pill{display:inline-flex;align-items:center;gap:4px;font-size:9px;font-weight:700;color:#166534;background:#DCFCE7;padding:1px 7px;border-radius:10px;margin-left:4px;letter-spacing:.04em;text-transform:uppercase}
+
+/* FEATURE MULTI-SELECT */
+.feat-card{border:1.5px solid #3B82F6;background:#F8FBFF;border-radius:10px;padding:16px;position:relative}
+.feat-card::before{content:"NEW";position:absolute;top:-10px;left:14px;background:#16A34A;color:#fff;font-size:9px;font-weight:700;padding:2px 8px;border-radius:10px;letter-spacing:.05em}
+.feat-card-title{font-size:13px;font-weight:700;color:#1E3A5F;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.feat-card-desc{font-size:11px;color:#64748B;margin-bottom:12px;line-height:1.55}
+
+.feat-list{border:1px solid #CBD5E1;border-radius:8px;overflow:hidden;background:#fff}
+.feat-option{display:flex;align-items:flex-start;gap:10px;padding:11px 14px;border-bottom:1px solid #F1F5F9;cursor:pointer;position:relative}
+.feat-option:last-child{border-bottom:none}
+.feat-option.selected{background:#EFF6FF;border-left:3px solid #3B82F6;padding-left:11px}
+.feat-option input[type=checkbox]{margin-top:3px;accent-color:#3B82F6;width:15px;height:15px;flex-shrink:0}
+.feat-option .feat-main{flex:1}
+.feat-option .feat-name{font-size:13px;font-weight:700;color:#1E3A5F;display:flex;align-items:center;gap:8px}
+.feat-option .feat-desc{font-size:11px;color:#64748B;margin-top:2px;line-height:1.5}
+.feat-option.disabled{opacity:.55;cursor:not-allowed}
+.feat-option .feat-key{font-family:'IBM Plex Mono',monospace;font-size:10px;color:#94A3B8;margin-left:auto;flex-shrink:0;background:#F1F5F9;padding:1px 6px;border-radius:3px}
+.feat-badge{font-size:9px;font-weight:700;padding:1px 7px;border-radius:10px;letter-spacing:.04em;text-transform:uppercase}
+.feat-badge-first{background:#FEF3C7;color:#92400E}
+.feat-badge-disabled{background:#F1F5F9;color:#94A3B8}
+.feat-badge-beta{background:#EDE9FE;color:#4C1D95}
+
+/* SELECTED FEATURE TAGS */
+.feat-selected-row{display:flex;align-items:center;gap:8px;margin-top:12px;flex-wrap:wrap}
+.feat-selected-row .lbl{font-size:11px;color:#64748B;font-weight:600}
+.feat-tag{display:inline-flex;align-items:center;gap:5px;background:#1E3A5F;color:#fff;font-size:11px;font-weight:700;padding:3px 10px;border-radius:12px}
+.feat-tag .x{cursor:pointer;opacity:.75;font-size:11px}
+
+/* PLAN CARD PREVIEW */
+.plan-preview-card{background:#fff;border:1px solid #E2E8F0;border-radius:10px;padding:18px;max-width:340px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.plan-preview-card .pp-badge{display:inline-block;font-size:10px;font-weight:700;background:#DBEAFE;color:#1E40AF;padding:2px 8px;border-radius:10px;letter-spacing:.04em;text-transform:uppercase;margin-bottom:8px}
+.plan-preview-card h3{font-size:16px;font-weight:700;color:#1E3A5F;margin-bottom:4px}
+.plan-preview-card .pp-price{font-size:22px;font-weight:700;color:#1E3A5F;margin-bottom:2px}
+.plan-preview-card .pp-price small{font-size:12px;color:#64748B;font-weight:500}
+.plan-preview-card .pp-desc{font-size:12px;color:#64748B;margin:10px 0;line-height:1.55}
+.plan-preview-card ul.pp-feat{list-style:none;padding:0;margin:10px 0}
+.plan-preview-card ul.pp-feat li{padding:5px 0;font-size:12px;color:#334155;display:flex;align-items:center;gap:6px}
+.plan-preview-card ul.pp-feat li::before{content:"✓";color:#16A34A;font-weight:700}
+.plan-preview-card .pp-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px;padding-top:14px;border-top:1px dashed #E2E8F0}
+.plan-preview-card .pp-tag{display:inline-flex;align-items:center;gap:5px;background:#EFF6FF;color:#1E40AF;font-size:10px;font-weight:700;padding:3px 9px;border-radius:10px;letter-spacing:.04em}
+.plan-preview-card .pp-tag .dot{width:6px;height:6px;background:#3B82F6;border-radius:50%}
+
+/* PLAN LIST TABLE (saved state) */
+.plan-list{background:#fff;border:1px solid #E2E8F0;border-radius:10px;overflow:hidden}
+.plan-list-header{background:#F8FAFC;padding:12px 16px;font-size:12px;font-weight:700;color:#1E3A5F;border-bottom:1px solid #E2E8F0;display:flex;align-items:center;justify-content:space-between}
+table.plans{width:100%;border-collapse:collapse}
+table.plans th{background:#F8FAFC;text-align:left;font-size:10px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.04em;padding:9px 14px;border-bottom:1px solid #E2E8F0}
+table.plans td{padding:12px 14px;border-bottom:1px solid #F1F5F9;font-size:12px;vertical-align:middle}
+table.plans tr:last-child td{border-bottom:none}
+table.plans .pn{font-weight:700;color:#1E3A5F;font-size:13px}
+.saved-tag{display:inline-flex;align-items:center;gap:4px;background:#DBEAFE;color:#1E40AF;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;letter-spacing:.04em;margin-right:4px}
+.saved-tag.gray{background:#F1F5F9;color:#64748B}
+
+/* CALLOUT */
+.callout{border-radius:8px;padding:14px 18px;font-size:12px;line-height:1.65;margin-bottom:14px}
+.callout-amber{background:#FFFBEB;border:1px solid #FDE68A;border-left:4px solid #F59E0B;color:#78350F}
+.callout-purple{background:#FAF5FF;border:1px solid #DDD6FE;border-left:4px solid #8B5CF6;color:#4C1D95}
+.callout-blue{background:#EFF6FF;border:1px solid #BFDBFE;border-left:4px solid #3B82F6;color:#1E40AF}
+.callout strong{font-weight:700}
+.callout .tag{display:inline-block;font-size:9px;font-weight:700;padding:1px 7px;border-radius:10px;background:rgba(0,0,0,.08);letter-spacing:.05em;text-transform:uppercase;margin-right:6px;vertical-align:middle}
+.callout code{background:rgba(0,0,0,.08);padding:1px 5px;border-radius:3px;font-size:11px;font-family:'IBM Plex Mono',monospace}
+
+/* DIAGRAM */
+.link-diagram{display:grid;grid-template-columns:1fr 40px 1fr;gap:0;align-items:stretch;margin-top:14px}
+.ld-card{background:#fff;border:1.5px solid #E2E8F0;border-radius:10px;padding:14px 16px}
+.ld-card.q-config{border-color:#8B5CF6;background:#FAF5FF}
+.ld-card.wemonitor{border-color:#3B82F6;background:#EFF6FF}
+.ld-card .ld-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#1E3A5F;margin-bottom:6px}
+.ld-card .ld-body{font-size:12px;color:#334155;line-height:1.55}
+.ld-card code{background:rgba(0,0,0,.06);padding:1px 5px;border-radius:3px;font-size:10px}
+.ld-arrow{display:flex;align-items:center;justify-content:center;color:#8B5CF6;font-size:22px;font-weight:700}
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="../index.html">← All Mockups</a>
+  <span class="sep">/</span>
+  <span class="title">Q-Config Subscription Builder — Feature Selector</span>
+  <span class="sep">/</span>
+  <span class="ticket-badge">B.2 · Ticket 2</span>
+</nav>
+
+<div class="page">
+
+  <div class="page-header">
+    <h1>Q-Config Subscription Builder — Feature Selector on Plan Details (MyCOA first)</h1>
+    <p>Adds a <strong>Features</strong> control to the Q-Config subscription plan Details screen. Operators tag each plan with one or more features (MyCOA first). The saved <code>features[]</code> array is consumed downstream by the We Monitor invite paywall (Ticket 1) to filter plans by feature scope.</p>
+  </div>
+
+  <!-- TOP INFO BLOCK -->
+  <div class="info-block">
+    <div class="info-pill">ℹ INFO — NOT IN BUILD</div>
+    <p><strong>How to read this mockup:</strong> Yellow dashed blocks are annotations for Joseph / design review — never rendered in-app. Fields marked <span class="placeholder-pill">Placeholder</span> are pre-existing and out of scope for this ticket; only the <strong>Features</strong> control (green NEW badge) is net-new.</p>
+    <ul>
+      <li><strong>Features is a multi-select</strong> (plans may expose more than one feature), not a single radio. A plan with <code>features = ["mycoa","qscanai"]</code> appears at paywall for either scope.</li>
+      <li><strong>MyCOA is the first and only enabled option at launch.</strong> Other features appear in the list but are disabled ("Coming soon") — they surface as the roadmap fills in.</li>
+      <li><strong>Persistence:</strong> <code>subscription_plans.features</code> — text[] or jsonb. Key/slug per feature: <code>mycoa</code>, <code>qscanai</code>, <code>policy_portal</code>, etc. Stable slug, not the display name.</li>
+      <li><strong>Saved state (Example 2)</strong> renders the feature tags on the plan card and in the plan list — so operators can scan which plans expose what without re-opening Details.</li>
+      <li><strong>Integration with Ticket 1 (Example 3):</strong> callout explains the flag flow from Q-Config → invite token → paywall filter.</li>
+    </ul>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       EXAMPLE 1 — Q-Config plan Details, Features multi-select
+  ═══════════════════════════════════════ -->
+  <div class="section-block">
+    <div class="section-label label-blue">Example 1 — Q-Config · Subscription plan Details · Features multi-select (MyCOA selected)</div>
+    <div class="section-title">Plan Details screen with the new Features control</div>
+
+    <div class="app-shell">
+      <div class="app-topbar">
+        <span>Q-Config</span>
+        <span class="crumb">· Subscription Builder · Plan Details</span>
+      </div>
+
+      <div class="qc-layout">
+
+        <!-- Sidebar nav -->
+        <div class="qc-side">
+          <div class="qc-side-title">Configuration</div>
+          <div class="qc-side-item">Company Types</div>
+          <div class="qc-side-item">Industry Types</div>
+          <div class="qc-side-item">MRI Rules</div>
+          <div class="qc-side-item active">Subscription Plans</div>
+          <div class="qc-side-item">Payment Processors</div>
+          <div class="qc-side-item">Feature Flags</div>
+        </div>
+
+        <!-- Main -->
+        <div class="qc-main">
+
+          <div class="qc-crumb"><a href="#">← Subscription Plans</a></div>
+          <div class="qc-head">
+            <div>
+              <h2>MyCOA Starter</h2>
+              <div class="qc-sub">Plan ID <code class="mono" style="background:#F1F5F9;padding:1px 6px;border-radius:3px;font-size:11px">pl_mycoa_starter_01</code> · Last edited Apr 20, 2026 by J. Floyd</div>
+            </div>
+            <div class="qc-actions">
+              <button class="btn btn-secondary">Cancel</button>
+              <button class="btn btn-primary">Save plan</button>
+            </div>
+          </div>
+
+          <div class="form-grid">
+
+            <!-- LEFT COLUMN -->
+            <div>
+              <div class="field-group">
+                <label>Plan name <span class="placeholder-pill">Placeholder</span></label>
+                <input class="form-input" value="MyCOA Starter">
+                <div class="helper">Displayed to merchants at paywall and on invoices.</div>
+              </div>
+
+              <div class="field-group">
+                <label>Monthly price <span class="placeholder-pill">Placeholder</span></label>
+                <div class="input-prefix"><span>$</span><input class="form-input" value="49.00"></div>
+              </div>
+
+              <div class="field-group">
+                <label>Billing interval <span class="placeholder-pill">Placeholder</span></label>
+                <select class="form-select">
+                  <option>Monthly</option>
+                  <option>Annual</option>
+                  <option>One-time</option>
+                </select>
+              </div>
+
+              <div class="field-group">
+                <label>Description <span class="placeholder-pill">Placeholder</span></label>
+                <textarea class="form-textarea">Publish COAs on a branded MyCOA page for one location. Unlimited COA uploads and consumer-facing scan.</textarea>
+              </div>
+            </div>
+
+            <!-- RIGHT COLUMN — Features multi-select -->
+            <div>
+              <div class="feat-card">
+                <div class="feat-card-title">Features <span class="new-pill">New</span></div>
+                <div class="feat-card-desc">Tag this plan with the product features it exposes. Consumed by the invite paywall, merchant portal navigation, and Q-Audit entitlement checks.</div>
+
+                <div class="feat-list">
+                  <label class="feat-option selected">
+                    <input type="checkbox" checked>
+                    <div class="feat-main">
+                      <div class="feat-name">🧪 MyCOA <span class="feat-badge feat-badge-first">First &amp; enabled</span></div>
+                      <div class="feat-desc">Merchant-branded COA publishing page, consumer scan, custom domain/CNAME.</div>
+                    </div>
+                    <span class="feat-key">mycoa</span>
+                  </label>
+                  <label class="feat-option disabled">
+                    <input type="checkbox" disabled>
+                    <div class="feat-main">
+                      <div class="feat-name" style="color:#94A3B8">🔍 Q-ScanAI Self-Serve <span class="feat-badge feat-badge-disabled">Coming soon</span></div>
+                      <div class="feat-desc">Standalone product &amp; website scan.</div>
+                    </div>
+                    <span class="feat-key">qscanai</span>
+                  </label>
+                  <label class="feat-option disabled">
+                    <input type="checkbox" disabled>
+                    <div class="feat-main">
+                      <div class="feat-name" style="color:#94A3B8">📜 Policy Portal <span class="feat-badge feat-badge-disabled">Coming soon</span></div>
+                      <div class="feat-desc">Policy-first merchant onboarding portal.</div>
+                    </div>
+                    <span class="feat-key">policy_portal</span>
+                  </label>
+                  <label class="feat-option disabled">
+                    <input type="checkbox" disabled>
+                    <div class="feat-main">
+                      <div class="feat-name" style="color:#94A3B8">📊 Compliance Portal <span class="feat-badge feat-badge-disabled">Coming soon</span></div>
+                      <div class="feat-desc">Merchant-facing compliance dashboard with findings.</div>
+                    </div>
+                    <span class="feat-key">compliance_portal</span>
+                  </label>
+                </div>
+
+                <div class="feat-selected-row">
+                  <span class="lbl">Selected:</span>
+                  <span class="feat-tag">🧪 MyCOA <span class="x">✕</span></span>
+                </div>
+
+                <div class="helper" style="margin-top:10px">
+                  Persisted as <code class="mono" style="background:#F1F5F9;padding:1px 5px;border-radius:3px;font-size:10px">features: ["mycoa"]</code> on <code class="mono" style="background:#F1F5F9;padding:1px 5px;border-radius:3px;font-size:10px">subscription_plans</code>.
+                </div>
+              </div>
+
+              <div class="field-group" style="margin-top:18px">
+                <label>Seat limit <span class="placeholder-pill">Placeholder</span></label>
+                <input class="form-input" value="1">
+              </div>
+
+              <div class="field-group">
+                <label>Trial length (days) <span class="placeholder-pill">Placeholder</span></label>
+                <input class="form-input" value="14">
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       EXAMPLE 2 — Saved state: plan card + plan list
+  ═══════════════════════════════════════ -->
+  <div class="section-block">
+    <div class="section-label label-green">Example 2 — Saved state · Plan card preview &amp; Plan list both show the feature tag</div>
+    <div class="section-title">After save — feature tag renders on the plan preview card and in the plan list</div>
+
+    <div style="display:grid;grid-template-columns:360px 1fr;gap:24px;align-items:start">
+
+      <!-- Plan card preview -->
+      <div>
+        <div style="font-size:11px;font-weight:700;color:#64748B;margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em">Plan preview card</div>
+        <div class="plan-preview-card">
+          <span class="pp-badge">Starter</span>
+          <h3>MyCOA Starter</h3>
+          <div class="pp-price">$49<small> / mo</small></div>
+          <div class="pp-desc">Publish COAs on a branded MyCOA page for one location. Unlimited COA uploads and consumer-facing scan.</div>
+          <ul class="pp-feat">
+            <li>1 location</li>
+            <li>Unlimited COA uploads</li>
+            <li>Custom domain / CNAME</li>
+            <li>Consumer scan page</li>
+          </ul>
+          <div class="pp-tags">
+            <span class="pp-tag"><span class="dot"></span>🧪 MyCOA</span>
+          </div>
+        </div>
+        <div class="callout callout-blue" style="margin-top:12px;font-size:11px">
+          <strong>Feature tags</strong> render at the bottom of the preview card so operators can spot plan scope at a glance across the plan library.
+        </div>
+      </div>
+
+      <!-- Plan list -->
+      <div>
+        <div style="font-size:11px;font-weight:700;color:#64748B;margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em">Subscription plan list (Features column)</div>
+        <div class="plan-list">
+          <div class="plan-list-header">
+            <span>Subscription Plans</span>
+            <button class="btn btn-primary btn-sm">＋ New plan</button>
+          </div>
+          <table class="plans">
+            <thead>
+              <tr>
+                <th>Plan</th>
+                <th>Price</th>
+                <th>Billing</th>
+                <th>Features <span class="new-pill">New</span></th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="pn">MyCOA Starter</td>
+                <td>$49 / mo</td>
+                <td>Monthly</td>
+                <td><span class="saved-tag">🧪 MyCOA</span></td>
+                <td><span style="color:#166534;font-weight:700">● Published</span></td>
+              </tr>
+              <tr>
+                <td class="pn">MyCOA Growth</td>
+                <td>$149 / mo</td>
+                <td>Monthly</td>
+                <td><span class="saved-tag">🧪 MyCOA</span></td>
+                <td><span style="color:#166534;font-weight:700">● Published</span></td>
+              </tr>
+              <tr>
+                <td class="pn">MyCOA + Q-ScanAI Bundle</td>
+                <td>$249 / mo</td>
+                <td>Monthly</td>
+                <td>
+                  <span class="saved-tag">🧪 MyCOA</span>
+                  <span class="saved-tag gray">🔍 Q-ScanAI <em style="font-weight:500;opacity:.7">future</em></span>
+                </td>
+                <td><span style="color:#D97706;font-weight:700">● Draft</span></td>
+              </tr>
+              <tr>
+                <td class="pn">Q-Audit Enterprise</td>
+                <td>Custom</td>
+                <td>Annual</td>
+                <td><span style="font-size:11px;color:#94A3B8;font-style:italic">— no features —</span></td>
+                <td><span style="color:#166534;font-weight:700">● Published</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout callout-amber" style="margin-top:12px;font-size:11px">
+          <strong>Unfeatured plans are hidden at paywall.</strong> "Q-Audit Enterprise" has no feature tag, so it will <em>not</em> surface to any feature-scoped invite recipient — intentional: Enterprise is a sales-led plan, not a self-serve paywall option.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       EXAMPLE 3 — Annotation: flag consumed by paywall
+  ═══════════════════════════════════════ -->
+  <div class="section-block">
+    <div class="section-label label-purple">Example 3 — Annotation · Feature flag is consumed by the We Monitor invite paywall (Ticket 1)</div>
+    <div class="section-title">How this field gets consumed downstream</div>
+
+    <div class="callout callout-purple">
+      <span class="tag">Callout</span>
+      <strong>The <code>subscription_plans.features</code> array set here is the single source of truth for paywall filtering.</strong> When an invite is sent with a feature scope (Ticket 1), the paywall query is:
+      <div style="margin:10px 0;padding:10px 14px;background:rgba(139,92,246,.1);border-radius:6px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#4C1D95">
+        SELECT * FROM subscription_plans<br>
+        WHERE status = 'published'<br>
+        &nbsp;&nbsp;AND '<strong>mycoa</strong>' = ANY(features)
+      </div>
+      So a plan only shows at a MyCOA-scoped paywall if <code>"mycoa"</code> appears in its features array. Add/remove the MyCOA tag here and the paywall list updates on the next invite click — no code deploy.
+    </div>
+
+    <div class="link-diagram">
+      <div class="ld-card q-config">
+        <div class="ld-title">① Q-Config (this ticket)</div>
+        <div class="ld-body">
+          Operator tags <strong>MyCOA Starter</strong> with the <code>mycoa</code> feature and saves. Row is written to <code>subscription_plans.features = ["mycoa"]</code>.
+        </div>
+      </div>
+      <div class="ld-arrow">→</div>
+      <div class="ld-card wemonitor">
+        <div class="ld-title">② We Monitor Invite (Ticket 1)</div>
+        <div class="ld-body">
+          Operator sends an invite scoped to MyCOA. Token carries <code>feature_scope = 'mycoa'</code>. On paywall, only plans containing <code>"mycoa"</code> in <code>features[]</code> are shown — <strong>MyCOA Starter</strong> and <strong>MyCOA Growth</strong> qualify; Q-Audit Enterprise does not.
+        </div>
+      </div>
+    </div>
+
+    <div class="callout callout-blue" style="margin-top:18px;font-size:11px">
+      <strong>Rollout note:</strong> Ticket 2 ships <em>before</em> Ticket 1. Plans must be tagged before the first MyCOA-scoped invite goes out — otherwise the paywall returns an empty list and the merchant is stuck. A pre-flight check in Ticket 1's invite dialog (disabled "Send" button with a warning) will guard this; tracked as a follow-up task.
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
