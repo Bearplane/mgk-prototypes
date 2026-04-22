@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QP-3734 — Dashboard Overhaul</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#1A202E;
+  --ink-2:#2D3748;
+  --muted:#64748B;
+  --line:#E2E8F0;
+  --bg:#F1F5F9;
+  --surface:#fff;
+  --accent:#F05252;
+  --blue:#3B82F6;
+  --blue-d:#1E3A5F;
+  --green:#16A34A;
+  --green-bg:#DCFCE7;
+  --wash:#F7F5FF;
+  --amber:#F59E0B;
+  --amber-bg:#FEF3C7;
+  --red:#991B1B;
+  --red-bg:#FEE2E2;
+}
+body{font-family:'Uber Move','Plus Jakarta Sans',-apple-system,sans-serif;background:var(--bg);color:var(--ink);font-size:13px;line-height:1.5}
+a{color:var(--blue);text-decoration:none}a:hover{text-decoration:underline}
+code,.mono{font-family:'IBM Plex Mono',monospace}
+
+.topnav{background:var(--ink);padding:12px 24px;display:flex;align-items:center;gap:8px;font-size:13px;color:#94A3B8;position:sticky;top:0;z-index:100}
+.topnav a{color:#93C5FD}.topnav .sep{color:#475569}
+.topnav .ticket-badge{background:var(--accent);color:#fff;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;font-family:'IBM Plex Mono',monospace}
+.topnav .title{color:#fff;font-weight:600}
+
+.page{max-width:1280px;margin:0 auto;padding:32px 24px 64px}
+.page-header{margin-bottom:24px}
+.page-header h1{font-size:22px;font-weight:700;color:var(--ink);margin-bottom:6px}
+.page-header p{color:var(--muted);font-size:13px}
+
+.info-block{background:#FFFBEB;border:2px dashed #FCD34D;border-radius:8px;padding:16px 20px;margin-bottom:28px}
+.info-block .info-pill{display:inline-flex;background:var(--amber);color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px}
+.info-block p,.info-block li{font-size:12px;color:#78350F;line-height:1.65}
+.info-block ul{padding-left:18px;margin-top:4px}
+
+.section-block{margin-bottom:40px}
+.section-title{font-size:16px;font-weight:700;color:var(--ink);margin-bottom:4px}
+.section-sub{font-size:12px;color:var(--muted);margin-bottom:16px}
+
+/* VARIANT TABS */
+.variant-tabs{display:flex;gap:0;border-bottom:1px solid var(--line);margin-bottom:20px}
+.variant-tab{padding:10px 16px;font-size:12px;font-weight:700;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;background:none;border-left:none;border-top:none;border-right:none;font-family:inherit}
+.variant-tab.active{color:var(--ink);border-bottom-color:var(--accent)}
+
+/* DASHBOARD SHELL */
+.dash{background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.dash-head{padding:20px 24px;border-bottom:1px solid var(--line);background:var(--wash);display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.dash-head h2{font-size:22px;font-weight:700;color:var(--ink)}
+.dash-head p{font-size:12px;color:var(--muted);margin-top:2px}
+.dash-head .head-meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.user-chip{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);padding:4px 10px;border-radius:20px;font-size:12px;font-weight:600}
+.user-chip .avatar{width:22px;height:22px;border-radius:50%;background:var(--ink);color:#fff;font-size:10px;display:flex;align-items:center;justify-content:center;font-weight:700}
+
+/* SYSTEM BANNER */
+.sys-banner{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:16px 24px;background:#FAFAFA;border-bottom:1px solid var(--line)}
+@media(max-width:900px){.sys-banner{grid-template-columns:repeat(2,1fr)}}
+.sys-card{background:#fff;border:1px solid var(--line);border-radius:8px;padding:12px;display:flex;gap:10px;align-items:flex-start;border-left:3px solid var(--line)}
+.sys-card.verify{border-left-color:var(--amber)}
+.sys-card.expired{border-left-color:var(--accent)}
+.sys-card.messages{border-left-color:var(--blue)}
+.sys-card.onboarding{border-left-color:var(--green)}
+.sys-icon{width:30px;height:30px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:15px;background:var(--wash);flex-shrink:0}
+.sys-card .sys-label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.sys-card .sys-value{font-size:18px;font-weight:700;color:var(--ink);line-height:1.1;margin:2px 0 2px}
+.sys-card .sys-sub{font-size:11px;color:var(--muted)}
+
+/* WIDGET GRID */
+.widget-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:16px;padding:20px 24px}
+@media(max-width:1000px){.widget-grid{grid-template-columns:repeat(6,1fr)}}
+@media(max-width:700px){.widget-grid{grid-template-columns:1fr}}
+
+.widget{background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden;display:flex;flex-direction:column;position:relative}
+.widget.col-6{grid-column:span 6}
+.widget.col-4{grid-column:span 4}
+.widget.col-8{grid-column:span 8}
+.widget.col-12{grid-column:span 12}
+@media(max-width:1000px){.widget.col-6,.widget.col-4,.widget.col-8{grid-column:span 6}}
+@media(max-width:700px){.widget.col-6,.widget.col-4,.widget.col-8{grid-column:span 1}}
+
+.w-head{padding:12px 14px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:8px}
+.w-title{font-size:13px;font-weight:700;color:var(--ink);display:flex;align-items:center;gap:8px}
+.w-title .w-icon{width:24px;height:24px;border-radius:6px;background:var(--wash);display:flex;align-items:center;justify-content:center;font-size:12px}
+.w-badge{font-size:9px;font-weight:700;padding:2px 6px;border-radius:10px;background:var(--ink);color:#fff;letter-spacing:.3px;text-transform:uppercase}
+.w-badge.premier{background:var(--accent)}
+.w-badge.platform{background:#64748B}
+.w-badge.upsell{background:#fff;color:var(--ink);border:1px solid var(--ink)}
+.w-action{font-size:11px;color:var(--blue);font-weight:600;cursor:pointer}
+
+.w-body{padding:12px 14px;flex:1;display:flex;flex-direction:column;gap:10px}
+.w-empty{font-size:12px;color:var(--muted);padding:20px;text-align:center}
+
+/* MYCOA TABLE */
+.coa-table{width:100%;border-collapse:collapse;font-size:12px}
+.coa-table th{text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);padding:6px 8px;border-bottom:1px solid var(--line);font-weight:700}
+.coa-table td{padding:8px;border-bottom:1px solid #F1F5F9;vertical-align:middle}
+.coa-table tr:last-child td{border-bottom:none}
+.coa-table .batch{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink-2)}
+.coa-table .prod{font-weight:600;color:var(--ink)}
+.status{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px}
+.status.ok{background:var(--green-bg);color:#166534}
+.status.warn{background:var(--amber-bg);color:#92400E}
+.status.err{background:var(--red-bg);color:var(--red)}
+.coa-table .exp{font-size:11px;color:var(--muted)}
+
+/* Q-MONITOR */
+.qm-kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.qm-box{background:var(--wash);border-radius:6px;padding:10px;display:flex;flex-direction:column;gap:2px}
+.qm-box .l{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+.qm-box .v{font-size:18px;font-weight:700;color:var(--ink);line-height:1}
+.qm-box .s{font-size:10px;color:var(--muted)}
+.spark{display:block;width:100%;height:40px;margin-top:6px}
+.qm-run{padding:8px 10px;background:var(--ink);color:#fff;border-radius:6px;font-size:11px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.qm-run .run-btn{background:var(--accent);color:#fff;border:none;padding:3px 10px;border-radius:4px;font-weight:700;font-size:10px;cursor:pointer;font-family:inherit}
+
+/* COMPLIANCE UPSELL */
+.upsell-card{position:relative;padding:16px;border-radius:8px;background:linear-gradient(135deg,#F7F5FF 0%,#EEF2FF 100%);border:1px dashed var(--ink);display:flex;flex-direction:column;gap:10px}
+.upsell-card .lock{font-size:18px}
+.upsell-card h4{font-size:14px;font-weight:700;color:var(--ink)}
+.upsell-card p{font-size:12px;color:var(--ink-2);line-height:1.5}
+.upsell-feats{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:3px;font-size:11px;color:var(--ink-2)}
+.upsell-feats li:before{content:'→ ';color:var(--accent);font-weight:700}
+.upsell-btn{align-self:flex-start;background:var(--ink);color:#fff;border:none;padding:8px 14px;border-radius:5px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit}
+
+/* NEWS / TIPS */
+.news-item,.tip-item{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid #F1F5F9;font-size:12px}
+.news-item:last-child,.tip-item:last-child{border-bottom:none}
+.news-date{font-size:10px;color:var(--muted);font-family:'IBM Plex Mono',monospace;flex-shrink:0;width:52px}
+.news-text{color:var(--ink-2);line-height:1.45}
+.news-text strong{color:var(--ink)}
+
+/* VERIFICATION WIDGET */
+.verify-list{display:flex;flex-direction:column;gap:8px}
+.verify-row{display:flex;align-items:center;gap:8px;padding:8px 10px;background:#F8FAFC;border-radius:6px;font-size:12px}
+.verify-row .v-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.v-dot.ok{background:var(--green)}
+.v-dot.pending{background:var(--amber)}
+.v-dot.err{background:var(--accent)}
+.verify-row .v-label{flex:1;font-weight:600}
+.verify-row .v-state{font-size:10px;font-weight:700;color:var(--muted)}
+
+/* ANNOTATION */
+.ann{position:absolute;top:-8px;right:-8px;background:var(--accent);color:#fff;font-size:9px;font-weight:700;padding:2px 6px;border-radius:10px;letter-spacing:.3px;z-index:5;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.ann.premier{background:var(--accent)}
+.ann.system{background:var(--amber)}
+.ann.platform{background:#64748B}
+.ann.upsell{background:var(--ink)}
+
+/* SIDEBAR NOTES */
+.notes{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:16px 20px;margin-top:24px}
+.notes h4{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:8px}
+.notes ul{padding-left:18px;font-size:12px;color:var(--ink-2);line-height:1.7}
+.notes code{background:var(--wash);padding:1px 5px;border-radius:3px;font-size:11px}
+
+/* ADMIN BADGE */
+.admin-indicator{display:inline-flex;align-items:center;gap:4px;background:var(--ink);color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;font-family:'IBM Plex Mono',monospace}
+</style>
+</head>
+<body>
+
+<div class="topnav">
+  <a href="../index.html">← Qredible Prototypes</a>
+  <span class="sep">/</span>
+  <span class="ticket-badge">QP-3734</span>
+  <span class="title">Dashboard Overhaul</span>
+</div>
+
+<div class="page">
+
+  <div class="page-header">
+    <h1>Dashboard Overhaul — Premier Feature Widgets + System Priorities</h1>
+    <p>Reworked home dashboard: a system-priority banner across the top, then a grid of Premier feature widgets (MyCOA, Q-Monitor / Q-ScanAI, Compliance Portal), always-on Platform widgets, and an admin override view.</p>
+  </div>
+
+  <div class="info-block">
+    <span class="info-pill">Ticket Scope</span>
+    <p><strong>QP-3734</strong> reorganizes the dashboard around three widget tiers:</p>
+    <ul>
+      <li><strong>System-priority</strong> — Verification, Expired COAs, New messages, Onboarding — <em>always visible, top banner</em>.</li>
+      <li><strong>Premier feature widgets</strong> — MyCOA, Q-Monitor (incl. Q-ScanAI), Compliance Portal. Render or upsell based on subscription.</li>
+      <li><strong>Platform widgets</strong> — Tips, In The News, Verification snapshot — <em>always visible regardless of subscription</em>.</li>
+    </ul>
+    <p style="margin-top:6px"><strong>Internal / Admin</strong> users see all widgets as if every subscription is active.</p>
+  </div>
+
+  <!-- VARIANT SWITCHER (visual-only) -->
+  <div class="variant-tabs">
+    <button class="variant-tab active">Merchant · MyCOA + Q-Monitor subscribed</button>
+    <button class="variant-tab">Internal / Admin</button>
+  </div>
+
+  <!-- ═══════════════════════════════════
+       VARIANT 1 — MERCHANT
+  ═══════════════════════════════════ -->
+  <div class="section-block">
+    <div class="section-title">Variant A — Subscribed: MyCOA + Q-Monitor, NOT Compliance Portal</div>
+    <div class="section-sub">Compliance Portal appears as an upsell card that deep-links to the paywall (QP-3733).</div>
+
+    <div class="dash">
+      <div class="dash-head">
+        <div>
+          <h2>Hello, Jordan!</h2>
+          <p>Welcome back. Here's what needs your attention today.</p>
+        </div>
+        <div class="head-meta">
+          <div class="user-chip"><div class="avatar">JF</div>Jordan Foster · Black Bear Hemp</div>
+        </div>
+      </div>
+
+      <!-- SYSTEM BANNER -->
+      <div class="sys-banner">
+        <div class="sys-card verify" style="position:relative">
+          <span class="ann system">SYSTEM</span>
+          <div class="sys-icon">🛡️</div>
+          <div>
+            <div class="sys-label">Verification</div>
+            <div class="sys-value">2 pending</div>
+            <div class="sys-sub">License + OFAC</div>
+          </div>
+        </div>
+        <div class="sys-card expired">
+          <div class="sys-icon">⏰</div>
+          <div>
+            <div class="sys-label">Expired COAs</div>
+            <div class="sys-value">5</div>
+            <div class="sys-sub">Act in ≤ 7 days</div>
+          </div>
+        </div>
+        <div class="sys-card messages">
+          <div class="sys-icon">✉️</div>
+          <div>
+            <div class="sys-label">New messages</div>
+            <div class="sys-value">3</div>
+            <div class="sys-sub">1 from compliance team</div>
+          </div>
+        </div>
+        <div class="sys-card onboarding">
+          <div class="sys-icon">🚀</div>
+          <div>
+            <div class="sys-label">Onboarding</div>
+            <div class="sys-value">87%</div>
+            <div class="sys-sub">2 steps remaining</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- WIDGET GRID -->
+      <div class="widget-grid">
+
+        <!-- MYCOA WIDGET -->
+        <div class="widget col-6" style="position:relative">
+          <span class="ann premier">PREMIER</span>
+          <div class="w-head">
+            <div class="w-title"><div class="w-icon">📋</div>MyCOA <span class="w-badge premier">Subscribed</span></div>
+            <a class="w-action">View all →</a>
+          </div>
+          <div class="w-body">
+            <table class="coa-table">
+              <thead>
+                <tr><th>Batch #</th><th>Product</th><th>Status</th><th>Expires</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="batch">BB-2604-A</td><td class="prod">Delta-9 Gummies 10mg</td><td><span class="status ok">Active</span></td><td class="exp">Oct 12, 2026</td></tr>
+                <tr><td class="batch">BB-2604-B</td><td class="prod">CBD Tincture 1000mg</td><td><span class="status ok">Active</span></td><td class="exp">Sep 28, 2026</td></tr>
+                <tr><td class="batch">BB-2603-F</td><td class="prod">Hemp Pre-Roll 5pk</td><td><span class="status warn">Expires soon</span></td><td class="exp">May 04, 2026</td></tr>
+                <tr><td class="batch">BB-2603-C</td><td class="prod">THC-O Vape 1g</td><td><span class="status err">Expired</span></td><td class="exp">Apr 18, 2026</td></tr>
+                <tr><td class="batch">BB-2602-A</td><td class="prod">Delta-8 Flower 3.5g</td><td><span class="status ok">Active</span></td><td class="exp">Aug 15, 2026</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Q-MONITOR WIDGET -->
+        <div class="widget col-6" style="position:relative">
+          <span class="ann premier">PREMIER</span>
+          <div class="w-head">
+            <div class="w-title"><div class="w-icon">📡</div>Q-Monitor <span class="w-badge premier">Subscribed</span></div>
+            <a class="w-action">Open Q-Monitor →</a>
+          </div>
+          <div class="w-body">
+            <div class="qm-kpi">
+              <div class="qm-box"><div class="l">Pending Tasks</div><div class="v">14</div><div class="s">4 overdue</div></div>
+              <div class="qm-box"><div class="l">Open Findings</div><div class="v">7</div><div class="s">2 critical</div></div>
+              <div class="qm-box"><div class="l">Companies</div><div class="v">42</div><div class="s">monitored</div></div>
+            </div>
+            <svg class="spark" viewBox="0 0 300 40" preserveAspectRatio="none">
+              <polyline points="0,28 25,22 50,24 75,18 100,20 125,12 150,16 175,10 200,14 225,8 250,12 275,6 300,10"
+                fill="none" stroke="#F05252" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <polyline points="0,28 25,22 50,24 75,18 100,20 125,12 150,16 175,10 200,14 225,8 250,12 275,6 300,10 300,40 0,40"
+                fill="rgba(240,82,82,0.08)" stroke="none"/>
+            </svg>
+            <div class="qm-run">
+              <span>Next <strong>Q-ScanAI</strong> run — in 2h 14m · 42 companies</span>
+              <button class="run-btn">Run now</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- COMPLIANCE PORTAL UPSELL -->
+        <div class="widget col-12" style="position:relative">
+          <span class="ann upsell">UPSELL</span>
+          <div class="w-head">
+            <div class="w-title"><div class="w-icon">🔒</div>Compliance Portal <span class="w-badge upsell">Not subscribed</span></div>
+          </div>
+          <div class="w-body">
+            <div class="upsell-card">
+              <div style="display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap">
+                <div style="flex:1;min-width:260px">
+                  <h4>Unlock Compliance Portal</h4>
+                  <p>Streamline case management, merchant invites, and document collection with a dedicated portal for your compliance team.</p>
+                  <ul class="upsell-feats" style="margin-top:8px">
+                    <li>Active cases + draft workflow (CaseDraftDrawer)</li>
+                    <li>Merchant invite flow + evidence upload</li>
+                    <li>Policy-aware report generation</li>
+                  </ul>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end">
+                  <div style="font-size:20px;font-weight:700;color:var(--ink)">From $249/mo</div>
+                  <a href="qp-3733-mycoa-paywall-ordering.html" class="upsell-btn" style="text-decoration:none">Unlock Compliance Portal →</a>
+                  <div style="font-size:10px;color:var(--muted)">Deep-links to paywall</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PLATFORM: TIPS -->
+        <div class="widget col-4" style="position:relative">
+          <span class="ann platform">PLATFORM</span>
+          <div class="w-head">
+            <div class="w-title"><div class="w-icon">💡</div>Tips <span class="w-badge platform">Always on</span></div>
+          </div>
+          <div class="w-body">
+            <div class="tip-item">
+              <div class="news-text"><strong>Bulk COA upload</strong> — drag a folder of PDFs to add multiple COAs at once.</div>
+            </div>
+            <div class="tip-item">
+              <div class="news-text"><strong>Shared COAs</strong> — one batch can cover multiple product forms. See the COA Management modal.</div>
+            </div>
+            <div class="tip-item">
+              <div class="news-text"><strong>SEO settings</strong> — add a custom domain to your MyCOA page under <code>Display → SEO</code>.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PLATFORM: NEWS -->
+        <div class="widget col-4" style="position:relative">
+          <span class="ann platform">PLATFORM</span>
+          <div class="w-head">
+            <div class="w-title"><div class="w-icon">📰</div>In The News <span class="w-badge platform">Always on</span></div>
+          </div>
+          <div class="w-body">
+            <div class="news-item"><div class="news-date">Apr 20</div><div class="news-text">FDA issues new warning letters on <strong>Delta-8 marketing</strong>.</div></div>
+            <div class="news-item"><div class="news-date">Apr 18</div><div class="news-text">Mastercard MMSP update — what hemp merchants need to know.</div></div>
+            <div class="news-item"><div class="news-date">Apr 15</div><div class="news-text">OFAC screening requirements expanded for payment processors.</div></div>
+          </div>
+        </div>
+
+        <!-- PLATFORM: VERIFICATION -->
+        <div class="widget col-4" style="position:relative">
+          <span class="ann platform">PLATFORM</span>
+          <div class="w-head">
+            <div class="w-title"><div class="w-icon">✅</div>Verification <span class="w-badge platform">Always on</span></div>
+          </div>
+          <div class="w-body">
+            <div class="verify-list">
+              <div class="verify-row"><div class="v-dot ok"></div><div class="v-label">Business license</div><div class="v-state">Verified</div></div>
+              <div class="verify-row"><div class="v-dot ok"></div><div class="v-label">EIN / Tax ID</div><div class="v-state">Verified</div></div>
+              <div class="verify-row"><div class="v-dot pending"></div><div class="v-label">OFAC screening</div><div class="v-state">Pending</div></div>
+              <div class="verify-row"><div class="v-dot pending"></div><div class="v-label">State license</div><div class="v-state">In review</div></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════
+       VARIANT 2 — ADMIN
+  ═══════════════════════════════════ -->
+  <div class="section-block">
+    <div class="section-title">Variant B — Internal / Admin</div>
+    <div class="section-sub">All Premier widgets render regardless of subscription status. No upsell cards.</div>
+
+    <div class="dash">
+      <div class="dash-head">
+        <div>
+          <h2>Hello, Admin!</h2>
+          <p>Internal view — all widgets visible.</p>
+        </div>
+        <div class="head-meta">
+          <span class="admin-indicator">ADMIN · ALL ACCESS</span>
+          <div class="user-chip"><div class="avatar" style="background:var(--accent)">QA</div>Q-Admin</div>
+        </div>
+      </div>
+
+      <div class="sys-banner">
+        <div class="sys-card verify"><div class="sys-icon">🛡️</div><div><div class="sys-label">Verification queue</div><div class="sys-value">38</div><div class="sys-sub">Across all merchants</div></div></div>
+        <div class="sys-card expired"><div class="sys-icon">⏰</div><div><div class="sys-label">Expired COAs</div><div class="sys-value">214</div><div class="sys-sub">Platform-wide</div></div></div>
+        <div class="sys-card messages"><div class="sys-icon">✉️</div><div><div class="sys-label">Support inbox</div><div class="sys-value">12</div><div class="sys-sub">5 unresolved</div></div></div>
+        <div class="sys-card onboarding"><div class="sys-icon">🚀</div><div><div class="sys-label">New merchants</div><div class="sys-value">7</div><div class="sys-sub">This week</div></div></div>
+      </div>
+
+      <div class="widget-grid">
+        <div class="widget col-4"><div class="w-head"><div class="w-title"><div class="w-icon">📋</div>MyCOA <span class="w-badge premier">Admin</span></div></div><div class="w-body"><div class="qm-kpi"><div class="qm-box"><div class="l">Total COAs</div><div class="v">4,218</div></div><div class="qm-box"><div class="l">Expired</div><div class="v">214</div></div><div class="qm-box"><div class="l">Orgs</div><div class="v">312</div></div></div></div></div>
+        <div class="widget col-4"><div class="w-head"><div class="w-title"><div class="w-icon">📡</div>Q-Monitor <span class="w-badge premier">Admin</span></div></div><div class="w-body"><div class="qm-kpi"><div class="qm-box"><div class="l">Companies</div><div class="v">2,104</div></div><div class="qm-box"><div class="l">Findings</div><div class="v">89</div></div><div class="qm-box"><div class="l">Pending</div><div class="v">47</div></div></div></div></div>
+        <div class="widget col-4"><div class="w-head"><div class="w-title"><div class="w-icon">🔓</div>Compliance Portal <span class="w-badge premier">Admin</span></div></div><div class="w-body"><div class="qm-kpi"><div class="qm-box"><div class="l">Open Cases</div><div class="v">62</div></div><div class="qm-box"><div class="l">Drafts</div><div class="v">18</div></div><div class="qm-box"><div class="l">Merchants</div><div class="v">145</div></div></div></div></div>
+
+        <div class="widget col-4"><div class="w-head"><div class="w-title"><div class="w-icon">💡</div>Tips</div></div><div class="w-body"><div class="tip-item"><div class="news-text">Admin tip — use <code>/qaudit</code> for license validation board.</div></div></div></div>
+        <div class="widget col-4"><div class="w-head"><div class="w-title"><div class="w-icon">📰</div>In The News</div></div><div class="w-body"><div class="news-item"><div class="news-date">Apr 20</div><div class="news-text">Platform digest: 12 regulatory updates this week.</div></div></div></div>
+        <div class="widget col-4"><div class="w-head"><div class="w-title"><div class="w-icon">✅</div>Verification</div></div><div class="w-body"><div class="verify-row"><div class="v-dot ok"></div><div class="v-label">Platform license feed</div><div class="v-state">OK</div></div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESPONSIVE + ANNOTATIONS -->
+  <div class="notes">
+    <h4>Annotations &amp; Responsive Behavior</h4>
+    <ul>
+      <li><strong>Widget classes</strong> — <code>Premier</code> (red badge, subscription-gated), <code>System</code> (amber, always top), <code>Platform</code> (slate, always on), <code>Upsell</code> (ink, deep-link to paywall).</li>
+      <li><strong>Premier gating rule</strong> — if <code>user.subscriptions.includes(feature)</code> render widget; else if <code>feature.upsellEnabled</code> render upsell; else hide.</li>
+      <li><strong>Internal / Admin override</strong> — <code>role === 'internal' || role === 'admin'</code> bypasses all subscription checks; all Premier widgets render in aggregate (platform-wide) mode.</li>
+      <li><strong>Compliance Portal upsell</strong> — CTA deep-links to <a href="qp-3733-mycoa-paywall-ordering.html">QP-3733 paywall</a> with <code>?feature=compliance-portal</code> pre-selected.</li>
+      <li><strong>Responsive stacking</strong> — 12-col grid collapses to 6-col at ≤ 1000px, then 1-col at ≤ 700px. System banner collapses 4 → 2 → 2. Premier widgets stack full-width on mobile; Platform widgets remain below them.</li>
+      <li><strong>Greeting</strong> — <code>Hello, {firstName}!</code> pulled from user profile; falls back to <code>Hello!</code> if unknown.</li>
+    </ul>
+  </div>
+
+</div>
+
+</body>
+</html>

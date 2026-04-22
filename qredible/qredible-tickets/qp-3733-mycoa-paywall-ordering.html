@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QP-3733 — MyCOA Paywall Ordering</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#1A202E;
+  --ink-2:#2D3748;
+  --muted:#64748B;
+  --line:#E2E8F0;
+  --bg:#F1F5F9;
+  --surface:#fff;
+  --accent:#F05252;
+  --blue:#3B82F6;
+  --blue-d:#1E3A5F;
+  --green:#16A34A;
+  --wash:#F7F5FF;
+  --amber:#F59E0B;
+  --amber-bg:#FEF3C7;
+  --red-bg:#FEE2E2;
+  --red:#991B1B;
+}
+body{font-family:'Uber Move','Plus Jakarta Sans',-apple-system,sans-serif;background:var(--bg);color:var(--ink);font-size:13px;line-height:1.5}
+a{color:var(--blue);text-decoration:none}a:hover{text-decoration:underline}
+code,.mono{font-family:'IBM Plex Mono',monospace}
+
+.topnav{background:var(--ink);padding:12px 24px;display:flex;align-items:center;gap:8px;font-size:13px;color:#94A3B8;position:sticky;top:0;z-index:100}
+.topnav a{color:#93C5FD}.topnav .sep{color:#475569}
+.topnav .ticket-badge{background:var(--accent);color:#fff;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;font-family:'IBM Plex Mono',monospace}
+.topnav .title{color:#fff;font-weight:600}
+
+.page{max-width:1280px;margin:0 auto;padding:32px 24px 64px}
+.page-header{margin-bottom:24px}
+.page-header h1{font-size:22px;font-weight:700;color:var(--ink);margin-bottom:6px}
+.page-header p{color:var(--muted);font-size:13px}
+
+.info-block{background:#FFFBEB;border:2px dashed #FCD34D;border-radius:8px;padding:16px 20px;margin-bottom:28px}
+.info-block .info-pill{display:inline-flex;background:var(--amber);color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px}
+.info-block p,.info-block li{font-size:12px;color:#78350F;line-height:1.65}
+.info-block ul{padding-left:18px;margin-top:4px}
+.info-block strong{color:#92400E}
+.info-block code{background:#FEF3C7;padding:1px 5px;border-radius:3px;font-size:11px}
+
+.section-block{margin-bottom:40px}
+.section-title{font-size:16px;font-weight:700;color:var(--ink);margin-bottom:4px}
+.section-sub{font-size:12px;color:var(--muted);margin-bottom:16px}
+
+/* SEQUENCE INDICATOR */
+.sequence{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:16px 20px;margin-bottom:28px;display:flex;align-items:center;gap:4px;overflow-x:auto}
+.seq-step{display:flex;align-items:center;gap:8px;white-space:nowrap}
+.seq-circle{width:24px;height:24px;border-radius:50%;background:#E2E8F0;color:#94A3B8;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.seq-circle.done{background:var(--ink);color:#fff}
+.seq-circle.current{background:var(--accent);color:#fff;box-shadow:0 0 0 4px rgba(240,82,82,.15)}
+.seq-label{font-size:12px;font-weight:600;color:var(--muted)}
+.seq-label.done{color:var(--ink)}
+.seq-label.current{color:var(--accent)}
+.seq-arrow{color:#CBD5E1;font-size:14px;margin:0 4px}
+
+/* SCENARIO GRID */
+.scenario-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+@media (max-width:1100px){.scenario-grid{grid-template-columns:1fr}}
+.scenario{background:var(--surface);border:1px solid var(--line);border-radius:8px;overflow:hidden;display:flex;flex-direction:column}
+.scenario-head{padding:12px 16px;background:var(--wash);border-bottom:1px solid var(--line)}
+.scenario-num{display:inline-block;background:var(--ink);color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;margin-bottom:6px;font-family:'IBM Plex Mono',monospace}
+.scenario-num.alt{background:var(--accent)}
+.scenario-title{font-size:13px;font-weight:700;color:var(--ink)}
+.scenario-desc{font-size:11px;color:var(--muted);margin-top:2px}
+
+/* PAYWALL MODAL (mini) */
+.paywall{padding:16px;background:#F8FAFC;flex:1;display:flex;flex-direction:column;gap:12px}
+.paywall-head{text-align:center;padding:4px 0 8px}
+.paywall-head h3{font-size:14px;font-weight:700;color:var(--ink)}
+.paywall-head p{font-size:11px;color:var(--muted);margin-top:2px}
+.billing-toggle{display:inline-flex;background:#fff;border:1px solid var(--line);border-radius:20px;padding:3px;margin:0 auto}
+.billing-toggle button{border:none;background:transparent;padding:4px 12px;font-size:11px;font-weight:600;color:var(--muted);border-radius:16px;cursor:pointer;font-family:inherit}
+.billing-toggle button.on{background:var(--ink);color:#fff}
+.toggle-wrap{display:flex;justify-content:center}
+.save-badge{font-size:9px;background:var(--accent);color:#fff;font-weight:700;padding:1px 5px;border-radius:3px;margin-left:4px}
+
+.plans{display:flex;flex-direction:column;gap:10px}
+.plan{background:#fff;border:1px solid var(--line);border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:6px;position:relative}
+.plan.highlight{border-color:var(--ink);background:linear-gradient(135deg,#EEF2FF,#F7F5FF)}
+.plan.disabled{opacity:.5;background:#F8FAFC}
+.plan-name{font-size:12px;font-weight:700;color:var(--ink);display:flex;align-items:center;gap:6px}
+.plan-cap{font-size:10px;color:var(--muted);font-weight:500}
+.plan-price{font-size:16px;font-weight:700;color:var(--ink)}
+.plan-price small{font-size:10px;font-weight:500;color:var(--muted)}
+.plan-feats{list-style:none;margin:0;padding:0;font-size:11px;color:var(--ink-2);display:flex;flex-direction:column;gap:3px}
+.plan-feats li{display:flex;gap:5px;align-items:flex-start}
+.plan-feats li:before{content:'✓';color:var(--green);font-weight:700;flex-shrink:0}
+.plan-btn{margin-top:6px;padding:7px 12px;background:var(--ink);color:#fff;border:none;border-radius:5px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit}
+.plan-btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}
+.plan-btn.disabled-btn{background:#E2E8F0;color:#94A3B8;cursor:not-allowed}
+
+.filter-note{font-size:10px;padding:6px 10px;border-radius:4px;background:var(--red-bg);color:var(--red);font-weight:600;display:flex;gap:4px;align-items:center}
+.filter-note.neutral{background:var(--amber-bg);color:#92400E}
+
+/* CONTACT SALES STATE */
+.contact-sales{background:#fff;border:2px solid var(--ink);border-radius:8px;padding:20px;text-align:center;display:flex;flex-direction:column;gap:10px;align-items:center}
+.contact-sales .cs-icon{width:42px;height:42px;border-radius:50%;background:var(--wash);display:flex;align-items:center;justify-content:center;font-size:20px}
+.contact-sales h4{font-size:14px;font-weight:700;color:var(--ink)}
+.contact-sales p{font-size:12px;color:var(--muted);line-height:1.5}
+.contact-sales .metric{display:flex;gap:12px;font-size:11px;justify-content:center;padding:8px;background:var(--wash);border-radius:6px;width:100%}
+.contact-sales .metric strong{color:var(--ink);font-weight:700}
+.contact-sales .cs-btn{background:var(--ink);color:#fff;border:none;padding:10px 16px;border-radius:5px;font-weight:700;font-size:12px;cursor:pointer;font-family:inherit}
+
+/* PRODUCT COUNT BAR */
+.product-meter{background:var(--wash);border:1px solid var(--line);border-radius:6px;padding:8px 12px;font-size:11px;color:var(--ink);display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.product-meter .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);flex-shrink:0}
+.product-meter .dot.green{background:var(--green)}
+.product-meter strong{color:var(--ink);font-weight:700}
+
+/* ANNOTATION CALLOUTS */
+.rules-card{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:20px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media (max-width:900px){.rules-card{grid-template-columns:1fr}}
+.rule{padding:12px;background:var(--wash);border-radius:6px;border-left:3px solid var(--accent)}
+.rule h5{font-size:12px;font-weight:700;color:var(--ink);margin-bottom:4px}
+.rule p{font-size:11px;color:var(--ink-2);line-height:1.55}
+.rule code{background:#fff;padding:1px 4px;border-radius:3px;font-size:10px;border:1px solid var(--line)}
+
+.footer-note{margin-top:32px;font-size:11px;color:var(--muted);text-align:center;padding:16px;background:#fff;border-radius:8px;border:1px dashed var(--line)}
+</style>
+</head>
+<body>
+
+<div class="topnav">
+  <a href="../index.html">← Qredible Prototypes</a>
+  <span class="sep">/</span>
+  <span class="ticket-badge">QP-3733</span>
+  <span class="title">MyCOA Paywall Ordering</span>
+</div>
+
+<div class="page">
+
+  <div class="page-header">
+    <h1>MyCOA Paywall — Post-Wizard Plan Selection</h1>
+    <p>Paywall rendered after the onboarding wizard; filters plans by the company's current product count. Three scenarios shown side-by-side.</p>
+  </div>
+
+  <div class="info-block">
+    <span class="info-pill">Ticket Scope</span>
+    <p><strong>QP-3733</strong> introduces the ordering paywall immediately after the onboarding wizard. The paywall surfaces three MyCOA plan tiers based on product count caps:</p>
+    <ul>
+      <li><strong>MyCOA 50</strong> — up to 50 products — <strong>$249/mo</strong></li>
+      <li><strong>MyCOA 100</strong> — up to 100 products — <strong>$399/mo</strong></li>
+      <li><strong>MyCOA Enterprise</strong> — up to 500 products — <strong>$499/mo</strong></li>
+    </ul>
+    <p style="margin-top:6px">Plans below the company's current product count are <strong>filtered out</strong>. If product count exceeds all caps, a <strong>Contact Sales</strong> state replaces the plan cards. Payment happens on the next step; the in-app experience unlocks immediately after.</p>
+  </div>
+
+  <!-- SEQUENCE -->
+  <div class="section-block">
+    <div class="section-title">Onboarding Sequence</div>
+    <div class="section-sub">Wizard completes → Paywall (this ticket) → Payment → In-app MyCOA tab unlocked.</div>
+
+    <div class="sequence">
+      <div class="seq-step"><div class="seq-circle done">✓</div><div class="seq-label done">Invite link</div></div>
+      <span class="seq-arrow">→</span>
+      <div class="seq-step"><div class="seq-circle done">✓</div><div class="seq-label done">Set Password</div></div>
+      <span class="seq-arrow">→</span>
+      <div class="seq-step"><div class="seq-circle done">✓</div><div class="seq-label done">Accept EULA</div></div>
+      <span class="seq-arrow">→</span>
+      <div class="seq-step"><div class="seq-circle done">✓</div><div class="seq-label done">Wizard</div></div>
+      <span class="seq-arrow">→</span>
+      <div class="seq-step"><div class="seq-circle current">5</div><div class="seq-label current">Paywall</div></div>
+      <span class="seq-arrow">→</span>
+      <div class="seq-step"><div class="seq-circle">6</div><div class="seq-label">Payment</div></div>
+      <span class="seq-arrow">→</span>
+      <div class="seq-step"><div class="seq-circle">7</div><div class="seq-label">In-app</div></div>
+    </div>
+  </div>
+
+  <!-- SCENARIOS -->
+  <div class="section-block">
+    <div class="section-title">Scenarios</div>
+    <div class="section-sub">Same paywall surface, plan visibility varies by product count detected at wizard completion.</div>
+
+    <div class="scenario-grid">
+
+      <!-- SCENARIO 1 -->
+      <div class="scenario">
+        <div class="scenario-head">
+          <span class="scenario-num">A</span>
+          <div class="scenario-title">Fresh company — 0 products</div>
+          <div class="scenario-desc">New merchant, no catalog yet. All three plans visible.</div>
+        </div>
+        <div class="paywall">
+          <div class="product-meter"><span class="dot green"></span>Current product count: <strong>0</strong> — all plans eligible</div>
+          <div class="paywall-head">
+            <h3>Choose your MyCOA plan</h3>
+            <p>Unlock public COA publishing and SEO</p>
+          </div>
+          <div class="toggle-wrap">
+            <div class="billing-toggle">
+              <button class="on">Monthly</button>
+              <button>Yearly<span class="save-badge">–20%</span></button>
+            </div>
+          </div>
+          <div class="plans">
+            <div class="plan">
+              <div class="plan-name">MyCOA 50 <span class="plan-cap">· up to 50 products</span></div>
+              <div class="plan-price">$249<small>/mo</small></div>
+              <ul class="plan-feats">
+                <li>Public COA pages</li>
+                <li>SEO title/meta</li>
+                <li>Custom domain (CNAME)</li>
+              </ul>
+              <button class="plan-btn ghost">Select 50-plan</button>
+            </div>
+            <div class="plan highlight">
+              <div class="plan-name">MyCOA 100 <span class="plan-cap">· up to 100 products</span></div>
+              <div class="plan-price">$399<small>/mo</small></div>
+              <ul class="plan-feats">
+                <li>Everything in 50</li>
+                <li>Theming &amp; branding</li>
+                <li>Consumer-friendly template</li>
+              </ul>
+              <button class="plan-btn">Select 100-plan</button>
+            </div>
+            <div class="plan">
+              <div class="plan-name">MyCOA Enterprise <span class="plan-cap">· up to 500 products</span></div>
+              <div class="plan-price">$499<small>/mo</small></div>
+              <ul class="plan-feats">
+                <li>Everything in 100</li>
+                <li>Priority COA processing</li>
+                <li>Dedicated CSM</li>
+              </ul>
+              <button class="plan-btn ghost">Select Enterprise</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SCENARIO 2 -->
+      <div class="scenario">
+        <div class="scenario-head">
+          <span class="scenario-num">B</span>
+          <div class="scenario-title">Existing catalog — 100 products</div>
+          <div class="scenario-desc">50-plan filtered out; 100 is the minimum eligible tier.</div>
+        </div>
+        <div class="paywall">
+          <div class="product-meter"><span class="dot"></span>Current product count: <strong>100</strong> — 50-plan hidden (over cap)</div>
+          <div class="paywall-head">
+            <h3>Choose your MyCOA plan</h3>
+            <p>Plans below your catalog size are hidden</p>
+          </div>
+          <div class="toggle-wrap">
+            <div class="billing-toggle">
+              <button class="on">Monthly</button>
+              <button>Yearly<span class="save-badge">–20%</span></button>
+            </div>
+          </div>
+          <div class="plans">
+            <div class="plan disabled">
+              <div class="plan-name">MyCOA 50 <span class="plan-cap">· up to 50 products</span></div>
+              <div class="plan-price">$249<small>/mo</small></div>
+              <div class="filter-note">Hidden — catalog exceeds 50-product cap</div>
+              <button class="plan-btn disabled-btn" disabled>Not available</button>
+            </div>
+            <div class="plan highlight">
+              <div class="plan-name">MyCOA 100 <span class="plan-cap">· up to 100 products</span></div>
+              <div class="plan-price">$399<small>/mo</small></div>
+              <ul class="plan-feats">
+                <li>Minimum eligible tier</li>
+                <li>Theming &amp; branding</li>
+                <li>Consumer-friendly template</li>
+              </ul>
+              <button class="plan-btn">Select 100-plan</button>
+            </div>
+            <div class="plan">
+              <div class="plan-name">MyCOA Enterprise <span class="plan-cap">· up to 500 products</span></div>
+              <div class="plan-price">$499<small>/mo</small></div>
+              <ul class="plan-feats">
+                <li>Room to grow to 500</li>
+                <li>Priority COA processing</li>
+                <li>Dedicated CSM</li>
+              </ul>
+              <button class="plan-btn ghost">Select Enterprise</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SCENARIO 3 -->
+      <div class="scenario">
+        <div class="scenario-head">
+          <span class="scenario-num alt">C</span>
+          <div class="scenario-title">Over all caps — 612 products</div>
+          <div class="scenario-desc">No standard plan fits. Contact Sales takes over.</div>
+        </div>
+        <div class="paywall">
+          <div class="product-meter"><span class="dot"></span>Current product count: <strong>612</strong> — exceeds all tiers</div>
+          <div class="paywall-head">
+            <h3>MyCOA for large catalogs</h3>
+            <p>Custom-priced Enterprise+ plan</p>
+          </div>
+          <div class="contact-sales">
+            <div class="cs-icon">🏢</div>
+            <h4>Let's talk</h4>
+            <p>Your catalog is above our standard MyCOA tiers. Our team will put together a custom plan with volume pricing and onboarding support.</p>
+            <div class="metric">
+              <div>Products: <strong>612</strong></div>
+              <div>•</div>
+              <div>Tier: <strong>Enterprise+</strong></div>
+            </div>
+            <button class="cs-btn">Contact Sales →</button>
+            <p style="font-size:10px">Or email <a href="#">sales@qredible.com</a></p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- RULES -->
+  <div class="section-block">
+    <div class="section-title">Filter Rules</div>
+    <div class="section-sub">Applied at paywall render — product count snapshot taken when the wizard completes.</div>
+
+    <div class="rules-card">
+      <div class="rule">
+        <h5>Rule 1 — Hide below-cap plans</h5>
+        <p>For every plan where <code>products &gt; plan.cap</code>, mark the card <strong>disabled / filtered</strong>. Grey out the CTA and show a short reason.</p>
+      </div>
+      <div class="rule">
+        <h5>Rule 2 — Promote minimum-eligible</h5>
+        <p>The lowest-tier plan the catalog <em>still fits</em> becomes the <strong>highlighted</strong> recommendation (navy border + wash).</p>
+      </div>
+      <div class="rule">
+        <h5>Rule 3 — Over-cap fallback</h5>
+        <p>When <code>products &gt; Enterprise.cap (500)</code>, replace all plan cards with the <strong>Contact Sales</strong> card and surface catalog metrics for the AE.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    Mockup references: Paywall Display (Monthly/Yearly toggle, gradient plan cards, green check feature list). Buttons default <code>#1A202E</code>; tab indicator <code>#F05252</code>; modal header wash <code>#F7F5FF</code>.
+  </div>
+
+</div>
+
+</body>
+</html>
