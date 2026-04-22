@@ -49,8 +49,6 @@
     .header-title p  { font-size: 11px; color: #93C5FD; margin-top: 2px; font-weight: 400; }
 
     .page-body {
-      max-width: 1100px;
-      margin: 0 auto;
       padding: 40px 24px 80px;
     }
 
@@ -109,39 +107,9 @@
 
     .divider { width: 1px; height: 22px; background: var(--border); flex-shrink: 0; }
 
-    .section-header {
-      display: flex; align-items: baseline; gap: 10px; margin-bottom: 14px;
-      margin-top: 40px; padding: 10px 12px;
-      border-bottom: 2px solid var(--border);
-      border-radius: 6px 6px 0 0;
-      cursor: pointer; user-select: none;
-      transition: background .12s;
-    }
-    .section-header:hover { background: #F1F5F9; }
-    .section-header:first-of-type { margin-top: 0; }
-    .section-title {
-      font-size: 12px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: .07em;
-      color: var(--text);
-    }
-    .section-count {
-      margin-left: auto;
-      font-size: 11px;
-      color: var(--text-muted);
-    }
-    .section-chevron {
-      font-size: 12px; color: var(--text-muted);
-      transition: transform .2s; display: inline-block;
-    }
-    .section-header.collapsed .section-chevron { transform: rotate(-90deg); }
-    .section-content { overflow: hidden; transition: max-height .25s ease; }
-    .section-content.collapsed { max-height: 0 !important; }
-
     .card-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
       gap: 14px;
     }
 
@@ -165,6 +133,7 @@
     }
 
     .card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+    .card-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
     .card-icon {
       width: 36px; height: 36px; flex-shrink: 0;
       border-radius: 8px;
@@ -172,6 +141,15 @@
       font-size: 18px;
       background: #F1F5F9;
     }
+    .card-category {
+      display: inline-flex; align-items: center;
+      padding: 2px 8px; border-radius: 20px;
+      font-size: 10px; font-weight: 700;
+      cursor: pointer; white-space: nowrap;
+      background: #EFF6FF; color: #1D4ED8; border: 1.5px solid #BFDBFE;
+      transition: background .12s;
+    }
+    .card-category:hover { background: #DBEAFE; }
     .card-ticket {
       font-size: 10px;
       font-weight: 700;
@@ -218,7 +196,6 @@
     .csp-done { background: #DCFCE7; color: #166534; }
     .csp-inprogress { background: #FEF9C3; color: #854D0E; }
 
-    .proto-card.status-hidden { display: none; }
     .proto-card.hidden { display: none; }
 
     footer {
@@ -259,13 +236,13 @@
 
     <span class="divider"></span>
 
-    <span class="filter-label">Area:</span>
+    <span class="filter-label">Category:</span>
     <select class="category-select" id="categorySelect" onchange="setCategoryFilter(this.value)">
       <option value="all">All Categories</option>
       <option value="mycoa">MyCOA</option>
       <option value="product-compliance">Product Compliance</option>
       <option value="coa-management">COA Management</option>
-      <option value="wemonitor">We Monitor</option>
+      <option value="wemonitor">WeMonitor</option>
       <option value="scan-ops">Scan Operations &amp; Q-ScanAI</option>
       <option value="q-audit">Q-Audit</option>
       <option value="policy-v3">Policy-driven compliance (v3)</option>
@@ -281,21 +258,17 @@
     <button class="sort-btn" onclick="setSortOrder('oldest', this)">Oldest</button>
   </div>
 
-  <!-- ══════════════════════════════════════
-       MYCOA
-  ══════════════════════════════════════ -->
-  <div class="section-header" data-section-cat="mycoa" onclick="toggleSection(this)">
-    <span class="section-title">MyCOA</span>
-    <span class="section-count">5 mockups</span>
-    <span class="section-chevron">&#9662;</span>
-  </div>
-  <div class="section-content" data-section-cat="mycoa">
   <div class="card-grid">
+
+    <!-- 2026-04-21 -->
 
     <a data-status="todo" data-category="mycoa" data-date="2026-04-21" href="qredible-tickets/mycoa-setup-wizard-v1.html" class="proto-card" data-keywords="mycoa setup wizard v1 first run gated modal site identity branding logo upload shopping url dynamic url jc green default template qp-3713 qp-3714">
       <div class="card-top">
         <div class="card-icon">&#129520;</div>
-        <span class="card-ticket">QP-3714</span>
+        <div class="card-meta">
+          <span class="card-category" onclick="event.preventDefault();filterByCategory('mycoa')">MyCOA</span>
+          <span class="card-ticket">QP-3714</span>
+        </div>
       </div>
       <div class="card-name">MyCOA Setup Wizard v1</div>
       <p class="card-desc">Gated first-run wizard for new MyCOA merchants. Two slides &#8212; Slide 1 captures the required Resume Shopping URL (company name and dynamic URL are read-only); Slide 2 uploads the primary logo. Post-completion preview renders the Default Template with the captured logo and CTA. No color/text/font controls in v1.</p>
@@ -313,7 +286,10 @@
     <a data-status="todo" data-category="mycoa" data-date="2026-04-21" href="qredible-tickets/mycoa-default-template.html" class="proto-card" data-keywords="mycoa default template rebuild certificate of analysis hero search batch number guide lab report explainer footer componentized display tab plug-in jc green qp-3713">
       <div class="card-top">
         <div class="card-icon">&#128196;</div>
-        <span class="card-ticket">QP-3713</span>
+        <div class="card-meta">
+          <span class="card-category" onclick="event.preventDefault();filterByCategory('mycoa')">MyCOA</span>
+          <span class="card-ticket">QP-3713</span>
+        </div>
       </div>
       <div class="card-name">MyCOA Default Template &#8212; Rebuild</div>
       <p class="card-desc">New Qredible-default MyCOA template: dark-teal hero with merchant + MyCOA branding, Search By Batch/Name, three-step guide, full COA explainer card with annotated lab report, and branded footer. Sections are componentized (data-component) so the Display Tab phase (QP-3626) can override tokens per merchant.</p>
@@ -328,464 +304,15 @@
       </div>
     </a>
 
-    <a data-status="todo" data-category="mycoa" data-date="2026-04-09" href="qredible-tickets/mycoa-shared-workflow-decision.html" class="proto-card" data-keywords="mycoa shared workflow decision board q-config qp-3226 wizard paywall westtown black bear permissions ownership architecture options recommendation phase phased">
-      <div class="card-top">
-        <div class="card-icon">&#128204;</div>
-        <span class="card-ticket">DECISION</span>
-      </div>
-      <div class="card-name">MyCOA Shared Workflow &#8212; Decision Board</div>
-      <p class="card-desc">Standalone decision document for the full team. Covers the Westtown MyCOA rollout (545 merchants, ~$32K/month), the 8-step requested workflow with status tags, 6 open blocking questions with if-yes/if-no consequences, three options compared, and the recommended phased approach (Phase 1: wizard + paywall now; Phase 2: shared workflow after alignment).</p>
-      <div class="card-pills">
-        <span class="pill pill-blue">MyCOA</span>
-        <span class="pill pill-blue">Architecture</span>
-        <span class="pill pill-green">Shareable</span>
-      </div>
-      <div class="card-footer">
-        <span class="card-date">Apr 9, 2026</span>
-        <span class="card-cta">View board &#8594;</span>
-      </div>
-    </a>
-
-    <a data-status="todo" data-category="mycoa" data-date="2026-04-05" href="mycoa-seo-consumer-experience.html" class="proto-card" data-keywords="mycoa seo consumer friendly coa template mobile potency safety terpene url configuration phase 1 phase 2 qp-3620 qp-3628">
-      <div class="card-top">
-        <div class="card-icon">&#128270;</div>
-        <span class="card-ticket">QP-3620/3628</span>
-      </div>
-      <div class="card-name">MyCOA SEO &amp; Consumer Experience</div>
-      <p class="card-desc">SEO settings (split listing/detail), URL configuration (default vs CNAME), Phase 1 PDF viewer, Phase 2 friendly COA template (mobile card layout with potency, safety, terpenes), COA lifecycle flow.</p>
-      <div class="card-pills">
-        <span class="pill pill-blue">MyCOA</span>
-        <span class="pill pill-blue">SEO</span>
-        <span class="pill pill-green">Mockup ready</span>
-      </div>
-      <div class="card-footer">
-        <span class="card-date">Apr 5, 2026</span>
-        <span class="card-cta">View mockup &#8594;</span>
-      </div>
-    </a>
-
-    <a data-status="todo" data-category="mycoa" data-date="2026-04-03" href="mycoa-display-tab-mockup.html" class="proto-card" data-keywords="mycoa display tab seo settings custom domain theming branding template white label coa publishing qp-3620 qp-3621 qp-3622 qp-3623 qp-3624 qp-3625 qp-3626 qp-3627 black bear">
-      <div class="card-top">
-        <div class="card-icon">&#127991;</div>
-        <span class="card-ticket">QP-3620&#8211;3627</span>
-      </div>
-      <div class="card-name">MyCOA Display Tab &#8212; SEO Settings &amp; Theming</div>
-      <p class="card-desc">Display tab mockup showing current state (Links, Chatbot, Display Settings) plus two new sections: SEO Settings (QP-3623) with title/meta templates, variable chips, indexing controls, verified custom domain card, COA listing options &#8212; and Theming &amp; Branding (QP-3626) with logo upload, color swatches, header/footer config, and location cards. Populated with Black Bear Hemp Dispensary data.</p>
-      <div class="card-pills">
-        <span class="pill pill-blue">MyCOA</span>
-        <span class="pill pill-green">Mockup ready</span>
-      </div>
-      <div class="card-footer">
-        <span class="card-date">Apr 3, 2026</span>
-        <span class="card-cta">View mockup &#8594;</span>
-      </div>
-    </a>
-
-  </div>
-  </div>
-
-  <!-- ══════════════════════════════════════
-       PRODUCT COMPLIANCE
-  ══════════════════════════════════════ -->
-  <div class="section-header" data-section-cat="product-compliance" onclick="toggleSection(this)">
-    <span class="section-title">Product Compliance</span>
-    <span class="section-count">5 mockups</span>
-    <span class="section-chevron">&#9662;</span>
-  </div>
-  <div class="section-content" data-section-cat="product-compliance">
-  <div class="card-grid">
-
-    <a data-status="todo" data-category="product-compliance" data-date="2026-04-06" href="qredible-tickets/import-workflow.html" class="proto-card" data-keywords="import upload column mapping validation bulk resolve coa matching progressive enrichment classification auto-classify qp-3638 qp-3639 qp-3640 qp-3641 qp-3642 qp-3643">
-      <div class="card-top">
-        <div class="card-icon">&#128229;</div>
-        <span class="card-ticket">QP-3638</span>
-      </div>
-      <div class="card-name">Unified Import Workflow</div>
-      <p class="card-desc">Column mapping, auto-detection, controlled value validation, bulk resolve, COA-to-product matching, progressive company classification enrichment. Replaces rigid template imports.</p>
-      <div class="card-pills">
-        <span class="pill pill-blue">Import</span>
-        <span class="pill pill-blue">Product Compliance</span>
-        <span class="pill pill-green">Mockup ready</span>
-      </div>
-      <div class="card-footer">
-        <span class="card-date">Apr 6, 2026</span>
-        <span class="card-cta">View mockup &#8594;</span>
-      </div>
-    </a>
-
-    <a data-status="todo" data-category="product-compliance" data-date="2026-04-03" href="qredible-tickets/configurable-export.html" class="proto-card" data-keywords="configurable export column selection rename reorder preset persistence flex bank coa export product compliance qp-3616">
-      <div class="card-top">
-        <div class="card-icon">&#128228;</div>
-        <span class="card-ticket">QP-3616</span>
-      </div>
-      <div class="card-name">Configurable Export &#8212; Product Compliance</div>
-      <p class="card-desc">Replace the fixed-format Export button with a configurable export flow: column selection, drag-to-reorder, rename-on-export, and persistent presets. Critical for Flex bank COA export requirements.</p>
-      <div class="card-pills">
-        <span class="pill pill-blue">Product Compliance</span>
-        <span class="pill pill-green">Mockup ready</span>
-      </div>
-      <div class="card-footer">
-        <span class="card-date">Apr 3, 2026</span>
-        <span class="card-cta">View mockup &#8594;</span>
-      </div>
-    </a>
-
-    <a data-status="todo" data-category="product-compliance" data-date="2026-03-27" href="qredible-tickets/inactive-coa.html" class="proto-card" data-keywords="inactive coa state audit view expired coa governing coa versioning coa management modal products table coas tab qp-3465 qp-3526">
-      <div class="card-top">
-        <div class="card-icon">&#128164;</div>
-        <span class="card-ticket">QP-3465 / QP-3526</span>
-      </div>
-      <div class="card-name">Inactive COA State + Audit View</div>
-      <p class="card-desc">Expired COAs are auto-flagged as Inactive when a valid replacement exists on the same product &#8212; eliminating false Violative signals. Audit View hides inactive COAs from table, count, and export. Default view shows all COAs with muted Inactive badge. Governing COA rule selects longest-remaining-validity COA.</p>
-      <div class="card-pills">
-        <span class="pill pill-blue">Product Compliance</span>
-        <span class="pill pill-green">Mockup ready</span>
-      </div>
-      <div class="card-footer">
-        <span class="card-date">Mar 27, 2026</span>
-        <span class="card-cta">View mockup &#8594;</span>
-      </div>
-    </a>
-
-    <a data-status="todo" data-category="product-compliance" data-date="2026-03-26" href="qredible-tickets/child-filter-surfacing.html" class="proto-card" data-keywords="child product filter surfacing parent dimmed hidden missing coa status count pagination qp-3476">
-      <div class="card-top">
-        <div class="card-icon">&#128270;</div>
-        <span class="card-ticket">QP-3476</span>
-      </div>
-      <div class="card-name">Surface Child Products Matching Filter</div>
-      <p class="card-desc">When a child product matches an active filter but its parent does not, the child is currently invisible. Fix: show parent row dimmed as context, surface matching children at full opacity. Also fixes filter counts to include child products.</p>
-      <div class="card-pills">
-        <span class="pill pill-blue">Product Compliance</span>
-        <span class="pill pill-green">Mockup ready</span>
-      </div>
-      <div class="card-footer">
-        <span class="card-date">Mar 26, 2026</span>
-        <span class="card-cta">View mockup &#8594;</span>
-      </div>
-    </a>
-
-    <a data-status="todo" data-category="product-compliance" data-date="2026-03-25" href="qredible-tickets/scan-review-modal.html" class="proto-card" data-keywords="scan review modal change tracking review status pending reviewed new removed modified re-added qp-3250">
-      <div class="card-top">
-        <div class="card-icon">&#128269;</div>
-        <span class="card-ticket">QP-3250</span>
-      </div>
-      <div class="card-name">Scan Review Modal</div>
-      <p class="card-desc">Full-screen overlay for reviewing scan changes. Summary cards, per-product change badges (New/Removed/Modified/Re-added), inline and bulk Mark Reviewed workflow with audit trail.</p>
-      <div class="card-pills">
-        <span class="pill pill-blue">Product Compliance</span>
-        <span class="pill pill-green">Mockup ready</span>
-      </div>
-      <div class="card-footer">
-        <span class="card-date">Mar 25, 2026</span>
-        <span class="card-cta">View mockup &#8594;</span>
-      </div>
-    </a>
-
-  </div>
-  </div>
-
-  <!-- ══════════════════════════════════════
-       COA MANAGEMENT
-  ══════════════════════════════════════ -->
-  <div class="section-header" data-section-cat="coa-management" onclick="toggleSection(this)">
-    <span class="section-title">COA Management</span>
-    <span class="section-count">3 mockups</span>
-    <span class="section-chevron">&#9662;</span>
-  </div>
-  <div class="section-content" data-section-cat="coa-management">
-  <div class="card-grid">
-
-    <a data-status="todo" data-category="coa-management" data-date="2026-03-26" href="qredible-tickets/coa-management-modal.html" class="proto-card" data-keywords="coa management modal assign reassign assignment level shared inherited child individual bundle not required qp-3517 qp-3518 qp-3519 qp-3544 qp-3546 coas tab">
-      <div class="card-top">
-        <div class="card-icon">&#128193;</div>
-        <span class="card-ticket">QP-3517/18/19 + 3544/46</span>
-      </div>
-      <div class="card-name">COA Management Modal &#8212; Assignment Level Behavior</div>
-      <p class="card-desc">How the COA Management modal (Assign/Reassign) behaves for each COA Assignment Level: Individual (normal), Shared (read-only, link to source), Inherited (read-only, link to sibling), Child (container view), Not Required (no button), Bundle (read-only). Includes COAs tab shared indicator.</p>
-      <div class="card-pills">
-        <span class="pill pill-blue">COA Management</span>
-        <span class="pill pill-green">Mockup ready</span>
-      </div>
-      <div class="card-footer">
-        <span class="card-date">Mar 26, 2026</span>
-        <span class="card-cta">View mockup &#8594;</span>
-      </div>
-    </a>
-
-    <a data-status="todo" data-category="coa-management" data-date="2026-03-26" href="qredible-tickets/coa-shared.html" class="proto-card" data-keywords="coa shared cross-product inheritance batch same coa multiple products source linked one record qp-3546">
-      <div class="card-top">
-        <div class="card-icon">&#128279;</div>
-        <span class="card-ticket">QP-3546</span>
-      </div>
-      <div class="card-name">Cross-Product COA Sharing</div>
-      <p class="card-desc">One COA batch covering multiple separate product forms (flower &#8594; pre-rolls &#8594; shake). Upload once to a source product, set others to Shared. One record, no copies. Dashed badge is a clickable link to the source COA. Related to QP-3544.</p>
-      <div class="card-pills">
-        <span class="pill pill-blue">COA Management</span>
-        <span class="pill pill-green">Mockup ready</span>
-      </div>
-      <div class="card-footer">
-        <span class="card-date">Mar 26, 2026</span>
-        <span class="card-cta">View mockup &#8594;</span>
-      </div>
-    </a>
-
-    <a data-status="todo" data-category="coa-management" data-date="2026-03-26" href="qredible-tickets/coa-assignment-level.html" class="proto-card" data-keywords="coa assignment level individual child inherited bundle not required product builder qp-3544">
-      <div class="card-top">
-        <div class="card-icon">&#129516;</div>
-        <span class="card-ticket">QP-3544</span>
-      </div>
-      <div class="card-name">COA Assignment Level</div>
-      <p class="card-desc">Introduces Individual, Child, Inherited, Bundle, and Not Required assignment levels. Controls how COA compliance is evaluated for parent/variant/bundle product relationships. Dashed badge = inherited status.</p>
-      <div class="card-pills">
-        <span class="pill pill-blue">Product Builder</span>
-        <span class="pill pill-green">Mockup ready</span>
-      </div>
-      <div class="card-footer">
-        <span class="card-date">Mar 26, 2026</span>
-        <span class="card-cta">View mockup &#8594;</span>
-      </div>
-    </a>
-
-  </div>
-  </div>
-
-  <!-- ══════════════════════════════════════
-       WE MONITOR
-  ══════════════════════════════════════ -->
-  <div class="section-header" data-section-cat="wemonitor" onclick="toggleSection(this)">
-    <span class="section-title">We Monitor</span>
-    <span class="section-count">7 mockups</span>
-    <span class="section-chevron">&#9662;</span>
-  </div>
-  <div class="section-content" data-section-cat="wemonitor">
-  <div class="card-grid">
-
-    <a data-status="todo" data-category="wemonitor" data-date="2026-04-14" href="qredible-tickets/mid-management.html" class="proto-card" data-keywords="mid merchant identifier pl_company_dba merchant_identifier pl_merchant_processor_client processor scoped bulk assign csv upload modal wemonitor mid management multiple mids per company qp-3677">
-      <div class="card-top">
-        <div class="card-icon">&#128273;</div>
-        <span class="card-ticket">QP-3677 &bull; NEW</span>
-      </div>
-      <div class="card-name">MID Management &#8212; Merchant Identifier Assignment</div>
-      <p class="card-desc">Bulk management UI for assigning merchant identifiers (MIDs) to monitored companies. MIDs render <strong>inline in the Legal Name cell</strong> &#8212; no new column. Processor-scoped via <code>pl_merchant_processor_client</code>; source field <code>pl_company_dba.merchant_identifier</code> (per-DBA, multiple per company). Surfaces: inline chip list in Legal Name cell, Manage MIDs modal (3 entry points), batch CSV upload. Complements policy-first but tracked separately.</p>
-      <div class="card-pills">
-        <span class="pill pill-blue">WeMonitor</span>
-        <span class="pill pill-green">Net New</span>
-        <span class="pill pill-green">Mockup ready</span>
-      </div>
-      <div class="card-footer">
-        <span class="card-date">Apr 14, 2026</span>
-        <span class="card-cta">View mockup &#8594;</span>
-      </div>
-    </a>
-
-    <a data-status="todo" data-category="wemonitor" data-date="2026-04-15" href="qredible-tickets/qp-3682-tab-aware-upload.html" class="proto-card" data-keywords="tab aware add company bulk upload modal destination tab pending active pending q review workflow we monitor qp-3682">
-      <div class="card-top">
-        <div class="card-icon">&#128198;</div>
-        <span class="card-ticket">QP-3682 &bull; NEW</span>
-      </div>
-      <div class="card-name">Tab-Aware Company Upload &#8212; Add Company + Bulk Upload</div>
-      <p class="card-desc">Adds an Active / Pending destination-tab picker to both the Add Company modal and the Bulk Upload modal. Default is <strong>Pending</strong>, supporting the new Pending Q review workflow (v2.2, 2026-04-23). Covers all states: default, active-selected, batch upload, validation errors, success confirmation.</p>
-      <div class="card-pills">
-        <span class="pill pill-blue">WeMonitor</span>
-        <span class="pill pill-green">Net New</span>
-        <span class="pill pill-green">Mockup ready</span>
-      </div>
-      <div class="card-footer">
-        <span class="card-date">Apr 15, 2026</span>
-        <span class="card-cta">View mockup &#8594;</span>
-      </div>
-    </a>
-
-    <a data-status="todo" data-category="wemonitor" data-date="2026-04-15" href="qredible-tickets/qp-3683-bulk-assignment-filters.html" class="proto-card" data-keywords="bulk team member assignment filters status filter team member filter search legal name dba website mid unassigned selection divergence qp-3683">
-      <div class="card-top">
-        <div class="card-icon">&#128101;</div>
-        <span class="card-ticket">QP-3683 &bull; NEW</span>
-      </div>
-      <div class="card-name">Bulk Team Member Assignment &#8212; Filters + Multi-Field Search</div>
-      <p class="card-desc">Extends Step 1 of the Bulk Team Member Assignment wizard with a Status filter (Active / Pending / Archived), a Current Team Member multi-select filter (includes Unassigned), and a search input spanning legal name, DBA, website, and MID. Selections persist across filter changes.</p>
-      <div class="card-pills">
-        <span class="pill pill-blue">WeMonitor</span>
-        <span class="pill pill-green">Net New</span>
-        <span class="pill pill-green">Mockup ready</span>
-      </div>
-      <div class="card-footer">
-        <span class="card-date">Apr 15, 2026</span>
-        <span class="card-cta">View mockup &#8594;</span>
-      </div>
-    </a>
-
-    <a data-status="todo" data-category="wemonitor" data-date="2026-04-07" href="qredible-tickets/wemonitor-rework.html" class="proto-card" data-keywords="wemonitor rework pending companies bulk actions mri industry type company pair retailer underwriting queue qp-3648">
-      <div class="card-top">
-        <div class="card-icon">&#128203;</div>
-        <span class="card-ticket">QP-3648</span>
-      </div>
-      <div class="card-name">WeMonitor Rework &#8212; Pending Queue, Bulk Actions &amp; Paired Industry Pills</div>
-      <p class="card-desc">Reworks WeMonitor into a Product Compliance-style pipeline with Pending Companies tab, bulk actions, MRI column, and combined Industry Type &#8594; Type of Company pill pairs shown under Legal Name instead of a separate Industry column.</p>
-      <div class="card-pills">
-        <span class="pill pill-blue">WeMonitor</span>
-        <span class="pill pill-blue">Q-Monitor</span>
-        <span class="pill pill-green">Mockup ready</span>
-      </div>
-      <div class="card-footer">
-        <span class="card-date">Apr 7, 2026</span>
-        <span class="card-cta">View mockup &#8594;</span>
-      </div>
-    </a>
-
-    <a data-status="todo" data-category="wemonitor" data-date="2026-04-07" href="qredible-tickets/multi-industry-type.html" class="proto-card" data-keywords="multi industry type company constraint many-to-many pipeline pills sign-up road qredibility questionnaire qp-3646">
-      <div class="card-top">
-        <div class="card-icon">&#127981;</div>
-        <span class="card-ticket">QP-3646</span>
-      </div>
-      <div class="card-name">Multi-Industry Type Support</div>
-      <p class="card-desc">Break the 1:1 Industry Type constraint. Before/after for all 6 touchpoints: sign-up, pipeline pills, company page, bulk upload, Road to Qredibility (aggregated questionnaire), Q-Audit admin.</p>
-      <div class="card-pills">
-        <span class="pill pill-blue">WeMonitor</span>
-        <span class="pill pill-blue">Q-Audit</span>
-        <span class="pill pill-green">Mockup ready</span>
-      </div>
-      <div class="card-footer">
-        <span class="card-date">Apr 7, 2026</span>
-        <span class="card-cta">View mockup &#8594;</span>
-      </div>
-    </a>
-
-    <a data-status="todo" data-category="wemonitor" data-date="2026-04-02" href="qredible-tickets/ofac-sanctions-screening.html" class="proto-card" data-keywords="ofac sanctions screening vital4 we monitor status column match clear pending contacts beneficial owner control person driver license template upload QP-3601 QP-3602">
-      <div class="card-top">
-        <div class="card-icon">&#128737;</div>
-        <span class="card-ticket">QP-3601 / QP-3602</span>
-      </div>
-      <div class="card-name">OFAC Status Column &amp; Sanctions Screening Modal</div>
-      <p class="card-desc">New OFAC Status column in We Monitor (Clear/Match/Pending/Not Screened). Dedicated Sanctions Screening modal with contact overview, SDN match detail cards with confidence scoring, Clear/Escalate workflow. Updated contacts template with Vital4-required fields.</p>
-      <div class="card-pills">
-        <span class="pill pill-red">Revenue Critical</span>
-        <span class="pill pill-green">Mockup ready</span>
-      </div>
-      <div class="card-footer">
-        <span class="card-date">Apr 2, 2026</span>
-        <span class="card-cta">View mockup &#8594;</span>
-      </div>
-    </a>
-
-    <a data-status="todo" data-category="wemonitor" data-date="2026-03-31" href="qredible-tickets/we-monitor-license.html" class="proto-card" data-keywords="we monitor license status run license check cannaspyglass q-audit validation validating active license not found not required hover tooltip sort filter qp-3561 qp-3562 qp-3563">
-      <div class="card-top">
-        <div class="card-icon">&#129370;</div>
-        <span class="card-ticket">QP-3561 / 3562 / 3563</span>
-      </div>
-      <div class="card-name">We Monitor &#8212; License Status Improvements</div>
-      <p class="card-desc">New &#8220;Run License Check&#8221; action triggers Q-Audit validation tasks via CannaSpyGlass API. Active badge simplified (license details in hover tooltip). &#8220;License Not Required&#8221; renamed to &#8220;License Not Found&#8221; with new hover. Validation timestamps on Validating badge. Column sort + dedicated filter panel.</p>
-      <div class="card-pills">
-        <span class="pill pill-blue">WeMonitor</span>
-        <span class="pill pill-green">Mockup ready</span>
-      </div>
-      <div class="card-footer">
-        <span class="card-date">Mar 31, 2026</span>
-        <span class="card-cta">View mockup &#8594;</span>
-      </div>
-    </a>
-
-  </div>
-  </div>
-
-  <!-- ══════════════════════════════════════
-       SCAN OPERATIONS & Q-SCANAI
-  ══════════════════════════════════════ -->
-  <div class="section-header" data-section-cat="scan-ops" onclick="toggleSection(this)">
-    <span class="section-title">Scan Operations &amp; Q-ScanAI</span>
-    <span class="section-count">4 mockups</span>
-    <span class="section-chevron">&#9662;</span>
-  </div>
-  <div class="section-content" data-section-cat="scan-ops">
-  <div class="card-grid">
-
-    <a data-status="todo" data-category="scan-ops" data-date="2026-04-08" href="qredible-tickets/scan-operations-center.html" class="proto-card" data-keywords="scan operations center active operations bulk clear retry cancel website scan product scan popup notification drawer q-audit backend aggregate scheduled scans bulk scan">
-      <div class="card-top">
-        <div class="card-icon">&#8635;</div>
-        <span class="card-ticket">QP-3652 / QP-3653</span>
-      </div>
-      <div class="card-name">Centralized Scan Operations Center</div>
-      <p class="card-desc">Replaces one-popup-per-company scan spam with a top-right Active Operations center. Shows running / failed / completed scans, bulk cancel / retry / clear actions, and result summaries for product + website scans. Includes Q-Audit backend aggregate view for Qredible staff.</p>
-      <div class="card-pills">
-        <span class="pill pill-blue">Q-ScanAI</span>
-        <span class="pill pill-blue">Q-Audit</span>
-        <span class="pill pill-green">Mockup ready</span>
-      </div>
-      <div class="card-footer">
-        <span class="card-date">Apr 8, 2026</span>
-        <span class="card-cta">View mockup &#8594;</span>
-      </div>
-    </a>
-
-    <a data-status="todo" data-category="scan-ops" data-date="2026-04-07" href="qredible-tickets/scanner-industry-config.html" class="proto-card" data-keywords="scanner industry config company level overrides scan profile defaults q-scanai compliance elements qp-3649">
-      <div class="card-top">
-        <div class="card-icon">&#129504;</div>
-        <span class="card-ticket">QP-3649</span>
-      </div>
-      <div class="card-name">Q-ScanAI Industry-Specific Scanner Configuration</div>
-      <p class="card-desc">Industry-aware scanner configuration modal that auto-loads scan defaults from the company&#8217;s assigned industry/type pair, shows source badges, and preserves company-level overrides.</p>
-      <div class="card-pills">
-        <span class="pill pill-blue">Q-ScanAI</span>
-        <span class="pill pill-blue">Q-Audit</span>
-        <span class="pill pill-green">Mockup ready</span>
-      </div>
-      <div class="card-footer">
-        <span class="card-date">Apr 7, 2026</span>
-        <span class="card-cta">View mockup &#8594;</span>
-      </div>
-    </a>
-
-    <a data-status="todo" data-category="scan-ops" data-date="2026-03-30" href="qredible-tickets/qscanai-findings.html" class="proto-card" data-keywords="q-scanai findings modal ux improvements sort priority analyst review quick filters compact header table view card view multi-select type filter bulk action large modal company selector qp-3502">
-      <div class="card-top">
-        <div class="card-icon">&#128269;</div>
-        <span class="card-ticket">Q-ScanAI</span>
-      </div>
-      <div class="card-name">Q-ScanAI Findings Modal &#8212; UX Improvements</div>
-      <p class="card-desc">Compact header collapses scan history to ~80px. Priority sort puts new High findings first, Analyst Review Pending above Low, Compliant collapsed. Near-fullscreen modal with 4 sticky zones + company selector. Table/Card view toggle. Multi-select type filter. Bulk analyst review queue with inline severity assignment.</p>
-      <div class="card-pills">
-        <span class="pill pill-blue">Q-ScanAI</span>
-        <span class="pill pill-green">Mockup ready</span>
-      </div>
-      <div class="card-footer">
-        <span class="card-date">Mar 30, 2026</span>
-        <span class="card-cta">View mockup &#8594;</span>
-      </div>
-    </a>
-
-    <a data-status="todo" data-category="scan-ops" data-date="2026-03-25" href="qredible-tickets/scan-discard.html" class="proto-card" data-keywords="scan discard zero product guard failed partial scan qp-3545">
-      <div class="card-top">
-        <div class="card-icon">&#128465;</div>
-        <span class="card-ticket">QP-3545</span>
-      </div>
-      <div class="card-name">Scan Discard / Zero-Product Guard</div>
-      <p class="card-desc">Zero-product guard prevents false removals when Zyte returns empty results. Scan discard allows admins to roll back a completed scan&#39;s change statuses without removing ingested COAs or products.</p>
-      <div class="card-pills">
-        <span class="pill pill-yellow">Scan Operations</span>
-        <span class="pill pill-green">Mockup ready</span>
-      </div>
-      <div class="card-footer">
-        <span class="card-date">Mar 25, 2026</span>
-        <span class="card-cta">View mockup &#8594;</span>
-      </div>
-    </a>
-
-  </div>
-  </div>
-
-  <!-- ══════════════════════════════════════
-       Q-AUDIT
-  ══════════════════════════════════════ -->
-  <div class="section-header" data-section-cat="q-audit" onclick="toggleSection(this)">
-    <span class="section-title">Q-Audit</span>
-    <span class="section-count">10 mockups</span>
-    <span class="section-chevron">&#9662;</span>
-  </div>
-  <div class="section-content" data-section-cat="q-audit">
-  <div class="card-grid">
+    <!-- 2026-04-20 -->
 
     <a data-status="todo" data-category="q-audit" data-date="2026-04-20" href="roadmap.html" class="proto-card" data-keywords="roadmap mvp policy scanner q-scanai team first step pol-1 scan-1 check code registry pl_policy pl_check_definition brian q-scanai enhancement spec v4 eight phases landing pad interlock cohesion ecosystem parallel tracks evolution">
       <div class="card-top">
         <div class="card-icon">&#9733;</div>
-        <span class="card-ticket">ROADMAPS &bull; NEW</span>
+        <div class="card-meta">
+          <span class="card-category" onclick="event.preventDefault();filterByCategory('q-audit')">Q-Audit</span>
+          <span class="card-ticket">ROADMAPS &bull; NEW</span>
+        </div>
       </div>
       <div class="card-name">Q-Trust Roadmaps &#8212; Policy + Scanner MVPs</div>
       <p class="card-desc">Two parallel MVPs, one shared system. Visualizes the Policy team's Pol-1&ndash;Pol-9 and the Q-ScanAI team's Scan-1&ndash;Scan-8 as timeline + 8-phase ladder. Shows the "first step" per team with a 1-paragraph why-this-first plus unblocks checklist. Explicit cohesion section on the check-code contract, data flow, and anti-patterns. Built for non-technical stakeholders and engineers both.</p>
@@ -797,14 +324,19 @@
       </div>
       <div class="card-footer">
         <span class="card-date">Apr 20, 2026</span>
-        <span class="card-cta">View roadmap &rarr;</span>
+        <span class="card-cta">View roadmap &#8594;</span>
       </div>
     </a>
+
+    <!-- 2026-04-16 -->
 
     <a data-status="todo" data-category="q-audit" data-date="2026-04-16" href="policy-first-ecosystem.html" class="proto-card" data-keywords="policy-first ecosystem architecture infographic nucleus versioned json policy document authoring intelligence assignment scan pipelines outputs payment processors industry verticals infrastructure tables services q ai engine soc 2 audit meeting prep 2026-04-17 mastercard mmsp">
       <div class="card-top">
         <div class="card-icon">&#9678;</div>
-        <span class="card-ticket">POLICY-FIRST &bull; NEW</span>
+        <div class="card-meta">
+          <span class="card-category" onclick="event.preventDefault();filterByCategory('q-audit')">Q-Audit</span>
+          <span class="card-ticket">POLICY-FIRST &bull; NEW</span>
+        </div>
       </div>
       <div class="card-name">Policy-First Ecosystem &#8212; Architecture Infographic</div>
       <p class="card-desc">Full-screen dark-theme ecosystem graphic. Central nucleus (the policy JSON with its 8 top-level keys) surrounded by authoring, intelligence, assignment, scan pipelines, outputs, and payment layers. Industry-vertical ring + infrastructure bar showing new tables, services, and existing hooks. Built for tomorrow's executive/dev working session.</p>
@@ -823,7 +355,10 @@
     <a data-status="todo" data-category="q-audit" data-date="2026-04-16" href="policy-first-meeting-prep.html" class="proto-card" data-keywords="policy-first meeting prep 2026-04-17 executive summary current vs target roadmap phases decisions mastercard mmsp multi-industry q ai integration mockup index risks discrepancies soc 2 ronaldo builddisposition uber move plus jakarta">
       <div class="card-top">
         <div class="card-icon">&#128196;</div>
-        <span class="card-ticket">POLICY-FIRST &bull; NEW</span>
+        <div class="card-meta">
+          <span class="card-category" onclick="event.preventDefault();filterByCategory('q-audit')">Q-Audit</span>
+          <span class="card-ticket">POLICY-FIRST &bull; NEW</span>
+        </div>
       </div>
       <div class="card-name">Policy-First Meeting Prep &#8212; Knowledge Base for 2026-04-17</div>
       <p class="card-desc">11-section scannable meeting doc: executive summary, simplified flow, current vs target, phase-by-phase roadmap in days, 9 decision cards, Mastercard MMSP mapping, multi-industry scalability, Q AI integration + model governance, mockup index, risks, and the color/font/buildDisposition discrepancies we need to settle.</p>
@@ -839,10 +374,187 @@
       </div>
     </a>
 
+    <!-- 2026-04-15 -->
+
+    <a data-status="todo" data-category="wemonitor" data-date="2026-04-15" href="qredible-tickets/qp-3682-tab-aware-upload.html" class="proto-card" data-keywords="tab aware add company bulk upload modal destination tab pending active pending q review workflow we monitor qp-3682">
+      <div class="card-top">
+        <div class="card-icon">&#128198;</div>
+        <div class="card-meta">
+          <span class="card-category" onclick="event.preventDefault();filterByCategory('wemonitor')">WeMonitor</span>
+          <span class="card-ticket">QP-3682 &bull; NEW</span>
+        </div>
+      </div>
+      <div class="card-name">Tab-Aware Company Upload &#8212; Add Company + Bulk Upload</div>
+      <p class="card-desc">Adds an Active / Pending destination-tab picker to both the Add Company modal and the Bulk Upload modal. Default is <strong>Pending</strong>, supporting the new Pending Q review workflow (v2.2, 2026-04-23). Covers all states: default, active-selected, batch upload, validation errors, success confirmation.</p>
+      <div class="card-pills">
+        <span class="pill pill-blue">WeMonitor</span>
+        <span class="pill pill-green">Net New</span>
+        <span class="pill pill-green">Mockup ready</span>
+      </div>
+      <div class="card-footer">
+        <span class="card-date">Apr 15, 2026</span>
+        <span class="card-cta">View mockup &#8594;</span>
+      </div>
+    </a>
+
+    <a data-status="todo" data-category="wemonitor" data-date="2026-04-15" href="qredible-tickets/qp-3683-bulk-assignment-filters.html" class="proto-card" data-keywords="bulk team member assignment filters status filter team member filter search legal name dba website mid unassigned selection divergence qp-3683">
+      <div class="card-top">
+        <div class="card-icon">&#128101;</div>
+        <div class="card-meta">
+          <span class="card-category" onclick="event.preventDefault();filterByCategory('wemonitor')">WeMonitor</span>
+          <span class="card-ticket">QP-3683 &bull; NEW</span>
+        </div>
+      </div>
+      <div class="card-name">Bulk Team Member Assignment &#8212; Filters + Multi-Field Search</div>
+      <p class="card-desc">Extends Step 1 of the Bulk Team Member Assignment wizard with a Status filter (Active / Pending / Archived), a Current Team Member multi-select filter (includes Unassigned), and a search input spanning legal name, DBA, website, and MID. Selections persist across filter changes.</p>
+      <div class="card-pills">
+        <span class="pill pill-blue">WeMonitor</span>
+        <span class="pill pill-green">Net New</span>
+        <span class="pill pill-green">Mockup ready</span>
+      </div>
+      <div class="card-footer">
+        <span class="card-date">Apr 15, 2026</span>
+        <span class="card-cta">View mockup &#8594;</span>
+      </div>
+    </a>
+
+    <!-- 2026-04-14 -->
+
+    <a data-status="todo" data-category="wemonitor" data-date="2026-04-14" href="qredible-tickets/mid-management.html" class="proto-card" data-keywords="mid merchant identifier pl_company_dba merchant_identifier pl_merchant_processor_client processor scoped bulk assign csv upload modal wemonitor mid management multiple mids per company qp-3677">
+      <div class="card-top">
+        <div class="card-icon">&#128273;</div>
+        <div class="card-meta">
+          <span class="card-category" onclick="event.preventDefault();filterByCategory('wemonitor')">WeMonitor</span>
+          <span class="card-ticket">QP-3677 &bull; NEW</span>
+        </div>
+      </div>
+      <div class="card-name">MID Management &#8212; Merchant Identifier Assignment</div>
+      <p class="card-desc">Bulk management UI for assigning merchant identifiers (MIDs) to monitored companies. MIDs render <strong>inline in the Legal Name cell</strong> &#8212; no new column. Processor-scoped via <code>pl_merchant_processor_client</code>; source field <code>pl_company_dba.merchant_identifier</code> (per-DBA, multiple per company). Surfaces: inline chip list in Legal Name cell, Manage MIDs modal (3 entry points), batch CSV upload. Complements policy-first but tracked separately.</p>
+      <div class="card-pills">
+        <span class="pill pill-blue">WeMonitor</span>
+        <span class="pill pill-green">Net New</span>
+        <span class="pill pill-green">Mockup ready</span>
+      </div>
+      <div class="card-footer">
+        <span class="card-date">Apr 14, 2026</span>
+        <span class="card-cta">View mockup &#8594;</span>
+      </div>
+    </a>
+
+    <a data-status="todo" data-category="policy-v3" data-date="2026-04-14" href="qredible-tickets/report-generation.html" class="proto-card" data-keywords="compliance report generate claude sonnet 4.6 web_search async job polling spinner stage labels policy-aware report generation qp-3701">
+      <div class="card-top">
+        <div class="card-icon">&#128196;</div>
+        <div class="card-meta">
+          <span class="card-category" onclick="event.preventDefault();filterByCategory('policy-v3')">Policy v3</span>
+          <span class="card-ticket">QP-3701 &bull; NEW</span>
+        </div>
+      </div>
+      <div class="card-name">Compliance Report Generation &#8212; Brian&#8217;s Centerpiece</div>
+      <p class="card-desc">Single "Produce Compliance Report" button flow. 30&#8211;60s async job: active policy JSON as system prompt, merchant evidence as user content, <code>claude-sonnet-4-6</code> + <code>web_search</code> as evaluator. Stage-labeled spinner, polling pattern, "Under the hood" collapsible with model/policy/token/audit-log details.</p>
+      <div class="card-pills">
+        <span class="pill pill-blue">Policy-First</span>
+        <span class="pill pill-green">Net New</span>
+        <span class="pill pill-green">Mockup ready</span>
+      </div>
+      <div class="card-footer">
+        <span class="card-date">Apr 14, 2026</span>
+        <span class="card-cta">View mockup &#8594;</span>
+      </div>
+    </a>
+
+    <a data-status="todo" data-category="policy-v3" data-date="2026-04-14" href="qredible-tickets/report-rendered.html" class="proto-card" data-keywords="compliance report rendered output pdf-style policy-aware sections executive summary tier assessment checklist product classification mri recommended actions claude-sonnet-4-6 CoaStatusEnum TypeDisposition SeverityLevelEnum qp-3701">
+      <div class="card-top">
+        <div class="card-icon">&#128202;</div>
+        <div class="card-meta">
+          <span class="card-category" onclick="event.preventDefault();filterByCategory('policy-v3')">Policy v3</span>
+          <span class="card-ticket">QP-3701 &bull; NEW</span>
+        </div>
+      </div>
+      <div class="card-name">Compliance Report &#8212; Rendered Output</div>
+      <p class="card-desc">PDF-style on-screen report driven at runtime from <code>report_configuration.sections[]</code> in the policy JSON. Sections: Executive Summary, Tier Assessment, Checklist Results (with <code>SeverityLevelEnum</code> S1/S2/S3), Product Classification Findings (<code>CoaStatusEnum</code> + <code>TypeDisposition</code>), MRI Risk Intelligence, Recommended Actions. Footer pins model + policy version + job ID.</p>
+      <div class="card-pills">
+        <span class="pill pill-blue">Policy-First</span>
+        <span class="pill pill-green">Net New</span>
+        <span class="pill pill-green">Mockup ready</span>
+      </div>
+      <div class="card-footer">
+        <span class="card-date">Apr 14, 2026</span>
+        <span class="card-cta">View mockup &#8594;</span>
+      </div>
+    </a>
+
+    <a data-status="todo" data-category="policy-v3" data-date="2026-04-14" href="qredible-tickets/track-b-catalog-upload.html" class="proto-card" data-keywords="track b card-present retail catalog upload csv xlsx column mapping validation diff review coa requirement PlCategoryEntity coaRequirement pl_category compliance review wizard brian qp-3702">
+      <div class="card-top">
+        <div class="card-icon">&#128281;</div>
+        <div class="card-meta">
+          <span class="card-category" onclick="event.preventDefault();filterByCategory('policy-v3')">Policy v3</span>
+          <span class="card-ticket">QP-3702 &bull; NEW</span>
+        </div>
+      </div>
+      <div class="card-name">Track B Catalog Upload &#8212; Card-Present Retail Wizard</div>
+      <p class="card-desc">4-step upload wizard for card-present retail merchants: drag-drop CSV/XLSX &#8594; column mapping &#8594; validation preview (errors + warnings per row) &#8594; confirm &amp; run compliance review. Diff view on re-upload (added/removed/changed products). <code>PlCategoryEntity.coaRequirement</code> (REQUIRED/CONDITIONAL/NOT_REQUIRED) determines COA need per line item at classification time.</p>
+      <div class="card-pills">
+        <span class="pill pill-blue">Policy-First</span>
+        <span class="pill pill-green">Net New</span>
+        <span class="pill pill-green">Mockup ready</span>
+      </div>
+      <div class="card-footer">
+        <span class="card-date">Apr 14, 2026</span>
+        <span class="card-cta">View mockup &#8594;</span>
+      </div>
+    </a>
+
+    <a data-status="todo" data-category="policy-v3" data-date="2026-04-14" href="qredible-tickets/policy-authoring-wizard.html" class="proto-card" data-keywords="policy authoring wizard guided mode dials levers component builder noah stepper license verification payment rail product classification mri two-layer narrative json qp-3703">
+      <div class="card-top">
+        <div class="card-icon">&#129520;</div>
+        <div class="card-meta">
+          <span class="card-category" onclick="event.preventDefault();filterByCategory('policy-v3')">Policy v3</span>
+          <span class="card-ticket">QP-3703 &bull; NEW</span>
+        </div>
+      </div>
+      <div class="card-name">Policy Authoring Wizard &#8212; Noah&#8217;s Guided Mode</div>
+      <p class="card-desc">Stepper UI for building policy components without writing JSON. Walkthrough: component type &#8594; jurisdiction &#8594; verification requirements &#8594; operational config &#8594; review &amp; save. After save: shows the resulting JSON appended to <code>checklist[]</code>, demonstrating the two-layer narrative + machine-readable model. Links to Policy Editor expert JSON mode.</p>
+      <div class="card-pills">
+        <span class="pill pill-blue">Policy-First</span>
+        <span class="pill pill-green">Net New</span>
+        <span class="pill pill-green">Mockup ready</span>
+      </div>
+      <div class="card-footer">
+        <span class="card-date">Apr 14, 2026</span>
+        <span class="card-cta">View mockup &#8594;</span>
+      </div>
+    </a>
+
+    <a data-status="todo" data-category="policy-v3" data-date="2026-04-14" href="qredible-tickets/mri-marketplace.html" class="proto-card" data-keywords="mri marketplace modular third-party checks vital4 ofac pep sanctions fda warning letters ftc adverse media whois domain age chargeback policy_scored risk_intelligence false positives confidence threshold auto-dismiss human review queue explainability qp-3704">
+      <div class="card-top">
+        <div class="card-icon">&#128269;</div>
+        <div class="card-meta">
+          <span class="card-category" onclick="event.preventDefault();filterByCategory('policy-v3')">Policy v3</span>
+          <span class="card-ticket">QP-3704 &bull; NEW</span>
+        </div>
+      </div>
+      <div class="card-name">MRI Marketplace &#8212; Modular Risk Intelligence Checks</div>
+      <p class="card-desc">Catalog of third-party MRI checks (Vital4, OFAC, PEP/Sanctions, FDA, FTC, adverse media, WHOIS, chargeback signals). Per-check: <code>policy_scored</code> vs <code>risk_intelligence</code> mode, tier eligibility, refresh frequency. Solves the hundreds-of-false-positives UX problem: confidence-threshold slider (340 flags/day &#8594; 12 at 0.72), auto-dismiss rules, human review queue, "why this matched" explainability panel.</p>
+      <div class="card-pills">
+        <span class="pill pill-blue">Policy-First</span>
+        <span class="pill pill-green">Net New</span>
+        <span class="pill pill-green">Mockup ready</span>
+      </div>
+      <div class="card-footer">
+        <span class="card-date">Apr 14, 2026</span>
+        <span class="card-cta">View mockup &#8594;</span>
+      </div>
+    </a>
+
+    <!-- 2026-04-13 -->
+
     <a data-status="todo" data-category="q-audit" data-date="2026-04-13" href="qredible-tickets/policy-lifecycle.html" class="proto-card" data-keywords="policy lifecycle customer flow onboarding wizard intake assignment chaining stack overlay bulletin merchant dashboard chained composable hemp cbd kratom payment rails open questions tbd qp-3647">
       <div class="card-top">
         <div class="card-icon">&#128260;</div>
-        <span class="card-ticket">QP-3647 &bull; POLICY-FIRST</span>
+        <div class="card-meta">
+          <span class="card-category" onclick="event.preventDefault();filterByCategory('q-audit')">Q-Audit</span>
+          <span class="card-ticket">QP-3647 &bull; POLICY-FIRST</span>
+        </div>
       </div>
       <div class="card-name">Policy Lifecycle &#8212; Customer Flow &amp; Chaining</div>
       <p class="card-desc">End-to-end flow: scan config created as a policy &#8594; assigned to merchant set &#8594; merchant compliance view &#8594; scan trigger &#8594; policy updates &#8594; bulletins &#8594; overlay model. Includes the chained-policy stack pattern, "Where This Lives" infrastructure table (existing hook points vs. net new), and a net-new merchant compliance surface proposal.</p>
@@ -860,7 +572,10 @@
     <a data-status="todo" data-category="q-audit" data-date="2026-04-13" href="qredible-tickets/policy-evidence-loop.html" class="proto-card" data-keywords="policy evidence loop coverage check missing policy detection q-scanai findings product scan coa license payment rails mri evidence tags signature attributes vocabulary kratom worked example confidence auto-attach suggest review queue analyst soc2 audit qp-3647">
       <div class="card-top">
         <div class="card-icon">&#128300;</div>
-        <span class="card-ticket">QP-3647 &bull; POLICY-FIRST &bull; NEW</span>
+        <div class="card-meta">
+          <span class="card-category" onclick="event.preventDefault();filterByCategory('q-audit')">Q-Audit</span>
+          <span class="card-ticket">QP-3647 &bull; POLICY-FIRST &bull; NEW</span>
+        </div>
       </div>
       <div class="card-name">Policy Evidence Loop &#8212; Detect Missing Policies from Scans</div>
       <p class="card-desc">Closed-loop system tying Q-ScanAI findings, product scans, COA results, license scans, payment rails detection, and MRI checks back to policy assignment. Each finding produces evidence tags; canonical policies declare expected evidence signatures; coverage check detects missing policies based on real evidence about the merchant. Worked example: Acme Hemp Co caught selling kratom under hemp-cbd-only policies.</p>
@@ -879,7 +594,10 @@
     <a data-status="todo" data-category="q-audit" data-date="2026-04-13" href="qredible-tickets/policy-editor.html" class="proto-card" data-keywords="policy editor versioned policy document hemp cbd v3 checklist merchant tiers product classification mri scoring enforcement rules policy-first architecture qp-3647 rescoped industry config engine">
       <div class="card-top">
         <div class="card-icon">&#128220;</div>
-        <span class="card-ticket">QP-3647</span>
+        <div class="card-meta">
+          <span class="card-category" onclick="event.preventDefault();filterByCategory('q-audit')">Q-Audit</span>
+          <span class="card-ticket">QP-3647</span>
+        </div>
       </div>
       <div class="card-name">Policy Editor &#8212; Versioned Policy Authoring</div>
       <p class="card-desc">Author, publish, and version policy documents — the durable container for reusable scan configurations. Covers real enum vocabulary (TypeDisposition subtypes, CategoryCoaRequirement, ComplianceFindingSeverityEnum), violative drill-down enforcement pattern, COA requirement reality (PlCategoryEntity, not per-product), and QP-2943 fulfillment.</p>
@@ -898,7 +616,10 @@
     <a data-status="todo" data-category="q-audit" data-date="2026-04-13" href="qredible-tickets/bulletin-authoring.html" class="proto-card" data-keywords="bulletin authoring policy change notice merchant communication advisory critical delivery fanout audience resolver policy-first new">
       <div class="card-top">
         <div class="card-icon">&#128227;</div>
-        <span class="card-ticket">QP-NEW</span>
+        <div class="card-meta">
+          <span class="card-category" onclick="event.preventDefault();filterByCategory('q-audit')">Q-Audit</span>
+          <span class="card-ticket">QP-NEW</span>
+        </div>
       </div>
       <div class="card-name">Bulletin Authoring &#8212; Merchant-Facing Policy Notices</div>
       <p class="card-desc">Net-new surface under the policy-first pivot. Author and publish bulletins that explain policy changes to merchants, with audience computed from <code>policy_ids</code> and delivery across portal, email, and scanner queue.</p>
@@ -913,10 +634,103 @@
       </div>
     </a>
 
+    <!-- 2026-04-09 -->
+
+    <a data-status="todo" data-category="mycoa" data-date="2026-04-09" href="qredible-tickets/mycoa-shared-workflow-decision.html" class="proto-card" data-keywords="mycoa shared workflow decision board q-config qp-3226 wizard paywall westtown black bear permissions ownership architecture options recommendation phase phased">
+      <div class="card-top">
+        <div class="card-icon">&#128204;</div>
+        <div class="card-meta">
+          <span class="card-category" onclick="event.preventDefault();filterByCategory('mycoa')">MyCOA</span>
+          <span class="card-ticket">DECISION</span>
+        </div>
+      </div>
+      <div class="card-name">MyCOA Shared Workflow &#8212; Decision Board</div>
+      <p class="card-desc">Standalone decision document for the full team. Covers the Westtown MyCOA rollout (545 merchants, ~$32K/month), the 8-step requested workflow with status tags, 6 open blocking questions with if-yes/if-no consequences, three options compared, and the recommended phased approach (Phase 1: wizard + paywall now; Phase 2: shared workflow after alignment).</p>
+      <div class="card-pills">
+        <span class="pill pill-blue">MyCOA</span>
+        <span class="pill pill-blue">Architecture</span>
+        <span class="pill pill-green">Shareable</span>
+      </div>
+      <div class="card-footer">
+        <span class="card-date">Apr 9, 2026</span>
+        <span class="card-cta">View board &#8594;</span>
+      </div>
+    </a>
+
+    <!-- 2026-04-08 -->
+
+    <a data-status="todo" data-category="scan-ops" data-date="2026-04-08" href="qredible-tickets/scan-operations-center.html" class="proto-card" data-keywords="scan operations center active operations bulk clear retry cancel website scan product scan popup notification drawer q-audit backend aggregate scheduled scans bulk scan">
+      <div class="card-top">
+        <div class="card-icon">&#8635;</div>
+        <div class="card-meta">
+          <span class="card-category" onclick="event.preventDefault();filterByCategory('scan-ops')">Scan Ops</span>
+          <span class="card-ticket">QP-3652 / QP-3653</span>
+        </div>
+      </div>
+      <div class="card-name">Centralized Scan Operations Center</div>
+      <p class="card-desc">Replaces one-popup-per-company scan spam with a top-right Active Operations center. Shows running / failed / completed scans, bulk cancel / retry / clear actions, and result summaries for product + website scans. Includes Q-Audit backend aggregate view for Qredible staff.</p>
+      <div class="card-pills">
+        <span class="pill pill-blue">Q-ScanAI</span>
+        <span class="pill pill-blue">Q-Audit</span>
+        <span class="pill pill-green">Mockup ready</span>
+      </div>
+      <div class="card-footer">
+        <span class="card-date">Apr 8, 2026</span>
+        <span class="card-cta">View mockup &#8594;</span>
+      </div>
+    </a>
+
+    <!-- 2026-04-07 -->
+
+    <a data-status="todo" data-category="wemonitor" data-date="2026-04-07" href="qredible-tickets/wemonitor-rework.html" class="proto-card" data-keywords="wemonitor rework pending companies bulk actions mri industry type company pair retailer underwriting queue qp-3648">
+      <div class="card-top">
+        <div class="card-icon">&#128203;</div>
+        <div class="card-meta">
+          <span class="card-category" onclick="event.preventDefault();filterByCategory('wemonitor')">WeMonitor</span>
+          <span class="card-ticket">QP-3648</span>
+        </div>
+      </div>
+      <div class="card-name">WeMonitor Rework &#8212; Pending Queue, Bulk Actions &amp; Paired Industry Pills</div>
+      <p class="card-desc">Reworks WeMonitor into a Product Compliance-style pipeline with Pending Companies tab, bulk actions, MRI column, and combined Industry Type &#8594; Type of Company pill pairs shown under Legal Name instead of a separate Industry column.</p>
+      <div class="card-pills">
+        <span class="pill pill-blue">WeMonitor</span>
+        <span class="pill pill-blue">Q-Monitor</span>
+        <span class="pill pill-green">Mockup ready</span>
+      </div>
+      <div class="card-footer">
+        <span class="card-date">Apr 7, 2026</span>
+        <span class="card-cta">View mockup &#8594;</span>
+      </div>
+    </a>
+
+    <a data-status="todo" data-category="wemonitor" data-date="2026-04-07" href="qredible-tickets/multi-industry-type.html" class="proto-card" data-keywords="multi industry type company constraint many-to-many pipeline pills sign-up road qredibility questionnaire qp-3646">
+      <div class="card-top">
+        <div class="card-icon">&#127981;</div>
+        <div class="card-meta">
+          <span class="card-category" onclick="event.preventDefault();filterByCategory('wemonitor')">WeMonitor</span>
+          <span class="card-ticket">QP-3646</span>
+        </div>
+      </div>
+      <div class="card-name">Multi-Industry Type Support</div>
+      <p class="card-desc">Break the 1:1 Industry Type constraint. Before/after for all 6 touchpoints: sign-up, pipeline pills, company page, bulk upload, Road to Qredibility (aggregated questionnaire), Q-Audit admin.</p>
+      <div class="card-pills">
+        <span class="pill pill-blue">WeMonitor</span>
+        <span class="pill pill-blue">Q-Audit</span>
+        <span class="pill pill-green">Mockup ready</span>
+      </div>
+      <div class="card-footer">
+        <span class="card-date">Apr 7, 2026</span>
+        <span class="card-cta">View mockup &#8594;</span>
+      </div>
+    </a>
+
     <a data-status="todo" data-category="q-audit" data-date="2026-04-07" href="qredible-tickets/industry-config-engine.html" class="proto-card" data-keywords="industry configuration engine scan profile mri check mcc codes q-audit global settings admin compliance elements regulatory attributes policy editor qp-3647">
       <div class="card-top">
         <div class="card-icon">&#9881;</div>
-        <span class="card-ticket">QP-3647 (legacy view)</span>
+        <div class="card-meta">
+          <span class="card-category" onclick="event.preventDefault();filterByCategory('q-audit')">Q-Audit</span>
+          <span class="card-ticket">QP-3647 (legacy view)</span>
+        </div>
       </div>
       <div class="card-name">Industry Configuration Engine &#8212; Policy Editor Precursor</div>
       <p class="card-desc">Original industry-config mockup, updated in-place with policy-first banner and Section 2 authoring view. Kept for context; see the new Policy Editor mockup for the rescoped design.</p>
@@ -931,10 +745,253 @@
       </div>
     </a>
 
+    <a data-status="todo" data-category="scan-ops" data-date="2026-04-07" href="qredible-tickets/scanner-industry-config.html" class="proto-card" data-keywords="scanner industry config company level overrides scan profile defaults q-scanai compliance elements qp-3649">
+      <div class="card-top">
+        <div class="card-icon">&#129504;</div>
+        <div class="card-meta">
+          <span class="card-category" onclick="event.preventDefault();filterByCategory('scan-ops')">Scan Ops</span>
+          <span class="card-ticket">QP-3649</span>
+        </div>
+      </div>
+      <div class="card-name">Q-ScanAI Industry-Specific Scanner Configuration</div>
+      <p class="card-desc">Industry-aware scanner configuration modal that auto-loads scan defaults from the company&#8217;s assigned industry/type pair, shows source badges, and preserves company-level overrides.</p>
+      <div class="card-pills">
+        <span class="pill pill-blue">Q-ScanAI</span>
+        <span class="pill pill-blue">Q-Audit</span>
+        <span class="pill pill-green">Mockup ready</span>
+      </div>
+      <div class="card-footer">
+        <span class="card-date">Apr 7, 2026</span>
+        <span class="card-cta">View mockup &#8594;</span>
+      </div>
+    </a>
+
+    <!-- 2026-04-06 -->
+
+    <a data-status="todo" data-category="product-compliance" data-date="2026-04-06" href="qredible-tickets/import-workflow.html" class="proto-card" data-keywords="import upload column mapping validation bulk resolve coa matching progressive enrichment classification auto-classify qp-3638 qp-3639 qp-3640 qp-3641 qp-3642 qp-3643">
+      <div class="card-top">
+        <div class="card-icon">&#128229;</div>
+        <div class="card-meta">
+          <span class="card-category" onclick="event.preventDefault();filterByCategory('product-compliance')">Product Compliance</span>
+          <span class="card-ticket">QP-3638</span>
+        </div>
+      </div>
+      <div class="card-name">Unified Import Workflow</div>
+      <p class="card-desc">Column mapping, auto-detection, controlled value validation, bulk resolve, COA-to-product matching, progressive company classification enrichment. Replaces rigid template imports.</p>
+      <div class="card-pills">
+        <span class="pill pill-blue">Import</span>
+        <span class="pill pill-blue">Product Compliance</span>
+        <span class="pill pill-green">Mockup ready</span>
+      </div>
+      <div class="card-footer">
+        <span class="card-date">Apr 6, 2026</span>
+        <span class="card-cta">View mockup &#8594;</span>
+      </div>
+    </a>
+
+    <!-- 2026-04-05 -->
+
+    <a data-status="todo" data-category="mycoa" data-date="2026-04-05" href="mycoa-seo-consumer-experience.html" class="proto-card" data-keywords="mycoa seo consumer friendly coa template mobile potency safety terpene url configuration phase 1 phase 2 qp-3620 qp-3628">
+      <div class="card-top">
+        <div class="card-icon">&#128270;</div>
+        <div class="card-meta">
+          <span class="card-category" onclick="event.preventDefault();filterByCategory('mycoa')">MyCOA</span>
+          <span class="card-ticket">QP-3620/3628</span>
+        </div>
+      </div>
+      <div class="card-name">MyCOA SEO &amp; Consumer Experience</div>
+      <p class="card-desc">SEO settings (split listing/detail), URL configuration (default vs CNAME), Phase 1 PDF viewer, Phase 2 friendly COA template (mobile card layout with potency, safety, terpenes), COA lifecycle flow.</p>
+      <div class="card-pills">
+        <span class="pill pill-blue">MyCOA</span>
+        <span class="pill pill-blue">SEO</span>
+        <span class="pill pill-green">Mockup ready</span>
+      </div>
+      <div class="card-footer">
+        <span class="card-date">Apr 5, 2026</span>
+        <span class="card-cta">View mockup &#8594;</span>
+      </div>
+    </a>
+
+    <!-- 2026-04-03 -->
+
+    <a data-status="todo" data-category="mycoa" data-date="2026-04-03" href="mycoa-display-tab-mockup.html" class="proto-card" data-keywords="mycoa display tab seo settings custom domain theming branding template white label coa publishing qp-3620 qp-3621 qp-3622 qp-3623 qp-3624 qp-3625 qp-3626 qp-3627 black bear">
+      <div class="card-top">
+        <div class="card-icon">&#127991;</div>
+        <div class="card-meta">
+          <span class="card-category" onclick="event.preventDefault();filterByCategory('mycoa')">MyCOA</span>
+          <span class="card-ticket">QP-3620&#8211;3627</span>
+        </div>
+      </div>
+      <div class="card-name">MyCOA Display Tab &#8212; SEO Settings &amp; Theming</div>
+      <p class="card-desc">Display tab mockup showing current state (Links, Chatbot, Display Settings) plus two new sections: SEO Settings (QP-3623) with title/meta templates, variable chips, indexing controls, verified custom domain card, COA listing options &#8212; and Theming &amp; Branding (QP-3626) with logo upload, color swatches, header/footer config, and location cards. Populated with Black Bear Hemp Dispensary data.</p>
+      <div class="card-pills">
+        <span class="pill pill-blue">MyCOA</span>
+        <span class="pill pill-green">Mockup ready</span>
+      </div>
+      <div class="card-footer">
+        <span class="card-date">Apr 3, 2026</span>
+        <span class="card-cta">View mockup &#8594;</span>
+      </div>
+    </a>
+
+    <a data-status="todo" data-category="product-compliance" data-date="2026-04-03" href="qredible-tickets/configurable-export.html" class="proto-card" data-keywords="configurable export column selection rename reorder preset persistence flex bank coa export product compliance qp-3616">
+      <div class="card-top">
+        <div class="card-icon">&#128228;</div>
+        <div class="card-meta">
+          <span class="card-category" onclick="event.preventDefault();filterByCategory('product-compliance')">Product Compliance</span>
+          <span class="card-ticket">QP-3616</span>
+        </div>
+      </div>
+      <div class="card-name">Configurable Export &#8212; Product Compliance</div>
+      <p class="card-desc">Replace the fixed-format Export button with a configurable export flow: column selection, drag-to-reorder, rename-on-export, and persistent presets. Critical for Flex bank COA export requirements.</p>
+      <div class="card-pills">
+        <span class="pill pill-blue">Product Compliance</span>
+        <span class="pill pill-green">Mockup ready</span>
+      </div>
+      <div class="card-footer">
+        <span class="card-date">Apr 3, 2026</span>
+        <span class="card-cta">View mockup &#8594;</span>
+      </div>
+    </a>
+
+    <!-- 2026-04-02 -->
+
+    <a data-status="todo" data-category="wemonitor" data-date="2026-04-02" href="qredible-tickets/ofac-sanctions-screening.html" class="proto-card" data-keywords="ofac sanctions screening vital4 we monitor status column match clear pending contacts beneficial owner control person driver license template upload QP-3601 QP-3602">
+      <div class="card-top">
+        <div class="card-icon">&#128737;</div>
+        <div class="card-meta">
+          <span class="card-category" onclick="event.preventDefault();filterByCategory('wemonitor')">WeMonitor</span>
+          <span class="card-ticket">QP-3601 / QP-3602</span>
+        </div>
+      </div>
+      <div class="card-name">OFAC Status Column &amp; Sanctions Screening Modal</div>
+      <p class="card-desc">New OFAC Status column in We Monitor (Clear/Match/Pending/Not Screened). Dedicated Sanctions Screening modal with contact overview, SDN match detail cards with confidence scoring, Clear/Escalate workflow. Updated contacts template with Vital4-required fields.</p>
+      <div class="card-pills">
+        <span class="pill pill-red">Revenue Critical</span>
+        <span class="pill pill-green">Mockup ready</span>
+      </div>
+      <div class="card-footer">
+        <span class="card-date">Apr 2, 2026</span>
+        <span class="card-cta">View mockup &#8594;</span>
+      </div>
+    </a>
+
+    <a data-status="todo" data-category="regulatory" data-date="2026-04-02" href="qredible-tickets/regulatory-rules-engine.html" class="proto-card" data-keywords="regulatory attributes rules engine compliance product status fda ends authorization kratom banned thc limit psilocybin product family classification binding rule builder QP-3539 QP-3540 QP-3541 QP-3542 QP-3603 QP-3604">
+      <div class="card-top">
+        <div class="card-icon">&#127991;</div>
+        <div class="card-meta">
+          <span class="card-category" onclick="event.preventDefault();filterByCategory('regulatory')">Regulatory</span>
+          <span class="card-ticket">QP-3539&#8211;3542 / 3603&#8211;3604</span>
+        </div>
+      </div>
+      <div class="card-name">Regulatory Attributes &amp; Rules Engine</div>
+      <p class="card-desc">Unified compliance ontology: Regulatory Attributes (tag library) &#8594; Attribute Bindings (classification, COA field, website finding, MCC) &#8594; Compliance Rules (IF/AND/THEN builder) &#8594; Product Compliance Status column. FDA ENDS as first implementation.</p>
+      <div class="card-pills">
+        <span class="pill pill-red">Strategic</span>
+        <span class="pill pill-blue">Architecture</span>
+        <span class="pill pill-green">Mockup ready</span>
+      </div>
+      <div class="card-footer">
+        <span class="card-date">Apr 2, 2026</span>
+        <span class="card-cta">View mockup &#8594;</span>
+      </div>
+    </a>
+
+    <a data-status="todo" data-category="roadmap" data-date="2026-04-02" href="qredible-tickets/merchant-portal-roadmap.html" class="proto-card" data-keywords="roadmap merchant portal case management flexpay timeline phases tickets dependency">
+      <div class="card-top">
+        <div class="card-icon">&#128202;</div>
+        <div class="card-meta">
+          <span class="card-category" onclick="event.preventDefault();filterByCategory('roadmap')">Roadmap</span>
+          <span class="card-ticket">ROADMAP</span>
+        </div>
+      </div>
+      <div class="card-name">Merchant Portal &amp; Case Management &#8212; Roadmap</div>
+      <p class="card-desc">5-phase roadmap for FlexPay 2-month deadline. 14 tickets, 8 ready for dev. Dependency chain, resolved product decisions, all mockup links.</p>
+      <div class="card-pills">
+        <span class="pill pill-red">FlexPay Deadline</span>
+      </div>
+      <div class="card-footer">
+        <span class="card-date">Apr 2, 2026</span>
+        <span class="card-cta">View roadmap &#8594;</span>
+      </div>
+    </a>
+
+    <!-- 2026-04-01 -->
+
+    <a data-status="todo" data-category="case-management" data-date="2026-04-01" href="qredible-tickets/compliance-portal-v2.html" class="proto-card" data-keywords="case management compliance portal interactive clickthrough v2 merchant portal /comply /qmonitor/cases we monitor active cases invite flow draft send CaseDraftDrawer QP-3579 QP-3580 QP-3581 QP-3582 QP-3583 QP-3584 QP-3585 QP-3586">
+      <div class="card-top">
+        <div class="card-icon">&#127916;</div>
+        <div class="card-meta">
+          <span class="card-category" onclick="event.preventDefault();filterByCategory('case-management')">Cases</span>
+          <span class="card-ticket">QP-3579&#8211;3586 v2</span>
+        </div>
+      </div>
+      <div class="card-name">Case Management &amp; Compliance Portal &#8212; Interactive Clickthrough</div>
+      <p class="card-desc">9-screen interactive walkthrough of the full case lifecycle: We Monitor &#8594; Create Case (COA/Product many-to-one) &#8594; CaseDraftDrawer &#8594; Cases queue &#8594; Send confirmation &#8594; Invite flow &#8594; Merchant /comply portal &#8594; Response form &#8594; Processor review. Click through every step.</p>
+      <div class="card-pills">
+        <span class="pill pill-red">Revenue Critical</span>
+        <span class="pill pill-blue">Interactive</span>
+        <span class="pill pill-green">Mockup ready</span>
+      </div>
+      <div class="card-footer">
+        <span class="card-date">Apr 1, 2026</span>
+        <span class="card-cta">View clickthrough &#8594;</span>
+      </div>
+    </a>
+
+    <!-- 2026-03-31 -->
+
+    <a data-status="todo" data-category="wemonitor" data-date="2026-03-31" href="qredible-tickets/we-monitor-license.html" class="proto-card" data-keywords="we monitor license status run license check cannaspyglass q-audit validation validating active license not found not required hover tooltip sort filter qp-3561 qp-3562 qp-3563">
+      <div class="card-top">
+        <div class="card-icon">&#129370;</div>
+        <div class="card-meta">
+          <span class="card-category" onclick="event.preventDefault();filterByCategory('wemonitor')">WeMonitor</span>
+          <span class="card-ticket">QP-3561 / 3562 / 3563</span>
+        </div>
+      </div>
+      <div class="card-name">We Monitor &#8212; License Status Improvements</div>
+      <p class="card-desc">New &#8220;Run License Check&#8221; action triggers Q-Audit validation tasks via CannaSpyGlass API. Active badge simplified (license details in hover tooltip). &#8220;License Not Required&#8221; renamed to &#8220;License Not Found&#8221; with new hover. Validation timestamps on Validating badge. Column sort + dedicated filter panel.</p>
+      <div class="card-pills">
+        <span class="pill pill-blue">WeMonitor</span>
+        <span class="pill pill-green">Mockup ready</span>
+      </div>
+      <div class="card-footer">
+        <span class="card-date">Mar 31, 2026</span>
+        <span class="card-cta">View mockup &#8594;</span>
+      </div>
+    </a>
+
+    <!-- 2026-03-30 -->
+
+    <a data-status="todo" data-category="scan-ops" data-date="2026-03-30" href="qredible-tickets/qscanai-findings.html" class="proto-card" data-keywords="q-scanai findings modal ux improvements sort priority analyst review quick filters compact header table view card view multi-select type filter bulk action large modal company selector qp-3502">
+      <div class="card-top">
+        <div class="card-icon">&#128269;</div>
+        <div class="card-meta">
+          <span class="card-category" onclick="event.preventDefault();filterByCategory('scan-ops')">Scan Ops</span>
+          <span class="card-ticket">Q-ScanAI</span>
+        </div>
+      </div>
+      <div class="card-name">Q-ScanAI Findings Modal &#8212; UX Improvements</div>
+      <p class="card-desc">Compact header collapses scan history to ~80px. Priority sort puts new High findings first, Analyst Review Pending above Low, Compliant collapsed. Near-fullscreen modal with 4 sticky zones + company selector. Table/Card view toggle. Multi-select type filter. Bulk analyst review queue with inline severity assignment.</p>
+      <div class="card-pills">
+        <span class="pill pill-blue">Q-ScanAI</span>
+        <span class="pill pill-green">Mockup ready</span>
+      </div>
+      <div class="card-footer">
+        <span class="card-date">Mar 30, 2026</span>
+        <span class="card-cta">View mockup &#8594;</span>
+      </div>
+    </a>
+
+    <!-- 2026-03-27 -->
+
     <a data-status="todo" data-category="q-audit" data-date="2026-03-27" href="qredible-tickets/spider-assignment.html" class="proto-card" data-keywords="spider assignment zyte qredible spider blackbear custom scanner global settings location selection scan for products we monitor qp-3551">
       <div class="card-top">
         <div class="card-icon">&#128375;</div>
-        <span class="card-ticket">QP-3551</span>
+        <div class="card-meta">
+          <span class="card-category" onclick="event.preventDefault();filterByCategory('q-audit')">Q-Audit</span>
+          <span class="card-ticket">QP-3551</span>
+        </div>
       </div>
       <div class="card-name">Spider Assignment &#8212; Global Settings</div>
       <p class="card-desc">New &#8220;Spiders&#8221; section in Q-Audit Global Settings. Assign custom Zyte spiders to specific companies. When a company with a custom spider triggers a scan (from Product Compliance or We Monitor), the system automatically uses the right spider and shows a location-picker if the spider requires it.</p>
@@ -951,7 +1008,10 @@
     <a data-status="todo" data-category="q-audit" data-date="2026-03-27" href="qredible-tickets/qaudit-finances.html" class="proto-card" data-keywords="q-audit finances tab date range filter export csv monthly yearly mrr transactions qp-3547">
       <div class="card-top">
         <div class="card-icon">&#128179;</div>
-        <span class="card-ticket">QP-3547</span>
+        <div class="card-meta">
+          <span class="card-category" onclick="event.preventDefault();filterByCategory('q-audit')">Q-Audit</span>
+          <span class="card-ticket">QP-3547</span>
+        </div>
       </div>
       <div class="card-name">Q-Audit Finances &#8212; Date Range Filter + Export</div>
       <p class="card-desc">Adds date range filter (From/To + quick-select pills: This Month, Last Month, etc.) and CSV export to the Finances tab transaction table. Summary cards update to reflect filtered totals.</p>
@@ -968,7 +1028,10 @@
     <a data-status="todo" data-category="q-audit" data-date="2026-03-27" href="qredible-tickets/qaudit-board.html" class="proto-card" data-keywords="q-audit audit board license validation search filter state days in queue expiration export kanban qp-3548">
       <div class="card-top">
         <div class="card-icon">&#128203;</div>
-        <span class="card-ticket">QP-3548</span>
+        <div class="card-meta">
+          <span class="card-category" onclick="event.preventDefault();filterByCategory('q-audit')">Q-Audit</span>
+          <span class="card-ticket">QP-3548</span>
+        </div>
       </div>
       <div class="card-name">Q-Audit License Board &#8212; Search, Filters + Export</div>
       <p class="card-desc">Adds text search, State filter, Days in Queue filter, and Expiration Status filter to the 3-column license validation board (Reject / To Do / Accept). Non-matching cards dim when filters are active. CSV export of current board state.</p>
@@ -982,138 +1045,146 @@
       </div>
     </a>
 
-  </div>
-  </div>
-
-  <!-- ══════════════════════════════════════
-       POLICY-DRIVEN COMPLIANCE (v3)
-  ══════════════════════════════════════ -->
-  <div class="section-header" data-section-cat="policy-v3" onclick="toggleSection(this)">
-    <span class="section-title">Policy-driven compliance (v3)</span>
-    <span class="section-count">5 mockups</span>
-    <span class="section-chevron">&#9662;</span>
-  </div>
-  <div class="section-content" data-section-cat="policy-v3">
-  <div class="card-grid">
-
-    <a data-status="todo" data-category="policy-v3" data-date="2026-04-14" href="qredible-tickets/report-generation.html" class="proto-card" data-keywords="compliance report generate claude sonnet 4.6 web_search async job polling spinner stage labels policy-aware report generation qp-3701">
+    <a data-status="todo" data-category="product-compliance" data-date="2026-03-27" href="qredible-tickets/inactive-coa.html" class="proto-card" data-keywords="inactive coa state audit view expired coa governing coa versioning coa management modal products table coas tab qp-3465 qp-3526">
       <div class="card-top">
-        <div class="card-icon">&#128196;</div>
-        <span class="card-ticket">QP-3701 &bull; NEW</span>
+        <div class="card-icon">&#128164;</div>
+        <div class="card-meta">
+          <span class="card-category" onclick="event.preventDefault();filterByCategory('product-compliance')">Product Compliance</span>
+          <span class="card-ticket">QP-3465 / QP-3526</span>
+        </div>
       </div>
-      <div class="card-name">Compliance Report Generation &#8212; Brian&#8217;s Centerpiece</div>
-      <p class="card-desc">Single "Produce Compliance Report" button flow. 30&#8211;60s async job: active policy JSON as system prompt, merchant evidence as user content, <code>claude-sonnet-4-6</code> + <code>web_search</code> as evaluator. Stage-labeled spinner, polling pattern, "Under the hood" collapsible with model/policy/token/audit-log details.</p>
+      <div class="card-name">Inactive COA State + Audit View</div>
+      <p class="card-desc">Expired COAs are auto-flagged as Inactive when a valid replacement exists on the same product &#8212; eliminating false Violative signals. Audit View hides inactive COAs from table, count, and export. Default view shows all COAs with muted Inactive badge. Governing COA rule selects longest-remaining-validity COA.</p>
       <div class="card-pills">
-        <span class="pill pill-blue">Policy-First</span>
-        <span class="pill pill-green">Net New</span>
+        <span class="pill pill-blue">Product Compliance</span>
         <span class="pill pill-green">Mockup ready</span>
       </div>
       <div class="card-footer">
-        <span class="card-date">Apr 14, 2026</span>
+        <span class="card-date">Mar 27, 2026</span>
         <span class="card-cta">View mockup &#8594;</span>
       </div>
     </a>
 
-    <a data-status="todo" data-category="policy-v3" data-date="2026-04-14" href="qredible-tickets/report-rendered.html" class="proto-card" data-keywords="compliance report rendered output pdf-style policy-aware sections executive summary tier assessment checklist product classification mri recommended actions claude-sonnet-4-6 CoaStatusEnum TypeDisposition SeverityLevelEnum qp-3701">
+    <!-- 2026-03-26 -->
+
+    <a data-status="todo" data-category="product-compliance" data-date="2026-03-26" href="qredible-tickets/child-filter-surfacing.html" class="proto-card" data-keywords="child product filter surfacing parent dimmed hidden missing coa status count pagination qp-3476">
       <div class="card-top">
-        <div class="card-icon">&#128202;</div>
-        <span class="card-ticket">QP-3701 &bull; NEW</span>
+        <div class="card-icon">&#128270;</div>
+        <div class="card-meta">
+          <span class="card-category" onclick="event.preventDefault();filterByCategory('product-compliance')">Product Compliance</span>
+          <span class="card-ticket">QP-3476</span>
+        </div>
       </div>
-      <div class="card-name">Compliance Report &#8212; Rendered Output</div>
-      <p class="card-desc">PDF-style on-screen report driven at runtime from <code>report_configuration.sections[]</code> in the policy JSON. Sections: Executive Summary, Tier Assessment, Checklist Results (with <code>SeverityLevelEnum</code> S1/S2/S3), Product Classification Findings (<code>CoaStatusEnum</code> + <code>TypeDisposition</code>), MRI Risk Intelligence, Recommended Actions. Footer pins model + policy version + job ID.</p>
+      <div class="card-name">Surface Child Products Matching Filter</div>
+      <p class="card-desc">When a child product matches an active filter but its parent does not, the child is currently invisible. Fix: show parent row dimmed as context, surface matching children at full opacity. Also fixes filter counts to include child products.</p>
       <div class="card-pills">
-        <span class="pill pill-blue">Policy-First</span>
-        <span class="pill pill-green">Net New</span>
+        <span class="pill pill-blue">Product Compliance</span>
         <span class="pill pill-green">Mockup ready</span>
       </div>
       <div class="card-footer">
-        <span class="card-date">Apr 14, 2026</span>
+        <span class="card-date">Mar 26, 2026</span>
         <span class="card-cta">View mockup &#8594;</span>
       </div>
     </a>
 
-    <a data-status="todo" data-category="policy-v3" data-date="2026-04-14" href="qredible-tickets/track-b-catalog-upload.html" class="proto-card" data-keywords="track b card-present retail catalog upload csv xlsx column mapping validation diff review coa requirement PlCategoryEntity coaRequirement pl_category compliance review wizard brian qp-3702">
+    <a data-status="todo" data-category="coa-management" data-date="2026-03-26" href="qredible-tickets/coa-management-modal.html" class="proto-card" data-keywords="coa management modal assign reassign assignment level shared inherited child individual bundle not required qp-3517 qp-3518 qp-3519 qp-3544 qp-3546 coas tab">
       <div class="card-top">
-        <div class="card-icon">&#128281;</div>
-        <span class="card-ticket">QP-3702 &bull; NEW</span>
+        <div class="card-icon">&#128193;</div>
+        <div class="card-meta">
+          <span class="card-category" onclick="event.preventDefault();filterByCategory('coa-management')">COA Management</span>
+          <span class="card-ticket">QP-3517/18/19 + 3544/46</span>
+        </div>
       </div>
-      <div class="card-name">Track B Catalog Upload &#8212; Card-Present Retail Wizard</div>
-      <p class="card-desc">4-step upload wizard for card-present retail merchants: drag-drop CSV/XLSX &#8594; column mapping &#8594; validation preview (errors + warnings per row) &#8594; confirm &amp; run compliance review. Diff view on re-upload (added/removed/changed products). <code>PlCategoryEntity.coaRequirement</code> (REQUIRED/CONDITIONAL/NOT_REQUIRED) determines COA need per line item at classification time.</p>
+      <div class="card-name">COA Management Modal &#8212; Assignment Level Behavior</div>
+      <p class="card-desc">How the COA Management modal (Assign/Reassign) behaves for each COA Assignment Level: Individual (normal), Shared (read-only, link to source), Inherited (read-only, link to sibling), Child (container view), Not Required (no button), Bundle (read-only). Includes COAs tab shared indicator.</p>
       <div class="card-pills">
-        <span class="pill pill-blue">Policy-First</span>
-        <span class="pill pill-green">Net New</span>
+        <span class="pill pill-blue">COA Management</span>
         <span class="pill pill-green">Mockup ready</span>
       </div>
       <div class="card-footer">
-        <span class="card-date">Apr 14, 2026</span>
+        <span class="card-date">Mar 26, 2026</span>
         <span class="card-cta">View mockup &#8594;</span>
       </div>
     </a>
 
-    <a data-status="todo" data-category="policy-v3" data-date="2026-04-14" href="qredible-tickets/policy-authoring-wizard.html" class="proto-card" data-keywords="policy authoring wizard guided mode dials levers component builder noah stepper license verification payment rail product classification mri two-layer narrative json qp-3703">
+    <a data-status="todo" data-category="coa-management" data-date="2026-03-26" href="qredible-tickets/coa-shared.html" class="proto-card" data-keywords="coa shared cross-product inheritance batch same coa multiple products source linked one record qp-3546">
       <div class="card-top">
-        <div class="card-icon">&#129520;</div>
-        <span class="card-ticket">QP-3703 &bull; NEW</span>
+        <div class="card-icon">&#128279;</div>
+        <div class="card-meta">
+          <span class="card-category" onclick="event.preventDefault();filterByCategory('coa-management')">COA Management</span>
+          <span class="card-ticket">QP-3546</span>
+        </div>
       </div>
-      <div class="card-name">Policy Authoring Wizard &#8212; Noah&#8217;s Guided Mode</div>
-      <p class="card-desc">Stepper UI for building policy components without writing JSON. Walkthrough: component type &#8594; jurisdiction &#8594; verification requirements &#8594; operational config &#8594; review &amp; save. After save: shows the resulting JSON appended to <code>checklist[]</code>, demonstrating the two-layer narrative + machine-readable model. Links to Policy Editor expert JSON mode.</p>
+      <div class="card-name">Cross-Product COA Sharing</div>
+      <p class="card-desc">One COA batch covering multiple separate product forms (flower &#8594; pre-rolls &#8594; shake). Upload once to a source product, set others to Shared. One record, no copies. Dashed badge is a clickable link to the source COA. Related to QP-3544.</p>
       <div class="card-pills">
-        <span class="pill pill-blue">Policy-First</span>
-        <span class="pill pill-green">Net New</span>
+        <span class="pill pill-blue">COA Management</span>
         <span class="pill pill-green">Mockup ready</span>
       </div>
       <div class="card-footer">
-        <span class="card-date">Apr 14, 2026</span>
+        <span class="card-date">Mar 26, 2026</span>
         <span class="card-cta">View mockup &#8594;</span>
       </div>
     </a>
 
-    <a data-status="todo" data-category="policy-v3" data-date="2026-04-14" href="qredible-tickets/mri-marketplace.html" class="proto-card" data-keywords="mri marketplace modular third-party checks vital4 ofac pep sanctions fda warning letters ftc adverse media whois domain age chargeback policy_scored risk_intelligence false positives confidence threshold auto-dismiss human review queue explainability qp-3704">
+    <a data-status="todo" data-category="coa-management" data-date="2026-03-26" href="qredible-tickets/coa-assignment-level.html" class="proto-card" data-keywords="coa assignment level individual child inherited bundle not required product builder qp-3544">
+      <div class="card-top">
+        <div class="card-icon">&#129516;</div>
+        <div class="card-meta">
+          <span class="card-category" onclick="event.preventDefault();filterByCategory('coa-management')">COA Management</span>
+          <span class="card-ticket">QP-3544</span>
+        </div>
+      </div>
+      <div class="card-name">COA Assignment Level</div>
+      <p class="card-desc">Introduces Individual, Child, Inherited, Bundle, and Not Required assignment levels. Controls how COA compliance is evaluated for parent/variant/bundle product relationships. Dashed badge = inherited status.</p>
+      <div class="card-pills">
+        <span class="pill pill-blue">Product Builder</span>
+        <span class="pill pill-green">Mockup ready</span>
+      </div>
+      <div class="card-footer">
+        <span class="card-date">Mar 26, 2026</span>
+        <span class="card-cta">View mockup &#8594;</span>
+      </div>
+    </a>
+
+    <!-- 2026-03-25 -->
+
+    <a data-status="todo" data-category="product-compliance" data-date="2026-03-25" href="qredible-tickets/scan-review-modal.html" class="proto-card" data-keywords="scan review modal change tracking review status pending reviewed new removed modified re-added qp-3250">
       <div class="card-top">
         <div class="card-icon">&#128269;</div>
-        <span class="card-ticket">QP-3704 &bull; NEW</span>
+        <div class="card-meta">
+          <span class="card-category" onclick="event.preventDefault();filterByCategory('product-compliance')">Product Compliance</span>
+          <span class="card-ticket">QP-3250</span>
+        </div>
       </div>
-      <div class="card-name">MRI Marketplace &#8212; Modular Risk Intelligence Checks</div>
-      <p class="card-desc">Catalog of third-party MRI checks (Vital4, OFAC, PEP/Sanctions, FDA, FTC, adverse media, WHOIS, chargeback signals). Per-check: <code>policy_scored</code> vs <code>risk_intelligence</code> mode, tier eligibility, refresh frequency. Solves the hundreds-of-false-positives UX problem: confidence-threshold slider (340 flags/day &#8594; 12 at 0.72), auto-dismiss rules, human review queue, "why this matched" explainability panel.</p>
+      <div class="card-name">Scan Review Modal</div>
+      <p class="card-desc">Full-screen overlay for reviewing scan changes. Summary cards, per-product change badges (New/Removed/Modified/Re-added), inline and bulk Mark Reviewed workflow with audit trail.</p>
       <div class="card-pills">
-        <span class="pill pill-blue">Policy-First</span>
-        <span class="pill pill-green">Net New</span>
+        <span class="pill pill-blue">Product Compliance</span>
         <span class="pill pill-green">Mockup ready</span>
       </div>
       <div class="card-footer">
-        <span class="card-date">Apr 14, 2026</span>
+        <span class="card-date">Mar 25, 2026</span>
         <span class="card-cta">View mockup &#8594;</span>
       </div>
     </a>
 
-  </div>
-  </div>
-
-  <!-- ══════════════════════════════════════
-       REGULATORY & CLASSIFICATION
-  ══════════════════════════════════════ -->
-  <div class="section-header" data-section-cat="regulatory" onclick="toggleSection(this)">
-    <span class="section-title">Regulatory &amp; Classification</span>
-    <span class="section-count">2 mockups</span>
-    <span class="section-chevron">&#9662;</span>
-  </div>
-  <div class="section-content" data-section-cat="regulatory">
-  <div class="card-grid">
-
-    <a data-status="todo" data-category="regulatory" data-date="2026-04-02" href="qredible-tickets/regulatory-rules-engine.html" class="proto-card" data-keywords="regulatory attributes rules engine compliance product status fda ends authorization kratom banned thc limit psilocybin product family classification binding rule builder QP-3539 QP-3540 QP-3541 QP-3542 QP-3603 QP-3604">
+    <a data-status="todo" data-category="scan-ops" data-date="2026-03-25" href="qredible-tickets/scan-discard.html" class="proto-card" data-keywords="scan discard zero product guard failed partial scan qp-3545">
       <div class="card-top">
-        <div class="card-icon">&#127991;</div>
-        <span class="card-ticket">QP-3539&#8211;3542 / 3603&#8211;3604</span>
+        <div class="card-icon">&#128465;</div>
+        <div class="card-meta">
+          <span class="card-category" onclick="event.preventDefault();filterByCategory('scan-ops')">Scan Ops</span>
+          <span class="card-ticket">QP-3545</span>
+        </div>
       </div>
-      <div class="card-name">Regulatory Attributes &amp; Rules Engine</div>
-      <p class="card-desc">Unified compliance ontology: Regulatory Attributes (tag library) &#8594; Attribute Bindings (classification, COA field, website finding, MCC) &#8594; Compliance Rules (IF/AND/THEN builder) &#8594; Product Compliance Status column. FDA ENDS as first implementation.</p>
+      <div class="card-name">Scan Discard / Zero-Product Guard</div>
+      <p class="card-desc">Zero-product guard prevents false removals when Zyte returns empty results. Scan discard allows admins to roll back a completed scan&#39;s change statuses without removing ingested COAs or products.</p>
       <div class="card-pills">
-        <span class="pill pill-red">Strategic</span>
-        <span class="pill pill-blue">Architecture</span>
+        <span class="pill pill-yellow">Scan Operations</span>
         <span class="pill pill-green">Mockup ready</span>
       </div>
       <div class="card-footer">
-        <span class="card-date">Apr 2, 2026</span>
+        <span class="card-date">Mar 25, 2026</span>
         <span class="card-cta">View mockup &#8594;</span>
       </div>
     </a>
@@ -1121,7 +1192,10 @@
     <a data-status="todo" data-category="regulatory" data-date="2026-03-25" href="qredible-tickets/tobacco-classification.html" class="proto-card" data-keywords="tobacco vape classification product compliance status fda ends check flex critical qp-3467">
       <div class="card-top">
         <div class="card-icon">&#127807;</div>
-        <span class="card-ticket">QP-3467</span>
+        <div class="card-meta">
+          <span class="card-category" onclick="event.preventDefault();filterByCategory('regulatory')">Regulatory</span>
+          <span class="card-ticket">QP-3467</span>
+        </div>
       </div>
       <div class="card-name">Tobacco/Vape Classifications + Product Compliance Status</div>
       <p class="card-desc">New classification tree for tobacco/vape product types, keyword config, COA = Never flag, FDA ENDS check flag. Includes Product Compliance Status column design and hover tooltip.</p>
@@ -1135,82 +1209,19 @@
       </div>
     </a>
 
-  </div>
-  </div>
-
-  <!-- ══════════════════════════════════════
-       CASE MANAGEMENT
-  ══════════════════════════════════════ -->
-  <div class="section-header" data-section-cat="case-management" onclick="toggleSection(this)">
-    <span class="section-title">Case Management</span>
-    <span class="section-count">1 mockup</span>
-    <span class="section-chevron">&#9662;</span>
-  </div>
-  <div class="section-content" data-section-cat="case-management">
-  <div class="card-grid">
-
-    <a data-status="todo" data-category="case-management" data-date="2026-04-01" href="qredible-tickets/compliance-portal-v2.html" class="proto-card" data-keywords="case management compliance portal interactive clickthrough v2 merchant portal /comply /qmonitor/cases we monitor active cases invite flow draft send CaseDraftDrawer QP-3579 QP-3580 QP-3581 QP-3582 QP-3583 QP-3584 QP-3585 QP-3586">
-      <div class="card-top">
-        <div class="card-icon">&#127916;</div>
-        <span class="card-ticket">QP-3579&#8211;3586 v2</span>
-      </div>
-      <div class="card-name">Case Management &amp; Compliance Portal &#8212; Interactive Clickthrough</div>
-      <p class="card-desc">9-screen interactive walkthrough of the full case lifecycle: We Monitor &#8594; Create Case (COA/Product many-to-one) &#8594; CaseDraftDrawer &#8594; Cases queue &#8594; Send confirmation &#8594; Invite flow &#8594; Merchant /comply portal &#8594; Response form &#8594; Processor review. Click through every step.</p>
-      <div class="card-pills">
-        <span class="pill pill-red">Revenue Critical</span>
-        <span class="pill pill-blue">Interactive</span>
-        <span class="pill pill-green">Mockup ready</span>
-      </div>
-      <div class="card-footer">
-        <span class="card-date">Apr 1, 2026</span>
-        <span class="card-cta">View clickthrough &#8594;</span>
-      </div>
-    </a>
-
-  </div>
-  </div>
-
-  <!-- ══════════════════════════════════════
-       ROADMAP & PLANNING
-  ══════════════════════════════════════ -->
-  <div class="section-header" data-section-cat="roadmap" onclick="toggleSection(this)">
-    <span class="section-title">Roadmap &amp; Planning</span>
-    <span class="section-count">1 page</span>
-    <span class="section-chevron">&#9662;</span>
-  </div>
-  <div class="section-content" data-section-cat="roadmap">
-  <div class="card-grid">
-
-    <a data-status="todo" data-category="roadmap" data-date="2026-04-02" href="qredible-tickets/merchant-portal-roadmap.html" class="proto-card" data-keywords="roadmap merchant portal case management flexpay timeline phases tickets dependency">
-      <div class="card-top">
-        <div class="card-icon">&#128202;</div>
-        <span class="card-ticket">ROADMAP</span>
-      </div>
-      <div class="card-name">Merchant Portal &amp; Case Management &#8212; Roadmap</div>
-      <p class="card-desc">5-phase roadmap for FlexPay 2-month deadline. 14 tickets, 8 ready for dev. Dependency chain, resolved product decisions, all mockup links.</p>
-      <div class="card-pills">
-        <span class="pill pill-red">FlexPay Deadline</span>
-      </div>
-      <div class="card-footer">
-        <span class="card-date">Apr 2, 2026</span>
-        <span class="card-cta">View roadmap &#8594;</span>
-      </div>
-    </a>
-
-  </div>
-  </div>
+  </div><!-- /.card-grid -->
 
   <footer>
     <p>Qredible &#183; Internal Prototypes &#183; jfloyd-qredible.netlify.app</p>
   </footer>
 
-</div>
+</div><!-- /.page-body -->
 
 <script>
-  let currentStatus = 'all';
-  let currentSearch = '';
-  let currentCategory = 'all';
-  let currentSort = 'newest';
+  var currentStatus = 'all';
+  var currentSearch = '';
+  var currentCategory = 'all';
+  var currentSort = 'newest';
 
   function filterCards(query) {
     currentSearch = query.toLowerCase().trim();
@@ -1219,7 +1230,7 @@
 
   function setStatusFilter(status, btn) {
     currentStatus = status;
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
     btn.classList.add('active');
     applyFilters();
   }
@@ -1229,62 +1240,29 @@
     applyFilters();
   }
 
+  function filterByCategory(cat) {
+    currentCategory = cat;
+    document.getElementById('categorySelect').value = cat;
+    applyFilters();
+  }
+
   function setSortOrder(order, btn) {
     currentSort = order;
-    document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.sort-btn').forEach(function(b) { b.classList.remove('active'); });
     btn.classList.add('active');
     sortCards();
   }
 
   function sortCards() {
-    document.querySelectorAll('.card-grid').forEach(function(grid) {
-      var cards = Array.from(grid.querySelectorAll('.proto-card'));
-      cards.sort(function(a, b) {
-        var da = a.getAttribute('data-date') || '';
-        var db = b.getAttribute('data-date') || '';
-        return currentSort === 'newest' ? db.localeCompare(da) : da.localeCompare(db);
-      });
-      cards.forEach(function(card) { grid.appendChild(card); });
+    var grid = document.querySelector('.card-grid');
+    if (!grid) return;
+    var cards = Array.from(grid.querySelectorAll('.proto-card'));
+    cards.sort(function(a, b) {
+      var da = a.getAttribute('data-date') || '';
+      var db = b.getAttribute('data-date') || '';
+      return currentSort === 'newest' ? db.localeCompare(da) : da.localeCompare(db);
     });
-    reorderSections();
-  }
-
-  function reorderSections() {
-    var headers = Array.from(document.querySelectorAll('.section-header'));
-    if (headers.length === 0) return;
-    var parent = headers[0].parentElement;
-    if (!headers.every(function(h) { return h.parentElement === parent; })) return;
-
-    var pairs = headers.map(function(header) {
-      var content = header.nextElementSibling;
-      var cards = content ? Array.from(content.querySelectorAll('.proto-card')) : [];
-      var visibleDates = cards
-        .filter(function(c) { return !c.classList.contains('hidden') && !c.classList.contains('status-hidden'); })
-        .map(function(c) { return c.getAttribute('data-date') || ''; })
-        .filter(Boolean);
-      var date;
-      if (currentSort === 'newest') {
-        date = visibleDates.length ? visibleDates.reduce(function(a, b) { return a > b ? a : b; }) : '';
-      } else {
-        date = visibleDates.length ? visibleDates.reduce(function(a, b) { return a < b ? a : b; }) : '9999-12-31';
-      }
-      return { header: header, content: content, date: date };
-    });
-
-    pairs.sort(function(a, b) {
-      return currentSort === 'newest' ? b.date.localeCompare(a.date) : a.date.localeCompare(b.date);
-    });
-
-    var footer = parent.querySelector('footer');
-    pairs.forEach(function(pair) {
-      if (footer) {
-        parent.insertBefore(pair.header, footer);
-        parent.insertBefore(pair.content, footer);
-      } else {
-        parent.appendChild(pair.header);
-        parent.appendChild(pair.content);
-      }
-    });
+    cards.forEach(function(card) { grid.appendChild(card); });
   }
 
   function applyFilters() {
@@ -1293,51 +1271,12 @@
         (card.textContent + ' ' + (card.dataset.keywords || '')).toLowerCase().indexOf(currentSearch) !== -1;
       var statusMatch = currentStatus === 'all' || (card.dataset.status || 'todo') === currentStatus;
       var catMatch = currentCategory === 'all' || (card.dataset.category || '') === currentCategory;
-      var isHidden = !textMatch || !statusMatch || !catMatch;
-      card.classList.toggle('hidden', isHidden);
-      card.classList.toggle('status-hidden', isHidden);
+      card.classList.toggle('hidden', !textMatch || !statusMatch || !catMatch);
     });
-
-    document.querySelectorAll('.section-header').forEach(function(header) {
-      var sectionCat = header.getAttribute('data-section-cat') || '';
-      var content = header.nextElementSibling;
-      if (!content) return;
-
-      var sectionHiddenByCat = currentCategory !== 'all' && sectionCat !== currentCategory;
-
-      if (sectionHiddenByCat) {
-        header.style.display = 'none';
-        content.style.display = 'none';
-        return;
-      }
-
-      var cards = content.querySelectorAll('.proto-card');
-      var hasVisible = Array.from(cards).some(function(c) {
-        return !c.classList.contains('hidden') && !c.classList.contains('status-hidden');
-      });
-      var showSection = hasVisible || (currentSearch.length === 0 && currentStatus === 'all' && currentCategory === 'all');
-      header.style.display = showSection ? '' : 'none';
-      content.style.display = showSection ? '' : 'none';
-    });
-    reorderSections();
-  }
-
-  function toggleSection(header) {
-    var content = header.nextElementSibling;
-    if (!content || !content.classList.contains('section-content')) return;
-    header.classList.toggle('collapsed');
-    content.classList.toggle('collapsed');
-    if (!content.classList.contains('collapsed')) {
-      content.style.maxHeight = content.scrollHeight + 'px';
-    } else {
-      content.style.maxHeight = '0';
-    }
+    sortCards();
   }
 
   document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('.section-content').forEach(function(content) {
-      content.style.maxHeight = content.scrollHeight + 'px';
-    });
     sortCards();
   });
 </script>
