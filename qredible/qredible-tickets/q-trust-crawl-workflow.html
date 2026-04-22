@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Q-Trust Crawl — End-to-End Workflow vs. Jira Backlog</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#1A202E;
+  --ink-2:#2D3748;
+  --muted:#64748B;
+  --line:#E2E8F0;
+  --bg:#F1F5F9;
+  --surface:#fff;
+  --accent:#F05252;
+  --blue:#2563eb;
+  --blue-s:#DBEAFE;
+  --blue-d:#1E3A5F;
+  --green:#16A34A;
+  --green-bg:#DCFCE7;
+  --green-d:#14532D;
+  --wash:#F7F5FF;
+  --amber:#F59E0B;
+  --amber-bg:#FEF3C7;
+  --amber-d:#78350F;
+  --red:#991B1B;
+  --red-bg:#FEE2E2;
+  --red-d:#7F1D1D;
+}
+body{font-family:'Uber Move','Plus Jakarta Sans',-apple-system,sans-serif;background:var(--bg);color:var(--ink);font-size:13px;line-height:1.5}
+a{color:var(--blue);text-decoration:none}a:hover{text-decoration:underline}
+code,.mono{font-family:'IBM Plex Mono',monospace}
+
+.topnav{background:var(--ink);padding:12px 24px;display:flex;align-items:center;gap:8px;font-size:13px;color:#94A3B8;position:sticky;top:0;z-index:100}
+.topnav a{color:#93C5FD}.topnav .sep{color:#475569}
+.topnav .title{color:#fff;font-weight:600}
+.topnav .badge{background:var(--accent);color:#fff;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;font-family:'IBM Plex Mono',monospace;margin-left:auto}
+
+.page{max-width:1320px;margin:0 auto;padding:32px 24px 80px}
+
+/* HEADER BAND */
+.band{background:linear-gradient(135deg,#1A202E 0%,#2D3748 100%);color:#fff;border-radius:12px;padding:28px 32px;margin-bottom:24px;position:relative;overflow:hidden}
+.band::after{content:'';position:absolute;right:-40px;top:-40px;width:220px;height:220px;border-radius:50%;background:rgba(240,82,82,.12)}
+.band h1{font-size:24px;font-weight:700;letter-spacing:-.2px;position:relative;z-index:1}
+.band p{color:#CBD5E1;font-size:13px;margin-top:6px;position:relative;z-index:1}
+.band .tag{display:inline-flex;align-items:center;gap:6px;background:rgba(240,82,82,.18);color:#FCA5A5;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;margin-bottom:10px;position:relative;z-index:1}
+
+/* LEGEND */
+.legend{display:flex;gap:10px;flex-wrap:wrap;padding:12px 16px;background:#fff;border:1px solid var(--line);border-radius:10px;margin-bottom:20px;align-items:center}
+.legend-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-right:4px}
+.legend-item{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--ink-2)}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+.dot.green{background:var(--green)}
+.dot.amber{background:var(--amber)}
+.dot.red{background:var(--accent)}
+
+/* FLOWCHART */
+.flow{background:#fff;border:1px solid var(--line);border-radius:12px;padding:24px;margin-bottom:28px;overflow-x:auto}
+.flow h2{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:14px;letter-spacing:.3px;text-transform:uppercase}
+.flow-row{display:grid;grid-template-columns:repeat(8,1fr);gap:6px;min-width:1100px;align-items:stretch}
+.flow-node{background:#fff;border:2px solid var(--line);border-radius:10px;padding:10px 10px 12px;position:relative;text-decoration:none;color:inherit;display:flex;flex-direction:column;gap:4px;transition:transform .12s}
+.flow-node:hover{transform:translateY(-2px);text-decoration:none}
+.flow-node .num{position:absolute;top:-10px;left:10px;background:var(--ink);color:#fff;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;font-family:'IBM Plex Mono',monospace}
+.flow-node .nm{font-size:12px;font-weight:700;color:var(--ink);margin-top:8px;line-height:1.25}
+.flow-node .sub{font-size:10px;color:var(--muted);line-height:1.35;flex:1}
+.flow-node .status{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;margin-top:4px}
+.flow-node.s-green{border-color:var(--green);background:#F0FDF4}
+.flow-node.s-amber{border-color:var(--amber);background:#FFFBEB}
+.flow-node.s-red{border-color:var(--accent);background:#FEF2F2}
+.flow-arrow{align-self:center;color:#94A3B8;font-size:16px;text-align:center}
+
+.monitor-row{margin-top:14px;background:linear-gradient(90deg,#FFFBEB,#FEF3C7);border:2px dashed var(--amber);border-radius:10px;padding:12px 16px;display:flex;align-items:center;gap:14px}
+.monitor-row .mtag{background:var(--amber);color:#fff;font-size:10px;font-weight:700;padding:3px 8px;border-radius:4px;letter-spacing:.5px;text-transform:uppercase;font-family:'IBM Plex Mono',monospace}
+.monitor-row .mtitle{font-weight:700;color:var(--amber-d);font-size:13px}
+.monitor-row .msub{color:var(--amber-d);font-size:12px;opacity:.8}
+
+/* SUMMARY METRIC CARDS */
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:28px}
+@media(max-width:900px){.metrics{grid-template-columns:repeat(2,1fr)}}
+.metric{background:#fff;border:1px solid var(--line);border-radius:10px;padding:16px 18px}
+.metric .lbl{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.metric .val{font-size:28px;font-weight:700;color:var(--ink);margin-top:4px;line-height:1}
+.metric .sub{font-size:11px;color:var(--muted);margin-top:4px}
+.metric.green{border-left:3px solid var(--green)}
+.metric.amber{border-left:3px solid var(--amber)}
+.metric.red{border-left:3px solid var(--accent)}
+.metric.blue{border-left:3px solid var(--blue)}
+
+/* STEP CARD */
+.step{background:#fff;border:1px solid var(--line);border-radius:12px;margin-bottom:18px;overflow:hidden}
+.step-head{padding:18px 22px;display:flex;align-items:center;gap:16px;border-bottom:1px solid var(--line);background:var(--wash)}
+.step-head .num{background:var(--ink);color:#fff;width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;font-family:'IBM Plex Mono',monospace;flex-shrink:0}
+.step-head h3{font-size:16px;font-weight:700;color:var(--ink)}
+.step-head p{font-size:12px;color:var(--muted);margin-top:2px}
+.step-head .spacer{flex:1}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.3px;text-transform:uppercase;white-space:nowrap}
+.badge.green{background:var(--green-bg);color:var(--green-d)}
+.badge.amber{background:var(--amber-bg);color:var(--amber-d)}
+.badge.red{background:var(--red-bg);color:var(--red-d)}
+
+.step-body{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:0}
+@media(max-width:1000px){.step-body{grid-template-columns:1fr}}
+.col{padding:18px 22px;border-right:1px solid var(--line)}
+.col:last-child{border-right:none}
+@media(max-width:1000px){.col{border-right:none;border-bottom:1px solid var(--line)}}
+.col h4{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.col h4 .pip{width:6px;height:6px;border-radius:50%;display:inline-block}
+.col h4 .pip.blue{background:var(--blue)}
+.col h4 .pip.green{background:var(--green)}
+.col h4 .pip.red{background:var(--accent)}
+
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{display:inline-flex;align-items:center;gap:4px;padding:4px 9px;border-radius:16px;background:var(--blue-s);color:var(--blue);font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;border:1px solid #BFDBFE}
+.chip.done{background:var(--green-bg);color:var(--green-d);border-color:#BBF7D0}
+.chip.todo{background:#F1F5F9;color:var(--ink-2);border-color:#E2E8F0}
+.chip.obsolete{background:#F1F5F9;color:#94A3B8;border-color:#E2E8F0;text-decoration:line-through}
+.chip.hot{background:#FEF3C7;color:var(--amber-d);border-color:#FDE68A}
+
+ul.bl{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px}
+ul.bl li{font-size:12px;color:var(--ink-2);padding-left:14px;position:relative;line-height:1.5}
+ul.bl li::before{content:'';position:absolute;left:0;top:8px;width:6px;height:6px;border-radius:50%;background:var(--green)}
+ul.bl.gap li::before{background:var(--accent)}
+ul.bl li code{background:#F1F5F9;padding:1px 5px;border-radius:3px;font-size:11px;color:var(--ink-2)}
+
+/* NEXT-TICKETS PANEL */
+.next-panel{background:linear-gradient(135deg,#FEF2F2 0%,#FFFBEB 100%);border:2px solid var(--accent);border-radius:12px;padding:24px 28px;margin-top:32px}
+.next-panel h2{font-size:16px;font-weight:700;color:var(--red-d);margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.next-panel h2 .pill{background:var(--accent);color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;letter-spacing:.5px;text-transform:uppercase;font-family:'IBM Plex Mono',monospace}
+.next-panel .lead{font-size:12px;color:var(--amber-d);margin-bottom:16px}
+.next-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:1000px){.next-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.next-grid{grid-template-columns:1fr}}
+.next-card{background:#fff;border:1px solid #FCA5A5;border-radius:10px;padding:14px 16px}
+.next-card .rank{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:var(--accent);color:#fff;font-size:11px;font-weight:700;font-family:'IBM Plex Mono',monospace;margin-bottom:8px}
+.next-card h4{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:4px;line-height:1.3}
+.next-card .step-ref{font-size:10px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.next-card p{font-size:11px;color:var(--ink-2);line-height:1.5}
+
+.footer-note{margin-top:28px;padding:16px 20px;background:#fff;border:1px solid var(--line);border-radius:10px;font-size:11px;color:var(--muted);line-height:1.6}
+.footer-note strong{color:var(--ink-2)}
+</style>
+</head>
+<body>
+
+<div class="topnav">
+  <a href="../">Qredible Prototypes</a>
+  <span class="sep">/</span>
+  <span class="title">Q-Trust Crawl — Workflow vs. Jira Backlog</span>
+  <span class="badge">Q-TRUST</span>
+</div>
+
+<div class="page">
+
+  <div class="band">
+    <span class="tag">&#9679; Workflow Mapping</span>
+    <h1>Q-Trust Crawl — End-to-End Underwriting &amp; Compliance Flow</h1>
+    <p>Workflow mapping vs. Jira backlog (2026-04-22) &bull; source: Crawl Strategy PDF + Fathom review &bull; ~40 tickets mapped, ~30 gaps identified</p>
+  </div>
+
+  <div class="metrics">
+    <div class="metric green">
+      <div class="lbl">Tickets Mapped</div>
+      <div class="val">~40</div>
+      <div class="sub">across 8 stages (incl. subtasks)</div>
+    </div>
+    <div class="metric amber">
+      <div class="lbl">Stages Partially Covered</div>
+      <div class="val">5 / 8</div>
+      <div class="sub">in-flight work but decision/notification/finalization gaps</div>
+    </div>
+    <div class="metric red">
+      <div class="lbl">Actionable Gaps</div>
+      <div class="val">~30</div>
+      <div class="sub">concentrated in Steps 4–8</div>
+    </div>
+    <div class="metric blue">
+      <div class="lbl">Policy-First Note</div>
+      <div class="val">QP-3603/3604</div>
+      <div class="sub">OBSOLETE — do not revive rules layer</div>
+    </div>
+  </div>
+
+  <div class="legend">
+    <span class="legend-label">Status legend</span>
+    <span class="legend-item"><span class="dot green"></span> Fully covered by tickets / shipped</span>
+    <span class="legend-item"><span class="dot amber"></span> Partially covered / in-flight with gaps</span>
+    <span class="legend-item"><span class="dot red"></span> Gap &mdash; ticket(s) needed</span>
+    <span style="flex:1"></span>
+    <span class="legend-item"><span class="chip done" style="margin:0">QP-XXXX Done</span></span>
+    <span class="legend-item"><span class="chip" style="margin:0">QP-XXXX Active</span></span>
+    <span class="legend-item"><span class="chip todo" style="margin:0">QP-XXXX To Do</span></span>
+  </div>
+
+  <!-- FLOWCHART -->
+  <div class="flow">
+    <h2>End-to-End Flow</h2>
+    <div class="flow-row">
+      <a class="flow-node s-amber" href="#s1">
+        <span class="num">1</span>
+        <span class="nm">Lead / App Creation</span>
+        <span class="sub">North CRM intake &rarr; merchant record + Q-ID</span>
+        <span class="status" style="color:var(--amber-d)"><span class="dot amber"></span> 3 gaps</span>
+      </a>
+      <a class="flow-node s-green" href="#s2">
+        <span class="num">2</span>
+        <span class="nm">License Verification</span>
+        <span class="sub">CSG + manual + (Vital 4 proposed)</span>
+        <span class="status" style="color:var(--green-d)"><span class="dot green"></span> 3 gaps</span>
+      </a>
+      <a class="flow-node s-green" href="#s3">
+        <span class="num">3</span>
+        <span class="nm">COA Scan (Q-ScanAI)</span>
+        <span class="sub">Extract &rarr; policy apply &rarr; violations</span>
+        <span class="status" style="color:var(--green-d)"><span class="dot green"></span> 3 gaps</span>
+      </a>
+      <a class="flow-node s-red" href="#s4">
+        <span class="num">4</span>
+        <span class="nm">Risk Score &amp; Recommendation</span>
+        <span class="sub">Approve / Escalate / Decline</span>
+        <span class="status" style="color:var(--red-d)"><span class="dot red"></span> 4 gaps</span>
+      </a>
+      <a class="flow-node s-red" href="#s5">
+        <span class="num">5</span>
+        <span class="nm">Underwriter Email</span>
+        <span class="sub">Merchant summary + deep link</span>
+        <span class="status" style="color:var(--red-d)"><span class="dot red"></span> 4 gaps</span>
+      </a>
+      <a class="flow-node s-amber" href="#s6">
+        <span class="num">6</span>
+        <span class="nm">Remediation + Rescan</span>
+        <span class="sub">Case &rarr; resubmit &rarr; rescan loop</span>
+        <span class="status" style="color:var(--red-d)"><span class="dot red"></span> 4 gaps</span>
+      </a>
+      <a class="flow-node s-red" href="#s7">
+        <span class="num">7</span>
+        <span class="nm">Finalize Decision</span>
+        <span class="sub">Freeze bundle + North writeback</span>
+        <span class="status" style="color:var(--red-d)"><span class="dot red"></span> 4 gaps</span>
+      </a>
+      <a class="flow-node s-amber" href="#s8">
+        <span class="num">8</span>
+        <span class="nm">Ongoing Monitoring</span>
+        <span class="sub">Re-scan + drift alerts</span>
+        <span class="status" style="color:var(--amber-d)"><span class="dot amber"></span> 5 gaps</span>
+      </a>
+    </div>
+    <div class="monitor-row">
+      <span class="mtag">Loop</span>
+      <div>
+        <div class="mtitle">Monitoring feeds Steps 2 &amp; 3 continuously</div>
+        <div class="msub">Active merchants re-enter license verification + COA scan on cadence &mdash; new violations trigger Step 4 recommendation regeneration.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 1 -->
+  <div class="step" id="s1">
+    <div class="step-head">
+      <div class="num">1</div>
+      <div>
+        <h3>Lead / App Creation &mdash; North CRM &rarr; Merchant Record + Q-ID</h3>
+        <p>Prospect intake creates an account + Q-Trust profile. North CRM push drives automated merchant record creation.</p>
+      </div>
+      <div class="spacer"></div>
+      <div class="badge amber">&#9679; Partial &bull; 3 gaps</div>
+    </div>
+    <div class="step-body">
+      <div class="col">
+        <h4><span class="pip blue"></span> Existing tickets</h4>
+        <div class="chips">
+          <span class="chip done">QP-2645 Done</span>
+          <span class="chip obsolete">QP-2068 Blocked</span>
+          <span class="chip todo">QP-2145 To Do</span>
+          <span class="chip">QP-3731 Active</span>
+          <span class="chip">QP-3732 Active</span>
+          <span class="chip">QP-3733 Active</span>
+        </div>
+      </div>
+      <div class="col">
+        <h4><span class="pip green"></span> Existing functionality</h4>
+        <ul class="bl">
+          <li>Merchant portal onboarding shipped (QP-2645)</li>
+          <li>Manual enterprise record creation + Q-ID assignment in Q-Trust today</li>
+          <li>We Monitor creates merchant records via its own invite path</li>
+        </ul>
+      </div>
+      <div class="col">
+        <h4><span class="pip red"></span> Gaps</h4>
+        <ul class="bl gap">
+          <li>No ticket defines the <strong>North CRM &rarr; Q-Trust API payload contract</strong> (fields, triggers, retry semantics)</li>
+          <li>No ticket for an automated <strong>"new merchant from North" Pending Queue entry</strong> w/ source-of-truth flag</li>
+          <li>No ticket for <strong>de-duplication</strong> against an existing enterprise (same DBA / EIN / license)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="step" id="s2">
+    <div class="step-head">
+      <div class="num">2</div>
+      <div>
+        <h3>License Verification</h3>
+        <p>CannaSpyGlass lookup, manual review for non-hemp/CBD industries, proposed Vital 4 integration.</p>
+      </div>
+      <div class="spacer"></div>
+      <div class="badge green">&#9679; Well covered &bull; 3 gaps</div>
+    </div>
+    <div class="step-body">
+      <div class="col">
+        <h4><span class="pip blue"></span> Existing tickets</h4>
+        <div class="chips">
+          <span class="chip hot">QP-3675 Code Review</span>
+          <span class="chip done">QP-3685 Done</span>
+          <span class="chip done">QP-3700 Done</span>
+          <span class="chip">QP-3703 Internal QA</span>
+          <span class="chip hot">QP-3728 Hotfix</span>
+          <span class="chip todo">QP-3696 To Do</span>
+          <span class="chip todo">QP-3697 To Do</span>
+          <span class="chip todo">QP-3691 To Do</span>
+          <span class="chip todo">QP-3610 To Do</span>
+          <span class="chip done">QP-3596 Done</span>
+          <span class="chip">QP-3667/3668/3669 Validate</span>
+          <span class="chip todo">QP-3655 Notes</span>
+          <span class="chip done">QP-3671 Done</span>
+          <span class="chip obsolete">QP-3672 Obsolete</span>
+        </div>
+      </div>
+      <div class="col">
+        <h4><span class="pip green"></span> Existing functionality</h4>
+        <ul class="bl">
+          <li>CannaSpyGlass lookup + matching + Q-Audit display in production</li>
+          <li>Manual license review path for non-hemp/CBD industries</li>
+          <li>We Monitor license status column + "Run License Check" action</li>
+          <li>Q-Audit License Validation Board (search/filter/export in validation)</li>
+        </ul>
+      </div>
+      <div class="col">
+        <h4><span class="pip red"></span> Gaps</h4>
+        <ul class="bl gap">
+          <li>No ticket for a <strong>Vital 4 integration implementation</strong> &mdash; QP-3655 is a Notes proposal only</li>
+          <li>No ticket for a <strong>unified "License Verification Decision" node</strong> combining CSG + manual + Vital 4 into one pass/fail signal feeding Step 4</li>
+          <li>No ticket for <strong>jurisdictions with no published expiration dates</strong> &mdash; need explicit "no-expiry-on-record" policy beyond QP-3697 reminders</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="step" id="s3">
+    <div class="step-head">
+      <div class="num">3</div>
+      <div>
+        <h3>COA Scan &amp; Regulatory Validation (Q-ScanAI)</h3>
+        <p>Automated COA extraction (Aluma), policy-first violation detection, severity tagging.</p>
+      </div>
+      <div class="spacer"></div>
+      <div class="badge green">&#9679; Well covered &bull; 3 gaps</div>
+    </div>
+    <div class="step-body">
+      <div class="col">
+        <h4><span class="pip blue"></span> Existing tickets</h4>
+        <div class="chips">
+          <span class="chip done">QP-3192 Done</span>
+          <span class="chip todo">QP-3152 To Do</span>
+          <span class="chip done">QP-3116 Done</span>
+          <span class="chip done">QP-2928 Done</span>
+          <span class="chip done">QP-2846 Done</span>
+          <span class="chip">QP-3733 Active</span>
+          <span class="chip">QP-3734 Active</span>
+          <span class="chip">QP-3731 Active</span>
+        </div>
+      </div>
+      <div class="col">
+        <h4><span class="pip green"></span> Existing functionality</h4>
+        <ul class="bl">
+          <li>Q-ScanAI shipped: Aluma extraction &rarr; active policy &rarr; findings per product/label</li>
+          <li>Violation severity tagging (Critical / Moderate / Minor) w/ icons + tooltips in prod</li>
+          <li>COA expiration config aligned for Westtown (QP-3192)</li>
+          <li>MyCOA onboarding for merchant-side COA submission mid-wave</li>
+        </ul>
+      </div>
+      <div class="col">
+        <h4><span class="pip red"></span> Gaps</h4>
+        <ul class="bl gap">
+          <li>No ticket for <strong>capacity scaling</strong> beyond stale QP-3152 &mdash; policy-first + MyCOA volume risk Q-Scan throughput</li>
+          <li>No ticket for a <strong>"scan bundle" concept</strong> tying an underwriting attempt to multiple COAs + labels + regulatory snapshot as one re-evaluable unit</li>
+          <li>No ticket for <strong>regulatory policy version pinning</strong> &mdash; which policy version produced a decision, and how re-runs surface in UI</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 4 -->
+  <div class="step" id="s4">
+    <div class="step-head">
+      <div class="num">4</div>
+      <div>
+        <h3>Risk Scoring &amp; Decision Recommendation</h3>
+        <p>Produce a Risk Score and a system recommendation (Approve / Escalate to UW / Decline / Needs-Info).</p>
+      </div>
+      <div class="spacer"></div>
+      <div class="badge red">&#9679; Gap-heavy &bull; 4 gaps</div>
+    </div>
+    <div class="step-body">
+      <div class="col">
+        <h4><span class="pip blue"></span> Existing tickets</h4>
+        <div class="chips">
+          <span class="chip done">QP-3028 Done</span>
+          <span class="chip todo">QP-2943 To Do</span>
+          <span class="chip obsolete">QP-3603 Obsolete</span>
+          <span class="chip obsolete">QP-3604 Obsolete</span>
+          <span class="chip obsolete">QP-494 Obsolete</span>
+        </div>
+      </div>
+      <div class="col">
+        <h4><span class="pip green"></span> Existing functionality</h4>
+        <ul class="bl">
+          <li>Finding-level user decisions persist across scans (QP-3028)</li>
+          <li>Policy-first compliance engine in production (replaces old rules direction)</li>
+          <li>Manual reviewer workflow exists &mdash; reviewer judgement, no explicit score</li>
+        </ul>
+      </div>
+      <div class="col">
+        <h4><span class="pip red"></span> Gaps</h4>
+        <ul class="bl gap">
+          <li>No ticket defines a <strong>Risk Score</strong> &mdash; how it's computed (severity mix, license, regulatory match, COA freshness), displayed, persisted</li>
+          <li>No ticket for a <strong>Decision Recommendation output</strong> (Approve / Escalate / Decline / Needs-Info) on top of the policy engine</li>
+          <li>No ticket for <strong>automated-approval / automated-violation policy toggles</strong> &mdash; QP-2943 is placeholder with no subtasks</li>
+          <li>No ticket for <strong>recording recommendation + override audit</strong>, separate from per-finding persistence</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 5 -->
+  <div class="step" id="s5">
+    <div class="step-head">
+      <div class="num">5</div>
+      <div>
+        <h3>Underwriter Email Notification (Merchant Summary)</h3>
+        <p>Consolidated underwriting email sent to UW team at end of Crawl with Risk Score + recommendation.</p>
+      </div>
+      <div class="spacer"></div>
+      <div class="badge red">&#9679; Gap-heavy &bull; 4 gaps</div>
+    </div>
+    <div class="step-body">
+      <div class="col">
+        <h4><span class="pip blue"></span> Existing tickets</h4>
+        <div class="chips">
+          <span class="chip hot">QP-3675 Code Review</span>
+          <span class="chip todo">QP-3697 To Do</span>
+        </div>
+      </div>
+      <div class="col">
+        <h4><span class="pip green"></span> Existing functionality</h4>
+        <ul class="bl">
+          <li>Transactional email plumbing (onboarding, password, We Monitor invites)</li>
+          <li>Individual-event notifications (license failures, scan completions) partially wired</li>
+        </ul>
+      </div>
+      <div class="col">
+        <h4><span class="pip red"></span> Gaps</h4>
+        <ul class="bl gap">
+          <li>No ticket for the <strong>"Merchant Summary + Risk Score + Recommendation" underwriting email</strong> artifact</li>
+          <li>No ticket for an <strong>auth-aware deep-link</strong> into the Merchant Record from the email</li>
+          <li>No ticket for an <strong>underwriter inbox view</strong> (queue of Crawls awaiting UW decision, sortable by risk/age/state)</li>
+          <li>No ticket for <strong>email templating governance</strong> &mdash; who edits UW copy, how CEO/CIO sign-off is captured</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 6 -->
+  <div class="step" id="s6">
+    <div class="step-head">
+      <div class="num">6</div>
+      <div>
+        <h3>Remediation Case + Rescan Loop</h3>
+        <p>Flagged violations &rarr; remediation request to merchant &rarr; corrected evidence &rarr; auto re-scan, until resolved or denied.</p>
+      </div>
+      <div class="spacer"></div>
+      <div class="badge red">&#9679; Gap-heavy &bull; 4 gaps</div>
+    </div>
+    <div class="step-body">
+      <div class="col">
+        <h4><span class="pip blue"></span> Existing tickets</h4>
+        <div class="chips">
+          <span class="chip todo">QP-3610 To Do</span>
+          <span class="chip obsolete">QP-505 Obsolete</span>
+          <span class="chip obsolete">QP-892 Obsolete</span>
+        </div>
+      </div>
+      <div class="col">
+        <h4><span class="pip green"></span> Existing functionality</h4>
+        <ul class="bl">
+          <li>Q-Audit can open individual items tied to findings</li>
+          <li>Remediation via "revise + re-upload COA" supported end-to-end through MyCOA + Q-ScanAI</li>
+        </ul>
+      </div>
+      <div class="col">
+        <h4><span class="pip red"></span> Gaps</h4>
+        <ul class="bl gap">
+          <li>No ticket for <strong>remediation orchestration</strong>: send report &rarr; wait for resubmission &rarr; auto-trigger rescan &rarr; re-evaluate recommendation</li>
+          <li>No ticket for a <strong>Case primitive as first-class object</strong> (id, owner, assignee, SLA, state machine, resolution)</li>
+          <li>No ticket for <strong>rescan traceability</strong> &mdash; linking rescan to triggering case, showing delta vs. prior scan</li>
+          <li>No ticket for <strong>Sales/Merchant remediation letter templates</strong> distinct from UW email</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 7 -->
+  <div class="step" id="s7">
+    <div class="step-head">
+      <div class="num">7</div>
+      <div>
+        <h3>Final Decision &amp; Merchant Record Finalization</h3>
+        <p>Stamp decision, freeze the scan bundle, write immutable audit record, close remediation, write back to North.</p>
+      </div>
+      <div class="spacer"></div>
+      <div class="badge red">&#9679; Gap-heavy &bull; 4 gaps</div>
+    </div>
+    <div class="step-body">
+      <div class="col">
+        <h4><span class="pip blue"></span> Existing tickets</h4>
+        <div class="chips">
+          <span class="chip done">QP-3028 Done</span>
+          <span class="chip todo">QP-2943 To Do</span>
+        </div>
+      </div>
+      <div class="col">
+        <h4><span class="pip green"></span> Existing functionality</h4>
+        <ul class="bl">
+          <li>Finalization is implicit today &mdash; reviewer clicks findings in Q-Audit, aggregated state updates</li>
+          <li>Record survives in the enterprise view with license + COA history</li>
+        </ul>
+      </div>
+      <div class="col">
+        <h4><span class="pip red"></span> Gaps</h4>
+        <ul class="bl gap">
+          <li>No ticket for an explicit <strong>"Finalize Crawl" action</strong> &mdash; stamp decision, freeze bundle, write immutable audit, close cases</li>
+          <li>No ticket for a <strong>Decision Report PDF</strong> artifact to file with merchant/bank/processor</li>
+          <li>No ticket for <strong>post-decision hand-off back to North</strong> &mdash; writeback of Approved/Declined + reason codes</li>
+          <li>No ticket for a <strong>Crawl-level audit log</strong> distinct from per-finding history</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 8 -->
+  <div class="step" id="s8">
+    <div class="step-head">
+      <div class="num">8</div>
+      <div>
+        <h3>Ongoing Monitoring</h3>
+        <p>Periodic re-scan for active merchants; alerts on new violations, license expirations, compliance drift.</p>
+      </div>
+      <div class="spacer"></div>
+      <div class="badge amber">&#9679; Partial &bull; 5 gaps</div>
+    </div>
+    <div class="step-body">
+      <div class="col">
+        <h4><span class="pip blue"></span> Existing tickets</h4>
+        <div class="chips">
+          <span class="chip">QP-3703 Internal QA</span>
+          <span class="chip done">QP-3596 Done</span>
+          <span class="chip">QP-3731 Active</span>
+          <span class="chip todo">QP-3697 To Do</span>
+          <span class="chip todo">QP-3655 Notes (Vital 4)</span>
+        </div>
+      </div>
+      <div class="col">
+        <h4><span class="pip green"></span> Existing functionality</h4>
+        <ul class="bl">
+          <li>We Monitor runs on-demand license checks + status column + working invite mechanism</li>
+          <li>Violation-type icons + tooltip explanations via shared Q-Audit UI layer</li>
+          <li>COA expiration logic aligned for ongoing Westtown monitoring (post-QP-3192)</li>
+        </ul>
+      </div>
+      <div class="col">
+        <h4><span class="pip red"></span> Gaps</h4>
+        <ul class="bl gap">
+          <li>No ticket for <strong>scheduled monitoring cadence controls</strong> (daily / weekly / monthly) per merchant or tenant</li>
+          <li>No ticket for a <strong>Compliance Drift alert</strong> &mdash; diff of prior vs. current scan findings as a single event</li>
+          <li>No ticket for <strong>monitoring-driven auto-open-case</strong> when a monitored merchant crosses a severity threshold</li>
+          <li>No ticket for a <strong>monitoring dashboard</strong> rolling up portfolio-level risk (% of a bank's merchants w/ Critical findings)</li>
+          <li>No ticket for <strong>Vital 4 in the monitoring loop</strong> &mdash; QP-3655 remains a proposal</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- NEXT TICKETS PANEL -->
+  <div class="next-panel">
+    <h2><span class="pill">Recommended</span> Next tickets to file</h2>
+    <p class="lead">The four highest-leverage gaps, in the order the mapping report recommends filing them &mdash; chosen for demo visibility, cross-team dependencies, and blocking effect on downstream mockups.</p>
+    <div class="next-grid">
+      <div class="next-card">
+        <span class="rank">1</span>
+        <div class="step-ref">Step 4 &bull; Decisioning</div>
+        <h4>Risk Score + Decision Recommendation surface</h4>
+        <p>Biggest conceptual gap. Define the score inputs, the recommendation states (Approve / Escalate / Decline / Needs-Info), and the override audit &mdash; on top of the policy-first engine.</p>
+      </div>
+      <div class="next-card">
+        <span class="rank">2</span>
+        <div class="step-ref">Step 5 &bull; UW Handoff</div>
+        <h4>Consolidated Underwriter Email + inbox view</h4>
+        <p>The visible handoff and loudest demo moment. Merchant summary artifact, deep-link with auth-aware routing, and a sortable UW inbox for awaiting-decision Crawls.</p>
+      </div>
+      <div class="next-card">
+        <span class="rank">3</span>
+        <div class="step-ref">Step 6 &bull; Remediation</div>
+        <h4>Case as a first-class object</h4>
+        <p>Give the remediation state machine a home (id, owner, assignee, SLA, resolution) before mockup UI pins to an implicit case primitive.</p>
+      </div>
+      <div class="next-card">
+        <span class="rank">4</span>
+        <div class="step-ref">Step 1 &bull; Intake</div>
+        <h4>North &harr; Q-Trust contract (spec placeholder)</h4>
+        <p>Cross-team dependency. Even a spec-only ticket unblocks coordination on fields, triggers, retry semantics, and dedup for the automated push.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    <strong>Policy-first architecture note</strong> (per CLAUDE.md, 2026-04-12): QP-3603 and QP-3604 are OBSOLETE. Any new Risk Score / Decision Recommendation work must live on top of the policy-first engine, not as a parallel rules layer. &bull; <strong>Source:</strong> Crawl Strategy PDF (Qredible North) + Fathom meeting 2026-04-22 + Jira QP project. &bull; <strong>Scope:</strong> ~40 existing tickets referenced across 8 stages; ~30 actionable gaps identified, concentrated in Steps 4–8.
+  </div>
+
+</div>
+</body>
+</html>
