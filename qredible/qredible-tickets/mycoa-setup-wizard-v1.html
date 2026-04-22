@@ -1,0 +1,1171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MyCOA Setup Wizard v1 — QP-3714 | Qredible Prototypes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ─────────────────────────────────────────────────────────
+       Qredible Design System tokens (from qredible-brain@89d342b)
+       ──────────────────────────────────────────────────────── */
+    :root {
+      --q-navy:          #292E6F;
+      --q-navy-hover:    #1F2357;
+      --q-sage:          #95BC64;
+      --q-sage-hover:    #7DA14E;
+      --q-sage-soft:     #EDF3E0;
+      --q-blue:          #50A8FF;
+      --q-blue-hover:    #2E93F5;
+      --q-blue-bg:       #DCEEFF;
+      --q-green:         #00D581;
+      --q-yellow:        #FFDD50;
+      --q-red:           #FF404A;
+
+      --q-grey-700:      #333333;
+      --q-grey-600:      #657496;
+      --q-grey-500:      #9BA09C;
+      --q-grey-400:      #A7B2C7;
+      --q-grey-300:      #C5C5C5;
+      --q-grey-200:      #EBEDF2;
+      --q-grey-100:      #F1F5F9;
+      --q-grey-50:       #F8FBFD;
+      --q-white:         #FFFFFF;
+
+      --q-bg:            #FFFFFF;
+      --q-bg-subtle:     #F8FBFD;
+      --q-bg-muted:      #F1F5F9;
+      --q-fg:            #292E6F;
+      --q-fg-muted:      #657496;
+      --q-fg-subtle:     #979BA0;
+      --q-fg-placeholder:#9BA09C;
+      --q-fg-inverse:    #FFFFFF;
+      --q-fg-link:       #50A8FF;
+      --q-fg-error:      #D32F2F;
+      --q-border:        #EBEDF2;
+      --q-border-input:  #C5C5C5;
+
+      --q-radius-sm:   5px;
+      --q-radius-md:   6px;
+      --q-radius-xl:   10px;
+      --q-radius-2xl:  15px;
+      --q-radius-pill: 999px;
+
+      --q-shadow-sm:     0px 3px 6px rgba(0,0,0,0.13);
+      --q-shadow-lg:     10px 10px 30px rgba(0,0,0,0.1);
+      --q-shadow-button: 0px 3px 6px rgba(0,0,0,0.16);
+      --q-shadow-drop:   0px 15px 20px rgba(0,0,0,0.25);
+
+      --q-font-sans: "Uber Move", "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --q-font-mono: "SF Mono", Menlo, Consolas, "Roboto Mono", monospace;
+    }
+
+    body {
+      font-family: var(--q-font-sans);
+      background: var(--q-bg-muted);
+      color: var(--q-fg);
+      font-size: 13px;
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+
+    /* ─── Prototype annotation bar ─── */
+    .proto-bar {
+      background: rgba(255,221,80,0.2);
+      border-bottom: 1px solid var(--q-yellow);
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 12px;
+      color: #7A6800;
+    }
+    .proto-bar strong { color: var(--q-fg); font-weight: 700; }
+    .proto-bar .spacer { flex: 1; }
+    .proto-bar a.back, .proto-bar a.nav {
+      text-decoration: none;
+      color: var(--q-fg);
+      font-weight: 700;
+      padding: 6px 12px;
+      border: 1px solid var(--q-border);
+      border-radius: var(--q-radius-xl);
+      background: var(--q-white);
+      font-size: 12px;
+    }
+    .proto-bar a.nav:hover, .proto-bar a.back:hover { background: var(--q-grey-100); }
+
+    /* ─── State chooser tabs (Qredible tab pattern) ─── */
+    .state-tabs {
+      display: flex;
+      gap: 4px;
+      padding: 16px 24px 0;
+      background: var(--q-bg-muted);
+      border-bottom: 1px solid var(--q-border);
+    }
+    .state-tab {
+      background: transparent;
+      color: var(--q-fg-muted);
+      border: none;
+      border-bottom: 2px solid transparent;
+      padding: 12px 20px;
+      font-family: var(--q-font-sans);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      letter-spacing: 0;
+      transition: color .12s, border-color .12s;
+    }
+    .state-tab:hover { color: var(--q-fg); }
+    .state-tab.active {
+      color: var(--q-fg);
+      border-bottom-color: var(--q-navy);
+    }
+
+    /* ─── Wizard stage ─── */
+    .stage {
+      min-height: calc(100vh - 108px);
+      position: relative;
+      padding: 48px 24px 80px;
+    }
+
+    /* Faux portal peek behind modal scrim */
+    .faux-portal {
+      position: absolute;
+      inset: 0;
+      padding: 24px 40px;
+      opacity: .45;
+      filter: blur(2px);
+      pointer-events: none;
+      user-select: none;
+    }
+    .faux-portal .fp-top {
+      background: var(--q-white);
+      color: var(--q-fg);
+      padding: 0 24px;
+      height: 64px;
+      border-bottom: 1px solid var(--q-border);
+      border-radius: var(--q-radius-2xl) var(--q-radius-2xl) 0 0;
+      font-size: 14px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .faux-portal .fp-logo {
+      width: 48px; height: 48px;
+      border-radius: 12px;
+      background: var(--q-navy);
+      color: var(--q-white);
+      font-weight: 700;
+      display: inline-flex; align-items: center; justify-content: center;
+    }
+    .faux-portal .fp-body {
+      background: var(--q-white);
+      border-radius: 0 0 var(--q-radius-2xl) var(--q-radius-2xl);
+      padding: 40px;
+      height: 420px;
+      background-image:
+        linear-gradient(90deg, var(--q-grey-200) 1px, transparent 1px),
+        linear-gradient(0deg, var(--q-grey-200) 1px, transparent 1px);
+      background-size: 60px 40px;
+      box-shadow: var(--q-shadow-lg);
+    }
+
+    /* ─── Modal scrim + dialog ─── */
+    .scrim {
+      position: absolute;
+      inset: 0;
+      background: rgba(26,32,46,.55);
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 48px 24px 80px;
+      overflow-y: auto;
+    }
+    .wizard {
+      width: 100%;
+      max-width: 620px;
+      background: var(--q-white);
+      border-radius: var(--q-radius-2xl); /* 15px — canonical card radius */
+      box-shadow: var(--q-shadow-drop);
+      overflow: hidden;
+      animation: pop .35s cubic-bezier(.22,1,.36,1);
+    }
+    @keyframes pop {
+      from { opacity: 0; transform: translateY(14px) scale(.98); }
+      to   { opacity: 1; transform: none; }
+    }
+
+    .wiz-header {
+      padding: 24px 28px 16px;
+      border-bottom: 1px solid var(--q-border);
+    }
+    .wiz-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 10px; /* q-label-small */
+      font-weight: 700;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--q-navy);
+      background: var(--q-sage-soft);
+      padding: 4px 10px;
+      border-radius: var(--q-radius-pill);
+      margin-bottom: 12px;
+    }
+    .wiz-eyebrow .dot { width: 6px; height: 6px; background: var(--q-sage); border-radius: 50%; }
+    .wiz-title {
+      font-size: 24px; /* q-title-page / q-h3 */
+      font-weight: 600;
+      line-height: 1.25;
+      letter-spacing: -.01em;
+      color: var(--q-fg);
+    }
+    .wiz-sub {
+      font-size: 13px;
+      color: var(--q-fg-muted);
+      margin-top: 8px;
+      line-height: 1.6;
+    }
+
+    /* Stepper */
+    .stepper {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 16px 28px;
+      border-bottom: 1px solid var(--q-border);
+      background: var(--q-bg-subtle);
+    }
+    .stepper .step {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .step-num {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--q-grey-200);
+      color: var(--q-fg-muted);
+      font-size: 12px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .step.active .step-num { background: var(--q-navy); color: var(--q-white); }
+    .step.done .step-num { background: var(--q-sage); color: var(--q-white); }
+    .step-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--q-fg-muted);
+      letter-spacing: 0;
+    }
+    .step.active .step-label { color: var(--q-fg); }
+    .step.done .step-label { color: var(--q-navy); }
+    .step-sep {
+      flex: 1;
+      height: 2px;
+      background: var(--q-grey-200);
+      border-radius: 2px;
+      position: relative;
+      overflow: hidden;
+    }
+    .step-sep.filled::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: var(--q-sage);
+    }
+
+    /* Body */
+    .wiz-body { padding: 24px 28px 24px; }
+    .slide { display: none; }
+    .slide.active { display: block; }
+
+    .field { margin-bottom: 20px; }
+    .field-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px; /* q-label */
+      font-weight: 700;
+      letter-spacing: 0;
+      color: var(--q-fg-subtle);
+      margin-bottom: 8px;
+      text-transform: none;
+    }
+    .field-label .req { color: var(--q-fg-error); font-weight: 700; }
+    .field-lock {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      background: var(--q-grey-100);
+      color: var(--q-fg-muted);
+      padding: 2px 8px;
+      border-radius: var(--q-radius-md);
+      margin-left: 4px;
+    }
+    .field-lock svg { width: 10px; height: 10px; }
+
+    /* Canonical Qredible input: 44px, radius 15px, bg #F8FBFD, no border, focus outline 1px blue */
+    .input {
+      width: 100%;
+      height: 44px;
+      padding: 0 18px;
+      border: none;
+      border-radius: var(--q-radius-2xl);
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--q-fg);
+      background: var(--q-grey-50);
+      outline: none;
+      transition: outline-color .12s;
+    }
+    .input:focus {
+      outline: 1px solid var(--q-blue);
+      outline-offset: 0;
+    }
+    .input::placeholder { color: var(--q-fg-placeholder); font-weight: 600; }
+    .input:read-only, .input[readonly] {
+      background: var(--q-grey-100);
+      color: var(--q-fg-muted);
+      cursor: not-allowed;
+    }
+    .input.invalid {
+      outline: 1px solid var(--q-fg-error);
+    }
+    .field-help {
+      font-size: 12px;
+      color: var(--q-fg-muted);
+      margin-top: 8px;
+      line-height: 1.6;
+    }
+    .field-help code { font-family: var(--q-font-mono); font-size: 11px; background: var(--q-grey-100); padding: 1px 6px; border-radius: 4px; }
+    .field-error {
+      font-size: 10px; /* q-error */
+      color: var(--q-fg-error);
+      margin-top: 6px;
+      font-weight: 600;
+      display: none;
+    }
+    .field-error.show { display: block; }
+
+    /* Input with prefix (for https:// on dynamic URL) */
+    .input-prefix {
+      display: flex;
+      align-items: stretch;
+      border-radius: var(--q-radius-2xl);
+      overflow: hidden;
+      background: var(--q-grey-50);
+      height: 44px;
+    }
+    .input-prefix .prefix {
+      background: var(--q-grey-100);
+      color: var(--q-fg-muted);
+      padding: 0 14px;
+      font-family: var(--q-font-mono);
+      font-size: 12px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+    }
+    .input-prefix .input {
+      border-radius: 0;
+      background: var(--q-grey-50);
+      flex: 1;
+    }
+    .input-prefix:focus-within { outline: 1px solid var(--q-blue); }
+
+    /* ─── Logo dropzone ─── */
+    .dropzone {
+      background: var(--q-grey-50);
+      border: 2px dashed var(--q-grey-300);
+      border-radius: var(--q-radius-2xl);
+      padding: 32px 22px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color .15s, background .15s;
+      position: relative;
+    }
+    .dropzone:hover { border-color: var(--q-blue); background: var(--q-blue-bg); }
+    .dropzone.drag { border-color: var(--q-blue); background: var(--q-blue-bg); }
+    .dropzone.has-file { padding: 20px 22px; text-align: left; border-style: solid; border-color: var(--q-border); background: var(--q-white); box-shadow: var(--q-shadow-sm); }
+    .dz-icon {
+      width: 44px; height: 44px;
+      margin: 0 auto 12px;
+      background: var(--q-blue-bg);
+      color: var(--q-blue);
+      border-radius: var(--q-radius-2xl);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .dz-icon svg { width: 22px; height: 22px; }
+    .dz-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--q-fg);
+      margin-bottom: 4px;
+    }
+    .dz-sub {
+      font-size: 12px;
+      color: var(--q-fg-muted);
+      line-height: 1.6;
+    }
+    .dz-sub strong { color: var(--q-blue); font-weight: 600; }
+    .dz-file { display: flex; align-items: center; gap: 14px; }
+    .dz-preview {
+      width: 64px; height: 64px;
+      border-radius: 12px;
+      background: var(--q-white);
+      border: 1px solid var(--q-border);
+      overflow: hidden;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .dz-preview img { width: 100%; height: 100%; object-fit: cover; }
+    .dz-meta { flex: 1; }
+    .dz-meta .fname { font-size: 13px; font-weight: 600; color: var(--q-fg); }
+    .dz-meta .fsize { font-size: 12px; color: var(--q-fg-muted); font-weight: 500; margin-top: 2px; }
+    .dz-meta .status {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 11px; font-weight: 700;
+      color: var(--q-navy);
+      background: var(--q-sage-soft);
+      padding: 2px 8px;
+      border-radius: var(--q-radius-md);
+      margin-top: 6px;
+    }
+    .dz-replace {
+      background: var(--q-white);
+      border: 1px solid var(--q-border);
+      color: var(--q-fg);
+      height: 32px;
+      padding: 0 14px;
+      border-radius: var(--q-radius-sm);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: var(--q-font-sans);
+    }
+    .dz-replace:hover { background: var(--q-grey-100); }
+
+    /* Info alert (Qredible info variant) */
+    .help-callout {
+      background: rgba(80,168,255,0.08);
+      border-radius: var(--q-radius-xl);
+      box-shadow: var(--q-shadow-sm);
+      padding: 12px 16px;
+      margin-top: 16px;
+      font-size: 12px;
+      color: var(--q-fg);
+      line-height: 1.6;
+      display: flex;
+      gap: 10px;
+    }
+    .help-callout .alert-icon {
+      width: 20px; height: 20px;
+      background: var(--q-blue);
+      color: var(--q-white);
+      border-radius: 50%;
+      display: inline-flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .help-callout .alert-icon svg { width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 2.5; }
+    .help-callout strong { color: var(--q-fg); font-weight: 600; }
+
+    /* Footer */
+    .wiz-footer {
+      padding: 16px 28px;
+      border-top: 1px solid var(--q-border);
+      background: var(--q-bg-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .wiz-footer .left { font-size: 12px; color: var(--q-fg-muted); font-weight: 500; }
+    .wiz-footer .right { display: flex; gap: 8px; }
+
+    /* Canonical Qredible Primary (Ink) button: 32px / radius 5px / 12px/700 / shadow-button */
+    .btn {
+      font-family: var(--q-font-sans);
+      font-size: 12px;
+      font-weight: 700;
+      height: 32px;
+      padding: 0 24px;
+      border-radius: var(--q-radius-sm);
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: background .12s, border-color .12s, color .12s, box-shadow .12s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      letter-spacing: 0;
+    }
+    .btn-primary {
+      background: var(--q-navy);
+      color: var(--q-white);
+      border-color: var(--q-navy);
+      box-shadow: var(--q-shadow-button);
+    }
+    .btn-primary:hover { background: var(--q-navy-hover); border-color: var(--q-navy-hover); }
+    .btn-primary:disabled {
+      background: rgba(0,0,0,0.12);
+      border-color: transparent;
+      color: rgba(0,0,0,0.26);
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+    .btn-ghost {
+      background: transparent;
+      color: var(--q-fg);
+      border: 1px solid var(--q-border);
+    }
+    .btn-ghost:hover { background: var(--q-grey-100); }
+    .btn-accent {
+      background: var(--q-blue);
+      color: var(--q-white);
+      border-color: var(--q-blue);
+      box-shadow: var(--q-shadow-button);
+    }
+    .btn-accent:hover { background: var(--q-blue-hover); border-color: var(--q-blue-hover); }
+    .btn-accent:disabled {
+      background: rgba(0,0,0,0.12);
+      border-color: transparent;
+      color: rgba(0,0,0,0.26);
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    /* ─── Post-completion preview state ─── */
+    .preview-wrap { display: none; }
+    .preview-wrap.active { display: block; }
+    .preview-bar {
+      background: rgba(0,213,129,0.08);
+      border-bottom: 1px solid rgba(0,213,129,0.3);
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 13px;
+      color: #067A4A;
+    }
+    .preview-bar .check {
+      width: 22px; height: 22px; border-radius: 50%;
+      background: var(--q-green); color: var(--q-white);
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 700; flex-shrink: 0;
+    }
+    .preview-bar strong { color: var(--q-fg); font-weight: 600; }
+    .preview-bar code {
+      font-family: var(--q-font-mono);
+      background: var(--q-white);
+      padding: 1px 8px;
+      border-radius: var(--q-radius-md);
+      color: var(--q-fg);
+      font-size: 12px;
+    }
+    .preview-bar .spacer { flex: 1; }
+    .preview-bar .reopen {
+      background: var(--q-white); border: 1px solid var(--q-border);
+      color: var(--q-fg); height: 32px; padding: 0 14px; border-radius: var(--q-radius-sm);
+      font-family: var(--q-font-sans); font-size: 12px; font-weight: 700; cursor: pointer;
+    }
+    .preview-bar .reopen:hover { background: var(--q-grey-100); }
+
+    .preview-frame-wrap {
+      max-width: 1100px;
+      margin: 24px auto 60px;
+      background: var(--q-white);
+      border-radius: var(--q-radius-2xl);
+      overflow: hidden;
+      box-shadow: var(--q-shadow-lg);
+    }
+    .browser-bar {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 14px; background: var(--q-bg-subtle);
+      border-bottom: 1px solid var(--q-border);
+      font-family: var(--q-font-mono); font-size: 11px; color: var(--q-fg-muted);
+    }
+    .browser-dots { display: flex; gap: 6px; }
+    .browser-dots span { width: 10px; height: 10px; border-radius: 50%; background: var(--q-grey-300); }
+    .browser-dots span:nth-child(1) { background: var(--q-red); }
+    .browser-dots span:nth-child(2) { background: var(--q-yellow); }
+    .browser-dots span:nth-child(3) { background: var(--q-green); }
+    .browser-url { flex: 1; background: var(--q-white); border: 1px solid var(--q-border); border-radius: var(--q-radius-xl); padding: 5px 12px; color: var(--q-fg-muted); }
+
+    /* ═════ Inlined MyCOA template preview (matches mycoa-default-template.html) ═════ */
+    .mycoa-template {
+      --mycoa-primary:             var(--q-navy);
+      --mycoa-primary-hover:       var(--q-navy-hover);
+      --mycoa-accent:              var(--q-blue);
+      --mycoa-accent-hover:        var(--q-blue-hover);
+      --mycoa-surface:             var(--q-white);
+      --mycoa-surface-soft:        var(--q-bg-subtle);
+      --mycoa-border:              var(--q-border);
+      --mycoa-text:                var(--q-fg);
+      --mycoa-text-muted:          var(--q-fg-muted);
+      --mycoa-text-on-dark:        var(--q-fg-inverse);
+      --mycoa-text-on-dark-muted:  rgba(255,255,255,.72);
+      --mycoa-radius-btn:          var(--q-radius-sm);
+      --mycoa-radius-input:        var(--q-radius-2xl);
+      --mycoa-radius-card:         var(--q-radius-2xl);
+      font-family: var(--q-font-sans);
+      color: var(--mycoa-text);
+      background: var(--mycoa-surface);
+    }
+    .mycoa-hero {
+      position: relative;
+      background: linear-gradient(135deg, var(--mycoa-primary-hover) 0%, var(--mycoa-primary) 60%, #3A3F87 100%);
+      color: var(--mycoa-text-on-dark);
+      padding: 40px 40px 48px;
+      overflow: hidden;
+    }
+    .mycoa-hero::before {
+      content: ""; position: absolute; inset: auto -120px -120px auto;
+      width: 340px; height: 340px; border-radius: 50%;
+      background: radial-gradient(circle at center, rgba(149,188,100,.18), rgba(149,188,100,0));
+      pointer-events: none;
+    }
+    .mycoa-hero-top { display: flex; align-items: center; justify-content: space-between; gap: 24px; margin-bottom: 28px; position: relative; z-index: 1; }
+    .mycoa-merchant { display: flex; align-items: center; gap: 12px; }
+    .mycoa-merchant-logo {
+      width: 48px; height: 48px; border-radius: 12px; background: var(--q-white);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; color: var(--mycoa-primary); font-size: 18px;
+      letter-spacing: -.02em; box-shadow: var(--q-shadow-sm);
+      overflow: hidden;
+    }
+    .mycoa-merchant-logo img { width: 100%; height: 100%; object-fit: cover; }
+    .mycoa-merchant-name { font-size: 14px; font-weight: 600; letter-spacing: -.01em; }
+    .mycoa-wordmark { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
+    .mycoa-wordmark-logo { font-size: 24px; font-weight: 700; letter-spacing: -.02em; }
+    .mycoa-wordmark-logo sup { font-size: 10px; font-weight: 500; opacity: .7; margin-left: 1px; }
+    .mycoa-wordmark-tag { font-size: 12px; color: var(--mycoa-text-on-dark-muted); letter-spacing: .01em; }
+    .mycoa-hero-title { font-size: 28px; font-weight: 600; letter-spacing: -.01em; line-height: 1.25; margin-bottom: 16px; position: relative; z-index: 1; }
+    .mycoa-hero-lead { font-size: 13px; line-height: 1.75; max-width: 720px; color: var(--mycoa-text-on-dark-muted); margin-bottom: 20px; position: relative; z-index: 1; }
+    .mycoa-hero-ctas { display: flex; gap: 12px; flex-wrap: wrap; position: relative; z-index: 1; margin-top: 8px; }
+
+    .mycoa-btn {
+      font-family: inherit; font-size: 14px; font-weight: 700;
+      height: 44px; padding: 0 28px; border-radius: var(--q-radius-2xl);
+      cursor: pointer; text-decoration: none;
+      display: inline-flex; align-items: center; gap: 8px;
+      border: 1.5px solid transparent;
+      transition: background .15s, border-color .15s, color .15s, transform .12s;
+    }
+    .mycoa-btn-primary { background: var(--mycoa-accent); color: var(--q-white); border-color: var(--mycoa-accent); box-shadow: var(--q-shadow-button); }
+    .mycoa-btn-primary:hover { background: var(--mycoa-accent-hover); border-color: var(--mycoa-accent-hover); transform: translateY(-1px); }
+    .mycoa-btn-ghost { background: transparent; color: var(--q-white); border-color: rgba(255,255,255,.55); }
+    .mycoa-btn-ghost:hover { background: rgba(255,255,255,.08); border-color: var(--q-white); }
+
+    .mycoa-search-section { background: var(--mycoa-surface); padding: 48px 40px 40px; }
+    .mycoa-search-title { font-size: 24px; font-weight: 600; line-height: 1.25; letter-spacing: -.01em; margin-bottom: 12px; color: var(--mycoa-text); }
+    .mycoa-search-help { font-size: 13px; color: var(--mycoa-text-muted); max-width: 720px; line-height: 1.65; margin-bottom: 20px; }
+    .mycoa-search-trouble { font-size: 12px; color: var(--mycoa-text-muted); margin-bottom: 12px; }
+    .mycoa-search-trouble a { color: var(--mycoa-accent); font-weight: 600; text-decoration: none; }
+    .mycoa-search-form { display: flex; gap: 10px; align-items: stretch; max-width: 720px; margin-bottom: 36px; }
+    .mycoa-search-input {
+      flex: 1; height: 44px; padding: 0 18px; border: none;
+      border-radius: var(--q-radius-2xl); font-family: inherit;
+      font-size: 12px; font-weight: 500; color: var(--mycoa-text);
+      background: var(--q-grey-50); outline: none;
+    }
+    .mycoa-search-input:focus { outline: 1px solid var(--q-blue); }
+    .mycoa-search-input::placeholder { color: var(--q-fg-placeholder); font-weight: 600; }
+    .mycoa-search-submit {
+      background: var(--mycoa-accent); color: var(--q-white); border: none;
+      border-radius: var(--q-radius-2xl); height: 44px; padding: 0 24px;
+      font-family: inherit; font-weight: 700; font-size: 14px; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 6px; letter-spacing: -.01em;
+      box-shadow: var(--q-shadow-button);
+    }
+    .mycoa-search-submit sup { font-size: 9px; opacity: .8; font-weight: 600; }
+
+    .mycoa-guide { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .mycoa-guide-card {
+      background: var(--mycoa-surface); border-radius: var(--q-radius-2xl);
+      box-shadow: var(--q-shadow-lg); padding: 22px 22px 24px;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .mycoa-guide-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+    .mycoa-guide-num {
+      width: 30px; height: 30px; border-radius: 50%; background: var(--mycoa-primary);
+      color: var(--q-white); font-size: 13px; font-weight: 700;
+      display: inline-flex; align-items: center; justify-content: center;
+    }
+    .mycoa-guide-icon { width: 32px; height: 32px; color: var(--q-grey-400); display: inline-flex; align-items: center; justify-content: center; }
+    .mycoa-guide-icon svg { width: 24px; height: 24px; }
+    .mycoa-guide-title { font-size: 16px; font-weight: 500; letter-spacing: -.01em; line-height: 20px; }
+    .mycoa-guide-desc { font-size: 13px; line-height: 1.6; color: var(--mycoa-text-muted); }
+
+    .mycoa-footer {
+      background: var(--mycoa-primary); color: var(--mycoa-text-on-dark);
+      padding: 24px 40px; display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 14px;
+    }
+    .mycoa-footer-left { font-size: 12px; color: var(--mycoa-text-on-dark-muted); font-weight: 500; }
+    .mycoa-footer-right { font-size: 12px; color: var(--mycoa-text-on-dark-muted); display: inline-flex; align-items: center; gap: 6px; font-weight: 500; }
+    .mycoa-footer-right strong { color: var(--q-white); font-weight: 700; }
+
+    .preview-note {
+      max-width: 1100px;
+      margin: 18px auto 0;
+      padding: 16px 20px;
+      background: var(--q-white);
+      border-radius: var(--q-radius-2xl);
+      box-shadow: var(--q-shadow-lg);
+      font-size: 12px;
+      color: var(--q-fg-muted);
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      line-height: 1.65;
+      font-weight: 500;
+    }
+    .preview-note .dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--q-sage); flex-shrink: 0; margin-top: 6px;
+    }
+    .preview-note strong { color: var(--q-fg); font-weight: 600; }
+    .preview-note code {
+      font-family: var(--q-font-mono); font-size: 11px;
+      background: var(--q-grey-100); padding: 1px 6px; border-radius: 4px;
+      color: var(--q-fg);
+    }
+    .preview-note a { color: var(--q-blue); font-weight: 600; text-decoration: none; }
+
+    @media (max-width: 720px) {
+      .wiz-header, .wiz-body, .wiz-footer, .stepper { padding-left: 20px; padding-right: 20px; }
+      .mycoa-search-section { padding: 28px 22px; }
+      .mycoa-hero { padding: 28px 22px 32px; }
+      .mycoa-guide { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="proto-bar">
+    <strong>Prototype · QP-3714 MyCOA Setup Wizard v1</strong>
+    <span>Gated first-run modal for <strong>JC Green</strong>. Built on Qredible Design System (qredible-brain @ 89d342b). Two slides, then post-completion preview of the Default Template (QP-3713).</span>
+    <span class="spacer"></span>
+    <a class="nav" href="mycoa-default-template.html">View template standalone →</a>
+    <a class="back" href="../index.html">← All mockups</a>
+  </div>
+
+  <div class="state-tabs">
+    <button class="state-tab active" onclick="goTo(1)">Slide 1 · Site Identity</button>
+    <button class="state-tab" onclick="goTo(2)">Slide 2 · Branding</button>
+    <button class="state-tab" onclick="goTo('done')">After Finish · Preview</button>
+  </div>
+
+  <!-- ═════════════════ WIZARD STATE ═════════════════ -->
+  <div class="stage" id="wizardStage">
+    <div class="faux-portal" aria-hidden="true">
+      <div class="fp-top">
+        <div class="fp-logo">Q</div>
+        <span>Qredible Merchant Portal · JC Green</span>
+      </div>
+      <div class="fp-body"></div>
+    </div>
+
+    <div class="scrim">
+      <div class="wizard" role="dialog" aria-modal="true" aria-labelledby="wizTitle">
+
+        <div class="wiz-header">
+          <span class="wiz-eyebrow"><span class="dot"></span> First-time setup · required</span>
+          <div class="wiz-title" id="wizTitle">Set up your MyCOA site</div>
+          <div class="wiz-sub">Two quick steps. We'll publish your default MyCOA site at the dynamic URL below — you can customize colors, text, and fonts later from the Display tab.</div>
+        </div>
+
+        <div class="stepper" id="stepper">
+          <div class="step active" data-step="1">
+            <span class="step-num">1</span>
+            <span class="step-label">Site Identity</span>
+          </div>
+          <div class="step-sep" id="sep1"></div>
+          <div class="step" data-step="2">
+            <span class="step-num">2</span>
+            <span class="step-label">Branding</span>
+          </div>
+        </div>
+
+        <div class="wiz-body">
+
+          <!-- ───── Slide 1 ───── -->
+          <div class="slide active" data-slide="1">
+            <div class="field">
+              <div class="field-label">
+                Your company name
+                <span class="field-lock" title="Read-only. Matches your Qredible account.">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+                  Read-only
+                </span>
+              </div>
+              <input class="input" type="text" value="JC Green" readonly />
+              <div class="field-help">Pulled from your Qredible account. Contact support to change it.</div>
+            </div>
+
+            <div class="field">
+              <div class="field-label">
+                Resume shopping URL <span class="req">*</span>
+              </div>
+              <input
+                class="input"
+                id="shoppingUrl"
+                type="url"
+                placeholder="https://shop.jcgreen.com"
+                oninput="validateShoppingUrl()"
+                required
+              />
+              <div class="field-help">Where customers will be sent when they click <strong>Resume Shopping</strong> from your MyCOA site. Must start with <code>https://</code>.</div>
+              <div class="field-error" id="shoppingUrlError">Enter a valid URL starting with http:// or https://</div>
+            </div>
+
+            <div class="field">
+              <div class="field-label">
+                Your dynamic URL
+                <span class="field-lock" title="Read-only. Auto-generated from your account.">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+                  Read-only
+                </span>
+              </div>
+              <div class="input-prefix">
+                <span class="prefix">https://</span>
+                <input class="input" type="text" value="jcgreen.mycoa.com" readonly />
+              </div>
+              <div class="field-help">Your published MyCOA site. Custom CNAME mapping is available later from the Display tab.</div>
+            </div>
+          </div>
+
+          <!-- ───── Slide 2 ───── -->
+          <div class="slide" data-slide="2">
+            <div class="field">
+              <div class="field-label">
+                Primary logo <span class="req">*</span>
+              </div>
+              <div class="dropzone" id="dropzone" tabindex="0">
+                <div class="dz-empty" id="dzEmpty">
+                  <div class="dz-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                      <polyline points="17 8 12 3 7 8"/>
+                      <line x1="12" y1="3" x2="12" y2="15"/>
+                    </svg>
+                  </div>
+                  <div class="dz-title">Drop a logo file, or <strong>click to browse</strong></div>
+                  <div class="dz-sub">Recommended: <strong>512×512 PNG</strong>, square, transparent background, max 2 MB. Minimum 256×256.</div>
+                </div>
+                <div class="dz-file" id="dzFile" style="display:none;">
+                  <div class="dz-preview" id="dzPreview"></div>
+                  <div class="dz-meta">
+                    <div class="fname" id="dzName">logo.png</div>
+                    <div class="fsize" id="dzSize">— · —</div>
+                    <div class="status">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                      Looks good
+                    </div>
+                  </div>
+                  <button class="dz-replace" type="button" onclick="event.stopPropagation(); resetLogo();">Replace</button>
+                </div>
+                <input type="file" id="logoInput" accept="image/png,image/jpeg,image/svg+xml" style="display:none;" />
+              </div>
+            </div>
+
+            <div class="help-callout">
+              <span class="alert-icon">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+              </span>
+              <div>
+                <strong>Color, text, font size, and template customizations come in a later release.</strong>
+                For now, we'll publish your MyCOA site with the Qredible default template.
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="wiz-footer">
+          <div class="left">Step <span id="stepLabel">1</span> of 2</div>
+          <div class="right">
+            <button class="btn btn-ghost" id="backBtn" onclick="goTo(1)" style="display:none;">Back</button>
+            <button class="btn btn-primary" id="nextBtn" onclick="goTo(2)" disabled>Next</button>
+            <button class="btn btn-primary" id="finishBtn" onclick="goTo('done')" disabled style="display:none;">Finish setup</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ═════════════════ POST-COMPLETION PREVIEW STATE ═════════════════ -->
+  <div class="preview-wrap" id="previewWrap">
+    <div class="preview-bar">
+      <span class="check">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </span>
+      <div><strong>Setup complete.</strong> Your MyCOA site is live at <code>https://<span id="pbHost">jcgreen.mycoa.com</span></code>. Preview reflects the captured logo and shopping URL.</div>
+      <span class="spacer"></span>
+      <button class="reopen" onclick="goTo(1)">Re-open wizard</button>
+    </div>
+
+    <div class="preview-note">
+      <span class="dot"></span>
+      <div>
+        <strong>Captured from wizard:</strong>
+        Logo wired into the hero · "Resume Shopping" CTA links to <code id="pbShoppingUrl">https://shop.jcgreen.com</code> ·
+        Everything else follows the Qredible default template — customizable later via the Display tab (<a href="../mycoa-display-tab-mockup.html">QP-3626</a>).
+      </div>
+    </div>
+
+    <div class="preview-frame-wrap">
+      <div class="browser-bar">
+        <div class="browser-dots"><span></span><span></span><span></span></div>
+        <div class="browser-url">https://jcgreen.mycoa.com/</div>
+      </div>
+
+      <div class="mycoa-template">
+        <section class="mycoa-hero" data-component="mycoa-hero">
+          <div class="mycoa-hero-top">
+            <div class="mycoa-merchant">
+              <div class="mycoa-merchant-logo" id="previewMerchantLogo">JC</div>
+              <div class="mycoa-merchant-name">JC Green</div>
+            </div>
+            <div class="mycoa-wordmark">
+              <div class="mycoa-wordmark-logo">MyCOA<sup>®</sup></div>
+              <div class="mycoa-wordmark-tag">Transparency you can trust</div>
+            </div>
+          </div>
+          <h1 class="mycoa-hero-title">Certificate of Analysis</h1>
+          <p class="mycoa-hero-lead">
+            At JC Green, we believe in full transparency and rigorous quality control. Every batch of our
+            products is tested by accredited laboratories and the results are made readily available for your review.
+          </p>
+          <div class="mycoa-hero-ctas">
+            <a href="#guide" class="mycoa-btn mycoa-btn-primary">Understanding Your COA</a>
+            <a href="#" id="previewResumeShopping" target="_blank" rel="noopener" class="mycoa-btn mycoa-btn-ghost">Resume Shopping</a>
+          </div>
+        </section>
+
+        <section class="mycoa-search-section">
+          <div data-component="mycoa-search">
+            <h2 class="mycoa-search-title">Search By Batch/Name</h2>
+            <p class="mycoa-search-help">Find your lab report by entering the batch number or name of the product.</p>
+            <p class="mycoa-search-trouble">Still having trouble finding the batch number? <a href="#">See the guide below.</a></p>
+            <form class="mycoa-search-form" onsubmit="event.preventDefault();">
+              <input class="mycoa-search-input" type="text" placeholder="Enter batch number or product name" />
+              <button class="mycoa-search-submit" type="submit">MyCOA<sup>®</sup></button>
+            </form>
+          </div>
+
+          <div id="guide" data-component="mycoa-guide">
+            <div class="mycoa-guide">
+              <div class="mycoa-guide-card">
+                <div class="mycoa-guide-head">
+                  <span class="mycoa-guide-num">1</span>
+                  <span class="mycoa-guide-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 7h6M9 11h6M9 15h4"/></svg></span>
+                </div>
+                <div class="mycoa-guide-title">Locate the Batch Number</div>
+                <p class="mycoa-guide-desc">Find the batch number on the bottle label, box, or sticker on the bottom of the container.</p>
+              </div>
+              <div class="mycoa-guide-card">
+                <div class="mycoa-guide-head">
+                  <span class="mycoa-guide-num">2</span>
+                  <span class="mycoa-guide-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></span>
+                </div>
+                <div class="mycoa-guide-title">Enter and Search</div>
+                <p class="mycoa-guide-desc">Type the batch number or product name into the search bar above and click <em>MyCOA</em> to view the results.</p>
+              </div>
+              <div class="mycoa-guide-card">
+                <div class="mycoa-guide-head">
+                  <span class="mycoa-guide-num">3</span>
+                  <span class="mycoa-guide-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14h1M14 20h3M20 17v4"/></svg></span>
+                </div>
+                <div class="mycoa-guide-title">Quick QR Access</div>
+                <p class="mycoa-guide-desc">Some products include a QR code for instant access. Scan with your smartphone camera to jump straight to the COA.</p>
+              </div>
+            </div>
+          </div>
+
+          <div style="text-align:center;margin-top:32px;">
+            <a href="mycoa-default-template.html" style="color:var(--q-blue);font-size:13px;font-weight:600;text-decoration:none;">
+              View the full default template (with COA explainer) →
+            </a>
+          </div>
+        </section>
+
+        <footer class="mycoa-footer" data-component="mycoa-footer">
+          <div class="mycoa-footer-left">© 2026 JC Green. All rights reserved.</div>
+          <div class="mycoa-footer-right">Powered by <strong>MyCOA<sup>®</sup></strong></div>
+        </footer>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const state = {
+      slide: 1,
+      shoppingUrl: '',
+      shoppingUrlValid: false,
+      logoDataUrl: null,
+      logoName: null,
+      logoSize: null,
+    };
+
+    function validateShoppingUrl() {
+      const input = document.getElementById('shoppingUrl');
+      const errEl = document.getElementById('shoppingUrlError');
+      const val = input.value.trim();
+      state.shoppingUrl = val;
+      if (!val) {
+        state.shoppingUrlValid = false;
+        input.classList.remove('invalid');
+        errEl.classList.remove('show');
+      } else {
+        let ok = false;
+        try {
+          const u = new URL(val);
+          ok = u.protocol === 'http:' || u.protocol === 'https:';
+        } catch (_) { ok = false; }
+        state.shoppingUrlValid = ok;
+        input.classList.toggle('invalid', !ok);
+        errEl.classList.toggle('show', !ok);
+      }
+      updateCtas();
+    }
+
+    const dz = document.getElementById('dropzone');
+    const dzEmpty = document.getElementById('dzEmpty');
+    const dzFile = document.getElementById('dzFile');
+    const dzPreview = document.getElementById('dzPreview');
+    const dzName = document.getElementById('dzName');
+    const dzSize = document.getElementById('dzSize');
+    const logoInput = document.getElementById('logoInput');
+
+    dz.addEventListener('click', () => logoInput.click());
+    dz.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); logoInput.click(); } });
+    dz.addEventListener('dragover', (e) => { e.preventDefault(); dz.classList.add('drag'); });
+    dz.addEventListener('dragleave', () => dz.classList.remove('drag'));
+    dz.addEventListener('drop', (e) => {
+      e.preventDefault(); dz.classList.remove('drag');
+      if (e.dataTransfer.files && e.dataTransfer.files[0]) handleLogo(e.dataTransfer.files[0]);
+    });
+    logoInput.addEventListener('change', (e) => {
+      if (e.target.files && e.target.files[0]) handleLogo(e.target.files[0]);
+    });
+
+    function handleLogo(file) {
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        state.logoDataUrl = ev.target.result;
+        state.logoName = file.name;
+        state.logoSize = file.size;
+        dzName.textContent = file.name;
+        dzSize.textContent = formatSize(file.size) + ' · ' + (file.type || 'image');
+        dzPreview.innerHTML = '<img src="' + ev.target.result + '" alt="logo preview">';
+        dzEmpty.style.display = 'none';
+        dzFile.style.display = 'flex';
+        dz.classList.add('has-file');
+        updateCtas();
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function resetLogo() {
+      state.logoDataUrl = null;
+      state.logoName = null;
+      state.logoSize = null;
+      dzEmpty.style.display = 'block';
+      dzFile.style.display = 'none';
+      dz.classList.remove('has-file');
+      logoInput.value = '';
+      updateCtas();
+    }
+
+    function formatSize(bytes) {
+      if (bytes < 1024) return bytes + ' B';
+      if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+      return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+    }
+
+    function updateCtas() {
+      const nextBtn = document.getElementById('nextBtn');
+      const finishBtn = document.getElementById('finishBtn');
+      if (state.slide === 1) {
+        nextBtn.disabled = !state.shoppingUrlValid;
+      } else if (state.slide === 2) {
+        finishBtn.disabled = !state.logoDataUrl;
+      }
+    }
+
+    function goTo(target) {
+      document.querySelectorAll('.state-tab').forEach((t, i) => {
+        const map = [1, 2, 'done'];
+        t.classList.toggle('active', map[i] === target);
+      });
+
+      const wizardStage = document.getElementById('wizardStage');
+      const previewWrap = document.getElementById('previewWrap');
+      if (target === 'done') {
+        wizardStage.style.display = 'none';
+        previewWrap.classList.add('active');
+        applyToPreview();
+        return;
+      } else {
+        wizardStage.style.display = 'block';
+        previewWrap.classList.remove('active');
+      }
+
+      state.slide = target;
+
+      document.querySelectorAll('.slide').forEach(s => s.classList.toggle('active', parseInt(s.dataset.slide) === target));
+
+      document.querySelectorAll('.step').forEach(s => {
+        const stepNum = parseInt(s.dataset.step);
+        s.classList.toggle('active', stepNum === target);
+        s.classList.toggle('done', stepNum < target);
+      });
+      document.getElementById('sep1').classList.toggle('filled', target > 1);
+
+      document.getElementById('stepLabel').textContent = target;
+      document.getElementById('backBtn').style.display = target === 2 ? 'inline-flex' : 'none';
+      document.getElementById('nextBtn').style.display = target === 1 ? 'inline-flex' : 'none';
+      document.getElementById('finishBtn').style.display = target === 2 ? 'inline-flex' : 'none';
+
+      updateCtas();
+    }
+
+    function applyToPreview() {
+      const logoEl = document.getElementById('previewMerchantLogo');
+      if (state.logoDataUrl) {
+        logoEl.innerHTML = '<img src="' + state.logoDataUrl + '" alt="JC Green logo">';
+      } else {
+        logoEl.innerHTML = 'JC';
+      }
+      const shop = state.shoppingUrl || 'https://shop.jcgreen.com';
+      const resume = document.getElementById('previewResumeShopping');
+      resume.href = shop;
+      document.getElementById('pbShoppingUrl').textContent = shop;
+    }
+
+    validateShoppingUrl();
+  </script>
+
+</body>
+</html>

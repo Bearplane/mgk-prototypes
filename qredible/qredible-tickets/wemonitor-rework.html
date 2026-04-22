@@ -165,6 +165,93 @@ tbody td:first-child{text-align:center}
     .pill-pair .pill-connector { font-size: 10px; color: #94A3B8; padding: 0 4px; background: transparent; border: none; }
     .pill-pair .pill-type { border-radius: 0 12px 12px 0; padding-left: 4px; }
 
+    /* LOCATION SEARCH (second search input) */
+    .search-location{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 10c0 7-8 12-8 12s-8-5-8-12a8 8 0 0 1 16 0z'/%3E%3Ccircle cx='12' cy='10' r='3'/%3E%3C/svg%3E");max-width:280px}
+
+    /* SORTABLE COLUMN HEADERS */
+    thead th.sortable{cursor:pointer;user-select:none}
+    thead th.sortable:hover{background:#2A4A73}
+    thead th.sortable .sort-arrow{display:inline-block;margin-left:4px;font-size:10px;opacity:.55}
+    thead th.sortable.sort-active{background:#2A4A73}
+    thead th.sortable.sort-active .sort-arrow{opacity:1;color:#FBBF24}
+
+    /* FILTER PANEL (Violative-style, left-side card) */
+    .panel-layout{display:grid;grid-template-columns:300px 1fr;gap:16px;padding:16px 20px;background:#F8FAFC}
+    @media (max-width: 900px){.panel-layout{grid-template-columns:1fr}}
+    .fpanel{background:#fff;border:1px solid #E2E8F0;border-radius:10px;overflow:hidden;align-self:start}
+    .fpanel-head{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid #E2E8F0;background:#F8FAFC}
+    .fpanel-head-title{font-size:11px;font-weight:800;color:#1E3A5F;letter-spacing:.08em;text-transform:uppercase}
+    .fpanel-head-clear{font-size:12px;color:#EF4444;font-weight:600;cursor:pointer}
+    .fgrp{border-bottom:1px solid #F1F5F9}
+    .fgrp:last-child{border-bottom:none}
+    .fgrp-head{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;cursor:pointer;gap:8px}
+    .fgrp-head:hover{background:#F8FAFC}
+    .fgrp-label{font-size:13px;font-weight:700;color:#1E293B;display:flex;align-items:center;gap:8px}
+    .fgrp-count{background:#DBEAFE;color:#1D4ED8;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px}
+    .fgrp-arrow{font-size:12px;color:#94A3B8;transition:transform .15s}
+    .fgrp.open .fgrp-arrow{transform:rotate(90deg);color:#1E3A5F}
+    .fgrp-body{padding:4px 14px 12px;display:none}
+    .fgrp.open .fgrp-body{display:block}
+    .fopt{display:flex;align-items:center;gap:8px;padding:6px 0;font-size:13px;color:#1E293B;cursor:pointer}
+    .fopt input[type=checkbox]{width:14px;height:14px;accent-color:#3B82F6}
+    .fopt .fopt-count{margin-left:auto;font-size:11px;color:#64748B;font-weight:600}
+    .fopt.selected{font-weight:700;color:#1D4ED8}
+    .fopt-group-label{font-size:11px;font-weight:800;color:#64748B;letter-spacing:.06em;text-transform:uppercase;padding:10px 0 4px;display:flex;align-items:center;gap:6px}
+    .fopt-group-label::after{content:'';flex:1;height:1px;background:#E2E8F0}
+    /* sub-list (hierarchical, Violative-pattern) */
+    .fopt-sub-wrap{background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;padding:8px 10px;margin:4px 0 8px 18px;min-width:0}
+    .fopt-sub-label{font-size:11px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}
+    .fopt-sub{display:flex;align-items:center;gap:7px;padding:4px 0;font-size:12px;color:#334155;cursor:pointer}
+    .fopt-sub input[type=checkbox]{width:13px;height:13px;accent-color:#3B82F6}
+    .fopt-sub .fopt-count{margin-left:auto;font-size:11px;color:#94A3B8;font-weight:600}
+    .fopt-sub.selected{font-weight:700;color:#1D4ED8}
+    /* state multi-select search */
+    .fpanel-search{width:100%;padding:6px 10px 6px 28px;border:1px solid #CBD5E1;border-radius:6px;font-size:12px;font-family:inherit;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E") no-repeat 8px center;margin-bottom:6px;box-sizing:border-box}
+    /* date range inputs — side-by-side (wide contexts) */
+    .fdate-row{display:flex;align-items:center;gap:6px;margin-top:6px;min-width:0}
+    .fdate-input{flex:1;min-width:0;width:100%;padding:6px 8px;border:1px solid #CBD5E1;border-radius:6px;font-size:12px;font-family:'IBM Plex Mono',monospace;background:#fff;color:#1E293B;box-sizing:border-box}
+    .fdate-sep{font-size:11px;color:#94A3B8;font-weight:600;flex-shrink:0}
+    .fdate-sub-label{font-size:10px;font-weight:700;color:#64748B;text-transform:uppercase;letter-spacing:.04em;margin:6px 0 2px}
+    /* stacked date range — for narrow nested contexts (scan status completion dates) */
+    .fdate-stack{display:flex;flex-direction:column;gap:4px;margin-top:2px}
+    .fdate-stack .fdate-field{display:flex;align-items:center;gap:6px;min-width:0}
+    .fdate-stack .fdate-field-label{font-size:9px;font-weight:800;color:#64748B;text-transform:uppercase;letter-spacing:.06em;width:28px;flex-shrink:0}
+    .fdate-stack .fdate-input{flex:1;padding:5px 8px;font-size:11px}
+    /* SEGMENTED LIFECYCLE CONTROL */
+    .lifecycle-row{display:flex;align-items:center;gap:12px;padding:10px 20px;background:#FCFDFE;border-bottom:1px solid #E2E8F0;flex-wrap:wrap}
+    .lifecycle-label{font-size:11px;font-weight:800;color:#64748B;letter-spacing:.06em;text-transform:uppercase}
+    .segmented{display:inline-flex;background:#F1F5F9;border:1px solid #E2E8F0;border-radius:8px;padding:3px;gap:2px}
+    .seg-btn{padding:6px 14px;font-size:12px;font-weight:700;color:#64748B;background:transparent;border:none;border-radius:6px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+    .seg-btn:hover{color:#1E293B}
+    .seg-btn.active{background:#fff;color:#1E3A5F;box-shadow:0 1px 2px rgba(15,23,42,.08)}
+    .seg-btn.active.archived{color:#7C3AED;background:#F5F3FF}
+    .seg-btn .seg-count{font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;background:#E2E8F0;color:#64748B}
+    .seg-btn.active .seg-count{background:#DBEAFE;color:#1D4ED8}
+    .seg-btn.active.archived .seg-count{background:#DDD6FE;color:#6D28D9}
+    /* archived row styling */
+    .btn-bulk.unarchive{color:#6D28D9;border-color:#DDD6FE;background:#F5F3FF}
+    .lic-archived{background:#EDE9FE;color:#5B21B6}
+    /* CONFIRMATION MODAL */
+    .modal-stage{background:rgba(15,23,42,.65);padding:30px;border-radius:10px;display:flex;align-items:center;justify-content:center}
+    .modal{background:#fff;border-radius:12px;width:100%;max-width:480px;box-shadow:0 24px 48px rgba(15,23,42,.35);overflow:hidden}
+    .modal-head{padding:18px 22px 10px;border-bottom:1px solid #F1F5F9}
+    .modal-icon{width:40px;height:40px;border-radius:50%;background:#FEF3C7;color:#D97706;display:inline-flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:10px}
+    .modal-title{font-size:16px;font-weight:700;color:#1E293B;margin-bottom:4px}
+    .modal-subtitle{font-size:13px;color:#64748B;line-height:1.5}
+    .modal-body{padding:16px 22px}
+    .modal-summary{background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;padding:12px 14px;font-size:12px;color:#475569;line-height:1.55}
+    .modal-summary strong{color:#1E293B;font-weight:700}
+    .modal-row{display:flex;align-items:center;gap:10px;padding:4px 0;font-size:12px;color:#334155}
+    .modal-row .modal-dot{color:#3B82F6;font-size:14px}
+    .modal-actions{padding:14px 22px 20px;display:flex;justify-content:flex-end;gap:8px}
+    .modal-btn{padding:8px 16px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;border:1px solid #CBD5E1;background:#fff;color:#475569}
+    .modal-btn.primary{background:#D97706;border-color:#D97706;color:#fff}
+    .modal-btn.primary:hover{background:#B45309}
+    /* filter panel apply button */
+    .fpanel-apply{background:#1E3A5F;color:#fff;border:none;width:100%;padding:12px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;letter-spacing:.02em}
+    .fpanel-apply:hover{background:#2A4A73}
+    .fpanel-note{font-size:11px;color:#64748B;padding:10px 14px;background:#FFFBEB;border-top:1px solid #FDE68A;color:#92400E;line-height:1.45}
+
 @media (max-width: 900px) {
   .primary-actions{padding:10px 16px;gap:8px}
   .search-input{max-width:none}
@@ -185,7 +272,7 @@ tbody td:first-child{text-align:center}
 <div class="page">
   <div class="page-header">
     <h1>WeMonitor UI Rework + Pending Companies</h1>
-    <p>Design proposal: Enhanced pipeline view with combined Industry Type + Type of Company pairing, bulk actions, and underwriting queue tab.</p>
+    <p>Design proposal: Enhanced pipeline view with separate location search, full filter panel (License Status, Date Added, Team Members, State, Industry Type → Type of Company, Scan Status), sortable Date Added column, lifecycle state control (Active / Pending / Archived), contextual bulk actions with confirmation dialogs, and underwriting queue tab.</p>
   </div>
 
   <!-- ═══════════════════════════════════════════════
@@ -206,7 +293,10 @@ tbody td:first-child{text-align:center}
         <span class="pain">No Pending Companies tab (Active / Archived / Invites only)</span>
         <span class="pain">No bulk select or bulk actions</span>
         <span class="pain">No scan status indicators per industry</span>
-<span class="pain">No Team Member filter / My Queue view</span>
+        <span class="pain">No Team Member filter / My Queue view</span>
+        <span class="pain">No separate Location search — one combined search only</span>
+        <span class="pain">No Date Added column or sort</span>
+        <span class="pain">No License Status / State / Scan Status filters</span>
       </div>
       <!-- Simulated old tab bar -->
       <div class="tabs" style="margin:0 -20px;padding:0 20px">
@@ -339,29 +429,44 @@ tbody td:first-child{text-align:center}
       <div class="tab">Invites <span class="tab-count">8</span></div>
     </div>
 
+    <!-- Lifecycle state segmented control -->
+    <div class="lifecycle-row">
+      <span class="lifecycle-label">Lifecycle State</span>
+      <div class="segmented">
+        <button class="seg-btn active">Active <span class="seg-count">1,204</span></button>
+        <button class="seg-btn">Pending <span class="seg-count">47</span></button>
+        <button class="seg-btn">Archived <span class="seg-count">312</span></button>
+      </div>
+      <span style="font-size:11px;color:#64748B">Default excludes archived. Switch to Archived to see only archived rows and the Unarchive bulk action.</span>
+    </div>
+
     <!-- Filter bar -->
     <div class="filter-bar">
       <div class="filter-row1">
         <input class="search-input" type="text" placeholder="Search by Legal Name, DBA, Website, MID..." readonly>
-        <button class="btn-filters">⚙ Filters <span class="filter-count">5</span></button>
+        <input class="search-input search-location" type="text" placeholder="Search by Location (city, state)..." readonly>
+        <button class="btn-filters">⚙ Filters <span class="filter-count">7</span></button>
       </div>
       <div class="filter-pills-row">
         <div class="filter-pill"><span class="label">Industry Pair:</span> Hemp / CBD · Retailer <span class="pill-x">×</span></div>
         <div class="filter-pill"><span class="label">Industry Pair:</span> Guns &amp; Ammo · Retailer <span class="pill-x">×</span></div>
+        <div class="filter-pill"><span class="label">License:</span> Active, Pending <span class="pill-x">×</span></div>
+        <div class="filter-pill"><span class="label">State:</span> TX, CO, CA <span class="pill-x">×</span></div>
         <div class="filter-pill"><span class="label">Team:</span> Rick McDonald <span class="pill-x">×</span></div>
-        <div class="filter-pill"><span class="label">Scan:</span> No Product Scan <span class="pill-x">×</span></div>
+        <div class="filter-pill"><span class="label">Date Added:</span> Mar 1 – Apr 21 <span class="pill-x">×</span></div>
+        <div class="filter-pill"><span class="label">Scan:</span> Not Scanned <span class="pill-x">×</span></div>
         <span class="clear-all">Clear all</span>
       </div>
     </div>
 
-    <!-- Bulk action toolbar -->
+    <!-- Bulk action toolbar — contextual to Active Companies tab -->
     <div class="bulk-bar">
       <span class="bulk-count">3 selected</span>
-      <button class="btn-bulk archive">🗂 Archive Selected</button>
-      <button class="btn-bulk pending">⏳ Send to Pending</button>
-      <button class="btn-bulk active">✅ Send to Active</button>
+      <button class="btn-bulk pending">⏳ Move to Pending</button>
+      <button class="btn-bulk archive">🗂 Archive</button>
       <button class="btn-bulk assign">👤 Assign Team Member</button>
       <button class="btn-bulk scan">🔍 Run Website Scan <span class="future-tag">(future)</span></button>
+      <span style="margin-left:auto;font-size:11px;color:#64748B;font-style:italic">Lifecycle moves open a confirmation dialog</span>
     </div>
 
     <!-- Enhanced table -->
@@ -377,6 +482,7 @@ tbody td:first-child{text-align:center}
             <th>Product Compliance</th>
             <th>Team</th>
             <th>Scans</th>
+            <th class="sortable sort-active">Date Added <span class="sort-arrow">▼</span></th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -386,7 +492,7 @@ tbody td:first-child{text-align:center}
             <td><input type="checkbox" class="cb" checked></td>
             <td>
               <div style="font-weight:700;margin-bottom:4px">3rd Coast Blends</div>
-              <div style="font-size:11px;color:#94A3B8;margin-bottom:4px">44298173</div>
+              <div style="font-size:11px;color:#94A3B8;margin-bottom:4px">44298173 · Austin, TX</div>
               <div class="industry-pills">
                 <span class="pill-pair"><span class="pill pill-hemp pill-industry">Hemp/CBD</span><span class="pill-connector">·</span><span class="pill pill-retailer pill-type">Retailer</span></span>
               </div>
@@ -397,6 +503,7 @@ tbody td:first-child{text-align:center}
             <td><span class="comp comp-high">8 Products <span style="font-size:11px;color:#991B1B">(4 Violative)</span></span></td>
             <td><div class="team"><div class="avatar av-green">M</div><span class="team-more">+3</span></div></td>
             <td><span class="scan-date">Jan 30</span></td>
+            <td><span class="scan-date">04/18/2026</span></td>
             <td><button class="act-btn">⋯</button></td>
           </tr>
           <!-- Row 2 -->
@@ -404,7 +511,7 @@ tbody td:first-child{text-align:center}
             <td><input type="checkbox" class="cb"></td>
             <td>
               <div style="font-weight:700;margin-bottom:4px">Westtown Payment Solutions</div>
-              <div style="font-size:11px;color:#94A3B8;margin-bottom:4px">55210488</div>
+              <div style="font-size:11px;color:#94A3B8;margin-bottom:4px">55210488 · West Town, NY</div>
               <div class="industry-pills">
                 <span class="pill-pair"><span class="pill pill-lending pill-industry">Online Lending</span><span class="pill-connector">·</span><span class="pill pill-retailer pill-type">Retailer</span></span>
               </div>
@@ -415,6 +522,7 @@ tbody td:first-child{text-align:center}
             <td><span class="comp comp-na">N/A</span></td>
             <td><div class="team"><div class="avatar">R</div></div></td>
             <td><span class="scan-date">Mar 15</span></td>
+            <td><span class="scan-date">04/12/2026</span></td>
             <td><button class="act-btn">⋯</button></td>
           </tr>
           <!-- Row 3 -->
@@ -422,7 +530,7 @@ tbody td:first-child{text-align:center}
             <td><input type="checkbox" class="cb"></td>
             <td>
               <div style="font-weight:700;margin-bottom:4px">USAG Merchant</div>
-              <div style="font-size:11px;color:#94A3B8;margin-bottom:4px">77130412</div>
+              <div style="font-size:11px;color:#94A3B8;margin-bottom:4px">77130412 · Phoenix, AZ</div>
               <div class="industry-pills">
                 <span class="pill-pair"><span class="pill pill-firearms pill-industry">Firearms</span><span class="pill-connector">·</span><span class="pill pill-retailer pill-type">Retailer</span></span>
               </div>
@@ -433,6 +541,7 @@ tbody td:first-child{text-align:center}
             <td><span class="comp comp-med">12 Products</span></td>
             <td><span class="unassigned">Unassigned</span></td>
             <td><span class="scan-never">Never</span></td>
+            <td><span class="scan-date">04/02/2026</span></td>
             <td><button class="act-btn">⋯</button></td>
           </tr>
           <!-- Row 4 -->
@@ -440,7 +549,7 @@ tbody td:first-child{text-align:center}
             <td><input type="checkbox" class="cb" checked></td>
             <td>
               <div style="font-weight:700;margin-bottom:4px">Joe's CBD &amp; Guns</div>
-              <div style="font-size:11px;color:#94A3B8;margin-bottom:4px">66329041</div>
+              <div style="font-size:11px;color:#94A3B8;margin-bottom:4px">66329041 · Denver, CO</div>
               <div class="industry-pills">
                 <span class="pill-pair"><span class="pill pill-hemp pill-industry">Hemp/CBD</span><span class="pill-connector">·</span><span class="pill pill-retailer pill-type">Retailer</span></span>
                 <span class="pill-pair"><span class="pill pill-guns pill-industry">Guns &amp; Ammo</span><span class="pill-connector">·</span><span class="pill pill-retailer pill-type">Retailer</span></span>
@@ -452,6 +561,7 @@ tbody td:first-child{text-align:center}
             <td><span class="comp comp-high">15 Products <span style="font-size:11px;color:#991B1B">(9 Violative)</span></span></td>
             <td><div class="team"><div class="avatar av-purple">D</div></div></td>
             <td><span class="scan-date">Feb 28</span></td>
+            <td><span class="scan-date">03/24/2026</span></td>
             <td><button class="act-btn">⋯</button></td>
           </tr>
           <!-- Row 5 -->
@@ -459,7 +569,7 @@ tbody td:first-child{text-align:center}
             <td><input type="checkbox" class="cb" checked></td>
             <td>
               <div style="font-weight:700;margin-bottom:4px">Mood LLC</div>
-              <div style="font-size:11px;color:#94A3B8;margin-bottom:4px">81245019</div>
+              <div style="font-size:11px;color:#94A3B8;margin-bottom:4px">81245019 · Los Angeles, CA</div>
               <div class="industry-pills">
                 <span class="pill-pair"><span class="pill pill-hemp pill-industry">Hemp/CBD</span><span class="pill-connector">·</span><span class="pill pill-retailer pill-type">Retailer</span></span>
               </div>
@@ -470,6 +580,7 @@ tbody td:first-child{text-align:center}
             <td><span class="comp comp-high">20+ Products</span></td>
             <td><div class="team"><div class="avatar av-green">M</div></div></td>
             <td><span class="scan-date">Aug 21</span></td>
+            <td><span class="scan-date">03/05/2026</span></td>
             <td><button class="act-btn">⋯</button></td>
           </tr>
         </tbody>
@@ -529,26 +640,39 @@ tbody td:first-child{text-align:center}
       <div class="tab">Invites <span class="tab-count">8</span></div>
     </div>
 
+    <!-- Lifecycle state segmented control -->
+    <div class="lifecycle-row">
+      <span class="lifecycle-label">Lifecycle State</span>
+      <div class="segmented">
+        <button class="seg-btn">Active <span class="seg-count">1,204</span></button>
+        <button class="seg-btn active">Pending <span class="seg-count">47</span></button>
+        <button class="seg-btn">Archived <span class="seg-count">312</span></button>
+      </div>
+    </div>
+
     <!-- Filter bar -->
     <div class="filter-bar">
       <div class="filter-row1">
         <input class="search-input" type="text" placeholder="Search by Legal Name, DBA, Website, MID..." readonly>
-        <button class="btn-filters">⚙ Filters <span class="filter-count">2</span></button>
+        <input class="search-input search-location" type="text" placeholder="Search by Location (city, state)..." readonly>
+        <button class="btn-filters">⚙ Filters <span class="filter-count">3</span></button>
       </div>
       <div class="filter-pills-row">
         <div class="filter-pill"><span class="label">Industry Pair:</span> Hemp / CBD · Retailer <span class="pill-x">×</span></div>
-        <div class="filter-pill"><span class="label">Scan:</span> No Website Scan <span class="pill-x">×</span></div>
+        <div class="filter-pill"><span class="label">Date Added:</span> Last 14 days <span class="pill-x">×</span></div>
+        <div class="filter-pill"><span class="label">Scan:</span> Not Scanned <span class="pill-x">×</span></div>
         <span class="clear-all">Clear all</span>
       </div>
     </div>
 
-    <!-- Bulk bar for Pending -->
+    <!-- Bulk bar for Pending — contextual to Pending Companies tab -->
     <div class="bulk-bar">
       <span class="bulk-count">2 selected</span>
-      <button class="btn-bulk active">✅ Send to Active</button>
+      <button class="btn-bulk active">✅ Move to Active</button>
       <button class="btn-bulk archive">🗂 Archive</button>
       <button class="btn-bulk assign">👤 Assign Team Member</button>
       <button class="btn-bulk scan">🔍 Run All Scans</button>
+      <span style="margin-left:auto;font-size:11px;color:#64748B;font-style:italic">Lifecycle moves open a confirmation dialog</span>
     </div>
 
     <!-- Pending table -->
@@ -564,6 +688,7 @@ tbody td:first-child{text-align:center}
             <th>Product Compliance</th>
             <th>Team</th>
             <th>Scans</th>
+            <th class="sortable sort-active">Date Added <span class="sort-arrow">▼</span></th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -573,7 +698,7 @@ tbody td:first-child{text-align:center}
             <td><input type="checkbox" class="cb" checked></td>
             <td>
               <div style="font-weight:700;margin-bottom:4px">Green Valley Botanicals</div>
-              <div style="font-size:11px;color:#94A3B8;margin-bottom:4px">44298173</div>
+              <div style="font-size:11px;color:#94A3B8;margin-bottom:4px">44298173 · Boulder, CO</div>
               <div class="industry-pills">
                 <span class="pill-pair"><span class="pill pill-hemp pill-industry">Hemp/CBD</span><span class="pill-connector">·</span><span class="pill pill-retailer pill-type">Retailer</span></span>
               </div>
@@ -584,6 +709,7 @@ tbody td:first-child{text-align:center}
             <td><span class="comp comp-na">Not Scanned</span></td>
             <td><div class="team"><div class="avatar av-green">M</div></div></td>
             <td><span class="scan-never">Never</span></td>
+            <td><span class="scan-date">04/19/2026</span></td>
             <td><button class="act-btn">⋯</button></td>
           </tr>
           <!-- Pending Row 2 -->
@@ -591,7 +717,7 @@ tbody td:first-child{text-align:center}
             <td><input type="checkbox" class="cb" checked></td>
             <td>
               <div style="font-weight:700;margin-bottom:4px">Apex Arms Retailer</div>
-              <div style="font-size:11px;color:#94A3B8;margin-bottom:4px">55210488</div>
+              <div style="font-size:11px;color:#94A3B8;margin-bottom:4px">55210488 · Reno, NV</div>
               <div class="industry-pills">
                 <span class="pill-pair"><span class="pill pill-firearms pill-industry">Firearms</span><span class="pill-connector">·</span><span class="pill pill-retailer pill-type">Retailer</span></span>
               </div>
@@ -602,6 +728,7 @@ tbody td:first-child{text-align:center}
             <td><span class="comp comp-na">Not Scanned</span></td>
             <td><div class="team"><div class="avatar">R</div></div></td>
             <td><span class="scan-never">Never</span></td>
+            <td><span class="scan-date">04/17/2026</span></td>
             <td><button class="act-btn">⋯</button></td>
           </tr>
           <!-- Pending Row 3 -->
@@ -609,7 +736,7 @@ tbody td:first-child{text-align:center}
             <td><input type="checkbox" class="cb"></td>
             <td>
               <div style="font-weight:700;margin-bottom:4px">CloudKratom LLC</div>
-              <div style="font-size:11px;color:#94A3B8;margin-bottom:4px">77130412</div>
+              <div style="font-size:11px;color:#94A3B8;margin-bottom:4px">77130412 · Miami, FL</div>
               <div class="industry-pills">
                 <span class="pill-pair"><span class="pill" style="background:#F0FDF4;color:#166534;border-radius:12px 0 0 12px;border:1px solid #BBF7D0;border-right:none">Kratom</span><span class="pill-connector">·</span><span class="pill pill-retailer pill-type">Retailer</span></span>
               </div>
@@ -620,6 +747,7 @@ tbody td:first-child{text-align:center}
             <td><span class="comp comp-na">Not Scanned</span></td>
             <td><span class="unassigned">Unassigned</span></td>
             <td><span class="scan-never">Never</span></td>
+            <td><span class="scan-date">04/14/2026</span></td>
             <td><button class="act-btn">⋯</button></td>
           </tr>
           <!-- Pending Row 4 -->
@@ -627,7 +755,7 @@ tbody td:first-child{text-align:center}
             <td><input type="checkbox" class="cb"></td>
             <td>
               <div style="font-weight:700;margin-bottom:4px">NuVida Health</div>
-              <div style="font-size:11px;color:#94A3B8;margin-bottom:4px">66329041</div>
+              <div style="font-size:11px;color:#94A3B8;margin-bottom:4px">66329041 · Portland, OR</div>
               <div class="industry-pills">
                 <span class="pill-pair"><span class="pill" style="background:#FDF4FF;color:#6B21A8;border-radius:12px 0 0 12px;border:1px solid #E9D5FF;border-right:none">Func. Mushrooms</span><span class="pill-connector">·</span><span class="pill pill-retailer pill-type">Retailer</span></span>
               </div>
@@ -638,6 +766,7 @@ tbody td:first-child{text-align:center}
             <td><span class="comp comp-na">Not Scanned</span></td>
             <td><div class="team"><div class="avatar av-orange">K</div></div></td>
             <td><span class="scan-never">Never</span></td>
+            <td><span class="scan-date">04/09/2026</span></td>
             <td><button class="act-btn">⋯</button></td>
           </tr>
         </tbody>
@@ -655,11 +784,413 @@ tbody td:first-child{text-align:center}
   </div>
 
   <!-- ═══════════════════════════════════════════════
-       SECTION 4: FILTER IN ACTION
+       SECTION 3b: ARCHIVED VIEW (lifecycle state = Archived)
   ═══════════════════════════════════════════════ -->
   <div class="section">
     <div class="section-head">
-      <span class="badge-after">④ Industry Type Filter in Action</span>
+      <span class="badge-after">③ᴮ Archived View</span>
+      <h2>Archived — Lifecycle State with Unarchive</h2>
+    </div>
+
+    <div class="module-title">
+      WeMonitor — Enhanced Pipeline View
+    </div>
+
+    <!-- Tab bar with Archived active -->
+    <div class="tabs">
+      <div class="tab">Active Companies <span class="tab-count">1,204</span></div>
+      <div class="tab">Pending Companies <span class="tab-count">47</span> <span class="tab-new">NEW</span></div>
+      <div class="tab active">Archived <span class="tab-count">312</span></div>
+      <div class="tab">Invites <span class="tab-count">8</span></div>
+    </div>
+
+    <!-- Lifecycle state segmented control — Archived selected -->
+    <div class="lifecycle-row">
+      <span class="lifecycle-label">Lifecycle State</span>
+      <div class="segmented">
+        <button class="seg-btn">Active <span class="seg-count">1,204</span></button>
+        <button class="seg-btn">Pending <span class="seg-count">47</span></button>
+        <button class="seg-btn active archived">Archived <span class="seg-count">312</span></button>
+      </div>
+      <span style="font-size:11px;color:#6D28D9;font-weight:600">Archived view: Unarchive returns rows to their prior lifecycle state (Active or Pending).</span>
+    </div>
+
+    <!-- Filter bar -->
+    <div class="filter-bar">
+      <div class="filter-row1">
+        <input class="search-input" type="text" placeholder="Search by Legal Name, DBA, Website, MID..." readonly>
+        <input class="search-input search-location" type="text" placeholder="Search by Location (city, state)..." readonly>
+        <button class="btn-filters">⚙ Filters <span class="filter-count">1</span></button>
+      </div>
+      <div class="filter-pills-row">
+        <div class="filter-pill"><span class="label">Date Added:</span> Last 90 days <span class="pill-x">×</span></div>
+        <span class="clear-all">Clear all</span>
+      </div>
+    </div>
+
+    <!-- Bulk bar for Archived — only action is Unarchive -->
+    <div class="bulk-bar" style="background:#F5F3FF;border-bottom-color:#DDD6FE">
+      <span class="bulk-count" style="color:#6D28D9">2 selected</span>
+      <button class="btn-bulk unarchive">↩ Unarchive</button>
+      <span style="margin-left:auto;font-size:11px;color:#6D28D9;font-style:italic">Unarchive restores rows to their prior state (Active or Pending).</span>
+    </div>
+
+    <!-- Archived table -->
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th><input type="checkbox" class="cb"></th>
+            <th>Legal Name</th>
+            <th>DBA</th>
+            <th>Prior State</th>
+            <th>Archived On</th>
+            <th>Archived By</th>
+            <th>Team</th>
+            <th class="sortable sort-active">Date Added <span class="sort-arrow">▼</span></th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="background:#F5F3FF">
+            <td><input type="checkbox" class="cb" checked></td>
+            <td>
+              <div style="font-weight:700;margin-bottom:4px">Mission Botanical Co.</div>
+              <div style="font-size:11px;color:#94A3B8;margin-bottom:4px">88201749 · San Francisco, CA</div>
+              <div class="industry-pills">
+                <span class="pill-pair"><span class="pill pill-hemp pill-industry">Hemp/CBD</span><span class="pill-connector">·</span><span class="pill pill-retailer pill-type">Retailer</span></span>
+              </div>
+            </td>
+            <td style="color:#64748B;font-size:12px">Mission Botanical, MBC</td>
+            <td><span class="lic lic-active">● Active</span></td>
+            <td><span class="scan-date">02/14/2026</span></td>
+            <td style="font-size:12px;color:#475569">Meredith J.</td>
+            <td><div class="team"><div class="avatar av-green">M</div></div></td>
+            <td><span class="scan-date">08/04/2025</span></td>
+            <td><button class="act-btn">⋯</button></td>
+          </tr>
+          <tr style="background:#F5F3FF">
+            <td><input type="checkbox" class="cb" checked></td>
+            <td>
+              <div style="font-weight:700;margin-bottom:4px">Stone Ridge Arms</div>
+              <div style="font-size:11px;color:#94A3B8;margin-bottom:4px">99347162 · Helena, MT</div>
+              <div class="industry-pills">
+                <span class="pill-pair"><span class="pill pill-guns pill-industry">Guns &amp; Ammo</span><span class="pill-connector">·</span><span class="pill pill-retailer pill-type">Retailer</span></span>
+              </div>
+            </td>
+            <td style="color:#64748B;font-size:12px">Stone Ridge, SRA</td>
+            <td><span class="lic lic-pending">● Pending</span></td>
+            <td><span class="scan-date">02/28/2026</span></td>
+            <td style="font-size:12px;color:#475569">Rick M.</td>
+            <td><div class="team"><div class="avatar">R</div></div></td>
+            <td><span class="scan-date">01/22/2026</span></td>
+            <td><button class="act-btn">⋯</button></td>
+          </tr>
+          <tr>
+            <td><input type="checkbox" class="cb"></td>
+            <td>
+              <div style="font-weight:700;margin-bottom:4px">Bayou Hemp Collective</div>
+              <div style="font-size:11px;color:#94A3B8;margin-bottom:4px">10248573 · New Orleans, LA</div>
+              <div class="industry-pills">
+                <span class="pill-pair"><span class="pill pill-hemp pill-industry">Hemp/CBD</span><span class="pill-connector">·</span><span class="pill pill-retailer pill-type">Retailer</span></span>
+              </div>
+            </td>
+            <td style="color:#64748B;font-size:12px">Bayou Hemp, BHC</td>
+            <td><span class="lic lic-active">● Active</span></td>
+            <td><span class="scan-date">03/03/2026</span></td>
+            <td style="font-size:12px;color:#475569">Danielle P.</td>
+            <td><div class="team"><div class="avatar av-purple">D</div></div></td>
+            <td><span class="scan-date">11/12/2025</span></td>
+            <td><button class="act-btn">⋯</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="table-footer">
+      <div class="table-summary">Showing 1 to 3 of 312 archived companies</div>
+      <div class="table-pagination">
+        <div class="rows-per-page">Rows per page <span class="rows-select">25 ▾</span></div>
+        <div class="pager"><span class="page-btn">‹</span><span class="page-btn active">1</span><span class="page-btn">2</span><span class="page-btn ghost">…</span><span class="page-btn">13</span><span class="page-btn">›</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       SECTION 3c: LIFECYCLE CONFIRMATION MODAL
+  ═══════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-head">
+      <span class="badge-after">③ᶜ Lifecycle Confirmation</span>
+      <h2>Multi-row Lifecycle Move — Confirmation Dialog</h2>
+    </div>
+    <div style="padding:14px 20px 0;font-size:13px;color:#475569;line-height:1.5">
+      Any lifecycle bulk action (Move to Pending, Move to Active, Archive, Unarchive) that affects more than one row opens a confirmation dialog summarizing the move before it commits. Prevents accidental state changes across dozens of companies.
+    </div>
+
+    <div class="modal-stage">
+      <div class="modal">
+        <div class="modal-head">
+          <div class="modal-icon">⏳</div>
+          <div class="modal-title">Move 12 companies from Active → Pending?</div>
+          <div class="modal-subtitle">These companies will leave the Active Companies queue and be moved to Pending Companies (underwriting). Scans and team assignments are preserved.</div>
+        </div>
+        <div class="modal-body">
+          <div class="modal-summary">
+            <div class="modal-row"><span class="modal-dot">•</span><strong>From:</strong> Active Companies <span style="color:#94A3B8">(1,204 → 1,192)</span></div>
+            <div class="modal-row"><span class="modal-dot">•</span><strong>To:</strong> Pending Companies <span style="color:#94A3B8">(47 → 59)</span></div>
+            <div class="modal-row"><span class="modal-dot">•</span><strong>Selected:</strong> 12 companies (3rd Coast Blends, Joe's CBD &amp; Guns, Mood LLC, <span style="color:#3B82F6;cursor:pointer">+9 more</span>)</div>
+            <div class="modal-row"><span class="modal-dot">•</span><strong>Action:</strong> Reversible — each row can be moved back from Pending at any time.</div>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button class="modal-btn">Cancel</button>
+          <button class="modal-btn primary">⏳ Move 12 to Pending</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       SECTION 4: FILTER PANEL DETAIL (NEW)
+  ═══════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-head">
+      <span class="badge-after">④ Filter Panel</span>
+      <h2>Full Filter Panel — All Filterable Fields</h2>
+    </div>
+    <div style="padding:14px 20px 0;font-size:13px;color:#475569;line-height:1.5">
+      Clicking <strong>⚙ Filters</strong> opens a left-side panel (same pattern used for product-compliance filtering). Each row is an expandable section; selecting a primary value (e.g. an Industry Type, or <em>Completed</em> under Scan Status) reveals nested sub-filters — identical in shape to the existing <em>Violative → Filter by violation type</em> pattern. All six filters are multi-select; active selections appear as pills above the table (shown on the tabs above).
+    </div>
+
+    <div class="panel-layout">
+      <!-- LEFT: THE FILTER PANEL -->
+      <div class="fpanel">
+        <div class="fpanel-head">
+          <span class="fpanel-head-title">Filter Companies</span>
+          <span class="fpanel-head-clear">Clear all</span>
+        </div>
+
+        <!-- 1. License Status -->
+        <div class="fgrp open">
+          <div class="fgrp-head">
+            <span class="fgrp-label">License Status <span class="fgrp-count">2</span></span>
+            <span class="fgrp-arrow">▸</span>
+          </div>
+          <div class="fgrp-body">
+            <label class="fopt selected"><input type="checkbox" checked> Active <span class="fopt-count">1,041</span></label>
+            <label class="fopt selected"><input type="checkbox" checked> Pending <span class="fopt-count">47</span></label>
+            <label class="fopt"><input type="checkbox"> Failed <span class="fopt-count">62</span></label>
+            <label class="fopt"><input type="checkbox"> Expired <span class="fopt-count">54</span></label>
+          </div>
+        </div>
+
+        <!-- 2. Date Added -->
+        <div class="fgrp open">
+          <div class="fgrp-head">
+            <span class="fgrp-label">Date Added <span class="fgrp-count">Range</span></span>
+            <span class="fgrp-arrow">▸</span>
+          </div>
+          <div class="fgrp-body">
+            <label class="fopt"><input type="radio" name="date-preset"> Last 7 days</label>
+            <label class="fopt"><input type="radio" name="date-preset" checked> Last 30 days</label>
+            <label class="fopt"><input type="radio" name="date-preset"> Last 90 days</label>
+            <label class="fopt"><input type="radio" name="date-preset"> Custom range</label>
+            <div class="fdate-sub-label">Custom</div>
+            <div class="fdate-row">
+              <input class="fdate-input" type="text" value="03/01/2026" readonly>
+              <span class="fdate-sep">→</span>
+              <input class="fdate-input" type="text" value="04/21/2026" readonly>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Team Members -->
+        <div class="fgrp open">
+          <div class="fgrp-head">
+            <span class="fgrp-label">Team Members <span class="fgrp-count">1</span></span>
+            <span class="fgrp-arrow">▸</span>
+          </div>
+          <div class="fgrp-body">
+            <input class="fpanel-search" type="text" placeholder="Search team members..." readonly>
+            <label class="fopt selected"><input type="checkbox" checked> Rick McDonald <span class="fopt-count">23</span></label>
+            <label class="fopt"><input type="checkbox"> Meredith Johnson <span class="fopt-count">41</span></label>
+            <label class="fopt"><input type="checkbox"> Danielle Park <span class="fopt-count">18</span></label>
+            <label class="fopt"><input type="checkbox"> Kenji Ito <span class="fopt-count">12</span></label>
+            <label class="fopt"><input type="checkbox"> Unassigned <span class="fopt-count">86</span></label>
+          </div>
+        </div>
+
+        <!-- 4. State -->
+        <div class="fgrp open">
+          <div class="fgrp-head">
+            <span class="fgrp-label">State <span class="fgrp-count">3</span></span>
+            <span class="fgrp-arrow">▸</span>
+          </div>
+          <div class="fgrp-body">
+            <input class="fpanel-search" type="text" placeholder="Search states..." readonly>
+            <label class="fopt selected"><input type="checkbox" checked> TX — Texas <span class="fopt-count">187</span></label>
+            <label class="fopt selected"><input type="checkbox" checked> CO — Colorado <span class="fopt-count">142</span></label>
+            <label class="fopt selected"><input type="checkbox" checked> CA — California <span class="fopt-count">119</span></label>
+            <label class="fopt"><input type="checkbox"> FL — Florida <span class="fopt-count">98</span></label>
+            <label class="fopt"><input type="checkbox"> NY — New York <span class="fopt-count">76</span></label>
+            <label class="fopt" style="color:#3B82F6;font-weight:600"><input type="checkbox"> + 45 more states…</label>
+          </div>
+        </div>
+
+        <!-- 5. Industry Type → Type of Company (hierarchical, Violative-pattern) -->
+        <div class="fgrp open">
+          <div class="fgrp-head">
+            <span class="fgrp-label">Industry Type <span class="fgrp-count">2</span></span>
+            <span class="fgrp-arrow">▸</span>
+          </div>
+          <div class="fgrp-body">
+            <label class="fopt selected"><input type="checkbox" checked> Hemp / CBD <span class="fopt-count">847</span></label>
+            <div class="fopt-sub-wrap">
+              <div class="fopt-sub-label">Filter by type of company</div>
+              <label class="fopt-sub selected"><input type="checkbox" checked> Retailer <span class="fopt-count">612</span></label>
+              <label class="fopt-sub"><input type="checkbox"> Manufacturer <span class="fopt-count">128</span></label>
+              <label class="fopt-sub"><input type="checkbox"> Distributor <span class="fopt-count">71</span></label>
+              <label class="fopt-sub"><input type="checkbox"> Lab <span class="fopt-count">18</span></label>
+              <label class="fopt-sub"><input type="checkbox"> Brand <span class="fopt-count">18</span></label>
+            </div>
+
+            <label class="fopt selected"><input type="checkbox" checked> Guns &amp; Ammo <span class="fopt-count">184</span></label>
+            <div class="fopt-sub-wrap">
+              <div class="fopt-sub-label">Filter by type of company</div>
+              <label class="fopt-sub selected"><input type="checkbox" checked> Retailer <span class="fopt-count">126</span></label>
+              <label class="fopt-sub"><input type="checkbox"> Manufacturer <span class="fopt-count">31</span></label>
+              <label class="fopt-sub"><input type="checkbox"> Distributor <span class="fopt-count">19</span></label>
+              <label class="fopt-sub"><input type="checkbox"> FFL <span class="fopt-count">8</span></label>
+            </div>
+
+            <label class="fopt"><input type="checkbox"> Cannabis (Adult-Use) <span class="fopt-count">94</span></label>
+            <label class="fopt"><input type="checkbox"> Cannabis (Medical) <span class="fopt-count">57</span></label>
+            <label class="fopt"><input type="checkbox"> Psychedelics <span class="fopt-count">22</span></label>
+            <label class="fopt"><input type="checkbox"> Online Lending <span class="fopt-count">14</span></label>
+            <label class="fopt"><input type="checkbox"> Kratom <span class="fopt-count">9</span></label>
+            <label class="fopt"><input type="checkbox"> Functional Mushrooms <span class="fopt-count">6</span></label>
+          </div>
+        </div>
+
+        <!-- 6. Scan Status -->
+        <div class="fgrp open">
+          <div class="fgrp-head">
+            <span class="fgrp-label">Scan Status <span class="fgrp-count">2</span></span>
+            <span class="fgrp-arrow">▸</span>
+          </div>
+          <div class="fgrp-body">
+            <label class="fopt selected"><input type="checkbox" checked> Not Scanned <span class="fopt-count">412</span></label>
+            <label class="fopt"><input type="checkbox"> Scanning <span class="fopt-count">58</span></label>
+            <label class="fopt selected"><input type="checkbox" checked> Completed <span class="fopt-count">734</span></label>
+            <!-- When Completed is checked, reveal scan-date range sub-inputs -->
+            <div class="fopt-sub-wrap">
+              <div class="fopt-sub-label">Product scan completed</div>
+              <div class="fdate-stack">
+                <div class="fdate-field">
+                  <span class="fdate-field-label">From</span>
+                  <input class="fdate-input" type="text" value="01/01/2026" readonly>
+                </div>
+                <div class="fdate-field">
+                  <span class="fdate-field-label">To</span>
+                  <input class="fdate-input" type="text" value="04/21/2026" readonly>
+                </div>
+              </div>
+              <div class="fopt-sub-label" style="margin-top:10px">Website scan completed</div>
+              <div class="fdate-stack">
+                <div class="fdate-field">
+                  <span class="fdate-field-label">From</span>
+                  <input class="fdate-input" type="text" value="mm/dd/yyyy" readonly style="color:#94A3B8">
+                </div>
+                <div class="fdate-field">
+                  <span class="fdate-field-label">To</span>
+                  <input class="fdate-input" type="text" value="mm/dd/yyyy" readonly style="color:#94A3B8">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="fpanel-note">
+          💡 <strong>Mirrors product-compliance behavior:</strong> selecting a parent row (Industry Type, or Scan Status = Completed) reveals a nested "Filter by…" sub-list — same pattern as <em>Violative → violation type</em>. Retailer can be nested under multiple industries (e.g. Hemp/CBD <em>and</em> Guns &amp; Ammo) as independent selections.
+        </div>
+        <button class="fpanel-apply">Apply Filters (7)</button>
+      </div>
+
+      <!-- RIGHT: annotations listing every filterable field -->
+      <div>
+        <div style="background:#fff;border:1px solid #E2E8F0;border-radius:10px;padding:16px 18px">
+          <div style="font-size:12px;font-weight:800;color:#1E3A5F;letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px">Filterable Fields Summary</div>
+
+          <div style="display:flex;flex-direction:column;gap:10px">
+
+            <div style="display:flex;gap:10px;padding:10px 12px;background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px">
+              <div style="width:22px;height:22px;background:#1E3A5F;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">1</div>
+              <div>
+                <div style="font-size:13px;font-weight:700;color:#1E293B">License Status</div>
+                <div style="font-size:12px;color:#64748B;line-height:1.5">Multi-select: <em>Active · Pending · Failed · Expired</em></div>
+              </div>
+            </div>
+
+            <div style="display:flex;gap:10px;padding:10px 12px;background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px">
+              <div style="width:22px;height:22px;background:#1E3A5F;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">2</div>
+              <div>
+                <div style="font-size:13px;font-weight:700;color:#1E293B">Date Added</div>
+                <div style="font-size:12px;color:#64748B;line-height:1.5">Range picker (presets + custom). Paired with a new <strong>Date Added</strong> column on both Active &amp; Pending tables, sortable asc/desc by clicking the header.</div>
+              </div>
+            </div>
+
+            <div style="display:flex;gap:10px;padding:10px 12px;background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px">
+              <div style="width:22px;height:22px;background:#1E3A5F;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">3</div>
+              <div>
+                <div style="font-size:13px;font-weight:700;color:#1E293B">Team Members</div>
+                <div style="font-size:12px;color:#64748B;line-height:1.5">Multi-select with inline search. Includes an <em>Unassigned</em> option.</div>
+              </div>
+            </div>
+
+            <div style="display:flex;gap:10px;padding:10px 12px;background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px">
+              <div style="width:22px;height:22px;background:#1E3A5F;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">4</div>
+              <div>
+                <div style="font-size:13px;font-weight:700;color:#1E293B">State</div>
+                <div style="font-size:12px;color:#64748B;line-height:1.5">Multi-select with search bar (50 states + DC/territories).</div>
+              </div>
+            </div>
+
+            <div style="display:flex;gap:10px;padding:10px 12px;background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px">
+              <div style="width:22px;height:22px;background:#1E3A5F;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">5</div>
+              <div>
+                <div style="font-size:13px;font-weight:700;color:#1E293B">Industry Type → Type of Company</div>
+                <div style="font-size:12px;color:#64748B;line-height:1.5">Hierarchical multi-select (mirrors the <em>Violative → violation type</em> pattern). Select an industry type as a whole, or drill into specific types of company. Retailer can appear under both Hemp/CBD <em>and</em> Guns &amp; Ammo as independent selections.</div>
+              </div>
+            </div>
+
+            <div style="display:flex;gap:10px;padding:10px 12px;background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px">
+              <div style="width:22px;height:22px;background:#1E3A5F;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">6</div>
+              <div>
+                <div style="font-size:13px;font-weight:700;color:#1E293B">Scan Status</div>
+                <div style="font-size:12px;color:#64748B;line-height:1.5">Multi-select: <em>Not Scanned · Scanning · Completed</em>. When <strong>Completed</strong> is selected, two optional date ranges appear — one for <em>Product scan completed</em> and one for <em>Website scan completed</em>.</div>
+              </div>
+            </div>
+
+            <div style="display:flex;gap:10px;padding:10px 12px;background:#EFF6FF;border:1px solid #BFDBFE;border-radius:8px">
+              <div style="width:22px;height:22px;background:#1D4ED8;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">+</div>
+              <div>
+                <div style="font-size:13px;font-weight:700;color:#1E40AF">Location search (separate)</div>
+                <div style="font-size:12px;color:#1E40AF;line-height:1.5">In addition to the company search (Legal Name / DBA / Website / MID), a dedicated second search input accepts free-text <em>city, state</em> — matches the current WeMonitor UI's location field.</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       SECTION 5: FILTER IN ACTION
+  ═══════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-head">
+      <span class="badge-after">⑤ Industry Type Filter in Action</span>
       <h2>Filtered Views</h2>
     </div>
     <div class="section-body">
@@ -821,7 +1352,12 @@ tbody td:first-child{text-align:center}
           <tr>
             <td style="font-weight:600">Bulk actions</td>
             <td><span class="check-no">❌</span> Row-level only</td>
-            <td><span class="check-yes">✅</span> Archive / Pending / Active / Assign</td>
+            <td><span class="check-yes">✅</span> Contextual per tab: Active → Move to Pending / Archive · Pending → Move to Active / Archive · Archived → Unarchive. Multi-row moves open a confirmation dialog.</td>
+          </tr>
+          <tr>
+            <td style="font-weight:600">Lifecycle state control</td>
+            <td><span class="check-no">❌</span> Not available</td>
+            <td><span class="check-yes">✅</span> Segmented Active / Pending / Archived toggle alongside tabs; Archived view surfaces Unarchive and Prior-State column.</td>
           </tr>
           <tr>
             <td style="font-weight:600">Team Member filter</td>
@@ -831,7 +1367,7 @@ tbody td:first-child{text-align:center}
           <tr>
             <td style="font-weight:600">Scan status filter</td>
             <td><span class="check-no">❌</span> Not available</td>
-            <td><span class="check-yes">✅</span> No scan / Scan Failed / No Product Scan</td>
+            <td><span class="check-yes">✅</span> Not Scanned / Scanning / Completed — with optional product &amp; website completion date ranges</td>
           </tr>
           <tr>
             <td style="font-weight:600">Select rows</td>
@@ -842,6 +1378,26 @@ tbody td:first-child{text-align:center}
             <td style="font-weight:600">Multi-industry companies</td>
             <td><span class="check-no">❌</span> Single flat industry pill only</td>
             <td><span class="check-yes">✅</span> Multiple paired pills under Legal Name, one pair per Industry Type + Type of Company combination</td>
+          </tr>
+          <tr>
+            <td style="font-weight:600">Location search</td>
+            <td><span class="check-no">❌</span> Single combined search only</td>
+            <td><span class="check-yes">✅</span> Dedicated second search input for city/state</td>
+          </tr>
+          <tr>
+            <td style="font-weight:600">License Status filter</td>
+            <td><span class="check-no">❌</span> Not available</td>
+            <td><span class="check-yes">✅</span> Multi-select: Active / Pending / Failed / Expired</td>
+          </tr>
+          <tr>
+            <td style="font-weight:600">Date Added column + filter</td>
+            <td><span class="check-no">❌</span> Not available</td>
+            <td><span class="check-yes">✅</span> New sortable column (Active &amp; Pending) + range filter in panel</td>
+          </tr>
+          <tr>
+            <td style="font-weight:600">State filter</td>
+            <td><span class="check-no">❌</span> Not available</td>
+            <td><span class="check-yes">✅</span> Multi-select with inline state search</td>
           </tr>
         </tbody>
       </table>
