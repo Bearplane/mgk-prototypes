@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>QP-3717 — Add New Product button in Product Assignment</title>
+<title>QP-3717 — Add New Product from Product Assignment</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -14,107 +14,133 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#F1F5F9;color:#1E293B
 .nav .sep{color:#334155}
 .nav .cur{color:#F8FAFC;font-size:12px;font-weight:600}
 .ticket-badge{background:#1E3A5F;color:#fff;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;padding:3px 8px;border-radius:4px;letter-spacing:.02em;margin-left:auto}
+
 .page{max-width:1280px;margin:0 auto;padding:28px 24px 80px}
 .page-header{margin-bottom:24px}
 .page-header h1{font-size:24px;font-weight:700;color:#1E293B;margin-bottom:6px}
-.page-header p{color:#64748B;font-size:14px;max-width:780px}
+.page-header p{color:#64748B;font-size:14px;max-width:860px}
 .meta-row{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
 .meta-pill{background:#fff;border:1px solid #E2E8F0;border-radius:999px;padding:4px 12px;font-size:12px;font-weight:600;color:#475569}
 .meta-pill.strong{background:#EFF6FF;border-color:#BFDBFE;color:#1D4ED8}
+.meta-pill.reuse{background:#EDE9FE;border-color:#DDD6FE;color:#5B21B6}
 .meta-pill.scope{background:#FEF3C7;border-color:#FDE68A;color:#92400E}
-/* SECTION CARDS */
+
 .section{background:#fff;border-radius:12px;border:1px solid #E2E8F0;margin-bottom:28px;overflow:hidden}
 .section-head{display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid #E2E8F0}
 .section-head h2{font-size:16px;font-weight:700;color:#1E293B}
 .badge-before{background:#FEF3C7;color:#92400E;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:.04em;text-transform:uppercase}
 .badge-after{background:#DCFCE7;color:#166534;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:.04em;text-transform:uppercase}
 .badge-reuse{background:#EDE9FE;color:#5B21B6;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:.04em;text-transform:uppercase}
-.section-body{padding:20px}
-.section-sub{font-size:13px;color:#64748B;margin-top:4px}
-/* PRODUCT ASSIGNMENT PANE — styled like wemonitor */
-.tabs{display:flex;gap:2px;border-bottom:1px solid #E2E8F0;padding:0 16px;background:#FCFDFE}
-.tab{padding:11px 14px;font-size:12px;font-weight:700;color:#64748B;border-bottom:2px solid transparent;margin-bottom:-1px;display:flex;align-items:center;gap:6px}
-.tab.active{color:#1E3A5F;border-bottom-color:#1E3A5F}
-.tab-count{background:#E2E8F0;color:#64748B;font-size:10px;font-weight:700;padding:1px 7px;border-radius:10px}
-.tab.active .tab-count{background:#DBEAFE;color:#1D4ED8}
-.toolbar{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid #E2E8F0;background:#F8FAFC;flex-wrap:wrap}
-.search{flex:1;max-width:320px;padding:7px 12px 7px 34px;border:1px solid #CBD5E1;border-radius:8px;font-size:13px;font-family:inherit;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E") no-repeat 10px center}
-.filter-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border:1px solid #CBD5E1;border-radius:999px;background:#fff;font-size:12px;font-weight:700;color:#1E293B}
-.spacer{flex:1}
-/* ACTION BUTTONS */
-.btn{display:inline-flex;align-items:center;gap:7px;padding:8px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;border:1px solid #CBD5E1;background:#fff;color:#1E293B;font-family:inherit;white-space:nowrap}
+.section-sub{font-size:12px;color:#64748B;margin-left:auto}
+
+/* FLOW */
+.flow{display:flex;align-items:center;gap:8px;padding:14px 20px;background:#F8FAFC;border-bottom:1px solid #E2E8F0;flex-wrap:wrap}
+.flow-node{background:#fff;border:1px solid #E2E8F0;border-radius:10px;padding:8px 14px;font-size:12px;color:#334155;font-weight:600}
+.flow-node.accent{background:#1E3A5F;color:#fff;border-color:#1E3A5F}
+.flow-node.reuse{background:#F5F3FF;border-color:#DDD6FE;color:#5B21B6}
+.flow-arrow{color:#94A3B8;font-size:16px;font-weight:700}
+
+/* COA ROW MINI */
+.row-sim{padding:20px;background:#F8FAFC;border-bottom:1px solid #E2E8F0}
+.row-sim table{width:100%;border-collapse:collapse;font-size:12px;background:#fff;border:1px solid #E2E8F0;border-radius:8px;overflow:hidden}
+.row-sim th{background:#FCFDFE;padding:9px 12px;text-align:left;font-size:10px;font-weight:800;color:#64748B;letter-spacing:.08em;text-transform:uppercase;border-bottom:1px solid #E2E8F0}
+.row-sim td{padding:10px 12px;border-bottom:1px solid #F1F5F9;font-size:12px;color:#334155}
+.row-sim tr:last-child td{border-bottom:none}
+.sev{width:14px;height:14px;border-radius:3px;display:inline-block}
+.sev.g{background:#10B981}.sev.r{background:#EF4444}
+.pa-link{color:#3B82F6;font-weight:700;cursor:pointer;border-bottom:1px dashed #93C5FD}
+.pa-link.unassigned{color:#F05252;border-bottom-color:#FCA5A5}
+.pa-highlight{background:#FEF9C3;padding:2px 6px;border-radius:4px;position:relative}
+.pa-highlight::before{content:'CLICK ME';position:absolute;top:-18px;left:50%;transform:translateX(-50%);background:#F05252;color:#fff;font-size:9px;font-weight:800;padding:2px 6px;border-radius:3px;font-family:'IBM Plex Mono',monospace;white-space:nowrap}
+
+/* MODAL STAGE */
+.modal-stage{background:linear-gradient(180deg,#F8FAFC 0%,#E2E8F0 100%);padding:32px 20px;display:flex;justify-content:center;gap:20px;flex-wrap:wrap}
+.modal-mock{background:#fff;border-radius:14px;box-shadow:0 24px 60px rgba(15,23,42,.22);max-width:720px;width:100%;overflow:hidden;border:1px solid #E2E8F0}
+.modal-head{padding:16px 22px;border-bottom:1px solid #F1F5F9;display:flex;align-items:center;justify-content:space-between}
+.modal-title{font-size:15px;font-weight:700;color:#0F172A}
+.modal-sub{font-size:11px;color:#64748B;margin-top:2px}
+.modal-close{width:26px;height:26px;border:1px solid #E2E8F0;border-radius:6px;background:#fff;color:#64748B;display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer}
+
+/* REASSIGN MODAL (current) */
+.reassign-body{display:grid;grid-template-columns:200px 1fr;gap:20px;padding:20px}
+.reassign-img{width:180px;height:180px;border-radius:10px;background:linear-gradient(135deg,#FCE7F3,#FECACA);display:flex;align-items:center;justify-content:center;font-size:56px}
+.reassign-details{display:flex;flex-direction:column;gap:8px}
+.reassign-details .label{font-size:10px;font-weight:800;color:#64748B;text-transform:uppercase;letter-spacing:.08em}
+.reassign-dropdown{display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:#F8FAFC;border:1px solid #CBD5E1;border-radius:8px;font-size:12px;color:#0F172A;font-weight:600;cursor:pointer;margin-bottom:4px}
+.reassign-dropdown .caret{color:#64748B;font-size:11px}
+.reassign-brand{display:inline-flex;align-items:center;gap:6px;font-size:11px;color:#3B82F6;font-weight:700;margin-top:4px}
+.reassign-brand .br-logo{width:18px;height:18px;border-radius:3px;background:#1E3A5F;color:#fff;font-size:9px;font-weight:800;display:inline-flex;align-items:center;justify-content:center}
+.reassign-details h3{font-size:18px;font-weight:700;color:#0F172A;margin-top:6px}
+.reassign-details .sku-price{font-size:11px;color:#64748B;font-family:'IBM Plex Mono',monospace}
+.reassign-details .desc{font-size:11px;color:#475569;line-height:1.55;margin-top:6px}
+.reassign-footer{padding:14px 22px;border-top:1px solid #F1F5F9;display:flex;gap:10px;justify-content:flex-end;background:#FCFDFE}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;border:1px solid #CBD5E1;background:#fff;color:#1E293B;font-family:inherit}
 .btn.primary{background:#1E3A5F;border-color:#1E3A5F;color:#fff}
-.btn.primary:hover{background:#0F2942}
-.btn.danger{color:#B91C1C;border-color:#FECACA;background:#fff}
-.btn.danger:hover{background:#FEF2F2}
-.btn.new{background:#1E3A5F;border-color:#1E3A5F;color:#fff;position:relative}
-.btn.new::after{content:'NEW';background:#10B981;color:#fff;font-size:9px;font-weight:800;padding:1px 5px;border-radius:4px;margin-left:4px;letter-spacing:.04em}
-.btn-plus{font-size:14px;font-weight:800;line-height:1}
+.btn.danger{background:#EF4444;border-color:#EF4444;color:#fff}
+.btn.new{background:#16A34A;border-color:#16A34A;color:#fff;position:relative}
+.btn.new::after{content:'NEW';background:#064E3B;color:#fff;font-size:9px;font-weight:800;padding:1px 5px;border-radius:3px;margin-left:6px;letter-spacing:.04em}
 .btn.ghost{background:#fff;color:#1E3A5F}
-/* TABLE */
-.table-wrap{overflow-x:auto}
-table{width:100%;border-collapse:collapse;font-size:13px}
-thead th{background:#FCFDFE;border-bottom:1px solid #E2E8F0;padding:10px 14px;text-align:left;font-size:10px;font-weight:800;color:#64748B;letter-spacing:.08em;text-transform:uppercase}
-tbody td{padding:12px 14px;border-bottom:1px solid #F1F5F9;vertical-align:middle}
-tbody tr:hover{background:#F8FAFC}
-.chk{width:14px;height:14px;accent-color:#3B82F6;vertical-align:middle}
-.product-name{font-weight:600;color:#0F172A}
-.product-sku{font-family:'IBM Plex Mono',monospace;font-size:11px;color:#64748B;margin-top:2px}
-.assignee{display:inline-flex;align-items:center;gap:6px;font-size:12px}
-.avatar{width:22px;height:22px;border-radius:50%;background:#DBEAFE;color:#1D4ED8;font-size:10px;font-weight:700;display:inline-flex;align-items:center;justify-content:center}
-.pill{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:700}
-.pill.assigned{background:#DCFCE7;color:#166534}
-.pill.pending{background:#FEF3C7;color:#92400E}
-.pill.new-row{background:#DBEAFE;color:#1E40AF}
-.row-actions{display:flex;gap:6px}
-.icon-btn{width:28px;height:28px;border:1px solid #E2E8F0;border-radius:6px;background:#fff;display:inline-flex;align-items:center;justify-content:center;color:#64748B;cursor:pointer}
-/* ANNOTATION / CALLOUT */
-.callout{background:#FFFBEB;border:1px dashed #F59E0B;border-radius:10px;padding:14px 16px;margin:16px 20px 20px;display:flex;gap:14px;align-items:flex-start}
-.callout.reuse{background:#F5F3FF;border-color:#A78BFA;color:#4C1D95}
+
+/* DROPDOWN OPEN STATE */
+.dd-open{position:relative}
+.dd-menu{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:1px solid #CBD5E1;border-radius:8px;box-shadow:0 12px 28px rgba(15,23,42,.15);padding:4px;z-index:10}
+.dd-option{padding:8px 10px;font-size:12px;color:#334155;cursor:pointer;border-radius:6px;display:flex;align-items:center;gap:8px}
+.dd-option:hover{background:#F1F5F9}
+.dd-option.new{background:linear-gradient(90deg,#DCFCE7,#F0FDF4);color:#166534;font-weight:700}
+.dd-option.new::before{content:'＋';font-size:14px;font-weight:800}
+.dd-option.url{background:linear-gradient(90deg,#EDE9FE,#F5F3FF);color:#5B21B6;font-weight:700}
+.dd-option.url::before{content:'🔗';font-size:12px}
+.dd-sep{height:1px;background:#E2E8F0;margin:4px 0}
+.dd-section{font-size:9px;font-weight:800;color:#94A3B8;text-transform:uppercase;letter-spacing:.1em;padding:6px 10px 2px}
+
+/* PRODUCT BUILDER MODAL */
+.pb-modal{max-width:880px}
+.pb-tabs{display:flex;gap:2px;border-bottom:1px solid #E2E8F0;padding:0 16px;background:#FCFDFE}
+.pb-tab{padding:11px 14px;font-size:12px;font-weight:700;color:#64748B;border-bottom:2px solid transparent;margin-bottom:-1px;cursor:pointer}
+.pb-tab.active{color:#1E3A5F;border-bottom-color:#1E3A5F}
+.pb-body{display:grid;grid-template-columns:1fr 320px;gap:20px;padding:20px}
+.pb-form{display:flex;flex-direction:column;gap:14px}
+.field-row{display:flex;flex-direction:column;gap:5px}
+.field-label{font-size:10px;font-weight:800;color:#64748B;text-transform:uppercase;letter-spacing:.06em}
+.field-label .req{color:#EF4444;margin-left:3px}
+.field-input{padding:9px 12px;border:1px solid #CBD5E1;border-radius:8px;font-size:13px;background:#fff;color:#0F172A;font-family:inherit}
+.field-input.disabled{background:#F1F5F9;color:#94A3B8}
+.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field-help{font-size:11px;color:#64748B}
+.image-drop{border:2px dashed #CBD5E1;border-radius:10px;padding:20px;text-align:center;background:#F8FAFC;font-size:12px;color:#64748B}
+.image-drop .ic{font-size:22px;display:block;margin-bottom:4px}
+.pb-preview{background:#F8FAFC;border:1px solid #E2E8F0;border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.pb-preview .ph{font-size:10px;font-weight:800;color:#64748B;text-transform:uppercase;letter-spacing:.06em;display:flex;align-items:center;justify-content:space-between}
+.pb-preview .toggle-row{display:flex;align-items:center;gap:6px}
+.toggle{width:28px;height:16px;border-radius:8px;background:#CBD5E1;position:relative;flex-shrink:0}
+.toggle.on{background:#16A34A}
+.toggle::after{content:'';position:absolute;top:2px;left:2px;width:12px;height:12px;border-radius:50%;background:#fff;transition:left .2s}
+.toggle.on::after{left:14px}
+.pb-preview .img-box{background:#fff;border:1px solid #E2E8F0;border-radius:8px;height:140px;display:flex;align-items:center;justify-content:center;font-size:42px}
+.pb-preview .meta{font-size:11px;color:#475569;line-height:1.5}
+.pb-preview .meta strong{color:#0F172A}
+
+.pb-footer{padding:14px 22px;border-top:1px solid #F1F5F9;display:flex;justify-content:space-between;align-items:center;background:#FCFDFE;gap:12px}
+.reuse-tag{display:inline-flex;align-items:center;gap:6px;background:#EDE9FE;color:#5B21B6;font-size:11px;font-weight:700;padding:4px 10px;border-radius:999px}
+
+/* CALLOUTS */
+.callout{background:#F5F3FF;border:1px dashed #A78BFA;border-radius:10px;padding:14px 16px;margin:16px 20px;display:flex;gap:14px;align-items:flex-start;color:#4C1D95}
 .callout.scope{background:#FEF2F2;border-color:#FCA5A5;color:#7F1D1D}
-.callout .dot{width:24px;height:24px;border-radius:50%;background:#FEF3C7;color:#92400E;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
-.callout.reuse .dot{background:#EDE9FE;color:#5B21B6}
+.callout .dot{width:24px;height:24px;border-radius:50%;background:#EDE9FE;color:#5B21B6;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
 .callout.scope .dot{background:#FEE2E2;color:#991B1B}
 .callout strong{font-weight:700}
 .callout .body{font-size:13px;line-height:1.55}
-/* MODAL PREVIEW */
-.modal-stage{background:linear-gradient(180deg,#F8FAFC 0%,#E2E8F0 100%);padding:30px 20px;display:flex;justify-content:center}
-.modal-mock{background:#fff;border-radius:14px;box-shadow:0 24px 60px rgba(15,23,42,.25);max-width:640px;width:100%;overflow:hidden;border:1px solid #E2E8F0}
-.modal-head{padding:18px 22px;border-bottom:1px solid #F1F5F9;display:flex;align-items:center;justify-content:space-between}
-.modal-head-l{display:flex;align-items:center;gap:10px}
-.modal-title{font-size:16px;font-weight:700;color:#0F172A}
-.modal-sub{font-size:12px;color:#64748B;margin-top:2px}
-.modal-close{width:28px;height:28px;border:1px solid #E2E8F0;border-radius:6px;background:#fff;color:#64748B;display:flex;align-items:center;justify-content:center;font-size:14px}
-.modal-steps{display:flex;gap:4px;padding:14px 22px;background:#F8FAFC;border-bottom:1px solid #F1F5F9}
-.modal-step{flex:1;height:4px;border-radius:2px;background:#E2E8F0}
-.modal-step.active{background:#3B82F6}
-.modal-step.done{background:#10B981}
-.modal-body{padding:22px}
-.field-label{font-size:11px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px;display:block}
-.field-input{width:100%;padding:9px 12px;border:1px solid #CBD5E1;border-radius:8px;font-size:13px;background:#fff;color:#0F172A;font-family:inherit}
-.field-input:focus{outline:1px solid #3B82F6;border-color:#3B82F6}
-.field-row{margin-bottom:14px}
-.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
-.field-help{font-size:11px;color:#64748B;margin-top:4px}
-.modal-footer{padding:14px 22px;border-top:1px solid #F1F5F9;display:flex;justify-content:space-between;align-items:center;background:#FCFDFE}
-.reuse-tag{display:inline-flex;align-items:center;gap:6px;background:#EDE9FE;color:#5B21B6;font-size:11px;font-weight:700;padding:4px 10px;border-radius:999px}
-/* TIE LINE */
-.flow-strip{display:flex;align-items:center;gap:14px;padding:14px 20px;background:#F8FAFC;border-top:1px solid #E2E8F0;border-bottom:1px solid #E2E8F0;margin:0 -20px}
-.flow-node{background:#fff;border:1px solid #E2E8F0;border-radius:10px;padding:10px 14px;font-size:12px;color:#1E293B;font-weight:600;flex:1;text-align:center}
-.flow-node.accent{background:#EFF6FF;border-color:#BFDBFE;color:#1D4ED8}
-.flow-node.reuse{background:#F5F3FF;border-color:#DDD6FE;color:#5B21B6}
-.flow-arrow{color:#94A3B8;font-size:18px;font-weight:700}
-/* SCOPE CARD */
-.scope-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+
+/* SCOPE */
+.scope-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:20px}
 .scope-card{border:1px solid #E2E8F0;border-radius:10px;padding:14px 16px}
 .scope-card h4{font-size:12px;font-weight:800;color:#0F172A;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;display:flex;align-items:center;gap:8px}
 .scope-card.in h4::before{content:'';width:10px;height:10px;border-radius:50%;background:#10B981}
 .scope-card.out h4::before{content:'';width:10px;height:10px;border-radius:50%;background:#94A3B8}
-.scope-card ul{list-style:none;padding:0}
+.scope-card ul{list-style:none;padding:0;margin:0}
 .scope-card li{font-size:12px;color:#475569;padding:4px 0;display:flex;gap:8px}
 .scope-card li::before{content:'•';color:#94A3B8}
 .scope-card.out{background:#F8FAFC}
-.scope-card.out li{color:#64748B}
 </style>
 </head>
 <body>
@@ -122,312 +148,273 @@ tbody tr:hover{background:#F8FAFC}
 <div class="nav">
   <a href="../index.html">Qredible Prototypes</a>
   <span class="sep">/</span>
-  <a href="../index.html?filter=wemonitor">WeMonitor</a>
+  <a href="../index.html?filter=mycoa">MyCOA</a>
   <span class="sep">/</span>
-  <span class="cur">Add New Product button</span>
+  <span class="cur">Add New Product from Product Assignment</span>
   <span class="ticket-badge">QP-3717</span>
 </div>
 
 <div class="page">
   <div class="page-header">
-    <h1>Add New Product button — Product Assignment</h1>
-    <p>Product Assignment in WeMonitor today only exposes <strong>Unassign</strong>. QP-3717 adds a second primary action, <strong>Add New Product</strong>, that opens the <em>existing</em> Product Builder modal — the same one launched from Products &amp; Services and Product Compliance tabs. No new modal, no new form. URL-ingestion is scoped out to QP-3730.</p>
+    <h1>Add New Product — Product Assignment column</h1>
+    <p>On the MyCOA <strong>COAs tab</strong>, the <strong>Product Assignment</strong> column shows either a product name or <span style="color:#F05252;font-weight:700">Unassigned</span>. Clicking it today opens a modal with <strong>Reassign</strong> / <strong>Unassign</strong> buttons and a dropdown of existing products. There is no way to create a new product for a COA without leaving this flow. QP-3717 adds an <strong>Add New Product</strong> option that opens the existing Product Builder modal and auto-assigns the new product to this COA. QP-3730 (Import from URL) shares the same entry point.</p>
     <div class="meta-row">
-      <span class="meta-pill strong">WeMonitor · Product Assignment</span>
-      <span class="meta-pill">Reuses existing Product Builder modal</span>
-      <span class="meta-pill scope">URL ingestion → QP-3730 (out of scope here)</span>
+      <span class="meta-pill strong">MyCOA · COAs tab · Product Assignment</span>
+      <span class="meta-pill reuse">Reuses Product Builder modal</span>
+      <span class="meta-pill scope">QP-3730 Import-from-URL = sibling option</span>
     </div>
   </div>
 
-  <!-- BEFORE -->
-  <div class="section">
+  <!-- FLOW -->
+  <section class="section">
     <div class="section-head">
-      <span class="badge-before">Before</span>
-      <h2>Today — Unassign is the only primary action</h2>
+      <h2>End-to-end flow</h2>
+      <span class="section-sub">COA row → assignment modal → Product Builder → back to row</span>
     </div>
-
-    <div class="tabs">
-      <div class="tab">Products &amp; Services <span class="tab-count">142</span></div>
-      <div class="tab">Product Compliance <span class="tab-count">142</span></div>
-      <div class="tab active">Product Assignment <span class="tab-count">38</span></div>
-      <div class="tab">COAs <span class="tab-count">96</span></div>
+    <div class="flow">
+      <div class="flow-node">Click Product Assignment cell</div><span class="flow-arrow">→</span>
+      <div class="flow-node">Reassign/Unassign modal opens</div><span class="flow-arrow">→</span>
+      <div class="flow-node accent">Pick "Add New Product" in dropdown</div><span class="flow-arrow">→</span>
+      <div class="flow-node reuse">Product Builder modal (existing)</div><span class="flow-arrow">→</span>
+      <div class="flow-node">Product created &amp; auto-assigned to COA</div>
     </div>
+  </section>
 
-    <div class="toolbar">
-      <input class="search" placeholder="Search products…"/>
-      <button class="filter-btn">⏷ Filters</button>
-      <button class="filter-btn">Status: All</button>
-      <button class="filter-btn">Assignee: All</button>
-      <div class="spacer"></div>
-      <button class="btn danger">Unassign</button>
+  <!-- STEP 1 — CURRENT STATE -->
+  <section class="section">
+    <div class="section-head">
+      <h2>Step 1 — Click the Product Assignment cell on a COA row</h2>
+      <span class="badge-before">Current behaviour</span>
     </div>
-
-    <div class="table-wrap">
+    <div class="row-sim">
       <table>
         <thead>
-          <tr>
-            <th style="width:36px"><input type="checkbox" class="chk"/></th>
-            <th>Product</th>
-            <th>Assigned To</th>
-            <th>Status</th>
-            <th>Last Updated</th>
-            <th style="width:80px"></th>
-          </tr>
+          <tr><th>Severity</th><th>SKU</th><th>Batch</th><th>Product Assignment</th><th>COA URL</th><th>Expiration</th><th>Lab</th><th>Status</th></tr>
         </thead>
         <tbody>
           <tr>
-            <td><input type="checkbox" class="chk"/></td>
-            <td>
-              <div class="product-name">Sleep Gummies — Berry 10ct</div>
-              <div class="product-sku">SKU: BRB-SG-010</div>
-            </td>
-            <td><span class="assignee"><span class="avatar">AL</span>Alex Lin</span></td>
-            <td><span class="pill assigned">Assigned</span></td>
-            <td>Apr 18, 2026</td>
-            <td><button class="icon-btn">⋯</button></td>
+            <td><span class="sev r"></span></td>
+            <td style="font-family:'IBM Plex Mono',monospace;font-size:11px">SEP1823A-POT</td>
+            <td style="font-family:'IBM Plex Mono',monospace;font-size:11px">N/A</td>
+            <td><span class="pa-highlight"><span class="pa-link unassigned">Unassigned</span></span></td>
+            <td><a href="#" style="color:#3B82F6">https://members.qredi…</a></td>
+            <td>09/18/25</td>
+            <td>Badger Labs</td>
+            <td><span style="background:#DCFCE7;color:#166534;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px">COA Validated</span></td>
           </tr>
           <tr>
-            <td><input type="checkbox" class="chk"/></td>
-            <td>
-              <div class="product-name">Daily Tincture — Full Spectrum 1000mg</div>
-              <div class="product-sku">SKU: BRB-DT-1000</div>
-            </td>
-            <td><span class="assignee"><span class="avatar">MK</span>Morgan K.</span></td>
-            <td><span class="pill assigned">Assigned</span></td>
-            <td>Apr 17, 2026</td>
-            <td><button class="icon-btn">⋯</button></td>
-          </tr>
-          <tr>
-            <td><input type="checkbox" class="chk"/></td>
-            <td>
-              <div class="product-name">Topical Salve — Peppermint 2oz</div>
-              <div class="product-sku">SKU: BRB-TS-002</div>
-            </td>
-            <td><span class="assignee"><span class="avatar">JR</span>Jordan R.</span></td>
-            <td><span class="pill pending">Pending</span></td>
-            <td>Apr 16, 2026</td>
-            <td><button class="icon-btn">⋯</button></td>
+            <td><span class="sev g"></span></td>
+            <td style="font-family:'IBM Plex Mono',monospace;font-size:11px">164817-EDI-2</td>
+            <td style="font-family:'IBM Plex Mono',monospace;font-size:11px">N/A</td>
+            <td><span class="pa-link">THC Gummies - Watermelon 15-Count</span></td>
+            <td><a href="#" style="color:#3B82F6">https://members.qredi…</a></td>
+            <td>12/18/24</td>
+            <td>Columbia Labs</td>
+            <td><span style="background:#DCFCE7;color:#166534;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px">COA Validated</span></td>
           </tr>
         </tbody>
       </table>
     </div>
+  </section>
 
-    <div class="callout">
-      <div class="dot">!</div>
-      <div class="body">
-        <strong>Gap:</strong> no way to add a net-new product directly from Product Assignment. Team currently jumps to the Products &amp; Services tab, opens Product Builder there, then navigates back — breaks the assignment flow and creates friction when onboarding a merchant's backlog.
-      </div>
-    </div>
-  </div>
-
-  <!-- AFTER -->
-  <div class="section">
+  <!-- STEP 2 — REASSIGN MODAL WITH NEW DROPDOWN OPTIONS -->
+  <section class="section">
     <div class="section-head">
-      <span class="badge-after">After · QP-3717</span>
-      <h2>Add New Product appears alongside Unassign</h2>
-    </div>
-
-    <div class="tabs">
-      <div class="tab">Products &amp; Services <span class="tab-count">142</span></div>
-      <div class="tab">Product Compliance <span class="tab-count">142</span></div>
-      <div class="tab active">Product Assignment <span class="tab-count">39</span></div>
-      <div class="tab">COAs <span class="tab-count">96</span></div>
-    </div>
-
-    <div class="toolbar">
-      <input class="search" placeholder="Search products…"/>
-      <button class="filter-btn">⏷ Filters</button>
-      <button class="filter-btn">Status: All</button>
-      <button class="filter-btn">Assignee: All</button>
-      <div class="spacer"></div>
-      <button class="btn danger">Unassign</button>
-      <button class="btn new" id="add-new-btn"><span class="btn-plus">+</span> Add New Product</button>
-    </div>
-
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th style="width:36px"><input type="checkbox" class="chk"/></th>
-            <th>Product</th>
-            <th>Assigned To</th>
-            <th>Status</th>
-            <th>Last Updated</th>
-            <th style="width:80px"></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr style="background:#EFF6FF">
-            <td><input type="checkbox" class="chk"/></td>
-            <td>
-              <div class="product-name">Focus Capsules — Daytime 30ct <span class="pill new-row" style="margin-left:6px">Just added</span></div>
-              <div class="product-sku">SKU: BRB-FC-030</div>
-            </td>
-            <td><span class="assignee" style="color:#94A3B8">— Unassigned</span></td>
-            <td><span class="pill pending">Draft</span></td>
-            <td>Just now</td>
-            <td><button class="icon-btn">⋯</button></td>
-          </tr>
-          <tr>
-            <td><input type="checkbox" class="chk"/></td>
-            <td>
-              <div class="product-name">Sleep Gummies — Berry 10ct</div>
-              <div class="product-sku">SKU: BRB-SG-010</div>
-            </td>
-            <td><span class="assignee"><span class="avatar">AL</span>Alex Lin</span></td>
-            <td><span class="pill assigned">Assigned</span></td>
-            <td>Apr 18, 2026</td>
-            <td><button class="icon-btn">⋯</button></td>
-          </tr>
-          <tr>
-            <td><input type="checkbox" class="chk"/></td>
-            <td>
-              <div class="product-name">Daily Tincture — Full Spectrum 1000mg</div>
-              <div class="product-sku">SKU: BRB-DT-1000</div>
-            </td>
-            <td><span class="assignee"><span class="avatar">MK</span>Morgan K.</span></td>
-            <td><span class="pill assigned">Assigned</span></td>
-            <td>Apr 17, 2026</td>
-            <td><button class="icon-btn">⋯</button></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="callout reuse">
-      <div class="dot">↻</div>
-      <div class="body">
-        <strong>Reuse, don't rebuild.</strong> Clicking <em>Add New Product</em> launches the exact same Product Builder modal invoked today from <strong>Products &amp; Services</strong> and <strong>Product Compliance</strong>. Same fields, same validation, same save path — a single source of truth. Only the entry point changes.
-      </div>
-    </div>
-  </div>
-
-  <!-- MODAL PREVIEW -->
-  <div class="section">
-    <div class="section-head">
-      <span class="badge-reuse">Shared modal</span>
-      <h2>Existing Product Builder (reused as-is)</h2>
+      <h2>Step 2 — Product Assignment modal with new dropdown options</h2>
+      <span class="badge-after">QP-3717 change</span>
+      <span class="section-sub" style="margin-left:12px">Existing modal + two new entries at top of dropdown</span>
     </div>
 
     <div class="modal-stage">
       <div class="modal-mock">
         <div class="modal-head">
-          <div class="modal-head-l">
-            <div>
-              <div class="modal-title">Add Product</div>
-              <div class="modal-sub">Already reachable from Products &amp; Services and Product Compliance</div>
-            </div>
+          <div>
+            <div class="modal-title">Product Assignment</div>
+            <div class="modal-sub">Reassign, unassign, or create a new product for this COA</div>
           </div>
-          <div style="display:flex;align-items:center;gap:8px">
-            <span class="reuse-tag">↻ Shared modal</span>
-            <button class="modal-close">×</button>
+          <button class="modal-close">✕</button>
+        </div>
+
+        <div class="reassign-body">
+          <div class="reassign-img">🍬</div>
+          <div class="reassign-details">
+            <span class="label">Product Assignment</span>
+            <div class="dd-open">
+              <div class="reassign-dropdown">THC Gummies - Watermelon 15-Count<span class="caret">▾</span></div>
+              <div class="dd-menu">
+                <div class="dd-section">Quick actions</div>
+                <div class="dd-option new">Add New Product… <span style="margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:9px;color:#166534">NEW</span></div>
+                <div class="dd-option url">Import Product from URL… <span style="margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:9px;color:#5B21B6">QP-3730</span></div>
+                <div class="dd-sep"></div>
+                <div class="dd-section">Existing products</div>
+                <div class="dd-option">🍬 THC Gummies - Watermelon 15-Count</div>
+                <div class="dd-option">🧃 Delta-9 Juice - Mango 6-pack</div>
+                <div class="dd-option">🍫 Hemp Chocolate Bar - Dark 70%</div>
+                <div class="dd-option">🌿 Full-Spectrum Tincture 1000mg</div>
+              </div>
+            </div>
+            <div class="reassign-brand"><span class="br-logo">3C</span>3rd Coast Blends LLC</div>
+            <h3>THC Gummies - Watermelon 15-Count</h3>
+            <div class="sku-price">SKU: 164817-EDI-2 · <strong style="color:#0F172A">$44.00</strong>/unit</div>
+            <div class="desc">Release the taste of summer year-round with our Watermelon THC gummies! Each gummy contains 10 mg of hemp-derived THC which provides another great way to get you to your coast. Made with the same great gummy taste you know with Third Coast…</div>
           </div>
         </div>
 
-        <div class="modal-steps">
-          <div class="modal-step active"></div>
-          <div class="modal-step"></div>
-          <div class="modal-step"></div>
+        <div class="reassign-footer">
+          <button class="btn ghost">Reassign</button>
+          <button class="btn danger">Unassign</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <span class="dot">i</span>
+      <div class="body">
+        <strong>Two new entries</strong> at the top of the existing product-search dropdown — clearly separated from the existing list. Selecting <strong>Add New Product</strong> closes this modal and opens the Product Builder (Step 3). Selecting <strong>Import Product from URL</strong> routes to QP-3730's URL-ingestion flow (scoped separately). The existing Reassign/Unassign behaviour is untouched.
+      </div>
+    </div>
+    <div class="callout scope">
+      <span class="dot">?</span>
+      <div class="body">
+        <strong>Alternative placement under consideration:</strong> instead of nesting these as dropdown items, surface a secondary "Add New Product" button in the modal footer (next to Reassign/Unassign) and a separate "Import from URL" action on the COAs tab toolbar. Happy to ship either — tag me if the dropdown-style is wrong.
+      </div>
+    </div>
+  </section>
+
+  <!-- STEP 3 — PRODUCT BUILDER -->
+  <section class="section">
+    <div class="section-head">
+      <h2>Step 3 — Product Builder modal (reused)</h2>
+      <span class="badge-reuse">Reuses existing modal</span>
+      <span class="section-sub" style="margin-left:12px">Same component as Products &amp; Services · Edit your product info</span>
+    </div>
+
+    <div class="modal-stage">
+      <div class="modal-mock pb-modal">
+        <div class="modal-head">
+          <div>
+            <div class="modal-title">Product Builder</div>
+            <div class="modal-sub">Edit your product info</div>
+          </div>
+          <button class="modal-close">✕</button>
         </div>
 
-        <div class="modal-body">
-          <div class="field-row">
-            <label class="field-label">Product Name</label>
-            <input class="field-input" value="Focus Capsules — Daytime 30ct"/>
+        <div class="pb-tabs">
+          <div class="pb-tab active">Basic</div>
+          <div class="pb-tab">Details</div>
+          <div class="pb-tab">Attributes</div>
+          <div class="pb-tab">Composition</div>
+          <div class="pb-tab">Packaging</div>
+        </div>
+
+        <div class="pb-body">
+          <div class="pb-form">
+            <div class="image-drop"><span class="ic">🖼</span>Upload product image (PhotoUrl)</div>
+
+            <div class="field-row">
+              <label class="field-label">Title<span class="req">*</span></label>
+              <input class="field-input" placeholder="e.g. THC Gummies - Watermelon 15-Count"/>
+            </div>
+            <div class="field-row">
+              <label class="field-label">Description<span class="req">*</span></label>
+              <input class="field-input" placeholder="Product description"/>
+            </div>
+            <div class="field-grid">
+              <div class="field-row">
+                <label class="field-label">Category<span class="req">*</span></label>
+                <input class="field-input" placeholder="Edibles · Gummies"/>
+              </div>
+              <div class="field-row">
+                <label class="field-label">SKU(s)</label>
+                <input class="field-input" placeholder="Comma-separated"/>
+              </div>
+            </div>
+            <div class="field-grid">
+              <div class="field-row">
+                <label class="field-label">Retail Price</label>
+                <input class="field-input" placeholder="$0.00"/>
+              </div>
+              <div class="field-row">
+                <label class="field-label">Bulk Price + Unit</label>
+                <input class="field-input" placeholder="$0.00 · kg / lbs"/>
+              </div>
+            </div>
+            <div class="field-row">
+              <label class="field-label">URL<span class="req">*</span></label>
+              <input class="field-input" placeholder="https://…"/>
+              <div class="field-help">Public product page URL (required + validated).</div>
+            </div>
+            <div class="field-row">
+              <label class="field-label">Is Cannabis</label>
+              <div class="toggle-row" style="margin-top:4px"><span class="toggle on"></span><span style="font-size:12px;color:#334155;font-weight:600">Yes</span></div>
+            </div>
+            <div class="field-row">
+              <label class="field-label">Locations (address array)</label>
+              <input class="field-input" placeholder="Add location(s)"/>
+            </div>
           </div>
-          <div class="field-grid">
-            <div>
-              <label class="field-label">SKU</label>
-              <input class="field-input" value="BRB-FC-030"/>
+
+          <div class="pb-preview">
+            <div class="ph">Preview<span class="toggle-row"><span class="toggle on"></span>Publish</span></div>
+            <div class="img-box">🍬</div>
+            <div class="meta">
+              <strong>New Product</strong><br/>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:10px">SKU: —</span><br/>
+              <span style="color:#94A3B8">$0.00 / unit</span>
             </div>
-            <div>
-              <label class="field-label">Category</label>
-              <input class="field-input" value="Capsules / Softgels"/>
+            <div style="font-size:11px;color:#64748B;padding-top:8px;border-top:1px dashed #E2E8F0">
+              Live preview mirrors the final Products &amp; Services card. Publish toggle gates the product's visibility.
             </div>
-          </div>
-          <div class="field-grid">
-            <div>
-              <label class="field-label">Product Type</label>
-              <input class="field-input" value="Finished Good"/>
-            </div>
-            <div>
-              <label class="field-label">Net Weight</label>
-              <input class="field-input" value="30 ct"/>
-            </div>
-          </div>
-          <div class="field-row">
-            <label class="field-label">Description</label>
-            <input class="field-input" value="Daytime focus blend — no melatonin"/>
-            <div class="field-help">All other steps (Ingredients, Claims, Compliance, Assignment) reuse existing Product Builder screens.</div>
           </div>
         </div>
 
-        <div class="modal-footer">
-          <span style="font-size:12px;color:#64748B">Step 1 of 3 · Basics</span>
+        <div class="pb-footer">
+          <span class="reuse-tag">♻ Existing component — <code style="font-family:'IBM Plex Mono',monospace;font-size:10px">components/modals/ProductBuilderModal.tsx</code></span>
           <div style="display:flex;gap:8px">
             <button class="btn">Cancel</button>
-            <button class="btn primary">Continue →</button>
+            <button class="btn primary">Create &amp; Assign to COA →</button>
           </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- FLOW -->
-  <div class="section">
-    <div class="section-head">
-      <h2>Where this button fits</h2>
-      <span class="section-sub" style="margin-left:auto;font-size:12px">Three entry points, one modal</span>
-    </div>
-    <div class="section-body">
-      <div class="flow-strip" style="margin:0;border:none;background:transparent">
-        <div class="flow-node">Products &amp; Services tab<br/><span style="font-size:10px;color:#64748B;font-weight:500">Today</span></div>
-        <div class="flow-arrow">→</div>
-        <div class="flow-node accent">Product Assignment tab<br/><span style="font-size:10px;color:#1D4ED8;font-weight:700">NEW entry point (QP-3717)</span></div>
-        <div class="flow-arrow">→</div>
-        <div class="flow-node">Product Compliance tab<br/><span style="font-size:10px;color:#64748B;font-weight:500">Today</span></div>
-        <div class="flow-arrow">↘</div>
-        <div class="flow-node reuse">Existing Product Builder modal<br/><span style="font-size:10px;color:#5B21B6;font-weight:700">Reused, unchanged</span></div>
+    <div class="callout">
+      <span class="dot">♻</span>
+      <div class="body">
+        <strong>No new modal.</strong> This is the existing Product Builder from <code style="background:#fff;padding:1px 5px;border-radius:3px;font-family:'IBM Plex Mono',monospace;font-size:11px">ProductBuilderModal.tsx</code> (tabs: Basic · Details · Attributes · Composition · Packaging). QP-3717 only changes the entry point and one submit-behaviour: when opened from a COA row, the <strong>primary CTA auto-assigns the new product to that COA</strong>.
       </div>
     </div>
-  </div>
+  </section>
 
   <!-- SCOPE -->
-  <div class="section">
+  <section class="section">
     <div class="section-head">
       <h2>Scope</h2>
+      <span class="section-sub">What's in / out of this ticket</span>
     </div>
-    <div class="section-body">
-      <div class="scope-grid">
-        <div class="scope-card in">
-          <h4>In scope · QP-3717</h4>
-          <ul>
-            <li>Add "+ Add New Product" button to Product Assignment toolbar (right side, primary style)</li>
-            <li>Click opens the existing Product Builder modal — same instance used elsewhere</li>
-            <li>Newly-created product lands in the current tab with <em>Just added</em> badge and Unassigned state</li>
-            <li>Unassign action remains; both actions sit side-by-side</li>
-          </ul>
-        </div>
-        <div class="scope-card out">
-          <h4>Out of scope</h4>
-          <ul>
-            <li>URL ingestion / "Add from product URL" flow → <strong>QP-3730</strong></li>
-            <li>Any new fields or steps inside Product Builder</li>
-            <li>Bulk add / CSV import (already tracked under import-workflow)</li>
-            <li>Auto-assignment after create (product lands Unassigned; use existing assign flow)</li>
-          </ul>
-        </div>
+    <div class="scope-grid">
+      <div class="scope-card in">
+        <h4>In scope (QP-3717)</h4>
+        <ul>
+          <li>Add "Add New Product" option to the Product Assignment modal</li>
+          <li>Route that option to the existing Product Builder modal</li>
+          <li>On Product Builder submit, auto-assign the new product to the originating COA</li>
+          <li>Render "Import Product from URL" as a sibling option (stub — routes to QP-3730)</li>
+        </ul>
       </div>
-
-      <div class="callout scope" style="margin:18px 0 0">
-        <div class="dot">↗</div>
-        <div class="body">
-          <strong>URL ingestion (QP-3730):</strong> a separate ticket adds a secondary entry — "Add from URL" — that scrapes a product page and pre-fills Product Builder. That surface belongs in QP-3730 and should not be built inside QP-3717.
-        </div>
+      <div class="scope-card out">
+        <h4>Out of scope</h4>
+        <ul>
+          <li>Product Builder itself — reused verbatim, no field changes</li>
+          <li>URL-ingestion logic — QP-3730</li>
+          <li>Reassign / Unassign behaviour — unchanged</li>
+          <li>Unified Publish toggle — QP-3718</li>
+        </ul>
       </div>
     </div>
-  </div>
+  </section>
 
 </div>
+
 </body>
 </html>
