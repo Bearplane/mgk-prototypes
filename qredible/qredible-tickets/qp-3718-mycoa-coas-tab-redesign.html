@@ -135,6 +135,25 @@ tbody tr:hover{background:#F8FAFC}
 .tog-line{display:flex;align-items:center;gap:10px;font-size:12px;color:#334155}
 .tog-line .lbl{font-weight:700;color:#0F172A;min-width:90px}
 .tog-line .sub{color:#64748B;font-size:11px}
+
+/* CSS TOGGLE (input-based) */
+.toggle{position:relative;display:inline-block;width:36px;height:20px;flex-shrink:0;vertical-align:middle}
+.toggle input{opacity:0;width:0;height:0;position:absolute}
+.toggle-slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#CBD5E1;border-radius:20px;transition:.2s}
+.toggle-slider::before{position:absolute;content:'';height:14px;width:14px;left:3px;bottom:3px;background:#fff;border-radius:50%;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:.2s}
+.toggle input:checked+.toggle-slider{background:#16A34A}
+.toggle input:checked+.toggle-slider::before{transform:translateX(16px)}
+
+/* TABLE SETTINGS POPOVER */
+.settings-wrap{position:relative}
+.settings-popover{position:absolute;right:0;top:calc(100% + 8px);background:#fff;border:1px solid #E2E8F0;border-radius:10px;box-shadow:0 8px 30px rgba(15,23,42,.15);width:216px;z-index:200;overflow:hidden}
+.settings-popover-head{padding:10px 14px;border-bottom:1px solid #F1F5F9;font-size:11px;font-weight:800;color:#64748B;text-transform:uppercase;letter-spacing:.08em}
+.settings-popover-list{padding:6px 0}
+.settings-col-row{display:flex;align-items:center;gap:10px;padding:5px 14px;font-size:12px;color:#334155;cursor:pointer;user-select:none}
+.settings-col-row:hover{background:#F8FAFC}
+.settings-col-row.hidden-col{color:#94A3B8}
+.settings-col-row input[type=checkbox]{width:14px;height:14px;accent-color:#3B82F6;flex-shrink:0;cursor:pointer}
+.settings-divider{height:1px;background:#F1F5F9;margin:4px 0}
 </style>
 </head>
 <body>
@@ -208,7 +227,7 @@ tbody tr:hover{background:#F8FAFC}
   </section>
 
   <!-- FULL COAs TAB MOCK -->
-  <section class="section">
+  <section class="section" style="overflow:visible">
     <div class="section-head">
       <h2>COAs tab — production layout with unified Publish</h2>
       <span class="badge-after">QP-3718 applied</span>
@@ -243,21 +262,43 @@ tbody tr:hover{background:#F8FAFC}
       </div>
     </div>
 
-    <div class="filter-bar">
+    <div class="filter-bar" style="position:relative;overflow:visible">
       <input class="search" placeholder="Search"/>
       <input class="date-input" type="text" value="04/22/25" style="width:100px"/>
       <input class="date-input" type="text" value="04/22/26" style="width:100px"/>
       <select class="dropdown"><option>365 Days</option></select>
       <span class="filter-label">Filter by:</span>
-      <select class="dropdown"><option>Severity</option></select>
       <select class="dropdown"><option>Product Assignment</option></select>
-      <select class="dropdown"><option>Lab</option></select>
       <select class="dropdown"><option>Status</option></select>
       <span class="spacer"></span>
       <button class="btn disabled">Delete</button>
       <button class="btn">Export List</button>
       <button class="btn primary">Upload</button>
-      <button class="btn icon" title="Table Settings">⚙</button>
+      <div class="settings-wrap">
+        <button class="btn" style="background:#EFF6FF;border-color:#BFDBFE;color:#1D4ED8">⚙ Table Settings</button>
+        <div class="settings-popover">
+          <div class="settings-popover-head">Visible Columns</div>
+          <div class="settings-popover-list">
+            <label class="settings-col-row"><input type="checkbox" checked> SKU</label>
+            <label class="settings-col-row"><input type="checkbox" checked> Batch</label>
+            <label class="settings-col-row"><input type="checkbox" checked> Product Assignment</label>
+            <label class="settings-col-row"><input type="checkbox" checked> COA URL</label>
+            <label class="settings-col-row"><input type="checkbox" checked> Date Received</label>
+            <label class="settings-col-row"><input type="checkbox" checked> Expiration</label>
+            <label class="settings-col-row"><input type="checkbox" checked> QR Code</label>
+            <label class="settings-col-row"><input type="checkbox" checked> Status</label>
+            <label class="settings-col-row"><input type="checkbox" checked> Publish</label>
+            <label class="settings-col-row"><input type="checkbox" checked> Action</label>
+            <div class="settings-divider"></div>
+            <label class="settings-col-row hidden-col"><input type="checkbox"> Severity</label>
+            <label class="settings-col-row hidden-col"><input type="checkbox"> Date Modified</label>
+            <label class="settings-col-row hidden-col"><input type="checkbox"> Metric Source ID</label>
+            <label class="settings-col-row hidden-col"><input type="checkbox"> Sample ID</label>
+            <label class="settings-col-row hidden-col"><input type="checkbox"> Lot</label>
+            <label class="settings-col-row hidden-col"><input type="checkbox"> Lab</label>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="table-wrap">
@@ -265,18 +306,12 @@ tbody tr:hover{background:#F8FAFC}
         <thead>
           <tr>
             <th><input class="chk" type="checkbox"/></th>
-            <th>Severity</th>
             <th>SKU</th>
             <th>Batch</th>
             <th>Product Assignment</th>
             <th>COA URL</th>
             <th>Date Received</th>
             <th>Expiration</th>
-            <th>Date Modified</th>
-            <th>Metric Source ID</th>
-            <th>Sample ID</th>
-            <th>Lot</th>
-            <th>Lab</th>
             <th>QR Code</th>
             <th>Status</th>
             <th class="pub-col">Publish</th>
@@ -286,97 +321,67 @@ tbody tr:hover{background:#F8FAFC}
         <tbody>
           <tr>
             <td><input class="chk" type="checkbox"/></td>
-            <td><span class="sev-cell r"></span></td>
             <td>N/A</td>
             <td class="mono">SEP1823A-POT</td>
             <td><span class="pa-link">Unassigned</span></td>
             <td><a href="#" style="color:#3B82F6">https://members.qredi…</a></td>
             <td>09/28/25</td>
             <td>09/18/25</td>
-            <td>04/10/26</td>
-            <td class="mono">53035539</td>
-            <td class="mono">SEP1823A-POT</td>
-            <td class="mono">N/A</td>
-            <td>Badger Labs</td>
             <td><span class="qr"></span></td>
             <td><span class="status-pill">COA Validated</span></td>
-            <td><span class="row-toggle on" title="Publishes to MyCOA + Q-Report"></span></td>
+            <td><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
             <td class="action-row"><button class="icon-btn">⋯</button><button class="icon-btn">⬇</button><button class="icon-btn">🗑</button></td>
           </tr>
           <tr>
             <td><input class="chk" type="checkbox"/></td>
-            <td><span class="sev-cell g"></span></td>
             <td>N/A</td>
             <td class="mono">B09Wm50117-Fv6</td>
             <td><span class="pa-link">Unassigned</span></td>
             <td><a href="#" style="color:#3B82F6">https://members.qredi…</a></td>
             <td>01/28/25</td>
             <td>02/03/27</td>
-            <td>01/40/26</td>
-            <td class="mono">QSP 1221</td>
-            <td class="mono">2501386305</td>
-            <td class="mono">B09Wm50117-Fv6</td>
-            <td>SC Labs</td>
             <td><span class="qr"></span></td>
             <td><span class="status-pill">COA Validated</span></td>
-            <td><span class="row-toggle" title="Publishes to MyCOA + Q-Report"></span></td>
+            <td><label class="toggle"><input type="checkbox"><span class="toggle-slider"></span></label></td>
             <td class="action-row"><button class="icon-btn">⋯</button><button class="icon-btn">⬇</button><button class="icon-btn">🗑</button></td>
           </tr>
           <tr>
             <td><input class="chk" type="checkbox"/></td>
-            <td><span class="sev-cell r"></span></td>
             <td>MISSING_DATA</td>
             <td class="mono">2310135</td>
             <td><span class="pa-link">Unassigned</span></td>
             <td><a href="#" style="color:#3B82F6">https://members.qredi…</a></td>
             <td>08/31/23</td>
             <td>08/17/25</td>
-            <td>12/16/25</td>
-            <td class="mono">J AOAC 2015 V98-6 (mod)b</td>
-            <td class="mono">23-009657-0001</td>
-            <td class="mono">2310135</td>
-            <td>Columbia Laboratories</td>
             <td><span class="qr"></span></td>
             <td><span class="status-pill">COA Validated</span></td>
-            <td><span class="row-toggle on"></span></td>
+            <td><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
             <td class="action-row"><button class="icon-btn">⋯</button><button class="icon-btn">⬇</button><button class="icon-btn">🗑</button></td>
           </tr>
           <tr>
             <td><input class="chk" type="checkbox"/></td>
-            <td><span class="sev-cell r"></span></td>
             <td>164817-EDI-2</td>
             <td class="mono">N/A</td>
             <td><span class="pa-link assigned">THC Gummies - Watermelon 15-Count</span></td>
             <td><a href="#" style="color:#3B82F6">https://members.qredi…</a></td>
             <td>12/16/22</td>
             <td>12/18/24</td>
-            <td>08/20/25</td>
-            <td class="mono">—</td>
-            <td class="mono">12-16-2022-28226</td>
-            <td class="mono">N/A</td>
-            <td>New Bloom Labs</td>
             <td><span class="qr"></span></td>
             <td><span class="status-pill">COA Validated</span></td>
-            <td><span class="row-toggle on"></span></td>
+            <td><label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
             <td class="action-row"><button class="icon-btn">⋯</button><button class="icon-btn">⬇</button><button class="icon-btn">🗑</button></td>
           </tr>
           <tr>
             <td><input class="chk" type="checkbox"/></td>
-            <td><span class="sev-cell r"></span></td>
             <td>MISSING_DATA</td>
             <td class="mono">N/A</td>
             <td><span class="pa-link">Unassigned</span></td>
             <td><a href="#" style="color:#3B82F6">https://members.qredi…</a></td>
             <td>05/31/23</td>
             <td>05/30/25</td>
-            <td>08/20/25</td>
-            <td class="mono">HS-GC/MLCON-P-8000</td>
-            <td class="mono">05-31-2023-34098</td>
-            <td class="mono">N/A</td>
-            <td>N/A</td>
             <td><span class="qr"></span></td>
             <td><span class="status-pill">COA Validated</span></td>
-            <td><span class="row-toggle"></span></td>
+            <td><label class="toggle"><input type="checkbox"><span class="toggle-slider"></span></label></td>
             <td class="action-row"><button class="icon-btn">⋯</button><button class="icon-btn">⬇</button><button class="icon-btn">🗑</button></td>
           </tr>
         </tbody>
@@ -386,34 +391,6 @@ tbody tr:hover{background:#F8FAFC}
     <div class="callout">
       <span class="dot">✓</span>
       <div class="body"><strong>Unified Publish</strong> — the single toggle in the <em>Publish</em> column flips both MyCOA and Q-Report visibility together. Tooltip reads "Publishes to MyCOA + Q-Report". No other columns, filters, or summary cards are changed by this ticket.</div>
-    </div>
-  </section>
-
-  <!-- DIFF NOTES -->
-  <section class="section">
-    <div class="section-head">
-      <h2>What this mockup does NOT add</h2>
-      <span class="section-sub">Removed from previous draft — never in the real tab</span>
-    </div>
-    <div class="diff-grid">
-      <div class="diff-card remove">
-        <h4>Removed from prior mockup</h4>
-        <ul>
-          <li><strong>Analytes column</strong> — does not exist on the COAs tab. Removed.</li>
-          <li><strong>Collection Date column</strong> — does not exist. Removed.</li>
-          <li><strong>Disposition column</strong> — not displayed on the COAs tab. (The TypeDisposition enum exists elsewhere for MP / marketplace contexts, but is not a visible column here.) Removed.</li>
-          <li><strong>Two separate Publish toggles</strong> — collapsed into one.</li>
-        </ul>
-      </div>
-      <div class="diff-card keep">
-        <h4>Real column order (matches screenshot)</h4>
-        <ul>
-          <li>Checkbox · Severity · SKU · Batch · Product Assignment · COA URL</li>
-          <li>Date Received · Expiration · Date Modified</li>
-          <li>Metric Source ID · Sample ID · Lot · Lab</li>
-          <li>QR Code · Status · <strong>Publish (unified)</strong> · Action</li>
-        </ul>
-      </div>
     </div>
   </section>
 
