@@ -216,6 +216,7 @@ tr.selected{background:#F7F5FF}
       <li><strong>MyCOA invite toggle</strong> (on the Invite dialog): ON → recipient is routed into the MyCOA setup wizard after joining, before the paywall. OFF → standard post-join flow, no wizard. One boolean, stamped on the invite token at send time.</li>
       <li><strong>Activity Dates</strong> is a 3-line stack: <code>Sent: MM/DD/YYYY</code> · <code>Joined: MM/DD/YYYY</code> · <code>Last Active: MM/DD/YYYY</code>. Missing values render as <code>—</code>.</li>
       <li><strong>Email template modal</strong> is a single modal with Subject, Body, CTA, and standard merge tags (<code>{{sender_name}}</code>, <code>{{recipient_first_name}}</code>, <code>{{company_name}}</code>). No per-feature token — the template is MyCOA-agnostic for v1.</li>
+      <li><strong>Bulk invite</strong> has two entry points: (a) the "Bulk Invite" toolbar button on the Invites tab (CSV/XLSX upload or multi-row entry), and (b) multi-select + bulk action bar on the Invites table itself (Resend / Revoke / Send). The same <strong>MyCOA invite</strong> toggle concept applies at batch level — one boolean stamps the wizard flag on every generated token in the batch. Sibling bulk pattern on Active Companies is being tracked under <a href="https://qredible.atlassian.net/browse/QP-3738" target="_blank"><code>QP-3738</code></a>.</li>
     </ul>
   </div>
 
@@ -252,6 +253,7 @@ tr.selected{background:#F7F5FF}
         <span class="spacer"></span>
         <button class="btn btn-secondary">⇪ Export</button>
         <button class="btn btn-secondary">⚙ Configure Invite Template</button>
+        <button class="btn btn-secondary">⇪ Bulk Invite</button>
         <button class="btn btn-primary">✉ Invite</button>
       </div>
 
@@ -387,6 +389,274 @@ tr.selected{background:#F7F5FF}
           <button class="page-btn">›</button>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       INVITES TAB — multi-select + bulk action bar state
+  ═══════════════════════════════════════ -->
+  <div class="section-block">
+    <div class="section-label">QP-3731 · Invites tab · bulk selection state</div>
+    <div class="section-title">Multi-select rows → bulk action bar (Resend / Revoke / Send)</div>
+
+    <div class="app-shell">
+      <div class="app-topbar">
+        <h3>We Monitor</h3>
+        <span class="crumb">· Invites</span>
+      </div>
+
+      <div class="tabs">
+        <div class="tab">Active Companies <span class="tab-count">1,204</span></div>
+        <div class="tab">Pending Companies <span class="tab-count">47</span></div>
+        <div class="tab">Archived <span class="tab-count">312</span></div>
+        <div class="tab active">Invites <span class="tab-count">8</span></div>
+      </div>
+
+      <div class="bulk-bar on">
+        <span class="bulk-count">3 invites selected</span>
+        <button class="btn btn-primary">↻ Resend Invites</button>
+        <button class="btn btn-primary">✉ Send Invites</button>
+        <button class="btn btn-secondary" style="color:#C53030;border-color:#FEB2B2">⊘ Revoke Invites</button>
+        <span class="spacer" style="flex:1"></span>
+        <button class="btn btn-ghost" style="color:#4A5568">Clear selection</button>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:32px"><input type="checkbox" class="cb" checked></th>
+              <th>Legal Name</th>
+              <th>Email Invite Status</th>
+              <th>Company Status</th>
+              <th>Activity Dates</th>
+              <th>Team Members</th>
+              <th style="width:90px;text-align:right">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+
+            <tr class="selected">
+              <td><input type="checkbox" class="cb" checked></td>
+              <td>
+                <div class="row-name">3rd Coast Blends LLC</div>
+                <div class="row-sub"><span class="pill pill-hemp">Hemp/CBD</span><span class="email-cell">miles@3rdcoastblends.com</span></div>
+              </td>
+              <td><span class="pill pill-sent">● Sent</span></td>
+              <td><span class="pill pill-company-pending">Pending</span></td>
+              <td>
+                <div class="act-dates">
+                  <div class="al"><span class="k">Sent</span><span class="v">04/18/2026</span></div>
+                  <div class="al empty"><span class="k">Joined</span><span class="v">—</span></div>
+                  <div class="al empty"><span class="k">Last Active</span><span class="v">—</span></div>
+                </div>
+              </td>
+              <td><span class="tm-more">—</span></td>
+              <td><div class="row-actions"><button class="icon-btn" title="Resend">↻</button><button class="icon-btn" title="More">⋯</button></div></td>
+            </tr>
+
+            <tr>
+              <td><input type="checkbox" class="cb"></td>
+              <td>
+                <div class="row-name">Black Bear Hemp Dispensary</div>
+                <div class="row-sub"><span class="pill pill-hemp">Hemp/CBD</span><span class="email-cell">tasha@blackbearhemp.com</span></div>
+              </td>
+              <td><span class="pill pill-joined">● Joined</span></td>
+              <td><span class="pill pill-active">Active</span></td>
+              <td>
+                <div class="act-dates">
+                  <div class="al"><span class="k">Sent</span><span class="v">04/04/2026</span></div>
+                  <div class="al"><span class="k">Joined</span><span class="v">04/07/2026</span></div>
+                  <div class="al"><span class="k">Last Active</span><span class="v">04/22/2026</span></div>
+                </div>
+              </td>
+              <td><div class="tm-stack"><span class="tm-av">TR</span><span class="tm-av">JP</span><span class="tm-av">DK</span><span class="tm-more">+2</span></div></td>
+              <td><div class="row-actions"><button class="icon-btn" title="Open">↗</button><button class="icon-btn" title="More">⋯</button></div></td>
+            </tr>
+
+            <tr class="selected">
+              <td><input type="checkbox" class="cb" checked></td>
+              <td>
+                <div class="row-name">Rocky Seeds LLC</div>
+                <div class="row-sub"><span class="pill pill-hemp">Hemp/CBD</span><span class="email-cell">priya@rockyseeds.com</span></div>
+              </td>
+              <td><span class="pill pill-sent">● Sent</span></td>
+              <td><span class="pill pill-company-pending">Pending</span></td>
+              <td>
+                <div class="act-dates">
+                  <div class="al"><span class="k">Sent</span><span class="v">04/20/2026</span></div>
+                  <div class="al empty"><span class="k">Joined</span><span class="v">—</span></div>
+                  <div class="al empty"><span class="k">Last Active</span><span class="v">—</span></div>
+                </div>
+              </td>
+              <td><span class="tm-more">—</span></td>
+              <td><div class="row-actions"><button class="icon-btn" title="Resend">↻</button><button class="icon-btn" title="More">⋯</button></div></td>
+            </tr>
+
+            <tr class="selected">
+              <td><input type="checkbox" class="cb" checked></td>
+              <td>
+                <div class="row-name">Willow Creek Extracts</div>
+                <div class="row-sub"><span class="pill pill-hemp">Hemp/CBD</span><span class="email-cell">ops@willowcreek.co</span></div>
+              </td>
+              <td><span class="pill pill-expired">● Expired</span></td>
+              <td><span class="pill pill-company-pending">Pending</span></td>
+              <td>
+                <div class="act-dates">
+                  <div class="al"><span class="k">Sent</span><span class="v">04/01/2026</span></div>
+                  <div class="al empty"><span class="k">Joined</span><span class="v">—</span></div>
+                  <div class="al empty"><span class="k">Last Active</span><span class="v">—</span></div>
+                </div>
+              </td>
+              <td><span class="tm-more">—</span></td>
+              <td><div class="row-actions"><button class="icon-btn" title="Resend">↻</button><button class="icon-btn" title="More">⋯</button></div></td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="callout" style="margin-top:14px">
+      <strong>Action visibility rules:</strong>
+      <ul style="margin:6px 0 0 20px">
+        <li><strong>Resend Invites</strong> — enabled when every selected row has status <code>Sent</code> or <code>Expired</code>. Regenerates the token and re-emails using the current template.</li>
+        <li><strong>Send Invites</strong> — enabled when every selected row is in a pre-send / draft state (none in the example above; shown for completeness).</li>
+        <li><strong>Revoke Invites</strong> — enabled when every selected row has status <code>Sent</code> or <code>Expired</code>. Invalidates the token; accepted invites are never revoked from this surface.</li>
+        <li>If selection is mixed (e.g. includes a <code>Joined</code> row), the incompatible bulk actions disable with a tooltip explaining why.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       BULK INVITE DIALOG — CSV upload + inline rows, batch MyCOA toggle
+  ═══════════════════════════════════════ -->
+  <div class="section-block">
+    <div class="section-label">QP-3731 · Bulk Invite dialog</div>
+    <div class="section-title">Bulk Invite — CSV/XLSX upload or multi-row entry, single batch-level MyCOA toggle</div>
+
+    <div class="modal-scrim">
+      <div class="modal-wrap" style="max-width:720px">
+        <div class="modal-header">
+          <div>
+            <h2>Bulk invite merchants</h2>
+            <p>Send invitations to many companies at once. Each recipient receives a separate email with a unique 14-day token.</p>
+          </div>
+          <button class="modal-close">✕</button>
+        </div>
+
+        <div class="modal-tabs">
+          <div class="modal-tab active">Upload CSV / XLSX</div>
+          <div class="modal-tab">Enter rows manually</div>
+        </div>
+
+        <div class="modal-body">
+
+          <!-- CSV upload zone -->
+          <div class="field-group">
+            <label>Upload a list</label>
+            <div style="border:2px dashed #CBD5E1;border-radius:8px;padding:22px;text-align:center;background:#FAFAFA">
+              <div style="font-size:28px;margin-bottom:6px">⇪</div>
+              <div style="font-size:13px;font-weight:700;color:#1A202E;margin-bottom:4px">Drop a CSV or XLSX here, or <a href="#" style="color:#1A202E;text-decoration:underline">browse</a></div>
+              <div style="font-size:11px;color:#718096">Required columns: <code>legal_name</code>, <code>primary_contact_email</code>. Optional: <code>first_name</code>. <a href="#" style="color:#1A202E;text-decoration:underline">Download template</a></div>
+            </div>
+            <div class="helper">Max 500 rows per batch. Duplicate emails against existing invites are flagged for review before send.</div>
+          </div>
+
+          <!-- Parsed preview -->
+          <div class="field-group">
+            <label>Parsed rows <span style="font-size:11px;color:#718096;font-weight:500;margin-left:6px">3rd_coast_blends_list.csv · 28 rows</span></label>
+            <div style="border:1px solid #E2E8F0;border-radius:6px;overflow:hidden">
+              <table style="font-size:12px;min-width:0">
+                <thead>
+                  <tr>
+                    <th style="padding:8px 10px">Legal Name</th>
+                    <th style="padding:8px 10px">Primary contact email</th>
+                    <th style="padding:8px 10px;width:90px">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td style="padding:8px 10px">Willow Creek Extracts</td><td style="padding:8px 10px" class="email-cell">ops@willowcreek.co</td><td style="padding:8px 10px"><span class="pill pill-none">Ready</span></td></tr>
+                  <tr><td style="padding:8px 10px">Ridgeway Botanicals</td><td style="padding:8px 10px" class="email-cell">hello@ridgewaybot.com</td><td style="padding:8px 10px"><span class="pill pill-none">Ready</span></td></tr>
+                  <tr><td style="padding:8px 10px">Black Bear Hemp Dispensary</td><td style="padding:8px 10px" class="email-cell">tasha@blackbearhemp.com</td><td style="padding:8px 10px"><span class="pill pill-pending">Duplicate</span></td></tr>
+                  <tr><td style="padding:8px 10px;color:#A0AEC0;font-style:italic" colspan="3">+ 25 more rows…</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Batch MyCOA toggle -->
+          <div class="field-group">
+            <div class="blurb-card">
+              <div class="blurb-row">
+                <div>
+                  <div class="br-label">MyCOA invite (applies to all recipients in this batch)</div>
+                  <div class="br-hint">When <strong>ON</strong>, every invitee in this batch lands in the <strong>MyCOA setup wizard</strong> after joining, before the paywall. When <strong>OFF</strong>, all recipients go to the standard post-join flow. One boolean stamped on every generated token in the batch.</div>
+                </div>
+                <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Template note + summary -->
+          <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:#F7FAFC;border:1px solid #E2E8F0;border-radius:6px;font-size:12px;color:#4A5568">
+            <span style="font-size:14px">📧</span>
+            <span>Uses the current <strong>invite email template</strong>. <a href="#" style="color:#1A202E;text-decoration:underline">Preview</a> · <a href="#" style="color:#1A202E;text-decoration:underline">Edit template</a></span>
+          </div>
+
+        </div>
+
+        <div class="modal-footer">
+          <span class="footer-note">Sending <strong>27 invitations</strong> (1 duplicate skipped). Each recipient receives a separate email with a unique 14-day token.</span>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-secondary">Cancel</button>
+            <button class="btn btn-primary">Send 27 invites</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Manual entry variant preview -->
+    <div style="margin-top:18px">
+      <div class="section-title" style="font-size:13px;margin-bottom:10px">Alternative: "Enter rows manually" tab of the same dialog</div>
+      <div style="background:#fff;border:1px solid #E2E8F0;border-radius:8px;padding:16px">
+        <table style="font-size:12px;min-width:0">
+          <thead>
+            <tr>
+              <th style="padding:8px 10px">#</th>
+              <th style="padding:8px 10px">Legal Name</th>
+              <th style="padding:8px 10px">Primary contact email</th>
+              <th style="padding:8px 10px;width:40px"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="padding:6px 10px;color:#A0AEC0">1</td><td style="padding:6px 10px"><input class="form-input" value="Willow Creek Extracts" style="padding:6px 10px"></td><td style="padding:6px 10px"><input class="form-input" value="ops@willowcreek.co" style="padding:6px 10px"></td><td style="padding:6px 10px"><button class="icon-btn" title="Remove">✕</button></td></tr>
+            <tr><td style="padding:6px 10px;color:#A0AEC0">2</td><td style="padding:6px 10px"><input class="form-input" value="Ridgeway Botanicals" style="padding:6px 10px"></td><td style="padding:6px 10px"><input class="form-input" value="hello@ridgewaybot.com" style="padding:6px 10px"></td><td style="padding:6px 10px"><button class="icon-btn" title="Remove">✕</button></td></tr>
+            <tr><td style="padding:6px 10px;color:#A0AEC0">3</td><td style="padding:6px 10px"><input class="form-input" placeholder="Company name" style="padding:6px 10px"></td><td style="padding:6px 10px"><input class="form-input" placeholder="contact@example.com" style="padding:6px 10px"></td><td style="padding:6px 10px"><button class="icon-btn" title="Remove">✕</button></td></tr>
+          </tbody>
+        </table>
+        <button class="btn btn-secondary" style="margin-top:10px">+ Add row</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       BULK ENTRY POINTS — flow
+  ═══════════════════════════════════════ -->
+  <div class="section-block">
+    <div class="section-label">QP-3731 · Bulk invite entry points</div>
+    <div class="section-title">Two entry points land in the same Bulk Invite dialog</div>
+
+    <div class="flow" style="grid-template-columns:1fr 16px 1fr 16px 1fr">
+      <div class="flow-step"><span class="fs-ico">⇪</span><div class="fs-title">"Bulk Invite" button</div><div class="fs-sub">Invites tab toolbar</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step highlight"><span class="fs-ico">✉</span><div class="fs-title">Bulk Invite dialog</div><div class="fs-sub">Upload CSV or enter rows</div></div>
+      <div class="flow-arrow">←</div>
+      <div class="flow-step"><span class="fs-ico">☑</span><div class="fs-title">Active Companies<br>bulk action bar</div><div class="fs-sub">"Invite selected" · see <a href="https://qredible.atlassian.net/browse/QP-3738" target="_blank">QP-3738</a></div></div>
+    </div>
+
+    <div class="callout" style="margin-top:14px">
+      <strong>Batch-level MyCOA toggle is a single boolean.</strong> Whichever entry point launches the dialog, the toggle applies to every recipient in the batch — one value is stamped on every generated invite token at send time. Paywall plan filtering (for recipients who join with MyCOA = ON) is driven by the Focus Features mapping in Q-Config, tracked under <a href="https://qredible.atlassian.net/browse/QP-3732" target="_blank"><code>QP-3732</code></a>.
     </div>
   </div>
 
