@@ -233,6 +233,7 @@ tr.selected{background:#F7F5FF}
       <li><strong>Activity Dates</strong> is a 3-line stack: <code>Sent: MM/DD/YYYY</code> · <code>Joined: MM/DD/YYYY</code> · <code>Last Active: MM/DD/YYYY</code>. Missing values render as <code>—</code>.</li>
       <li><strong>Email template modal</strong> is a single modal with Subject, Body, CTA, and standard merge tags (<code>{{sender_name}}</code>, <code>{{recipient_first_name}}</code>, <code>{{company_name}}</code>). No per-feature token — the template is MyCOA-agnostic for v1.</li>
       <li><strong>Single "Send Invite" entry point — no separate Bulk Invite modal.</strong> The toolbar always shows one <code>Send Invite</code> button. When no rows are selected it opens the single-merchant modal ("Invite merchant"). When N rows are selected in the table, the button label adapts to <code>Send Invite (N)</code> and opens the batch modal listing those selected rows — no CSV upload, no manual-entry tab. One code path, two modes. The same <strong>MyCOA invite</strong> toggle concept applies at batch level.</li>
+      <li><strong>Invite scoping:</strong> Free-form Legal Name + Email entry is intentionally excluded. The single-invite and bulk-invite paths are both scoped to existing WeMonitor companies in this iteration. Free-form invites for brand-new companies are deferred. To invite a company not yet in WeMonitor, add it first.</li>
     </ul>
   </div>
 
@@ -563,57 +564,119 @@ tr.selected{background:#F7F5FF}
 
     <div class="comparison-grid">
 
-      <!-- LEFT COLUMN: single invite -->
+      <!-- LEFT COLUMN: single invite — two states stacked -->
       <div class="cmp-col">
         <div class="cmp-header">
           <div class="cmp-mode">Single invite</div>
           <div class="cmp-trigger-label">Trigger: "Send Invite" toolbar button — no rows selected<br>OR: row ⋯ menu → "Invite"</div>
           <div><span class="cmp-btn-demo">✉ Send Invite</span></div>
         </div>
-        <div class="cmp-scrim">
-          <div class="modal-wrap" style="max-width:100%">
-            <div class="modal-header">
-              <div>
-                <h2>Invite merchant</h2>
-                <p>Send a sign-up invitation. The recipient receives an email with a one-time link that expires in 14 days.</p>
-              </div>
-              <button class="modal-close">✕</button>
-            </div>
+        <div class="cmp-scrim" style="display:flex;flex-direction:column;gap:16px">
 
-            <div class="modal-body">
-              <div class="field-group">
-                <label>Legal name</label>
-                <input class="form-input" value="Willow Creek Extracts">
-              </div>
-
-              <div class="field-group">
-                <label>Primary contact email</label>
-                <input class="form-input" value="ops@willowcreek.co">
-                <div class="helper">The invitation link is scoped to this address.</div>
-              </div>
-
-              <div class="field-group">
-                <div class="blurb-card">
-                  <div class="blurb-row">
-                    <div>
-                      <div class="br-label">MyCOA invite</div>
-                      <div class="br-hint">When <strong>ON</strong>, the recipient lands in the <strong>MyCOA setup wizard</strong> after joining, before the paywall. When <strong>OFF</strong>, they go to the standard post-join flow.</div>
-                    </div>
-                    <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
-                  </div>
+          <!-- State A: before company is selected -->
+          <div>
+            <div class="section-label" style="margin-bottom:8px;font-size:9px">QP-3731 · Invite dialog · step 1 — pick company</div>
+            <div class="modal-wrap" style="max-width:100%">
+              <div class="modal-header">
+                <div>
+                  <h2>Invite merchant</h2>
+                  <p>Send a sign-up invitation. The recipient receives an email with a one-time link that expires in 14 days.</p>
                 </div>
-                <div class="helper" style="margin-top:6px">One boolean, stamped on the invite token at send time. Future features (e.g. Compliance Portal) can extend this surface once they ship.</div>
+                <button class="modal-close">✕</button>
               </div>
-            </div>
 
-            <div class="modal-footer">
-              <span class="footer-note">Uses the current invite email template.</span>
-              <div style="display:flex;gap:8px">
-                <button class="btn btn-secondary">Cancel</button>
-                <button class="btn btn-primary">Send invite</button>
+              <div class="modal-body">
+                <div class="field-group">
+                  <label>Company</label>
+                  <input class="form-input" placeholder="Search existing WeMonitor companies by Legal name, DBA, website, or MID…" style="padding-left:32px;background:#fff url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23718096' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E&quot;) no-repeat 10px center">
+                  <div class="helper">If the company you want to invite isn't in the list, add it to WeMonitor first.</div>
+                </div>
+
+                <div class="field-group" style="opacity:.45;pointer-events:none">
+                  <div class="blurb-card">
+                    <div class="blurb-row">
+                      <div>
+                        <div class="br-label">MyCOA invite</div>
+                        <div class="br-hint">When <strong>ON</strong>, the recipient lands in the <strong>MyCOA setup wizard</strong> after joining, before the paywall. When <strong>OFF</strong>, they go to the standard post-join flow.</div>
+                      </div>
+                      <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+                    </div>
+                  </div>
+                  <div class="helper" style="margin-top:6px">One boolean, stamped on the invite token at send time.</div>
+                </div>
+              </div>
+
+              <div class="modal-footer">
+                <span class="footer-note">Uses the current invite email template.</span>
+                <div style="display:flex;gap:8px">
+                  <button class="btn btn-secondary">Cancel</button>
+                  <button class="btn btn-primary" style="opacity:.45;cursor:default">Send invite</button>
+                </div>
               </div>
             </div>
           </div>
+
+          <!-- State B: after company is selected -->
+          <div>
+            <div class="section-label" style="margin-bottom:8px;font-size:9px">QP-3731 · Invite dialog · step 2 — company selected, ready to send</div>
+            <div class="modal-wrap" style="max-width:100%">
+              <div class="modal-header">
+                <div>
+                  <h2>Invite merchant</h2>
+                  <p>Send a sign-up invitation. The recipient receives an email with a one-time link that expires in 14 days.</p>
+                </div>
+                <button class="modal-close">✕</button>
+              </div>
+
+              <div class="modal-body">
+                <div class="field-group">
+                  <label>Company</label>
+                  <!-- Selected company chip -->
+                  <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid #E9D8FD;border-radius:6px;background:#F7F5FF">
+                    <span style="display:inline-flex;align-items:center;gap:6px;background:#F7F5FF;border:1px solid #E9D8FD;color:#4C1D95;font-size:12px;font-weight:600;padding:3px 10px;border-radius:5px">
+                      Willow Creek Extracts
+                    </span>
+                    <button style="background:transparent;border:none;color:#718096;font-size:14px;cursor:pointer;line-height:1;padding:0 2px" title="Clear selection">×</button>
+                  </div>
+                </div>
+
+                <!-- Read-only fields from selected company -->
+                <div class="field-group">
+                  <label>Legal name</label>
+                  <input class="form-input" value="Willow Creek Extracts" style="background:#F7FAFC;color:#718096;cursor:default" readonly tabindex="-1">
+                  <div class="helper">From existing company</div>
+                </div>
+
+                <div class="field-group">
+                  <label>Primary contact email</label>
+                  <input class="form-input" value="ops@willowcreek.co" style="background:#F7FAFC;color:#718096;cursor:default" readonly tabindex="-1">
+                  <div class="helper">From existing company</div>
+                </div>
+
+                <div class="field-group">
+                  <div class="blurb-card">
+                    <div class="blurb-row">
+                      <div>
+                        <div class="br-label">MyCOA invite</div>
+                        <div class="br-hint">When <strong>ON</strong>, the recipient lands in the <strong>MyCOA setup wizard</strong> after joining, before the paywall. When <strong>OFF</strong>, they go to the standard post-join flow.</div>
+                      </div>
+                      <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+                    </div>
+                  </div>
+                  <div class="helper" style="margin-top:6px">One boolean, stamped on the invite token at send time. Future features (e.g. Compliance Portal) can extend this surface once they ship.</div>
+                </div>
+              </div>
+
+              <div class="modal-footer">
+                <span class="footer-note">Uses the current invite email template.</span>
+                <div style="display:flex;gap:8px">
+                  <button class="btn btn-secondary">Cancel</button>
+                  <button class="btn btn-primary">Send invite</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
 
@@ -716,11 +779,50 @@ tr.selected{background:#F7F5FF}
     <div class="callout" style="margin-top:20px">
       <strong>Key differences between modes:</strong>
       <ul style="margin:6px 0 0 20px">
-        <li><strong>Single invite</strong> — free-form Legal Name + Email fields. The user types or pastes the recipient details.</li>
+        <li><strong>Single invite</strong> — company picker (typeahead). The operator must select a company already in WeMonitor; free-form Legal Name + Email entry is not available.</li>
         <li><strong>Multi-row invite</strong> — no free-form entry, no CSV upload. Recipients are pulled directly from the rows already checked in the table. The modal lists them with a per-row × to remove any before sending.</li>
         <li>Both modes use the same email template and the same MyCOA toggle concept. The only structural difference is where the recipient list originates.</li>
         <li>Duplicate detection runs against existing active invites for the same email address. Duplicates are shown inline and skipped at send time — no blocking pre-send confirmation dialog needed.</li>
       </ul>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       INVITE SCOPING — comparison + explanation
+  ═══════════════════════════════════════ -->
+  <div class="section-block">
+    <div class="section-label">QP-3731 · Invite scoping</div>
+    <div class="section-title">Single invite vs. bulk invite — scoping comparison</div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+      <div class="callout" style="margin-bottom:0">
+        <div style="font-size:12px;font-weight:700;color:#322659;margin-bottom:8px">Single invite → company picker</div>
+        <div style="font-size:11px;color:#44337A;line-height:1.7">
+          <div>✓ Scoped to existing WeMonitor companies</div>
+          <div style="color:#9B2C2C">✗ Free-form name/email entry</div>
+        </div>
+      </div>
+      <div class="callout" style="margin-bottom:0">
+        <div style="font-size:12px;font-weight:700;color:#322659;margin-bottom:8px">Bulk invite → WeMonitor table selection</div>
+        <div style="font-size:11px;color:#44337A;line-height:1.7">
+          <div>✓ Scoped to existing WeMonitor companies</div>
+          <div style="color:#9B2C2C">✗ Free-form name/email entry</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       HOW INVITE SCOPING WORKS
+  ═══════════════════════════════════════ -->
+  <div class="section-block">
+    <div class="section-label">QP-3731 · Invite scoping</div>
+    <div class="section-title">How invite scoping works</div>
+
+    <div class="callout">
+      <p><strong>Both invite paths are scoped to existing WeMonitor companies.</strong></p>
+      <p style="margin-top:8px">The single-invite dialog uses a company picker (typeahead) — the operator must select a company already in WeMonitor before they can send. The bulk-invite dialog (multi-row from table selection) populates from the WeMonitor table selection — same constraint applies.</p>
+      <p style="margin-top:8px"><strong>All invite paths are scoped to existing WeMonitor companies in this iteration. Free-form invites for brand-new companies are deferred.</strong></p>
     </div>
   </div>
 
