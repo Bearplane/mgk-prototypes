@@ -261,21 +261,43 @@
 
   <div class="card-grid">
 
-    <!-- 2026-05-02 — Case-First UX v1 cut (entry points + blank canvas) -->
+    <!-- 2026-05-05 — QP-3794 MyCOA Products Tab -->
 
-    <a data-status="todo" data-category="case-management" data-date="2026-05-02" href="qredible-tickets/compliance-case-create-blank.html" class="proto-card" data-keywords="case first blank case create new case entry points q-monitor cases tab company profile cases mini panel side panel exploration ux ui CaseDraftDrawer v1 single merchant no multi merchant">
+    <a data-status="todo" data-category="mycoa" data-date="2026-05-05" href="qredible-tickets/mycoa-products-tab.html" class="proto-card" data-keywords="qp-3794 mycoa products tab product compliance products q-monitor merchant scoped viewerRole merchant company column hidden action bar add product import scan report issue mycoa_products_tab qconfig gate">
+      <div class="card-top">
+        <div class="card-icon">&#128230;</div>
+        <div class="card-meta">
+          <span class="card-category" onclick="event.preventDefault();filterByCategory('mycoa')">MyCOA</span>
+          <span class="card-ticket">QP-3794 &bull; NEW</span>
+        </div>
+      </div>
+      <div class="card-name">QP-3794 &middot; MyCOA Products Tab</div>
+      <p class="card-desc">New <strong>Products</strong> tab in MyCOA (Display | <strong>Products</strong> | COAs), mirroring the Product Compliance Products tab from Q-Monitor scoped to the merchant&rsquo;s own products. Company column hidden; processor-only actions (Add to Case, Bulk Edit, Archive, Delete) omitted. Gated behind <code>mycoa_products_tab</code> Q-Config Source.</p>
+      <div class="card-pills">
+        <span class="pill pill-blue">MyCOA</span>
+        <span class="pill pill-green">Products</span>
+      </div>
+      <div class="card-footer">
+        <span class="card-date">May 5, 2026</span>
+        <span class="card-cta">View mockup &#8594;</span>
+      </div>
+    </a>
+
+    <!-- 2026-05-02 — Case-First UX Exploration (4-part series) -->
+
+    <a data-status="todo" data-category="case-management" data-date="2026-05-02" href="qredible-tickets/compliance-case-create-blank.html" class="proto-card" data-keywords="case first blank case create new case entry points q-monitor cases tab company profile cases mini panel side panel bulk action bar exploration ux ui CaseDraftDrawer">
       <div class="card-top">
         <div class="card-icon">&#128203;</div>
         <div class="card-meta">
           <span class="card-category" onclick="event.preventDefault();filterByCategory('case-management')">Cases</span>
-          <span class="card-ticket">v1 CUT &bull; 1/2</span>
+          <span class="card-ticket">EXPLORATION &bull; 1/4</span>
         </div>
       </div>
-      <div class="card-name">Case-First UX v1 &#8212; 1 / Entry Points</div>
-      <p class="card-desc">Where <strong>+ New Case</strong> lives across the app. v1 ships <strong>three single-merchant entry points</strong>: Q-Monitor Cases tab header, Company profile, and Cases mini-panel header. Bulk multi-merchant deferred. Companion to QP-3583 / QP-3584.</p>
+      <div class="card-name">Case-First UX &#8212; 1 / Entry Points</div>
+      <p class="card-desc">Where does <strong>+ New Case</strong> live across the app? Maps four entry points (Q-Monitor Cases tab, Company profile, Cases mini-panel header, Bulk action bar) with annotated decision matrix. Companion to QP-3583 / QP-3584 — flips the existing item-first creation flow.</p>
       <div class="card-pills">
         <span class="pill pill-blue">Cases</span>
-        <span class="pill pill-green">v1 cut</span>
+        <span class="pill pill-yellow">Exploration</span>
       </div>
       <div class="card-footer">
         <span class="card-date">May 2, 2026</span>
@@ -283,23 +305,63 @@
       </div>
     </a>
 
-    <a data-status="todo" data-category="case-management" data-date="2026-05-02" href="qredible-tickets/compliance-case-blank-canvas.html" class="proto-card" data-keywords="case first blank canvas empty case state CaseDraftDrawer create new case items priority sla v1 deep link product compliance qscanai findings draft auto generated title override single merchant">
+    <a data-status="todo" data-category="case-management" data-date="2026-05-02" href="qredible-tickets/compliance-case-blank-canvas.html" class="proto-card" data-keywords="case first blank canvas empty case state CaseDraftDrawer create new case items priority sla quick add cards source category exploration violative coa missing coa qscanai">
       <div class="card-top">
         <div class="card-icon">&#128221;</div>
         <div class="card-meta">
           <span class="card-category" onclick="event.preventDefault();filterByCategory('case-management')">Cases</span>
-          <span class="card-ticket">v1 CUT &bull; 2/2</span>
+          <span class="card-ticket">EXPLORATION &bull; 2/4</span>
         </div>
       </div>
-      <div class="card-name">Case-First UX v1 &#8212; 2 / Blank Canvas</div>
-      <p class="card-desc">Empty DRAFT case. Title auto-generated as <code>[Merchant] &mdash; [Date]</code> (processor can override inline). Empty zone shows <strong>two deep-link buttons</strong> &mdash; "Add from Product Compliance" and "Add from Q-ScanAI Findings" &mdash; each scoped to this merchant. Round-trip: leave as DRAFT, attach via shipped Add-to-case (QP-3582 / QP-3581), land back via toast or Cases tab. No in-case picker in v1.</p>
+      <div class="card-name">Case-First UX &#8212; 2 / Blank Canvas</div>
+      <p class="card-desc">The empty case after click-create. Title input with smart suggestions, priority/SLA defaults, and the centerpiece: an inviting empty-items zone with four quick-add cards (violative COAs / missing COAs / Q-ScanAI findings / License-OFAC) plus an inline ⌘K smart-add bar.</p>
       <div class="card-pills">
         <span class="pill pill-blue">Cases</span>
-        <span class="pill pill-green">v1 cut</span>
+        <span class="pill pill-yellow">Exploration</span>
       </div>
       <div class="card-footer">
         <span class="card-date">May 2, 2026</span>
         <span class="card-cta">View canvas &#8594;</span>
+      </div>
+    </a>
+
+    <a data-status="todo" data-category="case-management" data-date="2026-05-02" href="qredible-tickets/compliance-case-target-findings.html" class="proto-card" data-keywords="case first targeting picker source category violative coa missing coa qscanai license ofac multi select resolution chip add items exploration">
+      <div class="card-top">
+        <div class="card-icon">&#127919;</div>
+        <div class="card-meta">
+          <span class="card-category" onclick="event.preventDefault();filterByCategory('case-management')">Cases</span>
+          <span class="card-ticket">EXPLORATION &bull; 3/4</span>
+        </div>
+      </div>
+      <div class="card-name">Case-First UX &#8212; 3 / Targeting Picker</div>
+      <p class="card-desc">Multi-source picker for sweeping violative findings into a blank case. Left rail = source categories (scoped counts), main pane = items with severity, suggested resolution preview, and live multi-select. Cross-source selections accrue in a sticky footer with green &ldquo;Add N&rdquo; CTA.</p>
+      <div class="card-pills">
+        <span class="pill pill-blue">Cases</span>
+        <span class="pill pill-yellow">Exploration</span>
+      </div>
+      <div class="card-footer">
+        <span class="card-date">May 2, 2026</span>
+        <span class="card-cta">View picker &#8594;</span>
+      </div>
+    </a>
+
+    <a data-status="todo" data-category="case-management" data-date="2026-05-02" href="qredible-tickets/compliance-case-quick-add-modal.html" class="proto-card" data-keywords="case first quick add modal smart search command palette ⌘K cmdk power user keyboard shortcut sku finding id coa exploration">
+      <div class="card-top">
+        <div class="card-icon">&#9889;</div>
+        <div class="card-meta">
+          <span class="card-category" onclick="event.preventDefault();filterByCategory('case-management')">Cases</span>
+          <span class="card-ticket">EXPLORATION &bull; 4/4</span>
+        </div>
+      </div>
+      <div class="card-name">Case-First UX &#8212; 4 / Quick-Add Modal</div>
+      <p class="card-desc">Command-palette pattern (Linear / GitHub / Notion-style) for power users who already know the SKU or finding ID. ⌘K opens, type-to-suggest results grouped by source, ↩ adds, ⇧↩ adds &amp; keeps modal open. Past audit history surfaced quietly for pattern detection.</p>
+      <div class="card-pills">
+        <span class="pill pill-blue">Cases</span>
+        <span class="pill pill-yellow">Exploration</span>
+      </div>
+      <div class="card-footer">
+        <span class="card-date">May 2, 2026</span>
+        <span class="card-cta">View modal &#8594;</span>
       </div>
     </a>
 

@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QP-3794 — MyCOA Products Tab</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/*
+  Real-Qredible tokens:
+  - Plus Jakarta Sans (400/500/600/700), IBM Plex Mono for code/mono
+  - Body bg: #F7F5FF, text: #1A202E, base 13px
+  - Primary button: #1A202E bg
+  - Active tab underline: #F05252
+  - Modal wash: #F7F5FF
+  - Nav bar: #1A202E bg
+  - Section labels: .section-label (lavender: #EDE9FE bg, #4C1D95 text)
+  - Info/design-notes block: .info-block (amber dashed border)
+  - Callouts: .callout (purple left border)
+
+  Cross-ticket refs:
+  - QP-3794 = this ticket (MyCOA Products tab)
+  - QP-3745 = default landing tab change (tracked separately)
+*/
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Plus Jakarta Sans','Uber Move',-apple-system,sans-serif;background:#F7F5FF;color:#1A202E;font-size:13px;line-height:1.5}
+a{color:#1A202E;text-decoration:none}a:hover{text-decoration:underline}
+code,.mono{font-family:'IBM Plex Mono',monospace}
+
+/* TOP NAV */
+.topnav{background:#1A202E;padding:12px 24px;display:flex;align-items:center;gap:8px;font-size:13px;color:#94A3B8;position:sticky;top:0;z-index:100}
+.topnav a{color:#E2E8F0}.topnav .sep{color:#475569}
+.topnav .ticket-badge{background:#F05252;color:#fff;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;font-family:'IBM Plex Mono',monospace;letter-spacing:.02em}
+.topnav .title{color:#fff;font-weight:600}
+
+/* PAGE */
+.page{max-width:1240px;margin:0 auto;padding:28px 24px 64px}
+.page-header{margin-bottom:24px}
+.page-header h1{font-size:20px;font-weight:700;color:#1A202E;margin-bottom:6px}
+.page-header p{color:#4A5568;font-size:13px;line-height:1.6}
+.page-header .jira-link{display:inline-flex;align-items:center;gap:6px;background:#1A202E;color:#fff;font-size:11px;font-weight:700;padding:3px 10px;border-radius:4px;font-family:'IBM Plex Mono',monospace;margin-right:8px}
+.page-header .ticket-badge-lg{display:inline-flex;align-items:center;gap:6px;background:#F05252;color:#fff;font-size:12px;font-weight:700;padding:4px 12px;border-radius:4px;font-family:'IBM Plex Mono',monospace;letter-spacing:.02em;margin-bottom:10px}
+.banner{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #E2E8F0;border-radius:8px;padding:14px 18px;margin-bottom:24px}
+.banner .badge{background:#F05252;color:#fff;font-size:11px;font-weight:700;padding:3px 9px;border-radius:4px;font-family:'IBM Plex Mono',monospace;white-space:nowrap}
+.banner .summary{font-size:13px;font-weight:600;color:#1A202E}
+
+/* INFO BLOCK */
+.info-block{background:#FFFBEB;border:2px dashed #FCD34D;border-radius:8px;padding:14px 18px;margin-bottom:28px}
+.info-block .info-pill{display:inline-flex;align-items:center;gap:5px;background:#F59E0B;color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px}
+.info-block p,.info-block li{font-size:12px;color:#78350F;line-height:1.6}
+.info-block ul{padding-left:18px;margin-top:6px}
+.info-block strong{color:#92400E}
+.info-block code{background:#FEF3C7;padding:1px 5px;border-radius:3px;font-size:11px}
+
+/* SECTION */
+.section-block{margin-bottom:36px}
+.section-label{display:inline-flex;align-items:center;gap:6px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:4px 10px;border-radius:3px;margin-bottom:12px;background:#EDE9FE;color:#4C1D95}
+.section-title{font-size:14px;font-weight:700;color:#1A202E;margin-bottom:14px}
+
+/* APP SHELL */
+.app-shell{background:#fff;border:1px solid #E2E8F0;border-radius:8px;overflow:hidden;box-shadow:0 1px 2px rgba(15,23,42,.04)}
+.app-topbar{background:#fff;border-bottom:1px solid #E2E8F0;padding:14px 20px;display:flex;align-items:center;gap:12px}
+.app-topbar h3{font-size:15px;font-weight:700;color:#1A202E}
+.app-topbar .crumb{color:#718096;font-weight:500;font-size:12px}
+.app-topbar .merchant-name{font-size:12px;font-weight:700;color:#4C1D95;background:#EDE9FE;padding:2px 8px;border-radius:4px}
+.app-topbar .spacer{flex:1}
+
+/* UNDERLINE TABS */
+.tabs{display:flex;gap:2px;padding:0 20px;border-bottom:1px solid #E2E8F0;background:#fff}
+.tab{padding:14px 16px;font-size:13px;font-weight:600;color:#718096;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px}
+.tab.active{color:#1A202E;border-bottom-color:#F05252}
+.tab-count{font-size:11px;background:#EDF2F7;color:#4A5568;padding:1px 7px;border-radius:10px;margin-left:5px;font-weight:700}
+.tab.active .tab-count{background:#FED7D7;color:#C53030}
+
+/* METRICS CHIPS */
+.metrics{display:flex;gap:10px;padding:16px 20px;background:#fff;border-bottom:1px solid #F1F5F9;flex-wrap:wrap}
+.metric{background:#F7F5FF;border:1px solid #E9D8FD;border-radius:6px;padding:10px 14px;min-width:120px}
+.metric .m-label{font-size:10px;font-weight:700;color:#6B46C1;text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px}
+.metric .m-value{font-size:18px;font-weight:700;color:#1A202E;line-height:1.1}
+.metric .m-sub{font-size:10px;color:#718096;margin-top:2px}
+.metric.m-red .m-label{color:#C53030}
+.metric.m-red{background:#FFF5F5;border-color:#FED7D7}
+.metric.m-orange .m-label{color:#C05621}
+.metric.m-orange{background:#FFFAF0;border-color:#FEEBC8}
+.metric.m-green .m-label{color:#276749}
+.metric.m-green{background:#F0FFF4;border-color:#C6F6D5}
+
+/* TOOLBAR */
+.toolbar{display:flex;align-items:center;gap:8px;padding:14px 20px;border-bottom:1px solid #F1F5F9;background:#fff;flex-wrap:wrap}
+.search-input{flex:1;min-width:200px;max-width:340px;padding:7px 12px 7px 32px;border:1px solid #CBD5E1;border-radius:6px;font-size:13px;font-family:inherit;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23718096' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E") no-repeat 10px center;color:#1A202E}
+.search-input::placeholder{color:#A0AEC0}
+.toolbar .spacer{flex:1}
+
+/* BUTTONS */
+.btn{padding:7px 13px;border-radius:6px;font-size:12px;font-weight:700;border:1px solid transparent;cursor:pointer;display:inline-flex;align-items:center;gap:5px;font-family:inherit;line-height:1;white-space:nowrap}
+.btn-primary{background:#1A202E;color:#fff;border-color:#1A202E}
+.btn-primary:hover{background:#000}
+.btn-secondary{background:#fff;border-color:#CBD5E1;color:#1A202E}
+.btn-secondary:hover{background:#F7FAFC}
+.btn-filter{background:#fff;border-color:#CBD5E1;color:#4A5568;font-weight:600}
+.btn-filter.active{background:#EDE9FE;border-color:#C4B5FD;color:#4C1D95}
+.btn-ghost{background:transparent;color:#4A5568;border:none}
+
+/* TABLE */
+.table-wrap{padding:0;overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px;min-width:860px}
+thead th{background:#F7FAFC;text-align:left;font-size:11px;font-weight:700;color:#4A5568;text-transform:uppercase;letter-spacing:.04em;padding:10px 12px;border-bottom:1px solid #E2E8F0;white-space:nowrap}
+tbody td{padding:11px 12px;border-bottom:1px solid #F1F5F9;vertical-align:middle}
+tbody tr:hover{background:#FAFAFA}
+.cb{accent-color:#1A202E;width:15px;height:15px;cursor:pointer}
+.row-name{font-weight:700;color:#1A202E;font-size:13px}
+.row-sub{font-size:11px;color:#718096;margin-top:2px;font-family:'IBM Plex Mono',monospace}
+
+/* PILLS */
+.pill{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}
+.pill-compliant{background:#C6F6D5;color:#276749}
+.pill-needs-attention{background:#FEEBC8;color:#975A16}
+.pill-pending-scan{background:#EDF2F7;color:#4A5568}
+.pill-missing-coa{background:#FED7D7;color:#9B2C2C}
+.pill-listed{background:#C6F6D5;color:#276749}
+.pill-unlisted{background:#EDF2F7;color:#4A5568}
+.pill-draft{background:#FEEBC8;color:#975A16}
+.pill-variant{background:#EDE9FE;color:#553C9A}
+
+/* ACTIVITY ICONS */
+.row-actions{display:flex;gap:4px;align-items:center}
+.icon-btn{width:28px;height:28px;border:1px solid transparent;border-radius:6px;background:transparent;color:#4A5568;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-size:14px}
+.icon-btn:hover{background:#F7FAFC;border-color:#E2E8F0}
+.icon-btn[title]{position:relative}
+
+/* TABLE FOOTER */
+.table-footer{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;background:#fff;border-top:1px solid #F1F5F9;font-size:12px;color:#718096}
+.pager{display:flex;gap:4px}
+.page-btn{min-width:28px;height:28px;border:1px solid #E2E8F0;border-radius:6px;background:#fff;color:#4A5568;font-size:12px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;font-family:inherit}
+.page-btn.active{background:#1A202E;border-color:#1A202E;color:#fff}
+
+/* CALLOUT */
+.callout{border-radius:8px;padding:14px 18px;font-size:12px;line-height:1.65;margin-bottom:14px;background:#F7F5FF;border:1px solid #E9D8FD;border-left:3px solid #805AD5;color:#44337A}
+.callout strong{font-weight:700;color:#322659}
+.callout code{background:#EDE9FE;padding:1px 5px;border-radius:3px;font-size:11px}
+.callout ul{padding-left:18px;margin-top:6px}
+.callout li{margin-bottom:2px}
+
+/* COMPARISON GRID */
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:14px}
+@media(max-width:900px){.compare-grid{grid-template-columns:1fr}}
+.compare-box{border:1px solid #E2E8F0;border-radius:8px;overflow:hidden}
+.compare-head{padding:10px 14px;border-bottom:1px solid #E2E8F0;font-size:11px;font-weight:700;color:#4A5568;text-transform:uppercase;letter-spacing:.06em;background:#F7FAFC}
+.compare-head.processor{background:#EFF6FF;color:#1E40AF;border-bottom-color:#BFDBFE}
+.compare-head.merchant{background:#F0FFF4;color:#166534;border-bottom-color:#C6F6D5}
+.compare-body{padding:14px 16px;background:#fff}
+.compare-row{display:flex;align-items:flex-start;gap:8px;font-size:12px;color:#4A5568;padding:3px 0}
+.compare-row .icon{flex-shrink:0;font-size:12px;width:14px}
+.compare-row.yes .icon{color:#276749}
+.compare-row.no .icon{color:#9B2C2C}
+.compare-row strong{color:#1A202E;font-weight:600}
+
+/* QCONFIG GATE */
+.gate-card{background:#fff;border:1px solid #E2E8F0;border-radius:8px;padding:16px 20px;margin-bottom:0}
+.gate-card .gate-title{font-size:12px;font-weight:700;color:#1A202E;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.gate-card .gate-badge{background:#EDF2F7;color:#4A5568;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;font-family:'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:.04em}
+.gate-card .gate-badge.disabled{background:#FED7D7;color:#9B2C2C}
+.gate-card p{font-size:12px;color:#4A5568;line-height:1.6;margin-bottom:8px}
+.gate-card p:last-child{margin-bottom:0}
+.gate-card code{background:#EDE9FE;padding:1px 5px;border-radius:3px;font-size:11px;color:#4C1D95;font-family:'IBM Plex Mono',monospace}
+
+/* NOTE BOX (for separate-ticket note) */
+.note-box{background:#FFF5F5;border:1px solid #FED7D7;border-left:3px solid #F05252;border-radius:6px;padding:10px 14px;font-size:12px;color:#744210;margin-top:10px}
+.note-box strong{color:#9B2C2C}
+.note-box code{background:#FED7D7;padding:1px 4px;border-radius:3px;font-size:11px;font-family:'IBM Plex Mono',monospace}
+
+/* SECTION DIVIDER */
+.section-divider{height:1px;background:#E9D8FD;margin:32px 0}
+</style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<nav class="topnav">
+  <a href="../index.html">&#8592; All Mockups</a>
+  <span class="sep">/</span>
+  <span class="title">MyCOA &middot; Products tab</span>
+  <span class="sep">/</span>
+  <span class="ticket-badge">QP-3794</span>
+</nav>
+
+<div class="page">
+
+  <!-- BANNER -->
+  <div class="banner">
+    <span class="badge">QP-3794 &middot; NEW</span>
+    <span class="summary">Mirror Product Compliance Products tab into MyCOA, scoped to the merchant&rsquo;s own products.</span>
+  </div>
+
+  <!-- DESIGN NOTES -->
+  <div class="info-block">
+    <div class="info-pill">&#8505; DESIGN NOTES &mdash; NOT IN BUILD</div>
+    <ul>
+      <li><strong>Tab order:</strong> Display | <strong>Products</strong> (new &mdash; this ticket) | COAs. Products is the new tab added here; Display and COAs are unchanged.</li>
+      <li><strong>Shared component:</strong> The Products tab body is the same component as Product Compliance &rarr; Products tab in Q-Monitor, reused with <code>viewerRole: "merchant"</code>.</li>
+      <li><strong>Company column:</strong> Hidden/pinned in merchant view &mdash; the merchant only sees their own products, so the Company column is suppressed entirely.</li>
+      <li><strong>Q-Config gate:</strong> Gated behind new <code>mycoa_products_tab</code> Q-Config Source; default value: <strong>disabled</strong>. Enable per-account in Q-Config.</li>
+      <li><strong>Default landing tab:</strong> Any change to the default landing tab (opening to Products instead of Display) is tracked separately in <code>QP-3745</code> and is <strong>NOT</strong> part of this ticket.</li>
+      <li><strong>Processor-only actions NOT shown:</strong> &ldquo;+ Add to case&rdquo;, Bulk Edit, Archive, Delete.</li>
+      <li><strong>Merchant-visible actions:</strong> Add Product, Import Products, Scan for Products, Report an Issue.</li>
+    </ul>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       SECTION 1: MyCOA App Shell
+  ═══════════════════════════════════════ -->
+  <div class="section-block">
+    <div class="section-label">Section 1 &middot; MyCOA App Shell</div>
+    <div class="section-title">MyCOA &rarr; Products tab (merchant view)</div>
+
+    <div class="app-shell">
+
+      <!-- Top bar -->
+      <div class="app-topbar">
+        <h3>MyCOA</h3>
+        <span class="merchant-name">Willow Creek Extracts</span>
+        <span class="app-topbar spacer" style="flex:1"></span>
+      </div>
+
+      <!-- Underline tabs -->
+      <div class="tabs">
+        <div class="tab">Display</div>
+        <div class="tab active">Products <span class="tab-count">12</span></div>
+        <div class="tab">COAs <span class="tab-count">38</span></div>
+      </div>
+
+      <!-- Metrics strip -->
+      <div class="metrics">
+        <div class="metric">
+          <div class="m-label">Total Products</div>
+          <div class="m-value">12</div>
+          <div class="m-sub">In your catalog</div>
+        </div>
+        <div class="metric m-green">
+          <div class="m-label">Compliant</div>
+          <div class="m-value">7</div>
+          <div class="m-sub">Valid COAs</div>
+        </div>
+        <div class="metric m-orange">
+          <div class="m-label">Needs Attention</div>
+          <div class="m-value">3</div>
+          <div class="m-sub">Action required</div>
+        </div>
+        <div class="metric m-red">
+          <div class="m-label">Pending Scan</div>
+          <div class="m-value">2</div>
+          <div class="m-sub">Awaiting results</div>
+        </div>
+      </div>
+
+      <!-- Action bar (merchant-scoped) -->
+      <div class="toolbar">
+        <input class="search-input" type="text" placeholder="Search products by name, SKU, batch&hellip;" readonly>
+        <div class="spacer"></div>
+        <button class="btn btn-filter active">All</button>
+        <button class="btn btn-filter">Needs Attention</button>
+        <button class="btn btn-filter">Missing COA</button>
+        <button class="btn btn-secondary">&#43; Add Product</button>
+        <button class="btn btn-secondary">&#8679; Import Products</button>
+        <button class="btn btn-secondary">&#8635; Scan for Products</button>
+        <button class="btn btn-primary">&#9872; Report an Issue</button>
+      </div>
+
+      <!-- Products table -->
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:32px"><input type="checkbox" class="cb"></th>
+              <th>Product Name</th>
+              <th>SKU / Batch</th>
+              <th>Variant</th>
+              <th>COA Status</th>
+              <th>Disposition</th>
+              <th style="text-align:right">Activity</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Row 1 -->
+            <tr>
+              <td><input type="checkbox" class="cb"></td>
+              <td>
+                <div class="row-name">WCE Full-Spectrum 1000mg Tincture</div>
+                <div class="row-sub">WCE-1000-FS</div>
+              </td>
+              <td><span class="mono" style="font-size:11px">WCE-1000-FS</span></td>
+              <td><span class="pill pill-variant">30ml</span></td>
+              <td><span class="pill pill-compliant">Compliant</span></td>
+              <td><span class="pill pill-listed">Listed</span></td>
+              <td>
+                <div class="row-actions" style="justify-content:flex-end">
+                  <button class="icon-btn" title="View product">&#8599;</button>
+                  <button class="icon-btn" title="Request scan">&#8635;</button>
+                  <button class="icon-btn" title="Download COA">&#8595;</button>
+                </div>
+              </td>
+            </tr>
+            <!-- Row 2 -->
+            <tr>
+              <td><input type="checkbox" class="cb"></td>
+              <td>
+                <div class="row-name">WCE Broad-Spectrum 500mg Gummy</div>
+                <div class="row-sub">WCE-500-BS-G</div>
+              </td>
+              <td><span class="mono" style="font-size:11px">WCE-500-BS-G</span></td>
+              <td><span class="pill pill-variant">30ct</span></td>
+              <td><span class="pill pill-needs-attention">Needs Attention</span></td>
+              <td><span class="pill pill-listed">Listed</span></td>
+              <td>
+                <div class="row-actions" style="justify-content:flex-end">
+                  <button class="icon-btn" title="View product">&#8599;</button>
+                  <button class="icon-btn" title="Request scan">&#8635;</button>
+                  <button class="icon-btn" title="Download COA">&#8595;</button>
+                </div>
+              </td>
+            </tr>
+            <!-- Row 3 -->
+            <tr>
+              <td><input type="checkbox" class="cb"></td>
+              <td>
+                <div class="row-name">WCE Isolate Capsules 25mg</div>
+                <div class="row-sub">WCE-25-ISO-C</div>
+              </td>
+              <td><span class="mono" style="font-size:11px">WCE-25-ISO-C</span></td>
+              <td><span class="pill pill-variant">60ct</span></td>
+              <td><span class="pill pill-pending-scan">Pending Scan</span></td>
+              <td><span class="pill pill-draft">Draft</span></td>
+              <td>
+                <div class="row-actions" style="justify-content:flex-end">
+                  <button class="icon-btn" title="View product">&#8599;</button>
+                  <button class="icon-btn" title="Request scan">&#8635;</button>
+                  <button class="icon-btn" title="Download COA">&#8595;</button>
+                </div>
+              </td>
+            </tr>
+            <!-- Row 4 -->
+            <tr>
+              <td><input type="checkbox" class="cb"></td>
+              <td>
+                <div class="row-name">WCE Topical Salve 500mg</div>
+                <div class="row-sub">WCE-500-TOP</div>
+              </td>
+              <td><span class="mono" style="font-size:11px">WCE-500-TOP</span></td>
+              <td><span class="pill pill-variant">2oz</span></td>
+              <td><span class="pill pill-missing-coa">Missing COA</span></td>
+              <td><span class="pill pill-unlisted">Unlisted</span></td>
+              <td>
+                <div class="row-actions" style="justify-content:flex-end">
+                  <button class="icon-btn" title="View product">&#8599;</button>
+                  <button class="icon-btn" title="Request scan">&#8635;</button>
+                  <button class="icon-btn" title="Download COA">&#8595;</button>
+                </div>
+              </td>
+            </tr>
+            <!-- Row 5 -->
+            <tr>
+              <td><input type="checkbox" class="cb"></td>
+              <td>
+                <div class="row-name">WCE Pet CBD Drops 250mg</div>
+                <div class="row-sub">WCE-250-PET</div>
+              </td>
+              <td><span class="mono" style="font-size:11px">WCE-250-PET</span></td>
+              <td><span class="pill pill-variant">1oz</span></td>
+              <td><span class="pill pill-compliant">Compliant</span></td>
+              <td><span class="pill pill-listed">Listed</span></td>
+              <td>
+                <div class="row-actions" style="justify-content:flex-end">
+                  <button class="icon-btn" title="View product">&#8599;</button>
+                  <button class="icon-btn" title="Request scan">&#8635;</button>
+                  <button class="icon-btn" title="Download COA">&#8595;</button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Table footer -->
+      <div class="table-footer">
+        <span>Showing 5 of 12 products</span>
+        <div class="pager">
+          <button class="page-btn active">1</button>
+          <button class="page-btn">2</button>
+          <button class="page-btn">3</button>
+          <button class="page-btn">&rsaquo;</button>
+        </div>
+      </div>
+
+    </div><!-- /app-shell -->
+  </div><!-- /section-block -->
+
+  <div class="section-divider"></div>
+
+  <!-- ═══════════════════════════════════════
+       SECTION 2: Side-by-side comparison
+  ═══════════════════════════════════════ -->
+  <div class="section-block">
+    <div class="section-label">Section 2 &middot; Processor vs. Merchant View</div>
+    <div class="section-title">Side-by-side: Q-Monitor (processor) vs. MyCOA (merchant)</div>
+
+    <div class="compare-grid">
+
+      <!-- Left: processor -->
+      <div class="compare-box">
+        <div class="compare-head processor">Product Compliance Products tab &mdash; Q-Monitor (processor view)</div>
+        <div class="compare-body">
+          <div class="compare-row yes"><span class="icon">&#10003;</span><div><strong>Company column</strong> visible &mdash; shows which merchant owns each product</div></div>
+          <div class="compare-row yes"><span class="icon">&#10003;</span><div><strong>+ Add to case</strong> available per-row and in bulk action bar</div></div>
+          <div class="compare-row yes"><span class="icon">&#10003;</span><div><strong>Bulk Edit</strong> button visible in toolbar</div></div>
+          <div class="compare-row yes"><span class="icon">&#10003;</span><div><strong>Archive</strong> and <strong>Delete</strong> actions in row overflow menu</div></div>
+          <div class="compare-row yes"><span class="icon">&#10003;</span><div>All products from all companies shown; scoped by current monitor/filter</div></div>
+          <div class="compare-row yes"><span class="icon">&#10003;</span><div>Action bar: Add Product, Import Products, Scan, Report, <strong>Add to Case</strong>, Bulk Edit, Archive</div></div>
+        </div>
+      </div>
+
+      <!-- Right: merchant -->
+      <div class="compare-box">
+        <div class="compare-head merchant">MyCOA Products tab &mdash; this ticket (merchant view)</div>
+        <div class="compare-body">
+          <div class="compare-row no"><span class="icon">&#10005;</span><div><strong>Company column hidden</strong> &mdash; merchant only sees their own products; company is implicit</div></div>
+          <div class="compare-row no"><span class="icon">&#10005;</span><div><strong>+ Add to case</strong> omitted &mdash; processor-only action</div></div>
+          <div class="compare-row no"><span class="icon">&#10005;</span><div><strong>Bulk Edit</strong> omitted &mdash; processor-only action</div></div>
+          <div class="compare-row no"><span class="icon">&#10005;</span><div><strong>Archive</strong> and <strong>Delete</strong> omitted &mdash; processor-only actions</div></div>
+          <div class="compare-row yes"><span class="icon">&#10003;</span><div>Only this merchant&rsquo;s products shown &mdash; no cross-company data leakage</div></div>
+          <div class="compare-row yes"><span class="icon">&#10003;</span><div>Action bar: Add Product, Import Products, Scan for Products, Report an Issue</div></div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="callout">
+      <strong>Same component, different role.</strong> These are the same component reused with <code>viewerRole: 'merchant'</code>. The merchant view hides the Company column and omits processor-only actions. No new data layer is required &mdash; the existing Products component already gates columns and action buttons by <code>viewerRole</code>.
+    </div>
+
+  </div><!-- /section-block -->
+
+  <div class="section-divider"></div>
+
+  <!-- ═══════════════════════════════════════
+       SECTION 3: Action bar annotation
+  ═══════════════════════════════════════ -->
+  <div class="section-block">
+    <div class="section-label">Section 3 &middot; Action Bar</div>
+    <div class="section-title">Action bar visibility by <code>viewerRole</code></div>
+
+    <div class="callout">
+      <strong>Merchant-visible actions (included in this ticket):</strong>
+      <ul>
+        <li><strong>Add Product</strong> &mdash; opens the add/create product flow</li>
+        <li><strong>Import Products</strong> &mdash; opens CSV/XLSX import wizard</li>
+        <li><strong>Scan for Products</strong> &mdash; triggers a Q-ScanAI discovery scan for this merchant</li>
+        <li><strong>Report an Issue</strong> &mdash; opens the merchant issue-report form</li>
+      </ul>
+      <br>
+      <strong>Explicitly omitted (processor-only, NOT shown to merchant):</strong>
+      <ul>
+        <li><strong>+ Add to case</strong> &mdash; processor workflow; merchant has no case concept</li>
+        <li><strong>Bulk Edit</strong> &mdash; processor-only bulk management action</li>
+        <li><strong>Archive</strong> &mdash; processor-only lifecycle action</li>
+        <li><strong>Delete</strong> &mdash; processor-only destructive action</li>
+      </ul>
+      <br>
+      The action bar is the primary surface where <code>viewerRole</code> drives button visibility. All omissions are additive defaults &mdash; the processor view retains all buttons; merchant view is the restricted subset.
+    </div>
+
+  </div><!-- /section-block -->
+
+  <div class="section-divider"></div>
+
+  <!-- ═══════════════════════════════════════
+       SECTION 4: Q-Config gate
+  ═══════════════════════════════════════ -->
+  <div class="section-block">
+    <div class="section-label">Section 4 &middot; Q-Config Gate</div>
+    <div class="section-title">Feature flag &amp; default landing tab</div>
+
+    <div class="gate-card">
+      <div class="gate-title">
+        Q-Config Source: <code>mycoa_products_tab</code>
+        <span class="gate-badge disabled">Default: Disabled</span>
+      </div>
+      <p>The Products tab is gated behind the <code>mycoa_products_tab</code> Q-Config Source. Default value is <strong>disabled</strong>. The tab is not surfaced to any merchant until the flag is enabled per-account in Q-Config. Enable per-account (or globally) in Q-Config to surface the Products tab in MyCOA.</p>
+      <div class="note-box">
+        <strong>Out of scope &mdash; QP-3745:</strong> Default landing tab change (opening MyCOA to the Products tab instead of Display by default) is tracked separately in <code>QP-3745</code> and is <strong>not part of this ticket</strong>. This ticket only adds the Products tab; it does not change which tab opens by default.
+      </div>
+    </div>
+
+  </div><!-- /section-block -->
+
+</div><!-- /page -->
+
+</body>
+</html>
