@@ -420,7 +420,7 @@ body[data-tab="technical"] .anchor-nav{display:none}
   <div class="page-tabs-wrap">
     <div class="page-tabs" role="tablist" aria-label="Q-ScanAI view">
       <button class="page-tab" role="tab" id="tab-stake" data-tab="stakeholder" aria-selected="true" aria-controls="panel-stake">
-        Stakeholder Overview <span class="tab-count">11 sections</span>
+        Stakeholder Overview <span class="tab-count">12 sections</span>
       </button>
       <button class="page-tab" role="tab" id="tab-tech" data-tab="technical" aria-selected="false" aria-controls="panel-tech" tabindex="-1">
         Technical Diagrams <span class="tab-count">5 SVGs</span>
@@ -436,14 +436,15 @@ body[data-tab="technical"] .anchor-nav{display:none}
       <a href="#s1"><span class="num">1</span>Overview</a>
       <a href="#s2"><span class="num">2</span>What it does</a>
       <a href="#s3"><span class="num">3</span>Architecture</a>
-      <a href="#s4"><span class="num">4</span>Two kinds of work</a>
-      <a href="#s5"><span class="num">5</span>Rule lifecycle</a>
-      <a href="#s6"><span class="num">6</span>Finding memory</a>
-      <a href="#s7"><span class="num">7</span>Real scan</a>
-      <a href="#s8"><span class="num">8</span>Multi-tenant</a>
-      <a href="#s9"><span class="num">9</span>Q-Trust + Westtown</a>
-      <a href="#s10"><span class="num">10</span>Security posture</a>
-      <a href="#s11"><span class="num">11</span>Specs &amp; questions</a>
+      <a href="#s4"><span class="num">4</span>Data Flow</a>
+      <a href="#s5"><span class="num">5</span>Two kinds of work</a>
+      <a href="#s6"><span class="num">6</span>Rule lifecycle</a>
+      <a href="#s7"><span class="num">7</span>Finding memory</a>
+      <a href="#s8"><span class="num">8</span>Real scan</a>
+      <a href="#s9"><span class="num">9</span>Multi-tenant</a>
+      <a href="#s10"><span class="num">10</span>Q-Trust + Westtown</a>
+      <a href="#s11"><span class="num">11</span>Security posture</a>
+      <a href="#s12"><span class="num">12</span>Specs &amp; questions</a>
     </div>
   </nav>
 
@@ -565,7 +566,7 @@ body[data-tab="technical"] .anchor-nav{display:none}
           <div class="mod">
             <span class="mn">4</span>
             <div class="mt">Policy Execution Engine</div>
-            <div class="ms">Dispatches each policy by executing its action bindings (PRE / MAIN / POST / ON_FAIL / ON_SUCCESS) in topological order. No registered handler classes.</div>
+            <div class="ms">Dispatches action bindings (PRE / MAIN / <b>AUDIT</b> / POST / ON_PASS / ON_FAIL / ON_COMPLETE) per item. Discovery and execution run <b>concurrently</b> &mdash; workers begin as soon as the first items are emitted.</div>
           </div>
           <div class="mod">
             <span class="mn">6</span>
@@ -587,7 +588,7 @@ body[data-tab="technical"] .anchor-nav{display:none}
           <div class="mod ctx">
             <span class="mn">7</span>
             <div class="mt">Context &amp; Data Flow Module</div>
-            <div class="ms">Typed shared store across 4 scopes (item / group / scan / merchant) &middot; provenance per entry &middot; inline-vs-blob threshold &middot; schema validation at read/write boundaries.</div>
+            <div class="ms">Typed shared store across 4 scopes (item / group / scan / <b>subject</b>) &middot; provenance per entry &middot; inline-vs-blob threshold &middot; schema validation at read/write boundaries. Subject scope persists across scans (ADR-044).</div>
           </div>
         </div>
       </div>
@@ -639,22 +640,162 @@ body[data-tab="technical"] .anchor-nav{display:none}
     </div>
   </section>
 
-  <!-- ===================== SECTION 4: TWO KINDS OF WORK ===================== -->
+  <!-- ===================== SECTION 4: DATA FLOW ===================== -->
   <section id="s4" class="section">
     <header class="sec-head">
       <div class="sec-num">04</div>
       <div class="sec-titles">
-        <div class="sec-eyebrow">Same engine, same audit trail, same governance &mdash; only the purpose differs</div>
-        <h2>Two kinds of work</h2>
-        <p class="sec-sub">Q-ScanAI runs both compliance checks (PASS / FAIL findings) and operational workflows (scheduled side effects). Because they share an engine, every operational job inherits the same audit trail, version control, and four-eyes governance.</p>
+        <div class="sec-eyebrow">NEW &mdash; How inputs resolve, context accumulates, and reports materialize</div>
+        <h2>Data flow</h2>
+        <p class="sec-sub">Every scan item passes through a four-stage pipeline: inputs are resolved to runtime values, execution context is accumulated across four scope levels, large values are routed to content-addressed S3 storage, and results are materialized into hybrid typed-column + rollup tables.</p>
       </div>
     </header>
 
-    <div class="two-col">
+    <!-- Pipeline overview -->
+    <div class="arch" style="margin-top:8px">
+      <div class="arch-label">End-to-end per-item pipeline</div>
+      <div style="display:grid;grid-template-columns:1fr 20px 1fr 20px 1fr 20px 1fr 20px 1fr;gap:0;align-items:stretch">
+        <div style="background:#EFF6FF;border:1.5px solid #BFDBFE;border-radius:8px;padding:10px 12px;text-align:center">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;font-weight:700;color:var(--blue-d);letter-spacing:.4px;text-transform:uppercase">Input<br>Resolution</div>
+          <div style="font-size:10px;color:var(--muted);margin-top:5px;line-height:1.4">inline · s3 · dbKv · context · expression</div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:center;color:#94A3B8;font-weight:700">&rarr;</div>
+        <div style="background:#FFF7ED;border:1.5px solid #FED7AA;border-radius:8px;padding:10px 12px;text-align:center">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;font-weight:700;color:var(--amber-d);letter-spacing:.4px;text-transform:uppercase">Execution<br>Hooks</div>
+          <div style="font-size:10px;color:var(--muted);margin-top:5px;line-height:1.4">PRE &rarr; MAIN &rarr; AUDIT &rarr; POST &rarr; ON_PASS/FAIL</div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:center;color:#94A3B8;font-weight:700">&rarr;</div>
+        <div style="background:var(--wash);border:1.5px solid #DDD6FE;border-radius:8px;padding:10px 12px;text-align:center">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;font-weight:700;color:var(--purple);letter-spacing:.4px;text-transform:uppercase">Context<br>Store</div>
+          <div style="font-size:10px;color:var(--muted);margin-top:5px;line-height:1.4">item / group / scan / subject scopes</div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:center;color:#94A3B8;font-weight:700">&rarr;</div>
+        <div style="background:#FFFBEB;border:1.5px solid #FDE68A;border-radius:8px;padding:10px 12px;text-align:center">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;font-weight:700;color:var(--amber-d);letter-spacing:.4px;text-transform:uppercase">Storage<br>Routing</div>
+          <div style="font-size:10px;color:var(--muted);margin-top:5px;line-height:1.4">DB inline (&le;10KB) · S3 SHA-256 · Redis ephemeral</div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:center;color:#94A3B8;font-weight:700">&rarr;</div>
+        <div style="background:#F0FDF4;border:1.5px solid #BBF7D0;border-radius:8px;padding:10px 12px;text-align:center">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;font-weight:700;color:var(--green-d);letter-spacing:.4px;text-transform:uppercase">Reporting<br>Rollups</div>
+          <div style="font-size:10px;color:var(--muted);margin-top:5px;line-height:1.4">typed cols + JSON payload + materialized tables</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px">
+
+      <!-- Input Resolution -->
+      <div style="background:#EFF6FF;border:1.5px solid #BFDBFE;border-radius:12px;padding:20px">
+        <div style="font-size:11px;font-weight:700;color:var(--blue-d);letter-spacing:.5px;text-transform:uppercase;font-family:'IBM Plex Mono',monospace;margin-bottom:10px">Input Resolution &mdash; 5 kinds</div>
+        <p style="font-size:12px;color:var(--ink-2);line-height:1.55;margin-bottom:10px">Every parameter a policy binding receives is an <code>InputReference</code> &mdash; resolved to a runtime value immediately before execution.</p>
+        <table style="width:100%;border-collapse:collapse;font-size:11px">
+          <thead><tr>
+            <th style="text-align:left;padding:4px 8px;background:#BFDBFE;color:var(--blue-d);font-family:'IBM Plex Mono',monospace;font-size:9.5px;font-weight:700">Kind</th>
+            <th style="text-align:left;padding:4px 8px;background:#BFDBFE;color:var(--blue-d);font-family:'IBM Plex Mono',monospace;font-size:9.5px;font-weight:700">Description</th>
+            <th style="text-align:left;padding:4px 8px;background:#BFDBFE;color:var(--blue-d);font-family:'IBM Plex Mono',monospace;font-size:9.5px;font-weight:700">Example</th>
+          </tr></thead>
+          <tbody style="font-size:10.5px">
+            <tr style="border-bottom:1px solid #BFDBFE"><td style="padding:4px 8px;font-family:'IBM Plex Mono',monospace;font-weight:700;white-space:nowrap">inline</td><td style="padding:4px 8px;color:var(--muted)">Literal JSON value in config</td><td style="padding:4px 8px;color:var(--purple);font-family:'IBM Plex Mono',monospace">{ deepLevel: 2 }</td></tr>
+            <tr style="border-bottom:1px solid #BFDBFE"><td style="padding:4px 8px;font-family:'IBM Plex Mono',monospace;font-weight:700;white-space:nowrap">s3</td><td style="padding:4px 8px;color:var(--muted)">S3 object by bucket + key</td><td style="padding:4px 8px;color:var(--purple);font-family:'IBM Plex Mono',monospace">s3://bkt/key</td></tr>
+            <tr style="border-bottom:1px solid #BFDBFE"><td style="padding:4px 8px;font-family:'IBM Plex Mono',monospace;font-weight:700;white-space:nowrap">dbKv</td><td style="padding:4px 8px;color:var(--muted)">qsa_config_kv lookup (ADR-040)</td><td style="padding:4px 8px;color:var(--purple);font-family:'IBM Plex Mono',monospace">kv:cbd-kws-v2</td></tr>
+            <tr style="border-bottom:1px solid #BFDBFE"><td style="padding:4px 8px;font-family:'IBM Plex Mono',monospace;font-weight:700;white-space:nowrap">context</td><td style="padding:4px 8px;color:var(--muted)">Value from ContextStore</td><td style="padding:4px 8px;color:var(--purple);font-family:'IBM Plex Mono',monospace">ctx.item.html</td></tr>
+            <tr><td style="padding:4px 8px;font-family:'IBM Plex Mono',monospace;font-weight:700;white-space:nowrap">expression</td><td style="padding:4px 8px;color:var(--muted)">JSONata evaluated at runtime</td><td style="padding:4px 8px;color:var(--purple);font-family:'IBM Plex Mono',monospace">$now() + 86400</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Context Store -->
+      <div style="background:var(--wash);border:1.5px solid #DDD6FE;border-radius:12px;padding:20px">
+        <div style="font-size:11px;font-weight:700;color:var(--purple);letter-spacing:.5px;text-transform:uppercase;font-family:'IBM Plex Mono',monospace;margin-bottom:10px">Context Store &mdash; 4 scope levels</div>
+        <p style="font-size:12px;color:var(--ink-2);line-height:1.55;margin-bottom:10px">Typed key-value store shared across all bindings in a scan. API: <code>read / write / list / merge / watch / snapshot</code>. Every entry carries provenance metadata (sourceType, policyVersionId).</p>
+        <div style="display:grid;gap:6px">
+          <div style="background:#fff;border:1px solid #DDD6FE;border-radius:6px;padding:8px 10px;display:flex;gap:10px;align-items:flex-start">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;color:var(--purple);min-width:44px">item</div>
+            <div style="font-size:11px;color:var(--muted);line-height:1.45">Scoped to one <code>qsa_scan_run_item</code>. Cleared after the item pipeline completes. Holds extracted DOM elements, AI outputs.</div>
+          </div>
+          <div style="background:#fff;border:1px solid #DDD6FE;border-radius:6px;padding:8px 10px;display:flex;gap:10px;align-items:flex-start">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;color:var(--purple);min-width:44px">group</div>
+            <div style="font-size:11px;color:var(--muted);line-height:1.45">Shared across all items in one policy&rsquo;s group. Running totals for <code>AGGREGATE_ITEMS</code> reducers.</div>
+          </div>
+          <div style="background:#fff;border:1px solid #DDD6FE;border-radius:6px;padding:8px 10px;display:flex;gap:10px;align-items:flex-start">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;color:var(--purple);min-width:44px">scan</div>
+            <div style="font-size:11px;color:var(--muted);line-height:1.45">Scan-run-wide. Policy outcomes stored here so downstream policies can branch on prior results.</div>
+          </div>
+          <div style="background:#fff;border:1px solid #DDD6FE;border-radius:6px;padding:8px 10px;display:flex;gap:10px;align-items:flex-start">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;color:var(--purple);min-width:44px">subject</div>
+            <div style="font-size:11px;color:var(--muted);line-height:1.45">Persisted to <code>qsa_context_entry</code>; survives across scans. Mutation policy: merge / replace / immutable per key (ADR-046).</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Large-value handling -->
+      <div style="background:#FFFBEB;border:1.5px solid #FDE68A;border-radius:12px;padding:20px">
+        <div style="font-size:11px;font-weight:700;color:var(--amber-d);letter-spacing:.5px;text-transform:uppercase;font-family:'IBM Plex Mono',monospace;margin-bottom:10px">Large-Value Handling &mdash; threshold: 10 KB</div>
+        <p style="font-size:12px;color:var(--ink-2);line-height:1.55;margin-bottom:10px">Blobs above 10,240 bytes are never stored inline. The system automatically routes to the correct tier based on size and lifecycle.</p>
+        <div style="display:grid;gap:7px">
+          <div style="background:#fff;border:1px solid #FDE68A;border-radius:6px;padding:9px 12px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:700;color:var(--amber-d)">&le;10 KB &mdash; Inline DB</div>
+              <div style="font-size:10px;color:var(--muted)">MySQL JSON column</div>
+            </div>
+            <div style="font-size:11px;color:var(--muted);line-height:1.4">Small context entries, policy parameters, rule outputs. Instantly queryable with JSON_EXTRACT.</div>
+          </div>
+          <div style="background:#fff;border:1px solid #FDE68A;border-radius:6px;padding:9px 12px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:700;color:var(--amber-d)">&gt;10 KB &mdash; S3 Content-Addressed</div>
+              <div style="font-size:10px;color:var(--muted)">SHA-256 keyed</div>
+            </div>
+            <div style="font-size:11px;color:var(--muted);line-height:1.4">Screenshots, HTML bodies, PDF COA files. Prefixes: <code>evidence/</code> &middot; <code>scan-persistent/</code> &middot; <code>scan-transient/</code></div>
+          </div>
+          <div style="background:#fff;border:1px solid #FDE68A;border-radius:6px;padding:9px 12px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:700;color:var(--amber-d)">Ephemeral &mdash; Redis</div>
+              <div style="font-size:10px;color:var(--muted)">TTL-bounded</div>
+            </div>
+            <div style="font-size:11px;color:var(--muted);line-height:1.4">Idempotency keys, action output coordination, cross-worker locks. Never the source of truth.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reporting strategy -->
+      <div style="background:#F0FDF4;border:1.5px solid #BBF7D0;border-radius:12px;padding:20px">
+        <div style="font-size:11px;font-weight:700;color:var(--green-d);letter-spacing:.5px;text-transform:uppercase;font-family:'IBM Plex Mono',monospace;margin-bottom:10px">Reporting Strategy &mdash; hybrid approach</div>
+        <p style="font-size:12px;color:var(--ink-2);line-height:1.55;margin-bottom:10px">Three complementary layers: typed columns for high-cardinality GROUP BY, JSON for handler-specific extras, materialized rollups for dashboard load performance.</p>
+        <div style="display:grid;gap:7px">
+          <div style="background:#fff;border:1px solid #BBF7D0;border-radius:6px;padding:9px 12px">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:700;color:var(--green-d);margin-bottom:3px">Typed columns</div>
+            <div style="font-size:11px;color:var(--muted);line-height:1.4"><code>severity</code> &middot; <code>is_found</code> &middot; <code>is_compliant</code> &middot; <code>resource_kind</code> &middot; <code>resource_key</code> &mdash; indexed, fast for aggregation queries.</div>
+          </div>
+          <div style="background:#fff;border:1px solid #BBF7D0;border-radius:6px;padding:9px 12px">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:700;color:var(--green-d);margin-bottom:3px">JSON payload</div>
+            <div style="font-size:11px;color:var(--muted);line-height:1.4"><code>output_payload</code> holds handler-specific extras (matched selectors, confidence scores, evidence refs). Not indexed; read for drill-down views.</div>
+          </div>
+          <div style="background:#fff;border:1px solid #BBF7D0;border-radius:6px;padding:9px 12px">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:700;color:var(--green-d);margin-bottom:3px">Materialized rollups</div>
+            <div style="font-size:11px;color:var(--muted);line-height:1.4"><code>qsa_scan_run_summary</code> &middot; <code>qsa_policy_outcome_rollups</code> &middot; <code>qsa_scan_run_check_type_summary</code> &mdash; computed at <code>finalizeScan()</code> for instant dashboard load.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===================== SECTION 5: THREE KINDS OF WORK ===================== -->
+  <section id="s5" class="section">
+    <header class="sec-head">
+      <div class="sec-num">05</div>
+      <div class="sec-titles">
+        <div class="sec-eyebrow">Same engine, same audit trail, same governance &mdash; three <code>policy_mode</code> values (ADR-033)</div>
+        <h2>Three kinds of work</h2>
+        <p class="sec-sub">Q-ScanAI runs compliance checks (PASS / FAIL findings), aggregation rules (child-rollup verdicts), and operational workflows (scheduled side effects). All three share one engine, one audit trail, and one governance process.</p>
+      </div>
+    </header>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;margin-top:8px">
       <div class="kind compliance">
-        <span class="ktag">policy_kind = CHECK</span>
-        <h3>Compliance Check</h3>
-        <p class="kdesc">Determines whether a merchant meets a specific regulatory requirement. Verdict is recorded in persistent finding memory; first-detected date is immutable.</p>
+        <span class="ktag">policy_mode = DETECTION</span>
+        <h3>Detection Check</h3>
+        <p class="kdesc">Determines whether a subject meets a specific requirement. Verdict recorded in persistent finding memory; first-detected date is immutable.</p>
         <div class="kpurpose">
           <div><b>Produces</b>PASS / FAIL / N/A findings</div>
           <div><b>Persists in</b>qsa_compliance_finding</div>
@@ -662,12 +803,28 @@ body[data-tab="technical"] .anchor-nav{display:none}
         </div>
         <div class="kex">
           <div class="l">EXAMPLE</div>
-          <div class="ex">"Does every page on the merchant's website contain a valid FDA disclaimer in the footer?"</div>
+          <div class="ex">"Does every page on the merchant&rsquo;s website contain a valid FDA disclaimer in the footer?"</div>
+        </div>
+      </div>
+
+      <div class="kind" style="border-color:#DDD6FE">
+        <span style="position:absolute;top:0;left:0;right:0;height:4px;background:var(--purple);border-radius:10px 10px 0 0"></span>
+        <span class="ktag" style="background:var(--purple-bg);color:var(--purple);margin-top:8px;display:inline-block">policy_mode = AGGREGATION</span>
+        <h3>Aggregation Rule</h3>
+        <p class="kdesc">Rolls up child DETECTION results into a single parent verdict. No handler executes &mdash; verdict is derived from child outcomes by a rule (e.g., ALL_CHILDREN_MUST_PASS).</p>
+        <div class="kpurpose">
+          <div><b>Produces</b>Derived PASS / FAIL</div>
+          <div><b>Persists in</b>qsa_compliance_finding</div>
+          <div><b>Mutating actions</b>Forbidden</div>
+        </div>
+        <div class="kex" style="border-left-color:var(--purple)">
+          <div class="l">EXAMPLE</div>
+          <div class="ex">"CBD-CONTACT passes only when Phone, Email, <i>and</i> Address all pass."</div>
         </div>
       </div>
 
       <div class="kind operational">
-        <span class="ktag">policy_kind = OPERATIONAL</span>
+        <span class="ktag">policy_mode = OPERATIONAL</span>
         <h3>Operational Task</h3>
         <p class="kdesc">Automates a scheduled workflow that has no PASS/FAIL outcome. The durable record is the action invocations &mdash; emails sent, fields updated, queues pushed.</p>
         <div class="kpurpose">
@@ -677,16 +834,16 @@ body[data-tab="technical"] .anchor-nav{display:none}
         </div>
         <div class="kex">
           <div class="l">EXAMPLE</div>
-          <div class="ex">"Every Monday, query the Cannaspy license registry for each merchant. If a license is missing, email compliance and update the merchant's status field."</div>
+          <div class="ex">"Every Monday, query Cannaspy for each merchant. If a license is missing, email compliance and update the merchant&rsquo;s status field."</div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ===================== SECTION 5: RULE LIFECYCLE ===================== -->
-  <section id="s5" class="section">
+  <!-- ===================== SECTION 6: RULE LIFECYCLE ===================== -->
+  <section id="s6" class="section">
     <header class="sec-head">
-      <div class="sec-num">05</div>
+      <div class="sec-num">06</div>
       <div class="sec-titles">
         <div class="sec-eyebrow">No untested config reaches production &mdash; ever</div>
         <h2>Rule lifecycle &amp; promotion gates</h2>
@@ -724,10 +881,10 @@ body[data-tab="technical"] .anchor-nav{display:none}
       <div class="gates">
         <h4>&#128274;&nbsp;Four promotion gates &mdash; all must clear before draft &rarr; testable &rarr; active</h4>
         <ol>
-          <li><b>Schema validation</b><br>The rule's structure passes automatic validation: check-type contract, item-type compatibility, execution-pattern coherence.</li>
-          <li><b>Successful test run</b><br>At least one successful test scan completed in the isolated test environment against representative merchants.</li>
+          <li><b>Schema validation (mode-specific)</b><br><b>DETECTION:</b> check_type contract, item-type compat, execution-pattern coherence, mutating-action ban, rule_kind=PASS_FAIL.<br><b>AGGREGATION:</b> aggregation rule binding present, child policies exist, mutating-action ban.<br><b>OPERATIONAL:</b> at least one MAIN binding present.</li>
+          <li><b>Successful test run</b><br>At least one successful test scan completed in the isolated test environment against representative subjects.</li>
           <li class="eyes"><b>Four-eyes approval</b><br>A <b>different person</b> from the author approves the activation. Enforced at API and database CHECK constraint &mdash; not just policy.</li>
-          <li><b>No circular dependencies</b><br>No cycle exists between this rule's prerequisites and any other rule it ultimately depends on.</li>
+          <li><b>No circular dependencies</b><br>No cycle exists between this rule&rsquo;s prerequisites and any other rule it ultimately depends on.</li>
         </ol>
       </div>
 
@@ -738,10 +895,10 @@ body[data-tab="technical"] .anchor-nav{display:none}
     </div>
   </section>
 
-  <!-- ===================== SECTION 6: PERSISTENT FINDING MEMORY ===================== -->
-  <section id="s6" class="section">
+  <!-- ===================== SECTION 7: PERSISTENT FINDING MEMORY ===================== -->
+  <section id="s7" class="section">
     <header class="sec-head">
-      <div class="sec-num">06</div>
+      <div class="sec-num">07</div>
       <div class="sec-titles">
         <div class="sec-eyebrow">Living compliance memory &mdash; not one-shot audit reports</div>
         <h2>Persistent finding memory</h2>
@@ -754,7 +911,7 @@ body[data-tab="technical"] .anchor-nav{display:none}
         <div class="find-states">
           <div class="fs new">
             <div class="fsn">NEW</div>
-            <div class="fsd">First time we've seen this finding for <code>(merchant, item, policy)</code>. Engine sets on first FAIL.</div>
+            <div class="fsd">First time we&rsquo;ve seen this finding for <code>(subject, item, policy)</code>. Engine sets on first FAIL.</div>
           </div>
           <div class="fs ongoing">
             <div class="fsn">ONGOING</div>
@@ -790,14 +947,14 @@ body[data-tab="technical"] .anchor-nav{display:none}
     </div>
   </section>
 
-  <!-- ===================== SECTION 7: REAL SCAN WALKTHROUGH ===================== -->
-  <section id="s7" class="section">
+  <!-- ===================== SECTION 8: REAL SCAN WALKTHROUGH ===================== -->
+  <section id="s8" class="section">
     <header class="sec-head">
-      <div class="sec-num">07</div>
+      <div class="sec-num">08</div>
       <div class="sec-titles">
         <div class="sec-eyebrow">CBD merchant scan &mdash; abbreviated walkthrough</div>
         <h2>A real scan, end-to-end</h2>
-        <p class="sec-sub">A processor's CBD merchant inherits 16 active checks from the <i>CBD Standard v3</i> profile, with one local override and one excluded check. The engine runs them in DAG order, persists results, and fires the configured action tree.</p>
+        <p class="sec-sub">A processor&rsquo;s CBD merchant inherits 16 active checks from the <i>CBD Standard v3</i> profile with one local override. The engine runs them across five tiers, concurrently with page discovery, persists results, and fires the configured action tree.</p>
       </div>
     </header>
 
@@ -807,10 +964,10 @@ body[data-tab="technical"] .anchor-nav{display:none}
         <h3>Green Leaf Wellness</h3>
         <div class="mb">CBD e-commerce shop &middot; processor: Acme Payments</div>
         <div class="mr">
+          <div class="mr-row"><b>subjectId</b><span>1 (MERCHANT_COMPANY)</span></div>
           <div class="mr-row"><b>Profile</b><span>CBD Standard v3</span></div>
           <div class="mr-row"><b>Active checks</b><span>16</span></div>
           <div class="mr-row"><b>Local override</b><span>1 (PAY-METHODS)</span></div>
-          <div class="mr-row"><b>Local exclusion</b><span>0</span></div>
           <div class="mr-row"><b>Last scan</b><span>14 days ago</span></div>
           <div class="mr-row"><b>Run mode</b><span>PRODUCTION</span></div>
         </div>
@@ -825,22 +982,22 @@ body[data-tab="technical"] .anchor-nav{display:none}
         <div class="cbd-checks">
           <h4>Check execution &mdash; 16 of 16 dispatched <span>tier-ordered DAG</span></h4>
           <div class="checks">
-            <div class="chk"><span class="v pass">PASS</span><span class="nm">SSL Certificate</span><span class="strat">ONCE_PER_DOMAIN</span><span class="res">valid</span></div>
+            <div class="chk"><span class="v pass">PASS</span><span class="nm">SSL Certificate</span><span class="strat">ONCE_PER_GROUP</span><span class="res">valid</span></div>
             <div class="chk"><span class="v pass">PASS</span><span class="nm">Age Verification Gate</span><span class="strat">FIRST_MATCH_WINS</span><span class="res">homepage modal</span></div>
-            <div class="chk"><span class="v pass">PASS</span><span class="nm">FDA Disclaimer in Footer</span><span class="strat">FIRST_MATCH_WINS</span><span class="res">footer detected</span></div>
-            <div class="chk"><span class="v pass">PASS</span><span class="nm">Privacy Policy Link</span><span class="strat">FIRST_MATCH_WINS</span><span class="res">/privacy</span></div>
-            <div class="chk"><span class="v pass">PASS</span><span class="nm">Terms of Service Link</span><span class="strat">FIRST_MATCH_WINS</span><span class="res">/terms</span></div>
-            <div class="chk"><span class="v fail">FAIL</span><span class="nm">Return Policy Link</span><span class="strat">FIRST_MATCH_WINS</span><span class="res">not found</span></div>
-            <div class="chk"><span class="v pass">PASS</span><span class="nm">Contact: Phone Number</span><span class="strat">FIRST_MATCH_WINS</span><span class="res">+1 (555) 0188</span></div>
-            <div class="chk"><span class="v pass">PASS</span><span class="nm">Contact: Email Address</span><span class="strat">FIRST_MATCH_WINS</span><span class="res">support@</span></div>
-            <div class="chk"><span class="v pass">PASS</span><span class="nm">Contact: Physical Address</span><span class="strat">FIRST_MATCH_WINS</span><span class="res">Boulder, CO</span></div>
+            <div class="chk"><span class="v cache">CACHED</span><span class="nm">FDA Disclaimer in Footer</span><span class="strat">FIRST_MATCH_WINS</span><span class="res">footer detected</span></div>
+            <div class="chk"><span class="v pass">PASS</span><span class="nm">Privacy Policy Link</span><span class="strat">FIRST_MATCH_WINS</span><span class="res">/privacy-policy</span></div>
+            <div class="chk"><span class="v pass">PASS</span><span class="nm">Terms of Service Link</span><span class="strat">FIRST_MATCH_WINS</span><span class="res">/terms-of-service</span></div>
+            <div class="chk"><span class="v pass">PASS</span><span class="nm">Return Policy Link</span><span class="strat">FIRST_MATCH_WINS</span><span class="res">/return-policy</span></div>
+            <div class="chk"><span class="v cache">CACHED</span><span class="nm">Contact: Phone Number</span><span class="strat">FIRST_MATCH_WINS</span><span class="res">+1 (555) 0188</span></div>
+            <div class="chk"><span class="v cache">CACHED</span><span class="nm">Contact: Email Address</span><span class="strat">FIRST_MATCH_WINS</span><span class="res">support@</span></div>
+            <div class="chk"><span class="v fail">FAIL</span><span class="nm">Contact: Physical Address</span><span class="strat">FIRST_MATCH_WINS</span><span class="res">no address on /contact</span></div>
             <div class="chk"><span class="v pass">PASS</span><span class="nm">COA Lab Report Directory</span><span class="strat">AGGREGATE_ITEMS</span><span class="res">142 COAs indexed</span></div>
             <div class="chk"><span class="v fail">FAIL</span><span class="nm">CBD Compliance Keywords</span><span class="strat">EVERY_ITEM</span><span class="res">2 pages flagged</span></div>
-            <div class="chk"><span class="v fail">FAIL</span><span class="nm">THC Compliance Keywords</span><span class="strat">EVERY_ITEM</span><span class="res">1 page flagged</span></div>
+            <div class="chk"><span class="v pass">PASS</span><span class="nm">THC Compliance Keywords</span><span class="strat">EVERY_ITEM</span><span class="res">no mentions found</span></div>
             <div class="chk"><span class="v pass">PASS</span><span class="nm">Payment Methods <small style="color:var(--purple);font-weight:600">(local override)</small></span><span class="strat">FIRST_MATCH_WINS</span><span class="res">3 methods listed</span></div>
             <div class="chk"><span class="v cache">CACHED</span><span class="nm">Checkout Subscription Disclosure</span><span class="strat">EVERY_ITEM</span><span class="res">unchanged since v=14d</span></div>
-            <div class="chk"><span class="v pass">PASS</span><span class="nm">Legal &mdash; Parent Aggregate</span><span class="strat">PARENT</span><span class="res">3 of 3 children</span></div>
-            <div class="chk"><span class="v fail">FAIL</span><span class="nm">Contact &mdash; Parent Aggregate</span><span class="strat">PARENT</span><span class="res">return-policy missing</span></div>
+            <div class="chk"><span class="v pass">PASS</span><span class="nm">Legal &mdash; Parent Aggregate</span><span class="strat">AGGREGATION</span><span class="res">3 of 3 children</span></div>
+            <div class="chk"><span class="v fail">FAIL</span><span class="nm">Contact &mdash; Parent Aggregate</span><span class="strat">AGGREGATION</span><span class="res">address missing</span></div>
           </div>
         </div>
 
@@ -849,59 +1006,70 @@ body[data-tab="technical"] .anchor-nav{display:none}
           <div class="act">
             <span class="ai">&#127903;&#65039;</span>
             <div class="at">
-              <b>CREATE_TICKET &mdash; CBD/THC Keyword Findings (NEW)</b>
-              <span>Support ticket #QP-29741 opened in Jira with 3 page URLs and matched-text snippets attached.</span>
+              <b>CREATE_TICKET &mdash; CBD-CONTACT-ADDRESS (LOW severity) &rarr; CBD-1234</b>
+              <span>Jira ticket created for missing physical address on /contact. Idempotency key prevents duplicate on retry.</span>
             </div>
           </div>
           <div class="act">
             <span class="ai">&#128231;</span>
             <div class="at">
-              <b>SEND_EMAIL &mdash; Compliance Team Summary</b>
-              <span>Summary email sent to compliance@acme-payments.com listing 3 failing checks &middot; 2 NEW findings &middot; 1 ONGOING.</span>
+              <b>SEND_EMAIL &mdash; compliance@greenleaf-wellness.com (HARD dep on ticket)</b>
+              <span>Email body references ticket URL CBD-1234. Sent via SES fire-and-forget.</span>
             </div>
           </div>
           <div class="act">
             <span class="ai">&#128279;</span>
             <div class="at">
-              <b>SEND_WEBHOOK &mdash; Hyperdrive Status Update</b>
-              <span>Webhook fired to Hyperdrive with structured risk delta. Triggers Acme's downstream remediation workflow.</span>
+              <b>SEND_WEBHOOK &mdash; processor compliance dashboard</b>
+              <span>Structured payload with finding delta sent to Acme Payments. HTTP 200 returned.</span>
             </div>
           </div>
           <div class="act">
-            <span class="ai">&#128221;</span>
+            <span class="ai">&#127903;&#65039;</span>
             <div class="at">
-              <b>UPDATE_MERCHANT_FIELD &mdash; risk_status = YELLOW</b>
-              <span>Merchant record's <code>risk_status</code> downgraded from GREEN to YELLOW. Prior value retained in audit trail.</span>
+              <b>CREATE_TICKET &mdash; CBD-COMPL-KEYWORDS-CBD (HIGH severity, REOPENED) &rarr; CBD-1235</b>
+              <span>Marketing claim "treats anxiety" on /products/cbd-oil-30ml. Finding reopened from RESOLVED; <code>previous_occurrences++</code>.</span>
+            </div>
+          </div>
+          <div class="act">
+            <span class="ai">&#128279;</span>
+            <div class="at">
+              <b>SEND_WEBHOOK &mdash; immediate HIGH-severity alert to processor</b>
+              <span>Separate webhook for the keywords violation. Both webhooks delivered; 3 total this run.</span>
             </div>
           </div>
         </div>
 
-        <div style="margin-top:14px;display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
+        <div style="margin-top:14px;display:grid;grid-template-columns:repeat(5,1fr);gap:10px">
           <div style="background:#fff;border:1.5px solid var(--accent);border-radius:10px;padding:12px;text-align:center">
-            <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;color:var(--red-d);letter-spacing:.5px">FAILING CHECKS</div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;color:var(--red-d);letter-spacing:.5px">FAILING</div>
             <div style="font-size:24px;font-weight:800;color:var(--accent);margin-top:4px">3</div>
           </div>
           <div style="background:#fff;border:1.5px solid var(--accent);border-radius:10px;padding:12px;text-align:center">
-            <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;color:var(--red-d);letter-spacing:.5px">NEW FINDINGS</div>
-            <div style="font-size:24px;font-weight:800;color:var(--accent);margin-top:4px">2</div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;color:var(--red-d);letter-spacing:.5px">NEW</div>
+            <div style="font-size:24px;font-weight:800;color:var(--accent);margin-top:4px">1</div>
           </div>
           <div style="background:#fff;border:1.5px solid var(--amber);border-radius:10px;padding:12px;text-align:center">
             <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;color:var(--amber-d);letter-spacing:.5px">ONGOING</div>
-            <div style="font-size:24px;font-weight:800;color:var(--amber);margin-top:4px">1</div>
+            <div style="font-size:24px;font-weight:800;color:var(--amber);margin-top:4px">2</div>
+          </div>
+          <div style="background:#fff;border:1.5px solid var(--purple);border-radius:10px;padding:12px;text-align:center">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;color:var(--purple);letter-spacing:.5px">REOPENED</div>
+            <div style="font-size:24px;font-weight:800;color:var(--purple);margin-top:4px">1</div>
           </div>
           <div style="background:#fff;border:1.5px solid var(--green);border-radius:10px;padding:12px;text-align:center">
-            <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;color:var(--green-d);letter-spacing:.5px">CACHED HITS</div>
-            <div style="font-size:24px;font-weight:800;color:var(--green);margin-top:4px">1</div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;color:var(--green-d);letter-spacing:.5px">CACHED</div>
+            <div style="font-size:24px;font-weight:800;color:var(--green);margin-top:4px">4</div>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ===================== SECTION 8: MULTI-TENANT ===================== -->
-  <section id="s8" class="section">
+  <!-- ===================== SECTION 9: MULTI-TENANT ===================== -->
+  <section id="s9" class="section">
     <header class="sec-head">
-      <div class="sec-num">08</div>
+      <div class="sec-num">09</div>
       <div class="sec-titles">
         <div class="sec-eyebrow">Strict isolation at every layer &mdash; database, storage, credentials</div>
         <h2>Multi-tenant architecture</h2>
@@ -962,10 +1130,10 @@ body[data-tab="technical"] .anchor-nav{display:none}
     </div>
   </section>
 
-  <!-- ===================== SECTION 9: Q-TRUST + WESTTOWN ===================== -->
-  <section id="s9" class="section">
+  <!-- ===================== SECTION 10: Q-TRUST + WESTTOWN ===================== -->
+  <section id="s10" class="section">
     <header class="sec-head">
-      <div class="sec-num">09</div>
+      <div class="sec-num">10</div>
       <div class="sec-titles">
         <div class="sec-eyebrow">How Q-ScanAI plugs into Q-Trust + Hyperdrive</div>
         <h2>Q-Trust &amp; Westtown integration</h2>
@@ -1062,10 +1230,10 @@ body[data-tab="technical"] .anchor-nav{display:none}
     </div>
   </section>
 
-  <!-- ===================== SECTION 10: SECURITY POSTURE ===================== -->
-  <section id="s10" class="section">
+  <!-- ===================== SECTION 11: SECURITY POSTURE ===================== -->
+  <section id="s11" class="section">
     <header class="sec-head">
-      <div class="sec-num">10</div>
+      <div class="sec-num">11</div>
       <div class="sec-titles">
         <div class="sec-eyebrow">SOC 2 Type II posture &mdash; not bolted on, designed in</div>
         <h2>Compliance, audit &amp; security posture</h2>
@@ -1133,66 +1301,78 @@ body[data-tab="technical"] .anchor-nav{display:none}
     </div>
   </section>
 
-  <!-- ===================== SECTION 11: FOOTER / SPECS ===================== -->
-  <section id="s11" class="foot">
+  <!-- ===================== SECTION 12: FOOTER / SPECS ===================== -->
+  <section id="s12" class="foot">
     <h3>Read the technical specs</h3>
-    <p>This page is the stakeholder summary. Architects, engineers, and technical reviewers should work from the eight source documents below, plus the data model DDL and ADR archive. Each document is the authoritative source for its domain &mdash; this page never duplicates detail.</p>
+    <p>This page is the stakeholder summary. Architects, engineers, and technical reviewers should work from the nine source documents below, plus the data model DDL and ADR archive. Each document is the authoritative source for its domain &mdash; this page never duplicates detail.</p>
+    <p style="margin-top:10px;font-size:12px;color:#94A3B8">
+      <span style="background:rgba(240,82,82,.18);color:#FCA5A5;font-size:11px;font-weight:700;padding:3px 10px;border-radius:4px;font-family:'IBM Plex Mono',monospace;margin-right:8px">UPDATED 2026-05-05</span>
+      Refreshed from new dev team docs &mdash; added data-flow.md (§4), updated policy_mode (ADR-033), subject scope (ADR-044), AUDIT hook (ADR-038), concurrent discovery/execution (ADR-036), ADR-033&ndash;046.
+      <a href="https://github.com/Bearplane/qredible-brain/tree/main/docs/policy-first/dev-docs/" style="color:#93C5FD;margin-left:4px" target="_blank" rel="noopener">Source docs &nearr;</a>
+    </p>
 
     <div class="docs">
       <div class="doc">
         <span class="di">01</span>
         <div class="docbody">
           <div class="dt">design-overview.md</div>
-          <div class="dd">Plain-English overview &mdash; business context, the four guarantees, two kinds of work, glossary. Start here.</div>
+          <div class="dd">Plain-English overview &mdash; business context, the four guarantees, three policy modes, glossary. Start here.</div>
         </div>
       </div>
       <div class="doc">
         <span class="di">02</span>
         <div class="docbody">
           <div class="dt">design-proposal.md</div>
-          <div class="dd">Master architecture &mdash; modules, principles, security model, technology stack, risks.</div>
+          <div class="dd">Master architecture &mdash; modules, principles, security model, technology stack, risks. Includes policy_mode, qsa_subject, check_type families.</div>
         </div>
       </div>
       <div class="doc">
         <span class="di">03</span>
         <div class="docbody">
           <div class="dt">data-model.md</div>
-          <div class="dd">Full DDL for every table, every column, every index. JSON-justification per field.</div>
+          <div class="dd">Full DDL for every table, every column, every index. Includes qsa_subject, qsa_config_kv, context key schema registry.</div>
         </div>
       </div>
       <div class="doc">
         <span class="di">04</span>
         <div class="docbody">
           <div class="dt">execution-flow.md</div>
-          <div class="dd">Workflow engine internals: DAG construction, AI batching, action tree, checkpointing, force-scan.</div>
+          <div class="dd">Workflow engine internals: DAG construction, AI batching, AUDIT hook, concurrent discovery/execution phases, checkpointing, force-scan.</div>
         </div>
       </div>
       <div class="doc">
         <span class="di">05</span>
         <div class="docbody">
           <div class="dt">lifecycle-and-state-transitions.md</div>
-          <div class="dd">Every state machine: configs, scan runs, findings, assignments, action invocations, credentials.</div>
+          <div class="dd">Every state machine: configs, scan runs, findings, assignments, action invocations. Per-mode promotion gates.</div>
         </div>
       </div>
       <div class="doc">
         <span class="di">06</span>
         <div class="docbody">
           <div class="dt">context-and-audit-overview.md</div>
-          <div class="dd">Runtime context store + audit log spec + tamper chain + OpenTelemetry tracing.</div>
+          <div class="dd">Runtime context store (4 scopes, subject-scope persistence) + audit log spec + tamper chain + OpenTelemetry tracing.</div>
         </div>
       </div>
       <div class="doc">
         <span class="di">07</span>
         <div class="docbody">
           <div class="dt">webscan-example.md</div>
-          <div class="dd">CBD merchant end-to-end concrete walkthrough with full configuration snapshots.</div>
+          <div class="dd">CBD merchant end-to-end walkthrough with full configuration snapshots. Includes OPERATIONAL Cannaspy license sweep example.</div>
         </div>
       </div>
       <div class="doc">
         <span class="di">08</span>
         <div class="docbody">
           <div class="dt">architectural-decision-records.md</div>
-          <div class="dd">ADR-001..N &mdash; every significant design decision with alternatives, rationale, consequences.</div>
+          <div class="dd">ADR-001&ndash;046 &mdash; every significant design decision with alternatives, rationale, consequences. ADR-033&ndash;046 are new in this refresh.</div>
+        </div>
+      </div>
+      <div class="doc">
+        <span class="di" style="color:#10B981">09</span>
+        <div class="docbody">
+          <div class="dt">data-flow.md <span style="font-size:10px;font-weight:700;color:#10B981;font-family:'IBM Plex Mono',monospace;margin-left:6px">NEW</span></div>
+          <div class="dd">End-to-end data flow &mdash; InputReference types, ContextStore API, large-value handling (S3/inline/Redis), reporting strategy, differential scanning, finalizeScan() pseudocode.</div>
         </div>
       </div>
     </div>
@@ -1333,7 +1513,7 @@ body[data-tab="technical"] .anchor-nav{display:none}
 <script>
 (function(){
   var TABS=['stakeholder','technical'];
-  var SECTION_HASHES=['s1','s2','s3','s4','s5','s6','s7','s8','s9','s10','s11'];
+  var SECTION_HASHES=['s1','s2','s3','s4','s5','s6','s7','s8','s9','s10','s11','s12'];
   var tabs=document.querySelectorAll('[role="tab"]');
   var panels=document.querySelectorAll('[role="tabpanel"]');
 
