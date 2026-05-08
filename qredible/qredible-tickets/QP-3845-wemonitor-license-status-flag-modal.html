@@ -1,0 +1,1489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QP-3845 — We Monitor License Status Flag + Detail Modal</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/*
+  Design tokens (from qredible-brain + RTQ-Admin-UI production):
+  - Font: 'Plus Jakarta Sans' (mockup) / 'Uber Move' (production), 13px base
+  - Body bg: #F7F5FF  Nav: #1A202E  Ticket badge: #F05252  Tab indicator: #F05252
+  - Compliant: bg #DCFCE7  text #166534  border #bbf7d0
+  - Violative:  bg #FEE2E2  text #991B1B  border #fecaca
+  - Modal wash: #F7F5FF  Modal shadow: 0 24px 60px rgba(15,23,42,.22)
+  - Primary btn: #1A202E  Border: #E2E8F0
+  - Table head: #1E3A5F  Stripe: #F8FAFC
+*/
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Plus Jakarta Sans','Uber Move',-apple-system,sans-serif;background:#F7F5FF;color:#1A202E;font-size:13px;line-height:1.5}
+a{color:#2563eb;text-decoration:none}a:hover{text-decoration:underline}
+code,.mono{font-family:'IBM Plex Mono',monospace}
+
+/* TOP NAV */
+.topnav{background:#1A202E;padding:11px 24px;display:flex;align-items:center;gap:10px;font-size:13px;color:#94A3B8;position:sticky;top:0;z-index:300}
+.topnav a{color:#CBD5E1;text-decoration:none}.topnav a:hover{color:#fff}
+.topnav .sep{color:#475569}
+.topnav .title{color:#fff;font-weight:600}
+.topnav .badge{background:#F05252;color:#fff;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;font-family:'IBM Plex Mono',monospace;letter-spacing:.02em}
+.topnav .spacer{flex:1}
+.topnav .nav-note{font-size:11px;color:#64748B;font-style:italic}
+
+/* STATE TOGGLE BAR */
+.toggle-bar{background:#fff;border-bottom:1px solid #E2E8F0;padding:0 24px;display:flex;align-items:stretch;gap:0;position:sticky;top:44px;z-index:200}
+.toggle-btn{padding:14px 20px;font-size:13px;font-weight:600;color:#64748B;cursor:pointer;border:none;background:transparent;border-bottom:3px solid transparent;margin-bottom:-1px;display:flex;align-items:center;gap:8px;transition:color .12s,border-color .12s}
+.toggle-btn:hover{color:#1A202E;background:#F8FAFC}
+.toggle-btn.active{color:#1A202E;border-bottom-color:#F05252}
+.toggle-btn .state-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.toggle-btn .state-dot.closed{background:#94A3B8}
+.toggle-btn .state-dot.open{background:#F05252}
+.toggle-info{padding:14px 20px;font-size:12px;color:#94A3B8;font-style:italic;display:flex;align-items:center;margin-left:auto}
+
+/* PAGE PANEL */
+.panel{display:none}.panel.active{display:block}
+.page{max-width:1360px;margin:0 auto;padding:24px 24px 64px}
+.page-header{margin-bottom:20px}
+.page-header h1{font-size:19px;font-weight:700;color:#1A202E;margin-bottom:5px}
+.page-header p{font-size:12px;color:#64748B}
+.banner{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #E2E8F0;border-radius:8px;padding:12px 18px;margin-bottom:20px}
+.banner .badge{background:#F05252;color:#fff;font-size:11px;font-weight:700;padding:3px 9px;border-radius:4px;font-family:'IBM Plex Mono',monospace;white-space:nowrap}
+.banner .summary{font-size:13px;font-weight:600;color:#1A202E}
+.banner .diff{font-size:12px;color:#64748B;margin-left:auto}
+
+/* INFO BLOCK */
+.info-block{background:#FFFBEB;border:2px dashed #FCD34D;border-radius:8px;padding:12px 18px;margin-bottom:24px}
+.info-pill{display:inline-flex;align-items:center;gap:5px;background:#F59E0B;color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px}
+.info-block p{font-size:12px;color:#78350F;line-height:1.6}
+.info-block ul{padding-left:18px;margin-top:4px}
+.info-block li{font-size:12px;color:#78350F;line-height:1.7}
+
+/* APP SHELL */
+.app-shell{background:#fff;border:1px solid #E2E8F0;border-radius:10px;overflow:hidden;box-shadow:0 1px 3px rgba(15,23,42,.06)}
+
+/* RTQ-ADMIN TOPBAR */
+.admin-topbar{background:#fff;border-bottom:1px solid #E2E8F0;padding:14px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.admin-topbar h2{font-size:16px;font-weight:700;color:#1A202E}
+.admin-topbar .crumb{font-size:12px;color:#94A3B8;font-weight:500}
+.admin-topbar .spacer{flex:1}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid;line-height:1;font-family:inherit;transition:background .1s}
+.btn-primary{background:#1A202E;border-color:#1A202E;color:#fff}
+.btn-secondary{background:#fff;border-color:#CBD5E1;color:#374151}
+.btn-secondary:hover{background:#F8FAFC}
+
+/* UNDERLINE TABS */
+.tabs{display:flex;gap:0;padding:0 20px;border-bottom:1px solid #E2E8F0;background:#fff}
+.tab{padding:13px 16px;font-size:13px;font-weight:600;color:#64748B;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap}
+.tab.active{color:#1A202E;border-bottom-color:#F05252}
+.tab-count{font-size:11px;background:#EDF2F7;color:#4A5568;padding:1px 7px;border-radius:10px;margin-left:5px;font-weight:700}
+.tab.active .tab-count{background:#FED7D7;color:#C53030}
+
+/* FILTER / TOOLBAR */
+.filter-bar{padding:12px 20px;border-bottom:1px solid #E2E8F0;background:#F8FAFC;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.search-wrap{position:relative;flex:1;max-width:320px}
+.search-wrap svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:#94A3B8}
+.search-input{width:100%;padding:7px 12px 7px 34px;border:1px solid #CBD5E1;border-radius:6px;font-size:13px;font-family:inherit;background:#fff;color:#1A202E}
+.search-input::placeholder{color:#94A3B8}
+.filter-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border:1px solid #CBD5E1;border-radius:6px;background:#fff;font-size:12px;font-weight:600;color:#374151;cursor:pointer}
+.filter-chip{display:inline-flex;align-items:center;gap:5px;background:#EFF6FF;border:1px solid #BFDBFE;color:#1D4ED8;font-size:12px;font-weight:600;padding:4px 10px;border-radius:20px}
+.filter-chip-x{cursor:pointer;color:#93C5FD;margin-left:2px}
+
+/* MAIN TABLE */
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:1100px}
+thead tr{background:#1E3A5F}
+thead th{color:#fff;font-size:12px;font-weight:600;padding:10px 14px;text-align:left;white-space:nowrap;letter-spacing:.02em}
+thead th:first-child{width:40px;text-align:center}
+tbody tr{border-bottom:1px solid #F1F5F9}
+tbody tr:hover{background:#FAFCFF}
+tbody td{padding:10px 14px;font-size:13px;color:#1A202E;vertical-align:middle}
+tbody td:first-child{text-align:center}
+.cb{width:15px;height:15px;accent-color:#1E3A5F;cursor:pointer}
+
+/* LEGAL NAME CELL */
+.legal-name{font-weight:700;color:#1A202E;font-size:13px;line-height:1.3}
+.legal-sub{font-size:11px;color:#94A3B8;margin-top:1px}
+
+/* DBA CHIPS */
+.dba-chips{display:flex;flex-direction:column;gap:3px}
+.dba-chip{display:inline-flex;align-items:center;font-size:11px;font-weight:600;background:#EDE9FE;color:#4C1D95;padding:2px 8px;border-radius:12px;white-space:nowrap;width:fit-content}
+.dba-none{font-size:12px;color:#CBD5E1;font-style:italic}
+
+/* LICENSE STATUS — NEW FLAGS */
+.lic-flag{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;height:28px;border-radius:20px;font-size:12px;font-weight:600;font-style:italic;border:1px solid;white-space:nowrap;cursor:pointer;transition:opacity .1s}
+.lic-flag:hover{opacity:.82}
+.lic-flag.compliant{background:#DCFCE7;border-color:#bbf7d0;color:#166534}
+.lic-flag.violative{background:#FEE2E2;border-color:#fecaca;color:#991B1B}
+.lic-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.lic-flag.compliant .lic-dot{background:#16a34a}
+.lic-flag.violative .lic-dot{background:#dc2626}
+
+/* CLICK HINT (annotation on first row only) */
+.click-hint{display:inline-flex;align-items:center;gap:4px;margin-top:4px;font-size:10px;font-weight:600;color:#2563eb;opacity:.85;cursor:pointer;background:#EFF6FF;padding:2px 8px;border-radius:10px;border:1px solid #BFDBFE;white-space:nowrap}
+
+/* COMPLIANCE CELLS (Website + Product — unchanged) */
+.comp-cell{display:flex;flex-direction:column;gap:3px}
+.comp-score{font-size:12px;font-weight:700}
+.comp-score.red{color:#DC2626}
+.comp-score.green{color:#16A34A}
+.comp-score.gray{color:#94A3B8;font-style:italic}
+.comp-badges{display:flex;gap:3px;flex-wrap:wrap}
+.badge-sev{display:inline-flex;align-items:center;font-size:11px;font-weight:600;padding:2px 8px;border-radius:10px;border:1px solid;white-space:nowrap}
+.sev-h{background:#FEE2E2;border-color:#fecaca;color:#991B1B}
+.sev-m{background:#FEF9C3;border-color:#fde047;color:#854D0E}
+.sev-ok{background:#EFF6FF;border-color:#BFDBFE;color:#1E3A8A}
+
+/* WEBSITE CELL */
+.website-link{font-size:12px;color:#2563eb;display:flex;align-items:center;gap:4px}
+
+/* TEAM CELL */
+.team{display:flex;align-items:center;gap:3px}
+.avatar{width:26px;height:26px;border-radius:50%;font-size:11px;font-weight:700;color:#fff;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+.av-blue{background:#1E3A5F}
+.av-green{background:#16A34A}
+.av-purple{background:#7C3AED}
+.av-orange{background:#D97706}
+.av-more{font-size:11px;color:#64748B;font-weight:600;margin-left:2px}
+
+/* SCANS CELL */
+.scan-cell{font-size:12px}
+.scan-count{font-weight:700;color:#1A202E}
+.scan-date{font-size:11px;color:#94A3B8;margin-top:1px;font-family:'IBM Plex Mono',monospace}
+
+/* DATE CELL */
+.date-cell{font-size:12px;color:#374151;font-family:'IBM Plex Mono',monospace;white-space:nowrap}
+
+/* ACTION BUTTONS CELL */
+.action-cell{display:flex;align-items:center;gap:6px}
+.icon-btn{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:6px;border:1px solid #E2E8F0;background:#fff;cursor:pointer;color:#64748B;font-size:14px}
+.icon-btn:hover{background:#F8FAFC;color:#1A202E}
+
+/* TABLE FOOTER */
+.table-footer{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-top:1px solid #E2E8F0;background:#fff;flex-wrap:wrap;gap:10px}
+.table-summary{font-size:12px;color:#64748B}
+.pagination{display:flex;align-items:center;gap:6px}
+.page-btn{min-width:30px;height:30px;border:1px solid #E2E8F0;border-radius:6px;background:#fff;color:#475569;font-size:12px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
+.page-btn.active-page{background:#1E3A5F;border-color:#1E3A5F;color:#fff}
+
+/* ──────────────── STATE B: MODAL OVERLAY ──────────────── */
+.modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,.55);z-index:500;display:flex;align-items:center;justify-content:center;padding:24px}
+.modal{background:#fff;border-radius:14px;box-shadow:0 24px 60px rgba(15,23,42,.22);width:100%;max-width:1040px;max-height:90vh;display:flex;flex-direction:column;overflow:hidden}
+
+/* MODAL HEADER */
+.modal-header{background:#F7F5FF;border-bottom:1px solid #E2E8F0;padding:20px 28px 18px;display:flex;align-items:flex-start;gap:16px;flex-shrink:0}
+.modal-icon{width:44px;height:44px;border-radius:10px;background:#EDE9FE;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.modal-title-block{}
+.modal-title{font-size:16px;font-weight:700;color:#1A202E;margin-bottom:3px}
+.modal-subtitle{font-size:12px;color:#64748B}
+.modal-meta{display:flex;align-items:center;gap:8px;margin-top:8px;flex-wrap:wrap}
+.modal-meta-chip{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:3px 10px;border-radius:4px}
+.meta-id{background:#1E3A5F;color:#fff;font-family:'IBM Plex Mono',monospace}
+.meta-type{background:#EDE9FE;color:#4C1D95}
+.modal-close{margin-left:auto;width:32px;height:32px;border-radius:6px;border:1px solid #E2E8F0;background:#fff;font-size:18px;color:#64748B;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+.modal-close:hover{background:#FEE2E2;border-color:#fecaca;color:#991B1B}
+
+/* MODAL BODY */
+.modal-body{padding:0;overflow-y:auto;flex:1}
+.modal-scroll-hint{padding:10px 28px;background:#F8FAFC;border-bottom:1px solid #E2E8F0;font-size:11px;color:#94A3B8;display:flex;align-items:center;gap:6px}
+
+/* LICENSE CARDS */
+.lic-cards{padding:16px 28px 28px;display:flex;flex-direction:column;gap:16px}
+.lic-card{background:#fff;border:1px solid #E2E8F0;border-radius:10px;overflow:hidden}
+.lic-card-header{display:flex;align-items:center;gap:12px;padding:12px 16px;background:#F8FAFC;border-bottom:1px solid #E2E8F0;flex-wrap:wrap}
+.lic-card-num{font-size:11px;font-weight:700;color:#94A3B8;font-family:'IBM Plex Mono',monospace;background:#E2E8F0;padding:2px 8px;border-radius:4px}
+.lic-card-dba{font-size:13px;font-weight:700;color:#1A202E}
+.lic-card-addr{font-size:12px;color:#64748B;margin-left:auto}
+.lic-state-status{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;border:1px solid;font-style:italic;margin-left:8px}
+.ss-active{background:#DCFCE7;border-color:#bbf7d0;color:#166534}
+.ss-expired{background:#FEE2E2;border-color:#fecaca;color:#991B1B}
+.ss-suspended{background:#FEE2E2;border-color:#fecaca;color:#991B1B}
+.ss-pending{background:#FEF3C7;border-color:#FDE68A;color:#92400E}
+.ss-req-not-held{background:#FEE2E2;border-color:#fecaca;color:#991B1B}
+.ss-not-required{background:#DCFCE7;border-color:#bbf7d0;color:#166534}
+
+/* CARD FIELDS GRID */
+.lic-fields{display:grid;grid-template-columns:repeat(4,1fr);gap:0;padding:0}
+.lic-field{padding:10px 14px;border-right:1px solid #F1F5F9;border-bottom:1px solid #F1F5F9}
+.lic-field:last-child{border-right:none}
+.lic-field.span2{grid-column:span 2}
+.lic-field.span4{grid-column:span 4}
+.lic-field-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#94A3B8;margin-bottom:3px}
+.lic-field-value{font-size:12px;color:#1A202E;font-weight:500;line-height:1.4}
+.lic-field-value.empty{color:#CBD5E1;font-style:italic;font-weight:400}
+.lic-field-value.red{color:#991B1B;font-weight:700}
+.lic-field-value.green{color:#166534;font-weight:700}
+.lic-field-value.amber{color:#92400E;font-weight:700}
+
+/* DOCUMENT LINK */
+.doc-link{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:#2563eb;font-weight:600;padding:3px 8px;background:#EFF6FF;border-radius:5px;border:1px solid #BFDBFE;text-decoration:none}
+.doc-link:hover{background:#DBEAFE}
+.doc-none{font-size:12px;color:#CBD5E1;font-style:italic}
+
+/* CARD AUDIT HISTORY */
+.lic-audit{padding:10px 14px 12px;background:#F8FAFC;border-top:1px solid #E2E8F0}
+.lic-audit-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#94A3B8;margin-bottom:6px}
+.audit-row{display:flex;align-items:baseline;gap:8px;font-size:12px;color:#374151;line-height:1.5}
+.audit-who{font-weight:700;color:#1A202E}
+.audit-ts{font-family:'IBM Plex Mono',monospace;font-size:11px;color:#94A3B8}
+.audit-comment{color:#64748B;font-style:italic}
+
+/* MODAL FOOTER */
+.modal-footer{padding:14px 28px;border-top:1px solid #E2E8F0;display:flex;align-items:center;justify-content:space-between;background:#fff;flex-shrink:0}
+.modal-footer-note{font-size:11px;color:#94A3B8;font-style:italic}
+
+/* CHANGE CALLOUT ANNOTATION (State A) */
+.change-callout{background:#EFF6FF;border:1.5px dashed #93C5FD;border-radius:8px;padding:12px 16px;margin-bottom:20px;display:flex;gap:12px;align-items:flex-start}
+.change-callout .cc-icon{font-size:18px;flex-shrink:0;margin-top:1px}
+.change-callout .cc-body{}
+.change-callout .cc-title{font-size:13px;font-weight:700;color:#1E3A8A;margin-bottom:3px}
+.change-callout .cc-desc{font-size:12px;color:#1D4ED8;line-height:1.6}
+.change-callout code{background:#DBEAFE;padding:1px 5px;border-radius:3px;font-size:11px;font-family:'IBM Plex Mono',monospace}
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════════════════ TOP NAV -->
+<nav class="topnav">
+  <a href="/qredible-tickets/">← Prototypes</a>
+  <span class="sep">/</span>
+  <span class="badge">QP-3845</span>
+  <span class="title">We Monitor — License Status Flag + Detail Modal</span>
+  <span class="spacer"></span>
+  <span class="nav-note">Toggle states below ↓</span>
+</nav>
+
+<!-- ════════════════════════════════════════════════════════════ STATE TOGGLE -->
+<div class="toggle-bar">
+  <button class="toggle-btn active" id="btn-a" onclick="showState('a')">
+    <span class="state-dot closed"></span>
+    State A — Table view (modal closed)
+  </button>
+  <button class="toggle-btn" id="btn-b" onclick="showState('b')">
+    <span class="state-dot open"></span>
+    State B — License Detail modal open
+  </button>
+  <span class="toggle-info">Jira: <a href="https://qredible.atlassian.net/browse/QP-3845" target="_blank">QP-3845</a></span>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════ STATE A -->
+<div class="panel active" id="panel-a">
+  <div class="page">
+    <div class="page-header">
+      <h1>We Monitor — License Status column redesign</h1>
+      <p>The License Status column now shows a single <strong>Compliant</strong> / <strong>Violative</strong> flag. Click any flag to open the License Detail modal (State B). The old hover-only tooltip with multiple per-DBA badges is gone.</p>
+    </div>
+
+    <div class="change-callout">
+      <span class="cc-icon">🔄</span>
+      <div class="cc-body">
+        <div class="cc-title">What changed in License Status</div>
+        <div class="cc-desc">
+          <strong>Before:</strong> hover tooltip showed separate status badges per DBA address (confusing when multiple statuses existed). Clicking navigated to the Findings tab under Licenses &amp; Certifications.<br>
+          <strong>After:</strong> a single <code>Compliant</code> or <code>Violative</code> pill — click opens the License Detail modal (see State B) with the full field set per license row. Hover tooltip removed.
+        </div>
+      </div>
+    </div>
+
+    <div class="app-shell">
+      <!-- Admin topbar -->
+      <div class="admin-topbar">
+        <div>
+          <div class="crumb" style="font-size:11px;color:#94A3B8;margin-bottom:2px">RTQ-Admin-UI / We Monitor</div>
+          <h2>Monitored Companies</h2>
+        </div>
+        <span class="spacer"></span>
+        <button class="btn btn-secondary">⬇ Export</button>
+        <button class="btn btn-primary">+ Add Merchant</button>
+      </div>
+
+      <!-- Tab bar -->
+      <div class="tabs">
+        <div class="tab active">All Companies <span class="tab-count">248</span></div>
+        <div class="tab">Active <span class="tab-count">191</span></div>
+        <div class="tab">Pending <span class="tab-count">34</span></div>
+        <div class="tab">Archived <span class="tab-count">23</span></div>
+      </div>
+
+      <!-- Filter bar -->
+      <div class="filter-bar">
+        <div class="search-wrap">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input class="search-input" type="text" placeholder="Search legal name, DBA, website…">
+        </div>
+        <button class="filter-btn">⚙ Filters <span style="background:#F05252;color:#fff;font-size:10px;font-weight:700;padding:0 5px;border-radius:8px;margin-left:2px">2</span></button>
+        <span class="filter-chip">License Status: All <span class="filter-chip-x">×</span></span>
+        <span class="filter-chip">Industry: Hemp/Cannabis <span class="filter-chip-x">×</span></span>
+        <button class="filter-btn" style="margin-left:auto">☰ Columns</button>
+      </div>
+
+      <!-- Table -->
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th><input type="checkbox" class="cb"></th>
+              <th style="width:18%">Legal Name ↕</th>
+              <th style="width:13%">DBA Names</th>
+              <th style="width:10%">License Status</th>
+              <th style="width:10%">Website Compliance</th>
+              <th style="width:10%">Product Compliance</th>
+              <th style="width:9%">Website</th>
+              <th style="width:7%">Team</th>
+              <th style="width:7%">Scans</th>
+              <th style="width:8%">Date Added ↕</th>
+              <th style="width:8%">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+
+            <!-- Row 1 — ADL Capital (Compliant) — annotated -->
+            <tr>
+              <td><input type="checkbox" class="cb"></td>
+              <td>
+                <div class="legal-name">ADL Capital Investments LLC</div>
+                <div class="legal-sub">583523400006387 · CBD/Retailer</div>
+              </td>
+              <td>
+                <div class="dba-chips">
+                  <span class="dba-chip">Bulk Marijuana Seeds</span>
+                </div>
+              </td>
+              <td>
+                <div>
+                  <span class="lic-flag compliant" onclick="showState('b')" title="Click to view License Detail">
+                    <span class="lic-dot"></span> Compliant
+                  </span>
+                  <!-- annotation: first row only -->
+                  <div class="click-hint" onclick="showState('b')">↑ Click to view License Details</div>
+                </div>
+              </td>
+              <td>
+                <div class="comp-cell">
+                  <div class="comp-score red">2 Findings</div>
+                  <div class="comp-badges">
+                    <span class="badge-sev sev-h">1 High</span>
+                    <span class="badge-sev sev-m">1 Med</span>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="comp-cell">
+                  <div class="comp-score red">6 Products</div>
+                  <div class="comp-badges">
+                    <span class="badge-sev sev-h">2 Violative</span>
+                    <span class="badge-sev sev-ok">4 Compliant</span>
+                  </div>
+                </div>
+              </td>
+              <td><div class="website-link">🔗 adlcapital.com</div></td>
+              <td>
+                <div class="team">
+                  <span class="avatar av-blue">RK</span>
+                  <span class="avatar av-green">TM</span>
+                  <span class="av-more">+1</span>
+                </div>
+              </td>
+              <td>
+                <div class="scan-cell">
+                  <div class="scan-count">4 scans</div>
+                  <div class="scan-date">2025-04-28</div>
+                </div>
+              </td>
+              <td><div class="date-cell">Jan 15, 2025</div></td>
+              <td>
+                <div class="action-cell">
+                  <span class="icon-btn" title="View report">📋</span>
+                  <span class="icon-btn" title="More options">⋯</span>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 2 — Crop King Seeds (Violative) -->
+            <tr>
+              <td><input type="checkbox" class="cb"></td>
+              <td>
+                <div class="legal-name">Crop King Seeds Inc</div>
+                <div class="legal-sub">491872300009214 · Hemp Retailer</div>
+              </td>
+              <td><span class="dba-none">—</span></td>
+              <td>
+                <span class="lic-flag violative" title="Click to view License Detail">
+                  <span class="lic-dot"></span> Violative
+                </span>
+              </td>
+              <td>
+                <div class="comp-cell">
+                  <div class="comp-score red">5 Findings</div>
+                  <div class="comp-badges">
+                    <span class="badge-sev sev-h">3 High</span>
+                    <span class="badge-sev sev-m">2 Med</span>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="comp-cell">
+                  <div class="comp-score red">4 Products</div>
+                  <div class="comp-badges">
+                    <span class="badge-sev sev-h">4 Violative</span>
+                  </div>
+                </div>
+              </td>
+              <td><div class="website-link">🔗 cropkingseeds.com</div></td>
+              <td>
+                <div class="team">
+                  <span class="avatar av-purple">JL</span>
+                  <span class="avatar av-orange">SP</span>
+                </div>
+              </td>
+              <td>
+                <div class="scan-cell">
+                  <div class="scan-count">2 scans</div>
+                  <div class="scan-date">2025-03-14</div>
+                </div>
+              </td>
+              <td><div class="date-cell">Mar 22, 2024</div></td>
+              <td>
+                <div class="action-cell">
+                  <span class="icon-btn">📋</span>
+                  <span class="icon-btn">⋯</span>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 3 — Pacific Organics (Compliant) -->
+            <tr>
+              <td><input type="checkbox" class="cb"></td>
+              <td>
+                <div class="legal-name">Pacific Organics LLC</div>
+                <div class="legal-sub">774219600003851 · CBD/Retailer</div>
+              </td>
+              <td>
+                <div class="dba-chips">
+                  <span class="dba-chip">Pacific Hemp Co</span>
+                </div>
+              </td>
+              <td>
+                <span class="lic-flag compliant" title="Click to view License Detail">
+                  <span class="lic-dot"></span> Compliant
+                </span>
+              </td>
+              <td>
+                <div class="comp-cell">
+                  <div class="comp-score green">Compliant</div>
+                  <div class="comp-badges">
+                    <span class="badge-sev sev-ok">12 Compliant</span>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="comp-cell">
+                  <div class="comp-score green">7 Products</div>
+                  <div class="comp-badges">
+                    <span class="badge-sev sev-ok">7 Compliant</span>
+                  </div>
+                </div>
+              </td>
+              <td><div class="website-link">🔗 pacificorganics.com</div></td>
+              <td>
+                <div class="team">
+                  <span class="avatar av-blue">NR</span>
+                </div>
+              </td>
+              <td>
+                <div class="scan-cell">
+                  <div class="scan-count">3 scans</div>
+                  <div class="scan-date">2025-04-01</div>
+                </div>
+              </td>
+              <td><div class="date-cell">Jul 8, 2024</div></td>
+              <td>
+                <div class="action-cell">
+                  <span class="icon-btn">📋</span>
+                  <span class="icon-btn">⋯</span>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 4 — Green Valley (Violative) -->
+            <tr>
+              <td><input type="checkbox" class="cb"></td>
+              <td>
+                <div class="legal-name">Green Valley Dispensary</div>
+                <div class="legal-sub">302984100007629 · Dispensary</div>
+              </td>
+              <td>
+                <div class="dba-chips">
+                  <span class="dba-chip">GVD Express</span>
+                </div>
+              </td>
+              <td>
+                <span class="lic-flag violative" title="Click to view License Detail">
+                  <span class="lic-dot"></span> Violative
+                </span>
+              </td>
+              <td>
+                <div class="comp-cell">
+                  <div class="comp-score red">3 Findings</div>
+                  <div class="comp-badges">
+                    <span class="badge-sev sev-h">2 High</span>
+                    <span class="badge-sev sev-m">1 Med</span>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="comp-cell">
+                  <div class="comp-score red">2 Products</div>
+                  <div class="comp-badges">
+                    <span class="badge-sev sev-h">2 Violative</span>
+                  </div>
+                </div>
+              </td>
+              <td><div class="website-link">🔗 greenvalleydsp.com</div></td>
+              <td>
+                <div class="team">
+                  <span class="avatar av-green">AM</span>
+                  <span class="avatar av-blue">BK</span>
+                  <span class="avatar av-purple">CW</span>
+                  <span class="av-more">+1</span>
+                </div>
+              </td>
+              <td>
+                <div class="scan-cell">
+                  <div class="scan-count">2 scans</div>
+                  <div class="scan-date">2025-02-19</div>
+                </div>
+              </td>
+              <td><div class="date-cell">Nov 30, 2023</div></td>
+              <td>
+                <div class="action-cell">
+                  <span class="icon-btn">📋</span>
+                  <span class="icon-btn">⋯</span>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 5 — Hemp Republic (Compliant) -->
+            <tr>
+              <td><input type="checkbox" class="cb"></td>
+              <td>
+                <div class="legal-name">Hemp Republic Co.</div>
+                <div class="legal-sub">883001200004472 · Hemp/Wellness</div>
+              </td>
+              <td><span class="dba-none">—</span></td>
+              <td>
+                <span class="lic-flag compliant" title="Click to view License Detail">
+                  <span class="lic-dot"></span> Compliant
+                </span>
+              </td>
+              <td>
+                <div class="comp-cell">
+                  <div class="comp-score green">Compliant</div>
+                  <div class="comp-badges">
+                    <span class="badge-sev sev-ok">8 Compliant</span>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="comp-cell">
+                  <div class="comp-score green">5 Products</div>
+                  <div class="comp-badges">
+                    <span class="badge-sev sev-ok">5 Compliant</span>
+                  </div>
+                </div>
+              </td>
+              <td><div class="website-link">🔗 hemprepublic.com</div></td>
+              <td>
+                <div class="team">
+                  <span class="avatar av-orange">PD</span>
+                  <span class="avatar av-blue">KL</span>
+                </div>
+              </td>
+              <td>
+                <div class="scan-cell">
+                  <div class="scan-count">4 scans</div>
+                  <div class="scan-date">2025-04-22</div>
+                </div>
+              </td>
+              <td><div class="date-cell">Feb 14, 2025</div></td>
+              <td>
+                <div class="action-cell">
+                  <span class="icon-btn">📋</span>
+                  <span class="icon-btn">⋯</span>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 6 — Boulder Cannabis (Violative) -->
+            <tr>
+              <td><input type="checkbox" class="cb"></td>
+              <td>
+                <div class="legal-name">Boulder Cannabis LLC</div>
+                <div class="legal-sub">641590800002168 · Cannabis Retailer</div>
+              </td>
+              <td>
+                <div class="dba-chips">
+                  <span class="dba-chip">BC Vapes</span>
+                  <span class="dba-chip">BC Edibles</span>
+                </div>
+              </td>
+              <td>
+                <span class="lic-flag violative" title="Click to view License Detail">
+                  <span class="lic-dot"></span> Violative
+                </span>
+              </td>
+              <td>
+                <div class="comp-cell">
+                  <div class="comp-score red">1 Finding</div>
+                  <div class="comp-badges">
+                    <span class="badge-sev sev-h">1 High</span>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="comp-cell">
+                  <div class="comp-score red">8 Products</div>
+                  <div class="comp-badges">
+                    <span class="badge-sev sev-h">3 Violative</span>
+                    <span class="badge-sev sev-ok">5 Compliant</span>
+                  </div>
+                </div>
+              </td>
+              <td><div class="website-link">🔗 bouldercannabis.com</div></td>
+              <td>
+                <div class="team">
+                  <span class="avatar av-purple">HL</span>
+                  <span class="avatar av-green">MR</span>
+                  <span class="avatar av-orange">ST</span>
+                </div>
+              </td>
+              <td>
+                <div class="scan-cell">
+                  <div class="scan-count">1 scan</div>
+                  <div class="scan-date">2025-01-09</div>
+                </div>
+              </td>
+              <td><div class="date-cell">Sep 1, 2024</div></td>
+              <td>
+                <div class="action-cell">
+                  <span class="icon-btn">📋</span>
+                  <span class="icon-btn">⋯</span>
+                </div>
+              </td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Table footer -->
+      <div class="table-footer">
+        <div class="table-summary">Showing 1–6 of 248 companies</div>
+        <div class="pagination">
+          <span class="page-btn">«</span>
+          <span class="page-btn active-page">1</span>
+          <span class="page-btn">2</span>
+          <span class="page-btn">3</span>
+          <span class="page-btn">…</span>
+          <span class="page-btn">42</span>
+          <span class="page-btn">»</span>
+        </div>
+      </div>
+    </div><!-- /app-shell -->
+
+  </div><!-- /page -->
+</div><!-- /panel-a -->
+
+
+<!-- ════════════════════════════════════════════════════════════ STATE B -->
+<div class="panel" id="panel-b">
+  <div class="page">
+    <div class="page-header">
+      <h1>License Detail Modal — open on ADL Capital Investments LLC</h1>
+      <p>Clicking the Compliant / Violative flag on any row opens this modal. Background table remains visible (dimmed). Close button and ESC dismiss.</p>
+    </div>
+  </div>
+
+  <!-- Background: same table (slightly opacity) -->
+  <div style="opacity:.35;pointer-events:none;padding:0 24px 0;max-width:1360px;margin:0 auto">
+    <div class="app-shell">
+      <div class="admin-topbar"><h2 style="font-size:15px;color:#1A202E">Monitored Companies</h2></div>
+      <div class="tabs">
+        <div class="tab active">All Companies <span class="tab-count">248</span></div>
+        <div class="tab">Active <span class="tab-count">191</span></div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr>
+            <th><input type="checkbox" class="cb" disabled></th>
+            <th>Legal Name</th><th>DBA Names</th><th>License Status</th>
+            <th>Website Compliance</th><th>Product Compliance</th>
+            <th>Website</th><th>Team</th><th>Scans</th><th>Date Added</th><th>Actions</th>
+          </tr></thead>
+          <tbody>
+            <tr style="background:#EFF6FF">
+              <td><input type="checkbox" class="cb" checked disabled></td>
+              <td><div class="legal-name">ADL Capital Investments LLC</div><div class="legal-sub">583523400006387 · CBD/Retailer</div></td>
+              <td><span class="dba-chip">Bulk Marijuana Seeds</span></td>
+              <td><span class="lic-flag compliant"><span class="lic-dot"></span> Compliant</span></td>
+              <td><div class="comp-score red">2 Findings</div></td>
+              <td><div class="comp-score red">6 Products</div></td>
+              <td><div class="website-link">🔗 adlcapital.com</div></td>
+              <td>—</td><td>4 scans</td><td class="date-cell">Jan 15, 2025</td>
+              <td>—</td>
+            </tr>
+            <tr>
+              <td></td>
+              <td><div class="legal-name">Crop King Seeds Inc</div><div class="legal-sub">491872300009214</div></td>
+              <td>—</td>
+              <td><span class="lic-flag violative"><span class="lic-dot"></span> Violative</span></td>
+              <td><div class="comp-score red">5 Findings</div></td>
+              <td><div class="comp-score red">4 Products</div></td>
+              <td>—</td><td>—</td><td>2 scans</td><td class="date-cell">Mar 22, 2024</td><td>—</td>
+            </tr>
+            <tr>
+              <td></td>
+              <td><div class="legal-name">Pacific Organics LLC</div></td>
+              <td><span class="dba-chip">Pacific Hemp Co</span></td>
+              <td><span class="lic-flag compliant"><span class="lic-dot"></span> Compliant</span></td>
+              <td><div class="comp-score green">Compliant</div></td>
+              <td><div class="comp-score green">7 Products</div></td>
+              <td>—</td><td>—</td><td>3 scans</td><td class="date-cell">Jul 8, 2024</td><td>—</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL OVERLAY -->
+  <div class="modal-overlay">
+    <div class="modal" role="dialog" aria-modal="true" aria-label="License Detail">
+
+      <!-- Modal header -->
+      <div class="modal-header">
+        <div class="modal-icon">📋</div>
+        <div class="modal-title-block">
+          <div class="modal-title">License Detail — ADL Capital Investments LLC</div>
+          <div class="modal-subtitle">All licenses on file for this merchant, grouped by DBA and address</div>
+          <div class="modal-meta">
+            <span class="modal-meta-chip meta-id">583523400006387</span>
+            <span class="modal-meta-chip meta-type">CBD / Retailer</span>
+          </div>
+        </div>
+        <button class="modal-close" onclick="showState('a')" title="Close">✕</button>
+      </div>
+
+      <!-- Scroll hint -->
+      <div class="modal-scroll-hint">
+        ↕ Scroll to see all 8 license records &nbsp;·&nbsp; Rows cover CA, FL, TX, OR, NY, NV, CO locations
+      </div>
+
+      <!-- License cards -->
+      <div class="modal-body">
+        <div class="lic-cards">
+
+          <!-- ── License 1: CA / Los Angeles / Bulk Marijuana Seeds / Active ── -->
+          <div class="lic-card">
+            <div class="lic-card-header">
+              <span class="lic-card-num">#1</span>
+              <span class="lic-card-dba">Bulk Marijuana Seeds</span>
+              <span class="lic-state-status ss-active">● Active</span>
+              <span class="lic-card-addr">1234 Market St, Los Angeles, CA 90001</span>
+            </div>
+            <div class="lic-fields">
+              <div class="lic-field">
+                <div class="lic-field-label">State</div>
+                <div class="lic-field-value">California</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Industry Type</div>
+                <div class="lic-field-value">Hemp / Cannabis</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Type of Company</div>
+                <div class="lic-field-value">Retailer</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">License Type</div>
+                <div class="lic-field-value">State Retail License</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">License Details</div>
+                <div class="lic-field-value">Medical / Adult Use Retail</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Document Number</div>
+                <div class="lic-field-value mono">CA-DCC-RET-2024-03917</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">State License Status</div>
+                <div class="lic-field-value green">Active</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Issuer</div>
+                <div class="lic-field-value">CA Dept of Cannabis Control</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Required</div>
+                <div class="lic-field-value">Yes</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Issue Date</div>
+                <div class="lic-field-value mono">01/15/2023</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Expiration Date</div>
+                <div class="lic-field-value mono">12/31/2025</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Validation Method</div>
+                <div class="lic-field-value">State Verified</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Review Status</div>
+                <div class="lic-field-value green">Accepted</div>
+              </div>
+              <div class="lic-field span2">
+                <div class="lic-field-label">Additional License Information</div>
+                <div class="lic-field-value">Covers Los Angeles storefront only; does not extend to online sales.</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Comments</div>
+                <div class="lic-field-value empty">—</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Supporting Documents</div>
+                <div class="lic-field-value"><a class="doc-link" href="#">📄 CA-DCC-cert.pdf</a></div>
+              </div>
+            </div>
+            <div class="lic-audit">
+              <div class="lic-audit-title">Audit History</div>
+              <div class="audit-row">
+                <span class="audit-who">Rachel Kim</span>
+                <span class="audit-ts">2025-01-20 09:14 AM</span>
+                <span class="audit-comment">— Verified against CA DCC public license lookup. Status confirmed active.</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── License 2: CA / San Diego / Bulk Marijuana Seeds / Active ── -->
+          <div class="lic-card">
+            <div class="lic-card-header">
+              <span class="lic-card-num">#2</span>
+              <span class="lic-card-dba">Bulk Marijuana Seeds</span>
+              <span class="lic-state-status ss-active">● Active</span>
+              <span class="lic-card-addr">5678 Broadway, San Diego, CA 92101</span>
+            </div>
+            <div class="lic-fields">
+              <div class="lic-field">
+                <div class="lic-field-label">State</div>
+                <div class="lic-field-value">California</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Industry Type</div>
+                <div class="lic-field-value">Hemp / Cannabis</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Type of Company</div>
+                <div class="lic-field-value">Retailer</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">License Type</div>
+                <div class="lic-field-value">Business License</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">License Details</div>
+                <div class="lic-field-value">General Retail — Cannabis Products</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Document Number</div>
+                <div class="lic-field-value mono">SD-BIZ-2024-1122</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">State License Status</div>
+                <div class="lic-field-value green">Active</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Issuer</div>
+                <div class="lic-field-value">City of San Diego</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Required</div>
+                <div class="lic-field-value">Yes</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Issue Date</div>
+                <div class="lic-field-value mono">03/01/2023</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Expiration Date</div>
+                <div class="lic-field-value mono">02/28/2026</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Validation Method</div>
+                <div class="lic-field-value">Document Provided</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Review Status</div>
+                <div class="lic-field-value green">Accepted</div>
+              </div>
+              <div class="lic-field span2">
+                <div class="lic-field-label">Additional License Information</div>
+                <div class="lic-field-value">Covers SD retail storefront and wholesale distribution.</div>
+              </div>
+              <div class="lic-field span2">
+                <div class="lic-field-label">Comments</div>
+                <div class="lic-field-value">License copy verified against City of San Diego BAS portal. Certificate on file.</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Supporting Documents</div>
+                <div class="lic-field-value"><a class="doc-link" href="#">📄 SD-biz-license-2024.pdf</a></div>
+              </div>
+            </div>
+            <div class="lic-audit">
+              <div class="lic-audit-title">Audit History</div>
+              <div class="audit-row">
+                <span class="audit-who">Tom Medina</span>
+                <span class="audit-ts">2025-01-20 11:42 AM</span>
+                <span class="audit-comment">— Document provided. Matched city records. Accepted.</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── License 3: FL / Miami / ADL Capital / EXPIRED ── -->
+          <div class="lic-card">
+            <div class="lic-card-header">
+              <span class="lic-card-num">#3</span>
+              <span class="lic-card-dba">ADL Capital Investments</span>
+              <span class="lic-state-status ss-expired">● Expired</span>
+              <span class="lic-card-addr">890 Miami Ave, Miami, FL 33101</span>
+            </div>
+            <div class="lic-fields">
+              <div class="lic-field">
+                <div class="lic-field-label">State</div>
+                <div class="lic-field-value">Florida</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Industry Type</div>
+                <div class="lic-field-value">Hemp</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Type of Company</div>
+                <div class="lic-field-value">CBD Retailer</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">License Type</div>
+                <div class="lic-field-value">State Hemp License</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">License Details</div>
+                <div class="lic-field-value">Hemp Extract Retail</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Document Number</div>
+                <div class="lic-field-value mono">FL-HEMP-2024-5512</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">State License Status</div>
+                <div class="lic-field-value red">Expired</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Issuer</div>
+                <div class="lic-field-value">FL Dept of Agriculture &amp; Consumer Services</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Required</div>
+                <div class="lic-field-value">Yes</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Issue Date</div>
+                <div class="lic-field-value mono">04/15/2022</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Expiration Date</div>
+                <div class="lic-field-value mono red">04/14/2024 ⚠</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Validation Method</div>
+                <div class="lic-field-value">State Verified</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Review Status</div>
+                <div class="lic-field-value red">Rejected</div>
+              </div>
+              <div class="lic-field span2">
+                <div class="lic-field-label">Additional License Information</div>
+                <div class="lic-field-value">License expired April 2024 — renewal application submitted but awaiting state response.</div>
+              </div>
+              <div class="lic-field span2">
+                <div class="lic-field-label">Comments</div>
+                <div class="lic-field-value">Customer was contacted 30 days prior to expiration. Renewal application submitted 04/01/2024. FL DACS response pending as of this review.</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Supporting Documents</div>
+                <div class="lic-field-value"><a class="doc-link" href="#">📄 FL-HEMP-renewal-app.pdf</a></div>
+              </div>
+            </div>
+            <div class="lic-audit">
+              <div class="lic-audit-title">Audit History</div>
+              <div class="audit-row">
+                <span class="audit-who">Rachel Kim</span>
+                <span class="audit-ts">2024-05-02 02:31 PM</span>
+                <span class="audit-comment">— FL DACS portal confirms expired 04/14/2024. Rejected — renewal in progress. Escalated to compliance manager.</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── License 4: TX / Dallas / ADL Capital / Active ── -->
+          <div class="lic-card">
+            <div class="lic-card-header">
+              <span class="lic-card-num">#4</span>
+              <span class="lic-card-dba">ADL Capital Investments</span>
+              <span class="lic-state-status ss-active">● Active</span>
+              <span class="lic-card-addr">2200 Commerce St, Dallas, TX 75201</span>
+            </div>
+            <div class="lic-fields">
+              <div class="lic-field">
+                <div class="lic-field-label">State</div>
+                <div class="lic-field-value">Texas</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Industry Type</div>
+                <div class="lic-field-value">Hemp</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Type of Company</div>
+                <div class="lic-field-value">Hemp Retailer</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">License Type</div>
+                <div class="lic-field-value">State Hemp License</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">License Details</div>
+                <div class="lic-field-value">Hemp Food Manufacturer &amp; Retailer</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Document Number</div>
+                <div class="lic-field-value mono">TX-HEMP-0029841</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">State License Status</div>
+                <div class="lic-field-value green">Active</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Issuer</div>
+                <div class="lic-field-value">TX Dept of State Health Services</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Required</div>
+                <div class="lic-field-value">Yes</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Issue Date</div>
+                <div class="lic-field-value mono">07/01/2023</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Expiration Date</div>
+                <div class="lic-field-value mono">06/30/2025</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Validation Method</div>
+                <div class="lic-field-value">Document Provided</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Review Status</div>
+                <div class="lic-field-value green">Accepted</div>
+              </div>
+              <div class="lic-field span2">
+                <div class="lic-field-label">Additional License Information</div>
+                <div class="lic-field-value empty">—</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Comments</div>
+                <div class="lic-field-value empty">—</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Supporting Documents</div>
+                <div class="lic-field-value"><a class="doc-link" href="#">📄 TX-HEMP-cert.pdf</a></div>
+              </div>
+            </div>
+            <div class="lic-audit">
+              <div class="lic-audit-title">Audit History</div>
+              <div class="audit-row">
+                <span class="audit-who">Sarah Patel</span>
+                <span class="audit-ts">2024-08-11 10:05 AM</span>
+                <span class="audit-comment">— Document reviewed. TX DSHS license confirmed active. Accepted.</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── License 5: OR / Portland / Bulk Marijuana Seeds / SUSPENDED ── -->
+          <div class="lic-card">
+            <div class="lic-card-header">
+              <span class="lic-card-num">#5</span>
+              <span class="lic-card-dba">Bulk Marijuana Seeds</span>
+              <span class="lic-state-status ss-suspended">● Suspended</span>
+              <span class="lic-card-addr">301 SE Hawthorne Blvd, Portland, OR 97214</span>
+            </div>
+            <div class="lic-fields">
+              <div class="lic-field">
+                <div class="lic-field-label">State</div>
+                <div class="lic-field-value">Oregon</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Industry Type</div>
+                <div class="lic-field-value">Cannabis</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Type of Company</div>
+                <div class="lic-field-value">Dispensary</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">License Type</div>
+                <div class="lic-field-value">OLCC Dispensary License</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">License Details</div>
+                <div class="lic-field-value">Medical &amp; Recreational Retail</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Document Number</div>
+                <div class="lic-field-value mono">OR-DISP-2024-00312</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">State License Status</div>
+                <div class="lic-field-value red">Suspended</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Issuer</div>
+                <div class="lic-field-value">Oregon Liquor &amp; Cannabis Commission</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Required</div>
+                <div class="lic-field-value">Yes</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Issue Date</div>
+                <div class="lic-field-value mono">02/20/2022</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Expiration Date</div>
+                <div class="lic-field-value mono">02/19/2025</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Validation Method</div>
+                <div class="lic-field-value">State Verified</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Review Status</div>
+                <div class="lic-field-value green">Accepted</div>
+              </div>
+              <div class="lic-field span2">
+                <div class="lic-field-label">Additional License Information</div>
+                <div class="lic-field-value">License suspended by OLCC following a compliance inspection — reinstatement hearing scheduled Q1 2025.</div>
+              </div>
+              <div class="lic-field span2">
+                <div class="lic-field-label">Comments</div>
+                <div class="lic-field-value">Customer notified of suspension on 11/01/2024. Reinstatement hearing scheduled 01/14/2025. Status marked accepted as of audit date — state action occurred post-review.</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Supporting Documents</div>
+                <div class="lic-field-value"><span class="doc-none">No document on file</span></div>
+              </div>
+            </div>
+            <div class="lic-audit">
+              <div class="lic-audit-title">Audit History</div>
+              <div class="audit-row">
+                <span class="audit-who">Rachel Kim</span>
+                <span class="audit-ts">2024-11-04 03:15 PM</span>
+                <span class="audit-comment">— OLCC portal shows suspension effective 10/28/2024. Customer contacted. Escalated.</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── License 6: NY / New York / ADL Capital / Active ── -->
+          <div class="lic-card">
+            <div class="lic-card-header">
+              <span class="lic-card-num">#6</span>
+              <span class="lic-card-dba">ADL Capital Investments</span>
+              <span class="lic-state-status ss-active">● Active</span>
+              <span class="lic-card-addr">142 W 57th St, New York, NY 10019</span>
+            </div>
+            <div class="lic-fields">
+              <div class="lic-field">
+                <div class="lic-field-label">State</div>
+                <div class="lic-field-value">New York</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Industry Type</div>
+                <div class="lic-field-value">Hemp</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Type of Company</div>
+                <div class="lic-field-value">CBD Retailer</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">License Type</div>
+                <div class="lic-field-value">Hemp Extract License</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">License Details</div>
+                <div class="lic-field-value">Hemp Extract Products — Retail</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Document Number</div>
+                <div class="lic-field-value mono">NY-HEX-2024-7781</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">State License Status</div>
+                <div class="lic-field-value green">Active</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Issuer</div>
+                <div class="lic-field-value">NY Dept of Agriculture &amp; Markets</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Required</div>
+                <div class="lic-field-value">Yes</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Issue Date</div>
+                <div class="lic-field-value mono">09/01/2024</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Expiration Date</div>
+                <div class="lic-field-value mono">08/31/2026</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Validation Method</div>
+                <div class="lic-field-value">Document Provided</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Review Status</div>
+                <div class="lic-field-value green">Accepted</div>
+              </div>
+              <div class="lic-field span2">
+                <div class="lic-field-label">Additional License Information</div>
+                <div class="lic-field-value">Annual renewal completed on time. License covers NYC retail and e-commerce within NY state.</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Comments</div>
+                <div class="lic-field-value empty">—</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Supporting Documents</div>
+                <div class="lic-field-value"><a class="doc-link" href="#">📄 NY-HEX-license-2024.pdf</a></div>
+              </div>
+            </div>
+            <div class="lic-audit">
+              <div class="lic-audit-title">Audit History</div>
+              <div class="audit-row">
+                <span class="audit-who">Tom Medina</span>
+                <span class="audit-ts">2024-09-10 08:50 AM</span>
+                <span class="audit-comment">— NY DAM portal confirms active. Renewal document received and on file.</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── License 7: NV / Las Vegas / Bulk Marijuana Seeds / Active ── -->
+          <div class="lic-card">
+            <div class="lic-card-header">
+              <span class="lic-card-num">#7</span>
+              <span class="lic-card-dba">Bulk Marijuana Seeds</span>
+              <span class="lic-state-status ss-active">● Active</span>
+              <span class="lic-card-addr">4100 S Maryland Pkwy, Las Vegas, NV 89119</span>
+            </div>
+            <div class="lic-fields">
+              <div class="lic-field">
+                <div class="lic-field-label">State</div>
+                <div class="lic-field-value">Nevada</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Industry Type</div>
+                <div class="lic-field-value">Cannabis</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Type of Company</div>
+                <div class="lic-field-value">Retail Dispensary</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">License Type</div>
+                <div class="lic-field-value">Cannabis Establishment License</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">License Details</div>
+                <div class="lic-field-value">Retail Dispensary — Adult Use</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Document Number</div>
+                <div class="lic-field-value mono">NV-CAN-2024-9203</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">State License Status</div>
+                <div class="lic-field-value green">Active</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Issuer</div>
+                <div class="lic-field-value">Cannabis Control Board (CCB Nevada)</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Required</div>
+                <div class="lic-field-value">Yes</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Issue Date</div>
+                <div class="lic-field-value mono">11/15/2023</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Expiration Date</div>
+                <div class="lic-field-value mono">11/14/2025</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Validation Method</div>
+                <div class="lic-field-value">State Verified</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Review Status</div>
+                <div class="lic-field-value green">Accepted</div>
+              </div>
+              <div class="lic-field span2">
+                <div class="lic-field-label">Additional License Information</div>
+                <div class="lic-field-value">License covers two Las Vegas metro storefronts (S Maryland Pkwy &amp; Decatur Blvd).</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Comments</div>
+                <div class="lic-field-value empty">—</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Supporting Documents</div>
+                <div class="lic-field-value"><a class="doc-link" href="#">📄 NV-CCB-license.pdf</a></div>
+              </div>
+            </div>
+            <div class="lic-audit">
+              <div class="lic-audit-title">Audit History</div>
+              <div class="audit-row">
+                <span class="audit-who">Sarah Patel</span>
+                <span class="audit-ts">2024-12-01 01:22 PM</span>
+                <span class="audit-comment">— CCB Nevada public registry confirms active. Both locations covered under single license number.</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── License 8: CO / Denver / ADL Capital / Required Not Held ── -->
+          <div class="lic-card">
+            <div class="lic-card-header">
+              <span class="lic-card-num">#8</span>
+              <span class="lic-card-dba">ADL Capital Investments</span>
+              <span class="lic-state-status ss-req-not-held">● Required Not Held</span>
+              <span class="lic-card-addr">1560 Blake St, Denver, CO 80202</span>
+            </div>
+            <div class="lic-fields">
+              <div class="lic-field">
+                <div class="lic-field-label">State</div>
+                <div class="lic-field-value">Colorado</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Industry Type</div>
+                <div class="lic-field-value">Cannabis</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Type of Company</div>
+                <div class="lic-field-value">CBD Retailer</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">License Type</div>
+                <div class="lic-field-value">MED Retail License</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">License Details</div>
+                <div class="lic-field-value">Standard Retail — Medical</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Document Number</div>
+                <div class="lic-field-value empty">—  (application pending)</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">State License Status</div>
+                <div class="lic-field-value red">Required Not Held</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Issuer</div>
+                <div class="lic-field-value">MED Colorado (Marijuana Enforcement Div.)</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Required</div>
+                <div class="lic-field-value">Yes</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Issue Date</div>
+                <div class="lic-field-value empty">—</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Expiration Date</div>
+                <div class="lic-field-value empty">—</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Validation Method</div>
+                <div class="lic-field-value empty">—</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Review Status</div>
+                <div class="lic-field-value amber">Pending</div>
+              </div>
+              <div class="lic-field span2">
+                <div class="lic-field-label">Additional License Information</div>
+                <div class="lic-field-value">License application submitted to MED Colorado on 10/15/2024. State processing time est. 45–60 days per CO MED guidelines.</div>
+              </div>
+              <div class="lic-field span2">
+                <div class="lic-field-label">Comments</div>
+                <div class="lic-field-value">Awaiting state approval. Merchant has been advised not to operate at this address until license is issued. Follow-up scheduled for 12/15/2024.</div>
+              </div>
+              <div class="lic-field">
+                <div class="lic-field-label">Supporting Documents</div>
+                <div class="lic-field-value"><span class="doc-none">No document on file</span></div>
+              </div>
+            </div>
+            <div class="lic-audit">
+              <div class="lic-audit-title">Audit History</div>
+              <div class="audit-row">
+                <span class="audit-who">Rachel Kim</span>
+                <span class="audit-ts">2024-10-22 04:05 PM</span>
+                <span class="audit-comment">— MED Colorado portal: no active license found for this address. Application confirmed submitted. Status set to Required Not Held — pending review.</span>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /lic-cards -->
+      </div><!-- /modal-body -->
+
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <div class="modal-footer-note">8 licenses across 7 states · Last synced 2025-04-28</div>
+        <div style="display:flex;gap:10px">
+          <button class="btn btn-secondary" onclick="showState('a')">Close</button>
+          <button class="btn btn-primary">Export All Licenses</button>
+        </div>
+      </div>
+
+    </div><!-- /modal -->
+  </div><!-- /modal-overlay -->
+
+</div><!-- /panel-b -->
+
+
+<script>
+function showState(s) {
+  document.getElementById('panel-a').classList.toggle('active', s === 'a');
+  document.getElementById('panel-b').classList.toggle('active', s === 'b');
+  document.getElementById('btn-a').classList.toggle('active', s === 'a');
+  document.getElementById('btn-b').classList.toggle('active', s === 'b');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') showState('a');
+});
+</script>
+
+</body>
+</html>
