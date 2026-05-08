@@ -109,17 +109,36 @@ tbody td:first-child{text-align:center}
 .dba-chip{display:inline-flex;align-items:center;font-size:11px;font-weight:600;background:#EDE9FE;color:#4C1D95;padding:2px 8px;border-radius:12px;white-space:nowrap;width:fit-content}
 .dba-none{font-size:12px;color:#CBD5E1;font-style:italic}
 
-/* LICENSE STATUS — NEW FLAGS */
+/* LICENSE STATUS — NEW FLAGS (4 states) */
 .lic-flag{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;height:28px;border-radius:20px;font-size:12px;font-weight:600;font-style:italic;border:1px solid;white-space:nowrap;cursor:pointer;transition:opacity .1s}
 .lic-flag:hover{opacity:.82}
 .lic-flag.compliant{background:#DCFCE7;border-color:#bbf7d0;color:#166534}
 .lic-flag.violative{background:#FEE2E2;border-color:#fecaca;color:#991B1B}
+/* Pending — reuses platform amber (LicenseStatusBadgeHelper PENDING: #FEF3C7 / #92400E / #E7E1C5) */
+.lic-flag.pending{background:#FEF3C7;border-color:#E7E1C5;color:#92400E}
+/* Blank — no license tracking; cursor default, no action */
+.lic-flag.blank{background:transparent;border-color:transparent;color:#CBD5E1;cursor:default;font-style:normal;font-weight:400;font-size:12px;padding:4px 0;gap:4px}
+.lic-flag.blank:hover{opacity:1}
 .lic-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
 .lic-flag.compliant .lic-dot{background:#16a34a}
 .lic-flag.violative .lic-dot{background:#dc2626}
+.lic-flag.pending .lic-dot{background:#D97706}
 
-/* CLICK HINT (annotation on first row only) */
+/* CLICK HINT (annotation on a flagged row) */
 .click-hint{display:inline-flex;align-items:center;gap:4px;margin-top:4px;font-size:10px;font-weight:600;color:#2563eb;opacity:.85;cursor:pointer;background:#EFF6FF;padding:2px 8px;border-radius:10px;border:1px solid #BFDBFE;white-space:nowrap}
+/* Blank hint (no-op indicator) */
+.blank-hint{display:inline-flex;align-items:center;gap:4px;margin-top:4px;font-size:10px;color:#94A3B8;font-style:italic;padding:2px 0;white-space:nowrap}
+
+/* Q-AUDIT TO DO TASK BANNER (inside modal license cards) */
+.qaudit-task{margin:0;border-top:1px solid #E2E8F0;background:#FFFBEB;padding:10px 14px 12px}
+.qaudit-task-header{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.qaudit-task-pill{display:inline-flex;align-items:center;gap:5px;background:#FEF3C7;border:1px solid #E7E1C5;color:#92400E;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;text-transform:uppercase;letter-spacing:.04em}
+.qaudit-task-id{font-family:'IBM Plex Mono',monospace;font-size:11px;color:#94A3B8}
+.qaudit-task-title{font-size:12px;font-weight:700;color:#78350F;margin-bottom:6px}
+.qaudit-task-meta{display:flex;gap:16px;flex-wrap:wrap}
+.qaudit-meta-item{display:flex;flex-direction:column;gap:2px}
+.qaudit-meta-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#92400E;opacity:.7}
+.qaudit-meta-value{font-size:12px;color:#78350F;font-weight:500}
 
 /* COMPLIANCE CELLS (Website + Product — unchanged) */
 .comp-cell{display:flex;flex-direction:column;gap:3px}
@@ -270,16 +289,20 @@ tbody td:first-child{text-align:center}
   <div class="page">
     <div class="page-header">
       <h1>We Monitor — License Status column redesign</h1>
-      <p>The License Status column now shows a single <strong>Compliant</strong> / <strong>Violative</strong> flag. Click any flag to open the License Detail modal (State B). The old hover-only tooltip with multiple per-DBA badges is gone.</p>
+      <p>License Status now shows one of four states determined by priority. Click any non-blank flag to open the License Detail modal (State B). The old hover-only multi-badge tooltip is gone.</p>
     </div>
 
     <div class="change-callout">
       <span class="cc-icon">🔄</span>
       <div class="cc-body">
-        <div class="cc-title">What changed in License Status</div>
+        <div class="cc-title">Four-state flag — priority order</div>
         <div class="cc-desc">
-          <strong>Before:</strong> hover tooltip showed separate status badges per DBA address (confusing when multiple statuses existed). Clicking navigated to the Findings tab under Licenses &amp; Certifications.<br>
-          <strong>After:</strong> a single <code>Compliant</code> or <code>Violative</code> pill — click opens the License Detail modal (see State B) with the full field set per license row. Hover tooltip removed.
+          <strong style="color:#991B1B">① Violative</strong> — any license has a violative State License Status (Expired, Suspended, Revoked, Required Not Held, etc.)<br>
+          <strong style="color:#92400E">② Pending</strong> — no violative licenses, but ≥1 license verification task exists in the <em>To Do</em> column of Q-Audit for this merchant<br>
+          <strong style="color:#166534">③ Compliant</strong> — no violative or pending, and ≥1 license has been verified non-violative<br>
+          <strong style="color:#CBD5E1">④ Blank</strong> — no license verification task exists at all; cell is empty, click is a no-op<br><br>
+          <strong>Before:</strong> hover tooltip showed per-DBA status badges (confusing with multiple statuses). Clicking navigated to a broken Findings tab.<br>
+          <strong>After:</strong> single pill click opens License Detail modal (see State B). Blank cell shows empty-state hint.
         </div>
       </div>
     </div>
@@ -336,7 +359,7 @@ tbody td:first-child{text-align:center}
           </thead>
           <tbody>
 
-            <!-- Row 1 — ADL Capital (Compliant) — annotated -->
+            <!-- Row 1 — ADL Capital (Pending) — annotated -->
             <tr>
               <td><input type="checkbox" class="cb"></td>
               <td>
@@ -350,10 +373,10 @@ tbody td:first-child{text-align:center}
               </td>
               <td>
                 <div>
-                  <span class="lic-flag compliant" onclick="showState('b')" title="Click to view License Detail">
-                    <span class="lic-dot"></span> Compliant
+                  <span class="lic-flag pending" onclick="showState('b')" title="Click to view License Detail — verification tasks in progress">
+                    <span class="lic-dot"></span> Pending
                   </span>
-                  <!-- annotation: first row only -->
+                  <!-- annotation: shows click behavior -->
                   <div class="click-hint" onclick="showState('b')">↑ Click to view License Details</div>
                 </div>
               </td>
@@ -504,7 +527,7 @@ tbody td:first-child{text-align:center}
               </td>
             </tr>
 
-            <!-- Row 4 — Green Valley (Violative) -->
+            <!-- Row 4 — Green Valley (Blank — no license tracking) -->
             <tr>
               <td><input type="checkbox" class="cb"></td>
               <td>
@@ -517,9 +540,13 @@ tbody td:first-child{text-align:center}
                 </div>
               </td>
               <td>
-                <span class="lic-flag violative" title="Click to view License Detail">
-                  <span class="lic-dot"></span> Violative
-                </span>
+                <div>
+                  <span class="lic-flag blank" title="No license verification task on file — no action">
+                    — No license tracked
+                  </span>
+                  <!-- annotation: blank = no-op -->
+                  <div class="blank-hint">↑ Click is a no-op</div>
+                </div>
               </td>
               <td>
                 <div class="comp-cell">
@@ -698,8 +725,8 @@ tbody td:first-child{text-align:center}
 <div class="panel" id="panel-b">
   <div class="page">
     <div class="page-header">
-      <h1>License Detail Modal — open on ADL Capital Investments LLC</h1>
-      <p>Clicking the Compliant / Violative flag on any row opens this modal. Background table remains visible (dimmed). Close button and ESC dismiss.</p>
+      <h1>License Detail Modal — open on ADL Capital Investments LLC (Pending)</h1>
+      <p>Clicking any Compliant / Violative / Pending flag opens this modal. ADL Capital is <strong>Pending</strong> because two licenses have open verification tasks in the Q-Audit To Do column. Those tasks surface inside the relevant license cards below (cards #3 and #8). Background table remains visible (dimmed). Close button and ESC dismiss.</p>
     </div>
   </div>
 
@@ -724,7 +751,7 @@ tbody td:first-child{text-align:center}
               <td><input type="checkbox" class="cb" checked disabled></td>
               <td><div class="legal-name">ADL Capital Investments LLC</div><div class="legal-sub">583523400006387 · CBD/Retailer</div></td>
               <td><span class="dba-chip">Bulk Marijuana Seeds</span></td>
-              <td><span class="lic-flag compliant"><span class="lic-dot"></span> Compliant</span></td>
+              <td><span class="lic-flag pending"><span class="lic-dot"></span> Pending</span></td>
               <td><div class="comp-score red">2 Findings</div></td>
               <td><div class="comp-score red">6 Products</div></td>
               <td><div class="website-link">🔗 adlcapital.com</div></td>
@@ -768,6 +795,7 @@ tbody td:first-child{text-align:center}
           <div class="modal-meta">
             <span class="modal-meta-chip meta-id">583523400006387</span>
             <span class="modal-meta-chip meta-type">CBD / Retailer</span>
+            <span class="modal-meta-chip" style="background:#FEF3C7;border:1px solid #E7E1C5;color:#92400E">⏳ Pending — 2 verification tasks in Q-Audit To Do</span>
           </div>
         </div>
         <button class="modal-close" onclick="showState('a')" title="Close">✕</button>
@@ -1030,6 +1058,32 @@ tbody td:first-child{text-align:center}
                 <span class="audit-who">Rachel Kim</span>
                 <span class="audit-ts">2024-05-02 02:31 PM</span>
                 <span class="audit-comment">— FL DACS portal confirms expired 04/14/2024. Rejected — renewal in progress. Escalated to compliance manager.</span>
+              </div>
+            </div>
+            <!-- Q-Audit To Do task — drives Pending flag at merchant level -->
+            <div class="qaudit-task">
+              <div class="qaudit-task-header">
+                <span class="qaudit-task-pill">⏳ Q-Audit — To Do</span>
+                <span class="qaudit-task-id">QTASK-8821</span>
+              </div>
+              <div class="qaudit-task-title">License Renewal Verification Required — FL HEMP expired 04/14/2024</div>
+              <div class="qaudit-task-meta">
+                <div class="qaudit-meta-item">
+                  <span class="qaudit-meta-label">Assigned To</span>
+                  <span class="qaudit-meta-value">Sarah Patel</span>
+                </div>
+                <div class="qaudit-meta-item">
+                  <span class="qaudit-meta-label">Created</span>
+                  <span class="qaudit-meta-value mono" style="font-family:'IBM Plex Mono',monospace">2024-05-02</span>
+                </div>
+                <div class="qaudit-meta-item">
+                  <span class="qaudit-meta-label">Due Date</span>
+                  <span class="qaudit-meta-value mono" style="font-family:'IBM Plex Mono',monospace">2024-06-30</span>
+                </div>
+                <div class="qaudit-meta-item">
+                  <span class="qaudit-meta-label">Validation Method</span>
+                  <span class="qaudit-meta-value">State Verified (FL DACS)</span>
+                </div>
               </div>
             </div>
           </div>
@@ -1450,6 +1504,32 @@ tbody td:first-child{text-align:center}
                 <span class="audit-who">Rachel Kim</span>
                 <span class="audit-ts">2024-10-22 04:05 PM</span>
                 <span class="audit-comment">— MED Colorado portal: no active license found for this address. Application confirmed submitted. Status set to Required Not Held — pending review.</span>
+              </div>
+            </div>
+            <!-- Q-Audit To Do task — drives Pending flag at merchant level -->
+            <div class="qaudit-task">
+              <div class="qaudit-task-header">
+                <span class="qaudit-task-pill">⏳ Q-Audit — To Do</span>
+                <span class="qaudit-task-id">QTASK-9104</span>
+              </div>
+              <div class="qaudit-task-title">New License Application — Awaiting State Verification (CO MED)</div>
+              <div class="qaudit-task-meta">
+                <div class="qaudit-meta-item">
+                  <span class="qaudit-meta-label">Assigned To</span>
+                  <span class="qaudit-meta-value">Rachel Kim</span>
+                </div>
+                <div class="qaudit-meta-item">
+                  <span class="qaudit-meta-label">Created</span>
+                  <span class="qaudit-meta-value mono" style="font-family:'IBM Plex Mono',monospace">2024-10-22</span>
+                </div>
+                <div class="qaudit-meta-item">
+                  <span class="qaudit-meta-label">Due Date</span>
+                  <span class="qaudit-meta-value mono" style="font-family:'IBM Plex Mono',monospace">2024-12-15</span>
+                </div>
+                <div class="qaudit-meta-item">
+                  <span class="qaudit-meta-label">Validation Method</span>
+                  <span class="qaudit-meta-value">State Verified (CO MED)</span>
+                </div>
               </div>
             </div>
           </div>
