@@ -129,6 +129,11 @@ tbody td:first-child{text-align:center}
 /* Blank hint (no-op indicator) */
 .blank-hint{display:inline-flex;align-items:center;gap:4px;margin-top:4px;font-size:10px;color:#94A3B8;font-style:italic;padding:2px 0;white-space:nowrap}
 
+/* PER-CARD CLASSIFICATION BADGE (next to State License Status value in modal) */
+.lic-class-badge{display:inline-flex;align-items:center;font-size:10px;font-weight:700;padding:1px 7px;border-radius:8px;margin-left:6px;vertical-align:middle;border:1px solid}
+.lic-class-badge.compliant{background:#DCFCE7;border-color:#bbf7d0;color:#166534}
+.lic-class-badge.violative{background:#FEE2E2;border-color:#fecaca;color:#991B1B}
+
 /* Q-AUDIT TO DO TASK BANNER (inside modal license cards) */
 .qaudit-task{margin:0;border-top:1px solid #E2E8F0;background:#FFFBEB;padding:10px 14px 12px}
 .qaudit-task-header{display:flex;align-items:center;gap:8px;margin-bottom:8px}
@@ -216,7 +221,8 @@ tbody td:first-child{text-align:center}
 .ss-active{background:#DCFCE7;border-color:#bbf7d0;color:#166534}
 .ss-expired{background:#FEE2E2;border-color:#fecaca;color:#991B1B}
 .ss-suspended{background:#FEE2E2;border-color:#fecaca;color:#991B1B}
-.ss-pending{background:#FEF3C7;border-color:#FDE68A;color:#92400E}
+/* State License Status "Pending" = license applied but not yet issued → Violative */
+.ss-pending{background:#FEE2E2;border-color:#fecaca;color:#991B1B}
 .ss-req-not-held{background:#FEE2E2;border-color:#fecaca;color:#991B1B}
 .ss-not-required{background:#DCFCE7;border-color:#bbf7d0;color:#166534}
 
@@ -305,6 +311,17 @@ tbody td:first-child{text-align:center}
           <strong>After:</strong> single pill click opens License Detail modal (see State B). Blank cell shows empty-state hint.
         </div>
       </div>
+    </div>
+
+    <!-- Terminology disambiguation note -->
+    <div class="info-block" style="margin-bottom:20px;border-color:#FDE68A">
+      <div class="info-pill">⚠ Terminology note</div>
+      <p><strong>"Pending" exists at two independent levels — they must not be confused:</strong></p>
+      <ul style="margin-top:6px">
+        <li><strong style="color:#92400E">Merchant flag = Pending (amber)</strong> — means ≥1 open verification task sits in the Q-Audit <em>To Do</em> column. This is purely a workflow state. It says nothing about what the license values are.</li>
+        <li><strong style="color:#991B1B">State License Status field value = "Pending"</strong> — means a license application has been submitted but the state has not yet issued it. Per the classification table this counts as <em>Violative</em> at the roll-up level (no valid license held), and its per-card indicator renders red.</li>
+      </ul>
+      <p style="margin-top:8px"><strong>Full classification:</strong> Active → Compliant · Not Required → Compliant · Unknown → Compliant (open question) · Inactive / Expired / Suspended / Revoked / Pending / Required Not Held → Violative</p>
     </div>
 
     <div class="app-shell">
@@ -845,7 +862,7 @@ tbody td:first-child{text-align:center}
               </div>
               <div class="lic-field">
                 <div class="lic-field-label">State License Status</div>
-                <div class="lic-field-value green">Active</div>
+                <div class="lic-field-value green">Active <span class="lic-class-badge compliant">→ Compliant</span></div>
               </div>
               <div class="lic-field">
                 <div class="lic-field-label">Issuer</div>
@@ -929,7 +946,7 @@ tbody td:first-child{text-align:center}
               </div>
               <div class="lic-field">
                 <div class="lic-field-label">State License Status</div>
-                <div class="lic-field-value green">Active</div>
+                <div class="lic-field-value green">Active <span class="lic-class-badge compliant">→ Compliant</span></div>
               </div>
               <div class="lic-field">
                 <div class="lic-field-label">Issuer</div>
@@ -1013,7 +1030,7 @@ tbody td:first-child{text-align:center}
               </div>
               <div class="lic-field">
                 <div class="lic-field-label">State License Status</div>
-                <div class="lic-field-value red">Expired</div>
+                <div class="lic-field-value red">Expired <span class="lic-class-badge violative">→ Violative</span></div>
               </div>
               <div class="lic-field">
                 <div class="lic-field-label">Issuer</div>
@@ -1088,12 +1105,12 @@ tbody td:first-child{text-align:center}
             </div>
           </div>
 
-          <!-- ── License 4: TX / Dallas / ADL Capital / Active ── -->
+          <!-- ── License 4: TX / Dallas / ADL Capital / Pending (violative — app submitted, not yet issued) ── -->
           <div class="lic-card">
             <div class="lic-card-header">
               <span class="lic-card-num">#4</span>
               <span class="lic-card-dba">ADL Capital Investments</span>
-              <span class="lic-state-status ss-active">● Active</span>
+              <span class="lic-state-status ss-pending">● Pending</span>
               <span class="lic-card-addr">2200 Commerce St, Dallas, TX 75201</span>
             </div>
             <div class="lic-fields">
@@ -1119,11 +1136,11 @@ tbody td:first-child{text-align:center}
               </div>
               <div class="lic-field">
                 <div class="lic-field-label">Document Number</div>
-                <div class="lic-field-value mono">TX-HEMP-0029841</div>
+                <div class="lic-field-value mono">TX-HEMP-APP-2024-0029841</div>
               </div>
               <div class="lic-field">
                 <div class="lic-field-label">State License Status</div>
-                <div class="lic-field-value green">Active</div>
+                <div class="lic-field-value red">Pending <span class="lic-class-badge violative">→ Violative</span></div>
               </div>
               <div class="lic-field">
                 <div class="lic-field-label">Issuer</div>
@@ -1135,31 +1152,31 @@ tbody td:first-child{text-align:center}
               </div>
               <div class="lic-field">
                 <div class="lic-field-label">Issue Date</div>
-                <div class="lic-field-value mono">07/01/2023</div>
+                <div class="lic-field-value empty">— (not yet issued)</div>
               </div>
               <div class="lic-field">
                 <div class="lic-field-label">Expiration Date</div>
-                <div class="lic-field-value mono">06/30/2025</div>
+                <div class="lic-field-value empty">—</div>
               </div>
               <div class="lic-field">
                 <div class="lic-field-label">Validation Method</div>
-                <div class="lic-field-value">Document Provided</div>
+                <div class="lic-field-value empty">— (awaiting issuance)</div>
               </div>
               <div class="lic-field">
                 <div class="lic-field-label">Review Status</div>
-                <div class="lic-field-value green">Accepted</div>
+                <div class="lic-field-value amber">Pending</div>
               </div>
               <div class="lic-field span2">
                 <div class="lic-field-label">Additional License Information</div>
-                <div class="lic-field-value empty">—</div>
+                <div class="lic-field-value">License application submitted 06/15/2024 — awaiting TX DSHS approval. Processing time est. 30–45 days.</div>
               </div>
               <div class="lic-field">
                 <div class="lic-field-label">Comments</div>
-                <div class="lic-field-value empty">—</div>
+                <div class="lic-field-value">Merchant operating under prior-year exemption while new application is processed. No doc to provide until issued.</div>
               </div>
               <div class="lic-field">
                 <div class="lic-field-label">Supporting Documents</div>
-                <div class="lic-field-value"><a class="doc-link" href="#">📄 TX-HEMP-cert.pdf</a></div>
+                <div class="lic-field-value"><a class="doc-link" href="#">📄 TX-HEMP-application-receipt.pdf</a></div>
               </div>
             </div>
             <div class="lic-audit">
@@ -1167,7 +1184,7 @@ tbody td:first-child{text-align:center}
               <div class="audit-row">
                 <span class="audit-who">Sarah Patel</span>
                 <span class="audit-ts">2024-08-11 10:05 AM</span>
-                <span class="audit-comment">— Document reviewed. TX DSHS license confirmed active. Accepted.</span>
+                <span class="audit-comment">— TX DSHS portal: application received, license not yet issued. Status set to Pending — awaiting state approval. Review status held as Pending.</span>
               </div>
             </div>
           </div>
@@ -1207,7 +1224,7 @@ tbody td:first-child{text-align:center}
               </div>
               <div class="lic-field">
                 <div class="lic-field-label">State License Status</div>
-                <div class="lic-field-value red">Suspended</div>
+                <div class="lic-field-value red">Suspended <span class="lic-class-badge violative">→ Violative</span></div>
               </div>
               <div class="lic-field">
                 <div class="lic-field-label">Issuer</div>
@@ -1256,12 +1273,12 @@ tbody td:first-child{text-align:center}
             </div>
           </div>
 
-          <!-- ── License 6: NY / New York / ADL Capital / Active ── -->
+          <!-- ── License 6: NY / New York / ADL Capital / Not Required (compliant) ── -->
           <div class="lic-card">
             <div class="lic-card-header">
               <span class="lic-card-num">#6</span>
               <span class="lic-card-dba">ADL Capital Investments</span>
-              <span class="lic-state-status ss-active">● Active</span>
+              <span class="lic-state-status ss-not-required">● Not Required</span>
               <span class="lic-card-addr">142 W 57th St, New York, NY 10019</span>
             </div>
             <div class="lic-fields">
@@ -1287,31 +1304,31 @@ tbody td:first-child{text-align:center}
               </div>
               <div class="lic-field">
                 <div class="lic-field-label">Document Number</div>
-                <div class="lic-field-value mono">NY-HEX-2024-7781</div>
+                <div class="lic-field-value empty">— (N/A)</div>
               </div>
               <div class="lic-field">
                 <div class="lic-field-label">State License Status</div>
-                <div class="lic-field-value green">Active</div>
+                <div class="lic-field-value green">Not Required <span class="lic-class-badge compliant">→ Compliant</span></div>
               </div>
               <div class="lic-field">
                 <div class="lic-field-label">Issuer</div>
-                <div class="lic-field-value">NY Dept of Agriculture &amp; Markets</div>
+                <div class="lic-field-value empty">N/A</div>
               </div>
               <div class="lic-field">
                 <div class="lic-field-label">Required</div>
-                <div class="lic-field-value">Yes</div>
+                <div class="lic-field-value">No</div>
               </div>
               <div class="lic-field">
                 <div class="lic-field-label">Issue Date</div>
-                <div class="lic-field-value mono">09/01/2024</div>
+                <div class="lic-field-value empty">N/A</div>
               </div>
               <div class="lic-field">
                 <div class="lic-field-label">Expiration Date</div>
-                <div class="lic-field-value mono">08/31/2026</div>
+                <div class="lic-field-value empty">N/A</div>
               </div>
               <div class="lic-field">
                 <div class="lic-field-label">Validation Method</div>
-                <div class="lic-field-value">Document Provided</div>
+                <div class="lic-field-value">State Verified</div>
               </div>
               <div class="lic-field">
                 <div class="lic-field-label">Review Status</div>
@@ -1319,15 +1336,15 @@ tbody td:first-child{text-align:center}
               </div>
               <div class="lic-field span2">
                 <div class="lic-field-label">Additional License Information</div>
-                <div class="lic-field-value">Annual renewal completed on time. License covers NYC retail and e-commerce within NY state.</div>
+                <div class="lic-field-value">NY does not require a state-level hemp extract retail license for this location type. City-level business permit on file covers operations.</div>
               </div>
               <div class="lic-field">
                 <div class="lic-field-label">Comments</div>
-                <div class="lic-field-value empty">—</div>
+                <div class="lic-field-value">Confirmed via NY Dept of Agriculture &amp; Markets guidance issued 08/2024. Not Required status documented and accepted.</div>
               </div>
               <div class="lic-field">
                 <div class="lic-field-label">Supporting Documents</div>
-                <div class="lic-field-value"><a class="doc-link" href="#">📄 NY-HEX-license-2024.pdf</a></div>
+                <div class="lic-field-value"><a class="doc-link" href="#">📄 NY-DAM-exemption-letter.pdf</a></div>
               </div>
             </div>
             <div class="lic-audit">
@@ -1375,7 +1392,7 @@ tbody td:first-child{text-align:center}
               </div>
               <div class="lic-field">
                 <div class="lic-field-label">State License Status</div>
-                <div class="lic-field-value green">Active</div>
+                <div class="lic-field-value green">Active <span class="lic-class-badge compliant">→ Compliant</span></div>
               </div>
               <div class="lic-field">
                 <div class="lic-field-label">Issuer</div>
@@ -1459,7 +1476,7 @@ tbody td:first-child{text-align:center}
               </div>
               <div class="lic-field">
                 <div class="lic-field-label">State License Status</div>
-                <div class="lic-field-value red">Required Not Held</div>
+                <div class="lic-field-value red">Required Not Held <span class="lic-class-badge violative">→ Violative</span></div>
               </div>
               <div class="lic-field">
                 <div class="lic-field-label">Issuer</div>
