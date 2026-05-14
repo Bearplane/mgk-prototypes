@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MyCOA Display — Sticky Save Bar + Dirty Indicators</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/*
+  Real-Qredible tokens:
+  - Plus Jakarta Sans (400/500/600/700), IBM Plex Mono for code/mono
+  - Body bg: #F7F5FF, text: #1A202E, base 13px
+  - Primary button: #1A202E bg
+  - Active tab underline: #F05252
+  - Modal wash: #F7F5FF
+  - Nav bar: #1A202E bg
+  - Section labels: .section-label (lavender: #EDE9FE bg, #4C1D95 text)
+  - Info/design-notes block: .info-block (amber dashed border)
+  - Callouts: .callout (purple left border)
+*/
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Plus Jakarta Sans','Uber Move',-apple-system,sans-serif;background:#F7F5FF;color:#1A202E;font-size:13px;line-height:1.5}
+a{color:#1A202E;text-decoration:none}
+
+/* TOP NAV */
+.topnav{background:#1A202E;padding:12px 24px;display:flex;align-items:center;gap:8px;font-size:13px;color:#94A3B8;position:sticky;top:0;z-index:300}
+.topnav .ticket-badge{background:#F05252;color:#fff;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;font-family:'IBM Plex Mono',monospace;letter-spacing:.02em}
+.topnav .title{color:#fff;font-weight:600}
+.topnav .sep{color:#475569}
+
+/* PAGE */
+.page{max-width:1240px;margin:0 auto;padding:28px 24px 88px}
+.page-header{margin-bottom:24px}
+.page-header h1{font-size:20px;font-weight:700;color:#1A202E;margin-bottom:6px}
+.page-header p{color:#4A5568;font-size:13px;line-height:1.6}
+.ticket-badge-lg{display:inline-flex;align-items:center;gap:6px;background:#F05252;color:#fff;font-size:12px;font-weight:700;padding:4px 12px;border-radius:4px;font-family:'IBM Plex Mono',monospace;letter-spacing:.02em;margin-bottom:10px}
+
+/* INFO BLOCK */
+.info-block{background:#FFFBEB;border:2px dashed #FCD34D;border-radius:8px;padding:14px 18px;margin-bottom:28px}
+.info-pill{display:inline-flex;align-items:center;gap:5px;background:#F59E0B;color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px}
+.info-block p,.info-block li{font-size:12px;color:#78350F;line-height:1.6}
+.info-block ul{padding-left:18px;margin-top:6px}
+.info-block strong{color:#92400E}
+.info-block code{background:#FEF3C7;padding:1px 5px;border-radius:3px;font-size:11px;font-family:'IBM Plex Mono',monospace}
+
+/* CALLOUT */
+.callout{border-radius:8px;padding:12px 16px;font-size:12px;line-height:1.65;margin-bottom:20px;background:#F7F5FF;border:1px solid #E9D8FD;border-left:3px solid #805AD5;color:#44337A}
+.callout strong{font-weight:700;color:#322659}
+
+/* APP SHELL */
+.app-shell{background:#fff;border:1px solid #E2E8F0;border-radius:8px;overflow:hidden;box-shadow:0 1px 3px rgba(15,23,42,.06)}
+
+/* APP TOP BAR */
+.app-topbar{background:#1A202E;padding:10px 20px;display:flex;align-items:center;gap:16px;font-size:13px;color:#94A3B8}
+.app-topbar .nav-links{display:flex;gap:20px;font-size:12px;font-weight:500}
+.app-topbar .nav-link{color:#94A3B8;cursor:pointer}
+.app-topbar .nav-link.active{color:#fff;font-weight:700}
+.app-topbar .spacer{flex:1}
+.app-topbar .company-badge{background:#2D3748;color:#E2E8F0;font-size:11px;font-weight:600;padding:4px 10px;border-radius:4px}
+.app-topbar .user{color:#CBD5E0;font-size:12px;font-weight:600}
+.app-topbar .qredible-logo{color:#fff;font-size:14px;font-weight:800;letter-spacing:-.02em}
+
+/* PAGE CHROME (MyCOA heading + tabs) */
+.page-chrome{background:#fff;border-bottom:1px solid #E2E8F0;padding:16px 20px 0}
+.page-title-row{display:flex;align-items:center;gap:8px;margin-bottom:14px}
+.mycoa-wordmark{font-size:18px;font-weight:800;color:#1A202E;letter-spacing:-.02em}
+.mycoa-wordmark sup{font-size:9px;color:#F05252;font-weight:700;letter-spacing:0}
+
+/* UNDERLINE TABS */
+.tabs{display:flex;gap:2px;background:#fff}
+.tab{padding:12px 16px;font-size:13px;font-weight:600;color:#718096;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap}
+.tab.active{color:#1A202E;border-bottom-color:#F05252}
+
+/* FORM AREA */
+.form-area{padding:24px 20px 80px}
+
+/* SECTION */
+.section{margin-bottom:32px}
+.section-head{display:flex;align-items:center;gap:8px;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid #F1F5F9}
+.section-head .s-icon{font-size:14px;line-height:1}
+.section-head h3{font-size:14px;font-weight:700;color:#1A202E;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+
+/* PER-SECTION DIRTY DOT */
+.dirty-dot{display:inline-block;width:7px;height:7px;background:#F05252;border-radius:50%;opacity:0;transition:opacity 150ms ease;flex-shrink:0;vertical-align:middle}
+.dirty-dot.show{opacity:1}
+
+/* 2-COL TOP */
+.top-cols{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:860px){.top-cols{grid-template-columns:1fr}}
+
+/* FIELD */
+.field-group{margin-bottom:14px}
+.field-label{font-size:11px;font-weight:700;color:#4A5568;text-transform:uppercase;letter-spacing:.04em;margin-bottom:5px;display:flex;align-items:center;justify-content:space-between}
+.field-hint{font-size:11px;color:#718096;font-weight:400;margin-bottom:6px;line-height:1.5;letter-spacing:0;text-transform:none}
+.text-input{width:100%;padding:8px 12px;border:1px solid #CBD5E1;border-radius:6px;font-size:13px;font-family:inherit;color:#1A202E;background:#fff;line-height:1.4}
+.text-input:focus{outline:none;border-color:#805AD5;box-shadow:0 0 0 3px rgba(128,90,213,.12)}
+.text-input[readonly]{background:#F7FAFC;color:#718096;cursor:default}
+textarea.text-input{resize:vertical;min-height:72px}
+
+/* COPY FIELD */
+.copy-row{display:flex;gap:6px;align-items:center}
+.copy-row .text-input{flex:1}
+.copy-btn{padding:8px 10px;border:1px solid #CBD5E1;border-radius:6px;background:#fff;cursor:pointer;color:#718096;font-size:13px;flex-shrink:0}
+.copy-btn:hover{background:#F7FAFC;color:#1A202E}
+
+/* COLOR PICKERS */
+.color-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:600px){.color-row{grid-template-columns:1fr}}
+.color-input-wrap{display:flex;align-items:center;gap:8px;border:1px solid #CBD5E1;border-radius:6px;padding:6px 10px;background:#fff;cursor:pointer}
+.color-input-wrap:focus-within{border-color:#805AD5;box-shadow:0 0 0 3px rgba(128,90,213,.12)}
+.color-swatch{width:22px;height:22px;border-radius:4px;border:1px solid rgba(0,0,0,.1);flex-shrink:0;transition:outline 100ms}
+.color-text{font-size:12px;font-family:'IBM Plex Mono',monospace;color:#1A202E;border:none;outline:none;width:72px;background:transparent;font-weight:500;cursor:text}
+
+/* LOGO */
+.logo-row{display:flex;gap:12px;align-items:flex-start}
+.upload-zone{border:2px dashed #CBD5E1;border-radius:8px;padding:20px 16px;text-align:center;background:#FAFAFA;flex:1;cursor:pointer}
+.upload-zone:hover{background:#F0F4F8;border-color:#A0AEC0}
+.upload-icon{font-size:20px;color:#A0AEC0;margin-bottom:5px}
+.upload-label{font-size:12px;color:#4A5568;font-weight:600;margin-bottom:3px}
+.upload-hint{font-size:10px;color:#A0AEC0;line-height:1.5}
+.logo-thumb{width:96px;height:96px;background:#1A2340;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:8px;font-weight:700;text-align:center;line-height:1.4;flex-shrink:0;padding:8px}
+.logo-actions{display:flex;gap:6px;margin-top:8px}
+
+/* SLIDER */
+.slider-row{display:flex;align-items:center;gap:0;flex-direction:column}
+.slider-labels{display:flex;justify-content:space-between;font-size:11px;color:#A0AEC0;margin-top:4px}
+input[type=range]{width:100%;accent-color:#1A202E;cursor:pointer;height:4px}
+
+/* POSITION BTNS */
+.position-btns{display:flex;width:fit-content;border:1px solid #CBD5E1;border-radius:6px;overflow:hidden}
+.pos-btn{padding:6px 18px;font-size:12px;font-weight:600;font-family:inherit;border:none;background:#fff;color:#4A5568;cursor:pointer;border-right:1px solid #CBD5E1}
+.pos-btn:last-child{border-right:none}
+.pos-btn.active{background:#1A202E;color:#fff}
+
+/* STORE LOCATIONS */
+.section-head-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid #F1F5F9}
+.section-head-row h3{font-size:14px;font-weight:700;color:#1A202E;display:flex;align-items:center;gap:7px}
+.empty-state{text-align:center;padding:24px 16px;color:#A0AEC0;font-size:13px;border:1px dashed #E2E8F0;border-radius:6px;background:#FAFAFA}
+
+/* CONTACT GRID */
+.contact-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+@media(max-width:700px){.contact-grid{grid-template-columns:1fr}}
+
+/* PERFORMANCE */
+.perf-card{background:#F7FAFC;border:1px solid #E2E8F0;border-radius:8px;padding:18px}
+.perf-date-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.perf-legend{display:flex;align-items:center;gap:6px;font-size:11px;color:#718096;margin-bottom:10px}
+.perf-legend-line{width:28px;height:2px;background:#CBD5E1;border-radius:1px}
+.perf-chart{height:110px;background:#fff;border:1px solid #E2E8F0;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#CBD5E0;font-size:12px}
+
+/* BUTTONS */
+.btn{padding:7px 13px;border-radius:6px;font-size:12px;font-weight:700;border:1px solid transparent;cursor:pointer;display:inline-flex;align-items:center;gap:5px;font-family:inherit;line-height:1;white-space:nowrap}
+.btn-primary{background:#1A202E;color:#fff;border-color:#1A202E}
+.btn-primary:hover{background:#000}
+.btn-secondary{background:#fff;border-color:#CBD5E1;color:#1A202E}
+.btn-secondary:hover{background:#F7FAFC}
+.btn-danger{background:#F05252;color:#fff;border-color:#F05252}
+.btn-danger:hover{background:#E03030}
+.btn-sm{padding:5px 10px;font-size:11px}
+
+/* ============================================
+   STICKY SAVE BAR (new UI — the whole point)
+   ============================================ */
+.save-bar{
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  height:64px;
+  background:#fff;
+  border-top:1px solid #E2E8F0;
+  box-shadow:0 -4px 16px rgba(15,23,42,.10);
+  display:flex;
+  align-items:center;
+  padding:0 24px;
+  z-index:200;
+  transform:translateY(100%);
+  transition:transform 220ms cubic-bezier(0.16,1,0.3,1);
+}
+.save-bar.visible{transform:translateY(0)}
+.save-bar-inner{
+  max-width:1240px;
+  width:100%;
+  margin:0 auto;
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+.unsaved-label{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:13px;
+  font-weight:600;
+  color:#1A202E;
+}
+.unsaved-pulse{
+  width:8px;
+  height:8px;
+  background:#F05252;
+  border-radius:50%;
+  flex-shrink:0;
+}
+.bar-spacer{flex:1}
+.bar-actions{display:flex;align-items:center;gap:8px}
+.kbd-hint{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:10px;
+  color:#94A3B8;
+  background:#F1F5F9;
+  border:1px solid #E2E8F0;
+  border-radius:3px;
+  padding:1px 5px;
+  line-height:1.5;
+}
+.btn-loading{opacity:.65;pointer-events:none}
+
+/* TEMPLATE SELECTOR */
+.template-tabs{display:flex;width:fit-content;border:1px solid #CBD5E1;border-radius:6px;overflow:hidden;margin-bottom:12px}
+.tmpl-btn{padding:6px 20px;font-size:12px;font-weight:600;font-family:inherit;border:none;background:#fff;color:#4A5568;cursor:pointer;border-right:1px solid #CBD5E1}
+.tmpl-btn:last-child{border-right:none}
+.tmpl-btn.active{background:#1A202E;color:#fff}
+.coa-preview{background:#F7FAFC;border:1px solid #E2E8F0;border-radius:6px;padding:12px;min-height:116px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#A0AEC0}
+.preview-row{display:flex;justify-content:center;padding:12px 0 0}
+
+/* TOAST */
+.toast{
+  position:fixed;
+  top:24px;
+  right:24px;
+  background:#1A202E;
+  color:#fff;
+  padding:10px 16px;
+  border-radius:8px;
+  font-size:13px;
+  font-weight:600;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  z-index:500;
+  box-shadow:0 4px 20px rgba(0,0,0,.18);
+  opacity:0;
+  transform:translateY(-8px);
+  transition:opacity 180ms ease,transform 180ms ease;
+  pointer-events:none;
+}
+.toast.show{opacity:1;transform:translateY(0)}
+.toast-check{color:#68D391;font-size:15px}
+</style>
+</head>
+<body>
+
+<!-- MOCKUP TOPNAV -->
+<nav class="topnav">
+  <span class="ticket-badge">MyCOA Display</span>
+  <span class="sep">›</span>
+  <span class="title">Sticky Save Bar + Per-section Dirty Indicators</span>
+</nav>
+
+<div class="page">
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <span class="ticket-badge-lg">QP-XXXX</span>
+    <h1>MyCOA Display: Sticky Save Bar</h1>
+    <p>Replaces the top-right "Save" button with a viewport-anchored save bar that slides up when the form is dirty. Per-section dots flag exactly which sections have unsaved changes.</p>
+  </div>
+
+  <!-- INTERACTION GUIDE -->
+  <div class="info-block">
+    <div class="info-pill">Interaction guide</div>
+    <ul>
+      <li><strong>Clean state (page load):</strong> Save bar is hidden, no red dots on section headers.</li>
+      <li><strong>Edit any field:</strong> Save bar slides up from bottom; a <span style="display:inline-block;width:7px;height:7px;background:#F05252;border-radius:50%;vertical-align:middle;margin:0 2px"></span> dot appears next to that section's heading.</li>
+      <li><strong>"Save changes":</strong> 1s loading state → bar slides away → dots clear → "Saved ✓" toast (top-right, fades after 2 s).</li>
+      <li><strong>"Discard":</strong> Confirmation prompt → all changes reset to clean state.</li>
+      <li><strong>"Preview":</strong> Opens COA preview without requiring a save first — added specifically to reduce the current preview round-trip friction.</li>
+      <li><strong>⌘S / Ctrl+S:</strong> Keyboard shortcut triggers Save whenever the bar is visible.</li>
+    </ul>
+  </div>
+
+  <div class="callout">
+    <strong>Delta vs. current UI:</strong> The existing top-right "Save" button is removed. Everything below is the real Display tab layout; the save bar and <span style="display:inline-block;width:7px;height:7px;background:#F05252;border-radius:50%;vertical-align:middle;margin:0 2px"></span> dots are the only additions.
+  </div>
+
+  <!-- ===== APP SHELL ===== -->
+  <div class="app-shell">
+
+    <!-- Simplified app topbar (mirrors the real chrome) -->
+    <div class="app-topbar">
+      <div class="nav-links">
+        <span class="nav-link">Home</span>
+        <span class="nav-link">G-Monitor</span>
+        <span class="nav-link">Webcrawler</span>
+        <span class="nav-link">Q-Vault</span>
+        <span class="nav-link active">MyCOA</span>
+      </div>
+      <div class="spacer"></div>
+      <div class="company-badge">BuckmontAdvantage LLC ▾</div>
+      <div class="user" style="font-size:11px;color:#94A3B8">Joseph Floyd ▾</div>
+      <div class="qredible-logo">Qredible</div>
+    </div>
+
+    <!-- MyCOA page chrome + tabs -->
+    <div class="page-chrome">
+      <div class="page-title-row">
+        <div class="mycoa-wordmark">MyCOA<sup>TM</sup></div>
+      </div>
+      <div class="tabs">
+        <div class="tab">COAs</div>
+        <div class="tab">Products</div>
+        <div class="tab active">Display</div>
+        <div class="tab">Labs</div>
+      </div>
+    </div>
+
+    <!-- FORM AREA -->
+    <div class="form-area">
+
+      <!-- ── TOP 2-COL: Links + Chatbot ── -->
+      <div class="top-cols" style="margin-bottom:32px">
+
+        <!-- LINKS -->
+        <div class="section" data-section="links">
+          <div class="section-head">
+            <span class="s-icon">🔗</span>
+            <h3>Links <span class="dirty-dot" id="dot-links"></span></h3>
+          </div>
+          <div class="field-group">
+            <div class="field-label">Online Shopping URL</div>
+            <p class="field-hint">Add your ecommerce URL so users can shop from your MyCOA.</p>
+            <input class="text-input" type="url" value="https://bucksmont.com" placeholder="https://…">
+          </div>
+          <div class="field-group">
+            <div class="field-label">Dynamic URL</div>
+            <p class="field-hint">Embed this link in your customized MyCOA or e-commerce store.</p>
+            <div class="copy-row">
+              <input class="text-input" type="text" readonly
+                value="https://members.qrediblestaging.com/my-coa?bucketpage-id=04890">
+              <button class="copy-btn" title="Copy URL" onclick="copyUrl(this)">⧉</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- CHATBOT -->
+        <div class="section" data-section="chatbot">
+          <div class="section-head">
+            <span class="s-icon">💬</span>
+            <h3>Chatbot <span class="dirty-dot" id="dot-chatbot"></span></h3>
+          </div>
+          <div class="field-group">
+            <div class="field-label">JS Script</div>
+            <p class="field-hint">Add a chatbot; all chatbot submissions can be embedded in your MyCOA.</p>
+            <textarea class="text-input" rows="7" placeholder="Paste chatbot embed script here…"></textarea>
+          </div>
+        </div>
+
+      </div><!-- /top-cols links+chatbot -->
+
+      <!-- ── DISPLAY SETTINGS + TEMPLATE (2-col) ── -->
+      <div class="top-cols" style="margin-bottom:32px">
+
+        <!-- DISPLAY SETTINGS -->
+        <div class="section" data-section="display-settings">
+          <div class="section-head">
+            <span class="s-icon">⚙️</span>
+            <h3>Display Settings <span class="dirty-dot" id="dot-display-settings"></span></h3>
+          </div>
+          <div class="field-group">
+            <div class="field-label">User Instructions</div>
+            <p class="field-hint">Added to every COA page to provide clarity to the reader.</p>
+            <textarea class="text-input" rows="12">COA stands for Certificate Of Analysis. COAs are representations of the results found by Third Party Testing Laboratories. Check COAs before consuming and preferably before purchasing any products containing CBD or cannabis.
+
+1. The Lab Report tab report from a reputable laboratory will show the name, address, phone number, and any certifications earned. The COA will attest to the report's validity and is signed by a senior staff member.
+2. The Date — Make sure the date is recent. When purchasing CBD it is recommended the date on the COA be under one year.
+3. The THC — Delta-9-tetrahydrocannabinol (THC) is the primary psychoactive cannabinoid extracted from the cannabis (marijuana) plant.</textarea>
+          </div>
+        </div>
+
+        <!-- TEMPLATE -->
+        <div class="section" data-section="display-settings">
+          <div class="section-head" style="visibility:hidden;height:0;margin:0;padding:0;border:none"></div>
+          <div class="field-label" style="margin-bottom:6px">Template</div>
+          <p class="field-hint">Utilize one of our templates or upload your own view.</p>
+          <div class="template-tabs">
+            <button class="tmpl-btn active" onclick="selectTemplate(this)">Default</button>
+            <button class="tmpl-btn" onclick="selectTemplate(this)">Custom</button>
+          </div>
+          <div class="coa-preview">COA template preview</div>
+          <div class="preview-row">
+            <button class="btn btn-secondary">Preview</button>
+          </div>
+        </div>
+
+      </div><!-- /top-cols display+template -->
+
+      <!-- ── THEMING & BRANDING ── -->
+      <div class="section" data-section="theming">
+        <div class="section-head">
+          <span class="s-icon">🎨</span>
+          <h3>Theming &amp; Branding <span class="dirty-dot" id="dot-theming"></span></h3>
+        </div>
+
+        <div class="field-group">
+          <div class="field-label">Company Logo</div>
+          <div class="logo-row">
+            <div class="upload-zone" data-dirty-section="theming">
+              <div class="upload-icon">↑</div>
+              <div class="upload-label">Upload Logo</div>
+              <div class="upload-hint">PNG, PJP, JPE, JPG, JPEG, PJPEG, JFF, BMP, GIF, TIF, TIFF – max 2 MB</div>
+            </div>
+            <div>
+              <div class="logo-thumb">BLACK BEAR<br>DISPENSARY</div>
+              <div class="logo-actions">
+                <button class="btn btn-secondary btn-sm" data-dirty-section="theming">Replace</button>
+                <button class="btn btn-danger btn-sm" data-dirty-section="theming">Remove</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <div class="field-label">
+            Logo Width
+            <span id="logo-width-val" style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:12px;text-transform:none;letter-spacing:0">150px</span>
+          </div>
+          <input type="range" min="80" max="320" value="150" style="width:100%;margin-bottom:4px">
+          <div class="slider-labels"><span>80px</span><span>320px</span></div>
+        </div>
+
+        <div class="field-group">
+          <div class="field-label">Logo Position</div>
+          <div class="position-btns">
+            <button class="pos-btn active" onclick="selectPos(this)">Left</button>
+            <button class="pos-btn" onclick="selectPos(this)">Center</button>
+            <button class="pos-btn" onclick="selectPos(this)">Right</button>
+          </div>
+        </div>
+
+        <div class="field-label" style="margin:20px 0 12px">Brand Colors</div>
+
+        <div class="color-row" style="margin-bottom:10px">
+          <div class="field-group">
+            <div class="field-label">Header Background</div>
+            <div class="color-input-wrap">
+              <div class="color-swatch" style="background:#1A2340"></div>
+              <input class="color-text" type="text" value="#1A2340" maxlength="7">
+            </div>
+          </div>
+          <div class="field-group">
+            <div class="field-label">Accent Color</div>
+            <div class="color-input-wrap">
+              <div class="color-swatch" style="background:#7ED321"></div>
+              <input class="color-text" type="text" value="#7ED321" maxlength="7">
+            </div>
+          </div>
+        </div>
+
+        <div class="color-row">
+          <div class="field-group">
+            <div class="field-label">Header Text</div>
+            <div class="color-input-wrap">
+              <div class="color-swatch" style="background:#742E2E"></div>
+              <input class="color-text" type="text" value="#742E2E" maxlength="7">
+            </div>
+          </div>
+          <div class="field-group">
+            <div class="field-label">Footer Background</div>
+            <div class="color-input-wrap">
+              <div class="color-swatch" style="background:#776868"></div>
+              <input class="color-text" type="text" value="#776868" maxlength="7">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── HEADER / HERO TEXT ── -->
+      <div class="section" data-section="hero-text">
+        <div class="section-head">
+          <h3>Header / Hero Text <span class="dirty-dot" id="dot-hero-text"></span></h3>
+        </div>
+        <div class="field-group">
+          <div class="field-label">Page Title</div>
+          <input class="text-input" type="text" value="Our COA Repository">
+        </div>
+        <div class="field-group">
+          <div class="field-label">Tagline / Subtitle</div>
+          <textarea class="text-input" rows="3">See all of our COAs</textarea>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="field-group">
+            <div class="field-label">Primary CTA Button Label</div>
+            <input class="text-input" type="text" value="Understanding Your COAs!">
+          </div>
+          <div class="field-group">
+            <div class="field-label">Secondary CTA Button Label</div>
+            <input class="text-input" type="text" value="Keep Shopping">
+          </div>
+        </div>
+      </div>
+
+      <!-- ── FOOTER CONTENT ── -->
+      <div class="section" data-section="footer-content">
+        <div class="section-head">
+          <h3>Footer Content <span class="dirty-dot" id="dot-footer-content"></span></h3>
+        </div>
+        <div class="field-group">
+          <div class="field-label">Tagline</div>
+          <input class="text-input" type="text" value="The best in the business">
+        </div>
+        <div class="field-group">
+          <div class="field-label">Copyright Text</div>
+          <input class="text-input" type="text" value="Bucksmont Advantage LLC">
+        </div>
+      </div>
+
+      <!-- ── STORE LOCATIONS ── -->
+      <div class="section" data-section="store-locations">
+        <div class="section-head-row">
+          <h3>Store Locations <span class="dirty-dot" id="dot-store-locations"></span></h3>
+          <button class="btn btn-primary btn-sm" data-dirty-section="store-locations">+ Add Location</button>
+        </div>
+        <div class="empty-state">No store locations added yet.</div>
+      </div>
+
+      <!-- ── CONTACT INFO ── -->
+      <div class="section" data-section="contact-info">
+        <div class="section-head">
+          <h3>Contact Info <span class="dirty-dot" id="dot-contact-info"></span></h3>
+        </div>
+        <div class="contact-grid">
+          <div class="field-group">
+            <div class="field-label">Phone</div>
+            <input class="text-input" type="tel" value="+1 775 217 4859">
+          </div>
+          <div class="field-group">
+            <div class="field-label">Email</div>
+            <input class="text-input" type="email" value="bucksmont@llc.com">
+          </div>
+          <div class="field-group">
+            <div class="field-label">Website</div>
+            <input class="text-input" type="url" value="https://bucksmont.com">
+          </div>
+        </div>
+      </div>
+
+      <!-- ── PERFORMANCE (read-only, no dirty state) ── -->
+      <div class="section">
+        <div class="section-head">
+          <span class="s-icon">📊</span>
+          <h3>Performance</h3>
+        </div>
+        <div class="perf-card">
+          <div class="perf-date-grid">
+            <div>
+              <div class="field-label" style="margin-bottom:5px">Start Date</div>
+              <input class="text-input" type="text" value="04/30/26" readonly>
+            </div>
+            <div>
+              <div class="field-label" style="margin-bottom:5px">End Date</div>
+              <input class="text-input" type="text" value="05/14/26" readonly>
+            </div>
+          </div>
+          <div class="perf-legend">
+            <div class="perf-legend-line"></div>
+            Page views per day
+          </div>
+          <div class="perf-chart">Chart renders here</div>
+        </div>
+      </div>
+
+    </div><!-- /form-area -->
+  </div><!-- /app-shell -->
+</div><!-- /page -->
+
+<!-- ===== STICKY SAVE BAR ===== -->
+<div class="save-bar" id="savebar">
+  <div class="save-bar-inner">
+    <div class="unsaved-label">
+      <div class="unsaved-pulse"></div>
+      Unsaved changes
+    </div>
+    <div class="bar-spacer"></div>
+    <div class="bar-actions">
+      <button class="btn btn-secondary" id="btn-discard" onclick="discardChanges()">Discard</button>
+      <button class="btn btn-secondary" id="btn-preview" onclick="triggerPreview()">Preview</button>
+      <button class="btn btn-primary" id="btn-save" onclick="saveChanges()">
+        Save changes <span class="kbd-hint" id="kbd-hint">⌘S</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <span class="toast-check">✓</span>
+  Saved
+</div>
+
+<script>
+const dirtySections = new Set();
+let saving = false;
+
+function markDirty(sectionId) {
+  if (!sectionId) return;
+  dirtySections.add(sectionId);
+  const dot = document.getElementById('dot-' + sectionId);
+  if (dot) dot.classList.add('show');
+  document.getElementById('savebar').classList.add('visible');
+}
+
+function clearDirty() {
+  dirtySections.forEach(id => {
+    const dot = document.getElementById('dot-' + id);
+    if (dot) dot.classList.remove('show');
+  });
+  dirtySections.clear();
+  document.getElementById('savebar').classList.remove('visible');
+  // Reset any swatch outlines
+  document.querySelectorAll('.color-swatch').forEach(s => {
+    s.style.outline = '';
+    s.style.outlineOffset = '';
+  });
+}
+
+// Input / change on real form fields
+document.addEventListener('input', e => {
+  if (e.target.readOnly || e.target.disabled) return;
+  const sec = e.target.closest('[data-section]');
+  if (sec) markDirty(sec.dataset.section);
+  // update slider label
+  if (e.target.type === 'range') {
+    const label = document.getElementById('logo-width-val');
+    if (label) label.textContent = e.target.value + 'px';
+  }
+});
+document.addEventListener('change', e => {
+  if (e.target.readOnly || e.target.disabled) return;
+  const sec = e.target.closest('[data-section]');
+  if (sec) markDirty(sec.dataset.section);
+});
+
+// Clicks on color swatches, upload zone, logo action buttons, Add Location
+document.addEventListener('click', e => {
+  // color swatch
+  const swatch = e.target.closest('.color-swatch');
+  if (swatch) {
+    const sec = swatch.closest('[data-section]');
+    if (sec) markDirty(sec.dataset.section);
+    swatch.style.outline = '2px solid #F05252';
+    swatch.style.outlineOffset = '2px';
+    return;
+  }
+  // upload zone
+  const zone = e.target.closest('.upload-zone[data-dirty-section]');
+  if (zone) { markDirty(zone.dataset.dirtySection); return; }
+  // buttons with data-dirty-section (logo Replace/Remove, Add Location)
+  const dirtyBtn = e.target.closest('[data-dirty-section]');
+  if (dirtyBtn && dirtyBtn.tagName === 'BUTTON') { markDirty(dirtyBtn.dataset.dirtySection); return; }
+});
+
+// Template selector
+function selectTemplate(btn) {
+  btn.closest('.template-tabs').querySelectorAll('.tmpl-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  markDirty('display-settings');
+}
+
+// Logo position
+function selectPos(btn) {
+  btn.closest('.position-btns').querySelectorAll('.pos-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  markDirty('theming');
+}
+
+// Save
+function saveChanges() {
+  if (!dirtySections.size || saving) return;
+  saving = true;
+  const btn = document.getElementById('btn-save');
+  btn.innerHTML = 'Saving… <span class="kbd-hint" id="kbd-hint">⌘S</span>';
+  btn.classList.add('btn-loading');
+  setTimeout(() => {
+    btn.innerHTML = 'Save changes <span class="kbd-hint" id="kbd-hint">⌘S</span>';
+    btn.classList.remove('btn-loading');
+    saving = false;
+    clearDirty();
+    showToast();
+  }, 1000);
+}
+
+// Discard
+function discardChanges() {
+  if (confirm('Discard all unsaved changes and revert to saved state?')) {
+    clearDirty();
+  }
+}
+
+// Preview
+function triggerPreview() {
+  alert('Preview opens the live MyCOA page in a new tab without requiring a save.');
+}
+
+// Copy URL
+function copyUrl(btn) {
+  const input = btn.previousElementSibling;
+  navigator.clipboard.writeText(input.value).catch(() => {});
+  btn.textContent = '✓';
+  setTimeout(() => { btn.textContent = '⧉'; }, 1500);
+}
+
+// Toast
+function showToast() {
+  const t = document.getElementById('toast');
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// Keyboard shortcut ⌘S / Ctrl+S
+document.addEventListener('keydown', e => {
+  if ((e.metaKey || e.ctrlKey) && e.key === 's') {
+    e.preventDefault();
+    if (dirtySections.size) saveChanges();
+  }
+});
+
+// Show mac vs windows hint
+if (!navigator.platform.includes('Mac')) {
+  document.querySelectorAll('.kbd-hint').forEach(el => { el.textContent = 'Ctrl+S'; });
+}
+</script>
+</body>
+</html>
