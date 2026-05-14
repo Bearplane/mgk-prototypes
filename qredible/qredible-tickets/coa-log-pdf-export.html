@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>COA Log PDF Export — Bucksmont Advantage LLC</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #C4C9D4;
+      padding: 48px 24px;
+      font-family: 'Helvetica Neue', Arial, Helvetica, sans-serif;
+      color: #111;
+    }
+
+    /* ─── PAGE ─── */
+    .page {
+      width: 11in;
+      min-height: 8.5in;
+      background: #fff;
+      margin: 0 auto 40px;
+      padding: 0.5in;
+      box-shadow:
+        0 1px 2px rgba(0,0,0,0.10),
+        0 4px 14px rgba(0,0,0,0.16),
+        0 10px 32px rgba(0,0,0,0.08);
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ─── PAGE 1 DOCUMENT HEADER ─── */
+    .doc-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 7px;
+    }
+
+    .doc-title {
+      font-size: 14pt;
+      font-weight: 700;
+      color: #111;
+      letter-spacing: -0.3px;
+      line-height: 1.2;
+    }
+
+    .doc-meta {
+      text-align: right;
+      font-size: 7.5pt;
+      color: #555;
+      line-height: 1.75;
+    }
+
+    .doc-rule {
+      border: none;
+      border-top: 1px solid #888;
+      margin-bottom: 10px;
+    }
+
+    /* ─── COA TABLE ─── */
+    .coa-table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+      font-size: 8pt;
+      line-height: 1.35;
+    }
+
+    /* Column header band */
+    .coa-table thead th {
+      background: #1A202E;
+      color: #fff;
+      padding: 5px 5px;
+      font-size: 7.5pt;
+      font-weight: 600;
+      border-right: 1px solid rgba(255,255,255,0.10);
+      vertical-align: bottom;
+      white-space: normal;
+      line-height: 1.25;
+    }
+
+    .coa-table thead th:last-child { border-right: none; }
+
+    .coa-table thead th.right { text-align: right; }
+
+    /* Data rows */
+    .coa-table tbody tr:nth-child(odd)  { background: #fff; }
+    .coa-table tbody tr:nth-child(even) { background: #F7F5FF; }
+
+    .coa-table tbody td {
+      padding: 4px 5px;
+      border-bottom: 1px solid #ECEAF4;
+      font-size: 8pt;
+      color: #111;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      vertical-align: middle;
+    }
+
+    .coa-table tbody td.url {
+      font-style: italic;
+      color: #444;
+    }
+
+    .coa-table tbody td.right { text-align: right; }
+
+    /* ─── SPACER (pushes footer to bottom) ─── */
+    .spacer { flex: 1; }
+
+    /* ─── PAGE FOOTER ─── */
+    .page-footer {
+      margin-top: 12px;
+      padding-top: 7px;
+      border-top: 1px solid #bbb;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 7pt;
+      color: #666;
+    }
+
+    /* ─── CERTIFICATION BLOCK ─── */
+    .cert-block {
+      margin-top: 22px;
+      padding-top: 14px;
+      border-top: 2.5px solid #333;
+    }
+
+    .cert-heading {
+      font-size: 8.5pt;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .cert-text {
+      font-size: 8pt;
+      line-height: 1.72;
+      color: #111;
+      margin-bottom: 22px;
+    }
+
+    .cert-fields {
+      display: flex;
+      gap: 60px;
+      margin-bottom: 22px;
+      font-size: 8pt;
+    }
+
+    .cert-confidential {
+      font-size: 7pt;
+      font-style: italic;
+      color: #555;
+      border-top: 1px solid #ddd;
+      padding-top: 8px;
+      line-height: 1.55;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════
+     PAGE 1
+     ═══════════════════════════════════════════════════ -->
+<div class="page">
+
+  <!-- Document header — page 1 only -->
+  <div class="doc-header">
+    <div class="doc-title">COA Log for Merchant: Bucksmont Advantage LLC</div>
+    <div class="doc-meta">
+      Generated: May 14, 2026 &nbsp;14:32 ET<br>
+      Prepared by: Qredible
+    </div>
+  </div>
+  <hr class="doc-rule">
+
+  <!-- Main table -->
+  <table class="coa-table">
+    <colgroup>
+      <col style="width:25%"><!-- Product Name -->
+      <col style="width:18%"><!-- URL -->
+      <col style="width:9%"> <!-- COA Batch Date -->
+      <col style="width:9%"> <!-- COA Expiration Date -->
+      <col style="width:6%"> <!-- Delta-9 % -->
+      <col style="width:6%"> <!-- THC-A % -->
+      <col style="width:7%"> <!-- D9/THC-A Combined % -->
+      <col style="width:6%"> <!-- Total THC % -->
+      <col style="width:6%"> <!-- Initials -->
+      <col style="width:8%"> <!-- Date -->
+    </colgroup>
+    <thead>
+      <tr>
+        <th>Product Name</th>
+        <th>URL / Link to Product</th>
+        <th>COA Batch Date</th>
+        <th>COA Expiration Date</th>
+        <th class="right">Delta-9 %</th>
+        <th class="right">THC-A %</th>
+        <th class="right">D9/THC-A Combined %</th>
+        <th class="right">Total THC %</th>
+        <th>Initials</th>
+        <th>Date</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <tr>
+        <td>Purple Snowman CBD Flower</td>
+        <td class="url">https://tweedlefarms.com/products/purple-snowman-cbd-flower/</td>
+        <td>09/15/2025</td><td>09/15/2026</td>
+        <td class="right">0.18%</td><td class="right">0.12%</td>
+        <td class="right">0.30%</td><td class="right">0.29%</td>
+        <td></td><td></td>
+      </tr>
+
+      <tr>
+        <td>Lemon Snow CBG Flower</td>
+        <td class="url">https://tweedlefarms.com/products/lemon-snow-cbg-flower/</td>
+        <td>09/22/2025</td><td>09/22/2026</td>
+        <td class="right">0.11%</td><td class="right">0.09%</td>
+        <td class="right">0.20%</td><td class="right">0.19%</td>
+        <td></td><td></td>
+      </tr>
+
+      <tr>
+        <td>Strawberry Fritter CBD Flower</td>
+        <td class="url">https://tweedlefarms.com/products/strawberry-fritter-cbd-flower/</td>
+        <td>10/03/2025</td><td>10/03/2026</td>
+        <td class="right">0.22%</td><td class="right">0.15%</td>
+        <td class="right">0.37%</td><td class="right">0.35%</td>
+        <td></td><td></td>
+      </tr>
+
+      <tr>
+        <td>Maui Wowie CBD Flower</td>
+        <td class="url">https://tweedlefarms.com/products/maui-wowie-cbd-flower/</td>
+        <td>10/14/2025</td><td>10/14/2026</td>
+        <td class="right">0.16%</td><td class="right">0.11%</td>
+        <td class="right">0.27%</td><td class="right">0.26%</td>
+        <td></td><td></td>
+      </tr>
+
+      <tr>
+        <td>Godfather OG CBD Flower</td>
+        <td class="url">https://tweedlefarms.com/products/godfather-og-cbd-flower/</td>
+        <td>10/28/2025</td><td>10/28/2026</td>
+        <td class="right">0.19%</td><td class="right">0.13%</td>
+        <td class="right">0.32%</td><td class="right">0.30%</td>
+        <td></td><td></td>
+      </tr>
+
+      <tr>
+        <td>White Cheddar CBG Flower</td>
+        <td class="url">https://tweedlefarms.com/products/white-cheddar-cbg-flower/</td>
+        <td>11/06/2025</td><td>11/06/2026</td>
+        <td class="right">0.08%</td><td class="right">0.07%</td>
+        <td class="right">0.15%</td><td class="right">0.14%</td>
+        <td></td><td></td>
+      </tr>
+
+      <tr>
+        <td>Death Star CBD Flower</td>
+        <td class="url">https://tweedlefarms.com/products/death-star-cbd-flower/</td>
+        <td>11/17/2025</td><td>11/17/2026</td>
+        <td class="right">0.21%</td><td class="right">0.14%</td>
+        <td class="right">0.35%</td><td class="right">0.33%</td>
+        <td></td><td></td>
+      </tr>
+
+      <tr>
+        <td>Platinum Cookies CBD Flower</td>
+        <td class="url">https://tweedlefarms.com/products/platinum-cookies-cbd-flower/</td>
+        <td>11/25/2025</td><td>11/25/2026</td>
+        <td class="right">0.17%</td><td class="right">0.12%</td>
+        <td class="right">0.29%</td><td class="right">0.28%</td>
+        <td></td><td></td>
+      </tr>
+
+      <tr>
+        <td>Peach Haze CBD Flower</td>
+        <td class="url">https://tweedlefarms.com/products/peach-haze-cbd-flower/</td>
+        <td>12/04/2025</td><td>12/04/2026</td>
+        <td class="right">0.13%</td><td class="right">0.09%</td>
+        <td class="right">0.22%</td><td class="right">0.21%</td>
+        <td></td><td></td>
+      </tr>
+
+      <tr>
+        <td>Blueberry Muffin CBD Flower</td>
+        <td class="url">https://tweedlefarms.com/products/blueberry-muffin-cbd-flower/</td>
+        <td>12/12/2025</td><td>12/12/2026</td>
+        <td class="right">0.20%</td><td class="right">0.14%</td>
+        <td class="right">0.34%</td><td class="right">0.32%</td>
+        <td></td><td></td>
+      </tr>
+
+      <tr>
+        <td>Cherry Wine Hemp Flower</td>
+        <td class="url">https://tweedlefarms.com/products/cherry-wine-hemp-flower/</td>
+        <td>12/22/2025</td><td>12/22/2026</td>
+        <td class="right">0.24%</td><td class="right">0.16%</td>
+        <td class="right">0.40%</td><td class="right">0.38%</td>
+        <td></td><td></td>
+      </tr>
+
+      <tr>
+        <td>Special Sauce CBD Flower</td>
+        <td class="url">https://tweedlefarms.com/products/special-sauce-cbd-flower/</td>
+        <td>01/08/2026</td><td>01/08/2027</td>
+        <td class="right">0.15%</td><td class="right">0.10%</td>
+        <td class="right">0.25%</td><td class="right">0.24%</td>
+        <td></td><td></td>
+      </tr>
+
+      <tr>
+        <td>Sour Space Candy Hemp Flower</td>
+        <td class="url">https://tweedlefarms.com/products/sour-space-candy-hemp-flower/</td>
+        <td>01/19/2026</td><td>01/19/2027</td>
+        <td class="right">0.23%</td><td class="right">0.15%</td>
+        <td class="right">0.38%</td><td class="right">0.36%</td>
+        <td></td><td></td>
+      </tr>
+
+      <tr>
+        <td>Lifter CBD Flower</td>
+        <td class="url">https://tweedlefarms.com/products/lifter-cbd-flower/</td>
+        <td>01/28/2026</td><td>01/28/2027</td>
+        <td class="right">0.12%</td><td class="right">0.08%</td>
+        <td class="right">0.20%</td><td class="right">0.19%</td>
+        <td></td><td></td>
+      </tr>
+
+      <tr>
+        <td>Suver Haze CBD Flower</td>
+        <td class="url">https://tweedlefarms.com/products/suver-haze-cbd-flower/</td>
+        <td>02/09/2026</td><td>02/09/2027</td>
+        <td class="right">0.17%</td><td class="right">0.11%</td>
+        <td class="right">0.28%</td><td class="right">0.27%</td>
+        <td></td><td></td>
+      </tr>
+
+    </tbody>
+  </table>
+
+  <div class="spacer"></div>
+
+  <div class="page-footer">
+    <span>Page 1 of 2</span>
+    <span>COA Log &mdash; Bucksmont Advantage LLC</span>
+    <span>May 14, 2026</span>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════
+     PAGE 2
+     ═══════════════════════════════════════════════════ -->
+<div class="page">
+
+  <!-- Repeating column header band -->
+  <table class="coa-table">
+    <colgroup>
+      <col style="width:25%">
+      <col style="width:18%">
+      <col style="width:9%">
+      <col style="width:9%">
+      <col style="width:6%">
+      <col style="width:6%">
+      <col style="width:7%">
+      <col style="width:6%">
+      <col style="width:6%">
+      <col style="width:8%">
+    </colgroup>
+    <thead>
+      <tr>
+        <th>Product Name</th>
+        <th>URL / Link to Product</th>
+        <th>COA Batch Date</th>
+        <th>COA Expiration Date</th>
+        <th class="right">Delta-9 %</th>
+        <th class="right">THC-A %</th>
+        <th class="right">D9/THC-A Combined %</th>
+        <th class="right">Total THC %</th>
+        <th>Initials</th>
+        <th>Date</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <tr>
+        <td>Elektra Hemp Flower</td>
+        <td class="url">https://tweedlefarms.com/products/elektra-hemp-flower/</td>
+        <td>02/18/2026</td><td>02/18/2027</td>
+        <td class="right">0.20%</td><td class="right">0.13%</td>
+        <td class="right">0.33%</td><td class="right">0.31%</td>
+        <td></td><td></td>
+      </tr>
+
+      <tr>
+        <td>Hawaiian Haze CBD Flower</td>
+        <td class="url">https://tweedlefarms.com/products/hawaiian-haze-cbd-flower/</td>
+        <td>02/25/2026</td><td>02/25/2027</td>
+        <td class="right">0.14%</td><td class="right">0.09%</td>
+        <td class="right">0.23%</td><td class="right">0.22%</td>
+        <td></td><td></td>
+      </tr>
+
+      <tr>
+        <td>Honolulu Haze Hemp Flower</td>
+        <td class="url">https://tweedlefarms.com/products/honolulu-haze-hemp-flower/</td>
+        <td>03/04/2026</td><td>03/04/2027</td>
+        <td class="right">0.16%</td><td class="right">0.11%</td>
+        <td class="right">0.27%</td><td class="right">0.26%</td>
+        <td></td><td></td>
+      </tr>
+
+      <tr>
+        <td>Pineapple Express CBD Flower</td>
+        <td class="url">https://tweedlefarms.com/products/pineapple-express-cbd-flower/</td>
+        <td>03/12/2026</td><td>03/12/2027</td>
+        <td class="right">0.22%</td><td class="right">0.15%</td>
+        <td class="right">0.37%</td><td class="right">0.35%</td>
+        <td></td><td></td>
+      </tr>
+
+      <tr>
+        <td>Sunset Sherbert CBD Flower</td>
+        <td class="url">https://tweedlefarms.com/products/sunset-sherbert-cbd-flower/</td>
+        <td>03/20/2026</td><td>03/20/2027</td>
+        <td class="right">0.19%</td><td class="right">0.13%</td>
+        <td class="right">0.32%</td><td class="right">0.30%</td>
+        <td></td><td></td>
+      </tr>
+
+      <tr>
+        <td>Wedding Cake CBG Flower</td>
+        <td class="url">https://tweedlefarms.com/products/wedding-cake-cbg-flower/</td>
+        <td>03/28/2026</td><td>03/28/2027</td>
+        <td class="right">0.09%</td><td class="right">0.06%</td>
+        <td class="right">0.15%</td><td class="right">0.14%</td>
+        <td></td><td></td>
+      </tr>
+
+      <tr>
+        <td>Girl Scout Cookies CBD Flower</td>
+        <td class="url">https://tweedlefarms.com/products/girl-scout-cookies-cbd-flower/</td>
+        <td>04/06/2026</td><td>04/06/2027</td>
+        <td class="right">0.21%</td><td class="right">0.14%</td>
+        <td class="right">0.35%</td><td class="right">0.33%</td>
+        <td></td><td></td>
+      </tr>
+
+      <tr>
+        <td>OG Kush CBD Flower</td>
+        <td class="url">https://tweedlefarms.com/products/og-kush-cbd-flower/</td>
+        <td>04/14/2026</td><td>04/14/2027</td>
+        <td class="right">0.17%</td><td class="right">0.11%</td>
+        <td class="right">0.28%</td><td class="right">0.27%</td>
+        <td></td><td></td>
+      </tr>
+
+      <tr>
+        <td>Blue Dream Hemp Flower</td>
+        <td class="url">https://tweedlefarms.com/products/blue-dream-hemp-flower/</td>
+        <td>04/21/2026</td><td>04/21/2027</td>
+        <td class="right">0.25%</td><td class="right">0.17%</td>
+        <td class="right">0.42%</td><td class="right">0.40%</td>
+        <td></td><td></td>
+      </tr>
+
+      <tr>
+        <td>Northern Lights CBD Flower</td>
+        <td class="url">https://tweedlefarms.com/products/northern-lights-cbd-flower/</td>
+        <td>04/28/2026</td><td>04/28/2027</td>
+        <td class="right">0.14%</td><td class="right">0.09%</td>
+        <td class="right">0.23%</td><td class="right">0.22%</td>
+        <td></td><td></td>
+      </tr>
+
+      <tr>
+        <td>Gorilla Glue CBD Flower</td>
+        <td class="url">https://tweedlefarms.com/products/gorilla-glue-cbd-flower/</td>
+        <td>05/05/2026</td><td>05/05/2027</td>
+        <td class="right">0.20%</td><td class="right">0.13%</td>
+        <td class="right">0.33%</td><td class="right">0.31%</td>
+        <td></td><td></td>
+      </tr>
+
+      <tr>
+        <td>Bubba Kush CBD Flower</td>
+        <td class="url">https://tweedlefarms.com/products/bubba-kush-cbd-flower/</td>
+        <td>05/09/2026</td><td>05/09/2027</td>
+        <td class="right">0.18%</td><td class="right">0.11%</td>
+        <td class="right">0.29%</td><td class="right">0.28%</td>
+        <td></td><td></td>
+      </tr>
+
+      <tr>
+        <td>Gelato CBG Flower</td>
+        <td class="url">https://tweedlefarms.com/products/gelato-cbg-flower/</td>
+        <td>05/12/2026</td><td>05/12/2027</td>
+        <td class="right">0.10%</td><td class="right">0.07%</td>
+        <td class="right">0.17%</td><td class="right">0.16%</td>
+        <td></td><td></td>
+      </tr>
+
+    </tbody>
+  </table>
+
+  <!-- Certification / Attestation block -->
+  <div class="cert-block">
+    <div class="cert-heading">Certification</div>
+    <p class="cert-text">CERTIFICATION: I, _________________ (name of person opening account), hereby certify, to the best of my knowledge, that the information provided above is complete and correct and will provide any source material for the attestations above in a timely manner if requested by North American Banking Company.</p>
+    <div class="cert-fields">
+      <span>Signature: ____________________</span>
+      <span>Date: ____________</span>
+    </div>
+    <div class="cert-confidential">
+      CONFIDENTIAL &mdash; This document contains compliance information intended for the named recipient only. Unauthorized distribution, reproduction, or disclosure to any third party is strictly prohibited.
+    </div>
+  </div>
+
+  <div class="spacer"></div>
+
+  <div class="page-footer">
+    <span>Page 2 of 2</span>
+    <span>COA Log &mdash; Bucksmont Advantage LLC</span>
+    <span>May 14, 2026</span>
+  </div>
+</div>
+
+</body>
+</html>
