@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MyCOA Setup Wizard — No Online Sales Bypass · QP-3731 | Qredible Prototypes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --q-navy:          #292E6F;
+      --q-navy-hover:    #1F2357;
+      --q-sage:          #95BC64;
+      --q-sage-soft:     #EDF3E0;
+      --q-blue:          #50A8FF;
+      --q-blue-hover:    #2E93F5;
+      --q-blue-bg:       #DCEEFF;
+      --q-green:         #00D581;
+      --q-yellow:        #FFDD50;
+      --q-red:           #FF404A;
+      --q-grey-700:      #333333;
+      --q-grey-600:      #657496;
+      --q-grey-500:      #9BA09C;
+      --q-grey-400:      #A7B2C7;
+      --q-grey-300:      #C5C5C5;
+      --q-grey-200:      #EBEDF2;
+      --q-grey-100:      #F1F5F9;
+      --q-grey-50:       #F8FBFD;
+      --q-white:         #FFFFFF;
+      --q-bg:            #FFFFFF;
+      --q-bg-subtle:     #F8FBFD;
+      --q-bg-muted:      #F1F5F9;
+      --q-fg:            #292E6F;
+      --q-fg-muted:      #657496;
+      --q-fg-subtle:     #979BA0;
+      --q-fg-placeholder:#9BA09C;
+      --q-fg-inverse:    #FFFFFF;
+      --q-fg-link:       #50A8FF;
+      --q-fg-error:      #D32F2F;
+      --q-border:        #EBEDF2;
+      --q-radius-sm:     5px;
+      --q-radius-md:     6px;
+      --q-radius-xl:     10px;
+      --q-radius-2xl:    15px;
+      --q-radius-pill:   999px;
+      --q-shadow-sm:     0px 3px 6px rgba(0,0,0,0.13);
+      --q-shadow-lg:     10px 10px 30px rgba(0,0,0,0.1);
+      --q-shadow-button: 0px 3px 6px rgba(0,0,0,0.16);
+      --q-shadow-drop:   0px 15px 20px rgba(0,0,0,0.25);
+      --q-font-sans: "Uber Move", "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --q-font-mono: "SF Mono", Menlo, Consolas, "Roboto Mono", monospace;
+    }
+
+    body {
+      font-family: var(--q-font-sans);
+      background: var(--q-bg-muted);
+      color: var(--q-fg);
+      font-size: 13px;
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+
+    /* ─── Proto bar ─── */
+    .proto-bar {
+      background: rgba(255,221,80,0.2);
+      border-bottom: 1px solid var(--q-yellow);
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 12px;
+      color: #7A6800;
+    }
+    .proto-bar strong { color: var(--q-fg); font-weight: 700; }
+    .proto-bar .spacer { flex: 1; }
+    .proto-bar a {
+      text-decoration: none;
+      color: var(--q-fg);
+      font-weight: 700;
+      padding: 6px 12px;
+      border: 1px solid var(--q-border);
+      border-radius: var(--q-radius-xl);
+      background: var(--q-white);
+      font-size: 12px;
+    }
+    .proto-bar a:hover { background: var(--q-grey-100); }
+
+    /* ─── State tabs ─── */
+    .state-tabs {
+      display: flex;
+      gap: 4px;
+      padding: 16px 24px 0;
+      background: var(--q-bg-muted);
+      border-bottom: 1px solid var(--q-border);
+    }
+    .state-tab {
+      background: transparent;
+      color: var(--q-fg-muted);
+      border: none;
+      border-bottom: 2px solid transparent;
+      padding: 12px 20px;
+      font-family: var(--q-font-sans);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: color .12s, border-color .12s;
+    }
+    .state-tab:hover { color: var(--q-fg); }
+    .state-tab.active { color: var(--q-fg); border-bottom-color: var(--q-navy); }
+
+    /* ─── Views ─── */
+    .view { display: none; }
+    .view.active { display: block; }
+
+    /* ─── Stage / Faux portal / Scrim ─── */
+    .stage {
+      min-height: calc(100vh - 108px);
+      position: relative;
+      padding: 48px 24px 80px;
+    }
+    .faux-portal {
+      position: absolute;
+      inset: 0;
+      padding: 24px 40px;
+      opacity: .45;
+      filter: blur(2px);
+      pointer-events: none;
+      user-select: none;
+    }
+    .faux-portal .fp-top {
+      background: var(--q-white);
+      color: var(--q-fg);
+      padding: 0 24px;
+      height: 64px;
+      border-bottom: 1px solid var(--q-border);
+      border-radius: var(--q-radius-2xl) var(--q-radius-2xl) 0 0;
+      font-size: 14px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .faux-portal .fp-logo {
+      width: 48px; height: 48px;
+      border-radius: 12px;
+      background: var(--q-navy);
+      color: var(--q-white);
+      font-weight: 700;
+      display: inline-flex; align-items: center; justify-content: center;
+    }
+    .faux-portal .fp-body {
+      background: var(--q-white);
+      border-radius: 0 0 var(--q-radius-2xl) var(--q-radius-2xl);
+      padding: 40px;
+      height: 420px;
+      background-image:
+        linear-gradient(90deg, var(--q-grey-200) 1px, transparent 1px),
+        linear-gradient(0deg, var(--q-grey-200) 1px, transparent 1px);
+      background-size: 60px 40px;
+      box-shadow: var(--q-shadow-lg);
+    }
+    .scrim {
+      position: absolute;
+      inset: 0;
+      background: rgba(26,32,46,.55);
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 48px 24px 80px;
+      overflow-y: auto;
+    }
+
+    /* ─── Wizard modal ─── */
+    .wizard {
+      width: 100%;
+      max-width: 620px;
+      background: var(--q-white);
+      border-radius: var(--q-radius-2xl);
+      box-shadow: var(--q-shadow-drop);
+      overflow: hidden;
+      animation: pop .35s cubic-bezier(.22,1,.36,1);
+    }
+    @keyframes pop {
+      from { opacity: 0; transform: translateY(14px) scale(.98); }
+      to   { opacity: 1; transform: none; }
+    }
+
+    /* ─── Wizard header ─── */
+    .wiz-header {
+      padding: 24px 28px 16px;
+      border-bottom: 1px solid var(--q-border);
+    }
+    .wiz-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--q-navy);
+      background: var(--q-sage-soft);
+      padding: 4px 10px;
+      border-radius: var(--q-radius-pill);
+      margin-bottom: 12px;
+    }
+    .wiz-eyebrow .dot { width: 6px; height: 6px; background: var(--q-sage); border-radius: 50%; }
+    .wiz-title { font-size: 24px; font-weight: 600; line-height: 1.25; letter-spacing: -.01em; }
+    .wiz-sub { font-size: 13px; color: var(--q-fg-muted); margin-top: 8px; line-height: 1.6; }
+
+    /* ─── Stepper ─── */
+    .stepper {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 16px 28px;
+      border-bottom: 1px solid var(--q-border);
+      background: var(--q-bg-subtle);
+    }
+    .step { display: flex; align-items: center; gap: 10px; }
+    .step-num {
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      background: var(--q-grey-200);
+      color: var(--q-fg-muted);
+      font-size: 12px; font-weight: 700;
+      display: inline-flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .step.active .step-num { background: var(--q-navy); color: var(--q-white); }
+    .step.done .step-num   { background: var(--q-sage); color: var(--q-white); }
+    .step-label { font-size: 12px; font-weight: 700; color: var(--q-fg-muted); }
+    .step.active .step-label { color: var(--q-fg); }
+    .step.done .step-label   { color: var(--q-navy); }
+    .step-sep {
+      flex: 1;
+      height: 2px;
+      background: var(--q-grey-200);
+      border-radius: 2px;
+      position: relative;
+      overflow: hidden;
+    }
+    .step-sep.filled::after { content: ""; position: absolute; inset: 0; background: var(--q-sage); }
+
+    /* ─── Body / Slides ─── */
+    .wiz-body { padding: 24px 28px 24px; }
+    .slide { display: none; }
+    .slide.active { display: block; }
+
+    /* ─── Fields ─── */
+    .field { margin-bottom: 20px; }
+    .field-label {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 12px; font-weight: 700;
+      color: var(--q-fg-subtle);
+      margin-bottom: 8px;
+    }
+    .req { color: var(--q-fg-error); }
+    .field-lock {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 10px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .08em;
+      background: var(--q-grey-100); color: var(--q-fg-muted);
+      padding: 2px 8px; border-radius: var(--q-radius-md);
+      margin-left: 4px;
+    }
+    .field-lock svg { width: 10px; height: 10px; }
+    .input {
+      width: 100%; height: 44px;
+      padding: 0 18px;
+      border: none;
+      border-radius: var(--q-radius-2xl);
+      font-family: inherit;
+      font-size: 12px; font-weight: 500;
+      color: var(--q-fg);
+      background: var(--q-grey-50);
+      outline: none;
+      transition: outline-color .12s;
+    }
+    .input:focus { outline: 1px solid var(--q-blue); outline-offset: 0; }
+    .input::placeholder { color: var(--q-fg-placeholder); font-weight: 600; }
+    .input[readonly] { background: var(--q-grey-100); color: var(--q-fg-muted); cursor: not-allowed; }
+    .input.invalid { outline: 1px solid var(--q-fg-error); }
+    .input-prefix {
+      display: flex; align-items: stretch;
+      border-radius: var(--q-radius-2xl);
+      overflow: hidden;
+      background: var(--q-grey-50);
+      height: 44px;
+    }
+    .input-prefix .prefix {
+      background: var(--q-grey-100); color: var(--q-fg-muted);
+      padding: 0 14px;
+      font-family: var(--q-font-mono); font-size: 12px; font-weight: 500;
+      display: flex; align-items: center;
+    }
+    .input-prefix .input { border-radius: 0; background: var(--q-grey-50); flex: 1; }
+    .input-prefix:focus-within { outline: 1px solid var(--q-blue); }
+    .field-help { font-size: 12px; color: var(--q-fg-muted); margin-top: 8px; line-height: 1.6; }
+    .field-help code { font-family: var(--q-font-mono); font-size: 11px; background: var(--q-grey-100); padding: 1px 6px; border-radius: 4px; }
+    .field-error { font-size: 10px; color: var(--q-fg-error); margin-top: 6px; font-weight: 600; display: none; }
+    .field-error.show { display: block; }
+
+    /* ─── NEW: Bypass row ─── */
+    .bypass-row { margin: 4px 0 20px; text-align: center; }
+    .bypass-divider {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 14px;
+      color: var(--q-grey-400);
+      font-size: 11px; font-weight: 600; letter-spacing: .04em;
+    }
+    .bypass-divider::before,
+    .bypass-divider::after { content: ""; flex: 1; height: 1px; background: var(--q-border); }
+    .bypass-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: transparent;
+      border: 1px solid var(--q-border);
+      border-radius: var(--q-radius-xl);
+      padding: 8px 18px;
+      font-family: var(--q-font-sans);
+      font-size: 12px; font-weight: 700;
+      color: var(--q-fg-muted);
+      cursor: pointer;
+      transition: background .12s, color .12s, border-color .12s;
+      margin-bottom: 8px;
+    }
+    .bypass-btn svg { width: 14px; height: 14px; flex-shrink: 0; }
+    .bypass-btn:hover,
+    .bypass-btn.hover-demo {
+      background: var(--q-grey-100);
+      color: var(--q-fg);
+      border-color: var(--q-grey-300);
+    }
+    .bypass-hint { font-size: 11px; color: var(--q-fg-subtle); line-height: 1.5; }
+
+    /* ─── Footer ─── */
+    .wiz-footer {
+      padding: 16px 28px;
+      border-top: 1px solid var(--q-border);
+      background: var(--q-bg-subtle);
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    }
+    .wiz-footer .left { font-size: 12px; color: var(--q-fg-muted); font-weight: 500; }
+    .wiz-footer .right { display: flex; gap: 8px; }
+    .btn {
+      font-family: var(--q-font-sans);
+      font-size: 12px; font-weight: 700;
+      height: 32px; padding: 0 24px;
+      border-radius: var(--q-radius-sm);
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: background .12s, border-color .12s, color .12s;
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .btn-primary { background: var(--q-navy); color: var(--q-white); border-color: var(--q-navy); box-shadow: var(--q-shadow-button); }
+    .btn-primary:hover { background: var(--q-navy-hover); border-color: var(--q-navy-hover); }
+    .btn-primary:disabled { background: rgba(0,0,0,0.12); border-color: transparent; color: rgba(0,0,0,0.26); cursor: not-allowed; box-shadow: none; }
+    .btn-ghost { background: transparent; color: var(--q-fg); border: 1px solid var(--q-border); }
+    .btn-ghost:hover { background: var(--q-grey-100); }
+
+    /* ─── Step 2 stub ─── */
+    .out-of-scope-notice {
+      background: var(--q-blue-bg);
+      border-radius: var(--q-radius-xl);
+      padding: 28px 24px;
+      text-align: center;
+      display: flex; flex-direction: column; align-items: center; gap: 12px;
+    }
+    .oos-icon {
+      width: 48px; height: 48px;
+      background: var(--q-blue); color: var(--q-white);
+      border-radius: var(--q-radius-2xl);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .oos-icon svg { width: 24px; height: 24px; }
+    .oos-title { font-size: 16px; font-weight: 600; }
+    .oos-body { font-size: 12px; color: var(--q-fg-muted); line-height: 1.65; max-width: 380px; }
+    .oos-body a { color: var(--q-blue); font-weight: 600; text-decoration: none; }
+
+    /* ─── Loading view ─── */
+    .loading-body {
+      padding: 48px 28px;
+      display: flex; flex-direction: column; align-items: center; gap: 16px;
+      text-align: center;
+    }
+    .loading-spinner {
+      width: 40px; height: 40px;
+      border: 3px solid var(--q-grey-200);
+      border-top-color: var(--q-navy);
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-title { font-size: 16px; font-weight: 600; }
+    .loading-sub { font-size: 12px; color: var(--q-fg-muted); line-height: 1.6; max-width: 320px; }
+
+    /* ─── Paywall view ─── */
+    #view-paywall { background: var(--q-bg-muted); min-height: calc(100vh - 108px); }
+    .paywall-page { max-width: 1000px; margin: 0 auto; padding: 0 24px 80px; }
+    .paywall-nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 0;
+      border-bottom: 1px solid var(--q-border);
+    }
+    .paywall-wordmark { font-size: 18px; font-weight: 700; color: var(--q-navy); letter-spacing: -.02em; }
+    .paywall-wordmark sup { font-size: 10px; opacity: .7; }
+    .paywall-back {
+      font-size: 12px; font-weight: 700; color: var(--q-fg-muted);
+      text-decoration: none;
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 12px;
+      border: 1px solid var(--q-border);
+      border-radius: var(--q-radius-xl);
+      background: var(--q-white);
+    }
+    .paywall-back:hover { background: var(--q-grey-100); color: var(--q-fg); }
+    .paywall-banner {
+      background: linear-gradient(135deg, var(--q-navy-hover) 0%, var(--q-navy) 70%);
+      color: var(--q-white);
+      border-radius: var(--q-radius-2xl);
+      padding: 32px 40px;
+      margin: 28px 0;
+      display: flex; align-items: center; gap: 20px;
+    }
+    .paywall-banner-icon {
+      width: 52px; height: 52px;
+      background: rgba(255,255,255,0.15);
+      border-radius: var(--q-radius-2xl);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .paywall-banner-icon svg { width: 28px; height: 28px; }
+    .paywall-banner-text { flex: 1; }
+    .paywall-banner-title { font-size: 20px; font-weight: 600; line-height: 1.3; margin-bottom: 6px; }
+    .paywall-banner-sub { font-size: 13px; color: rgba(255,255,255,0.75); line-height: 1.55; }
+    .paywall-banner-tag {
+      background: rgba(149,188,100,0.2);
+      color: #95BC64;
+      border: 1px solid rgba(149,188,100,0.4);
+      border-radius: var(--q-radius-pill);
+      padding: 6px 14px;
+      font-size: 11px; font-weight: 700;
+      letter-spacing: .08em; text-transform: uppercase;
+      flex-shrink: 0;
+    }
+    .paywall-section-title { font-size: 20px; font-weight: 600; letter-spacing: -.01em; margin-bottom: 8px; }
+    .paywall-section-sub { font-size: 13px; color: var(--q-fg-muted); margin-bottom: 28px; line-height: 1.6; }
+    .paywall-plans { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 32px; }
+    .plan-card {
+      background: var(--q-white);
+      border-radius: var(--q-radius-2xl);
+      padding: 28px 24px 24px;
+      border: 2px solid var(--q-border);
+      box-shadow: var(--q-shadow-sm);
+      display: flex; flex-direction: column;
+      position: relative;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .plan-card:hover { border-color: var(--q-grey-300); box-shadow: var(--q-shadow-lg); }
+    .plan-card.featured { border-color: var(--q-navy); box-shadow: 0 8px 32px rgba(41,46,111,0.18); }
+    .plan-featured-badge {
+      position: absolute;
+      top: -1px; left: 50%; transform: translateX(-50%);
+      background: var(--q-navy); color: var(--q-white);
+      font-size: 10px; font-weight: 700;
+      letter-spacing: .1em; text-transform: uppercase;
+      padding: 4px 14px;
+      border-radius: 0 0 var(--q-radius-md) var(--q-radius-md);
+    }
+    .plan-tier { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--q-fg-muted); margin-bottom: 8px; }
+    .plan-price { font-size: 32px; font-weight: 700; color: var(--q-fg); letter-spacing: -.02em; line-height: 1; margin-bottom: 4px; }
+    .plan-price sup { font-size: 18px; vertical-align: top; margin-top: 4px; font-weight: 600; }
+    .plan-price .per { font-size: 14px; font-weight: 500; color: var(--q-fg-muted); }
+    .plan-desc { font-size: 12px; color: var(--q-fg-muted); line-height: 1.6; margin: 12px 0 20px; flex: 1; }
+    .plan-cta {
+      display: block; width: 100%; height: 36px;
+      border-radius: var(--q-radius-sm);
+      font-family: var(--q-font-sans); font-size: 12px; font-weight: 700;
+      cursor: pointer;
+      border: 1px solid var(--q-border);
+      background: var(--q-white); color: var(--q-fg);
+      margin-bottom: 20px;
+      transition: background .12s, border-color .12s;
+    }
+    .plan-cta:hover { background: var(--q-grey-100); }
+    .plan-card.featured .plan-cta { background: var(--q-navy); border-color: var(--q-navy); color: var(--q-white); box-shadow: var(--q-shadow-button); }
+    .plan-card.featured .plan-cta:hover { background: var(--q-navy-hover); border-color: var(--q-navy-hover); }
+    .plan-section-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--q-fg-subtle); margin-bottom: 10px; }
+    .plan-features { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+    .plan-features li { display: flex; align-items: flex-start; gap: 8px; font-size: 12px; color: var(--q-fg-muted); line-height: 1.4; }
+    .plan-features li .chk {
+      width: 16px; height: 16px;
+      background: var(--q-sage-soft); color: #7DA14E;
+      border-radius: 50%;
+      display: inline-flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 1px;
+    }
+    .plan-features li .chk svg { width: 9px; height: 9px; stroke-width: 3; }
+    .paywall-footnote {
+      background: var(--q-white);
+      border-radius: var(--q-radius-xl);
+      padding: 16px 20px;
+      font-size: 12px; color: var(--q-fg-muted);
+      display: flex; align-items: flex-start; gap: 12px;
+      box-shadow: var(--q-shadow-sm);
+    }
+    .paywall-footnote .fn-icon {
+      width: 20px; height: 20px;
+      background: var(--q-sage-soft); color: #7DA14E;
+      border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .paywall-footnote .fn-icon svg { width: 12px; height: 12px; }
+
+    /* ─── State indicator view ─── */
+    .si-wrap { min-height: calc(100vh - 108px); padding: 40px 24px 80px; }
+    .si-page { max-width: 900px; margin: 0 auto; }
+    .si-page h1 { font-size: 22px; font-weight: 600; letter-spacing: -.01em; margin-bottom: 8px; }
+    .si-page > p { font-size: 13px; color: var(--q-fg-muted); line-height: 1.6; margin-bottom: 32px; }
+    .si-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 32px; }
+    .si-card { background: var(--q-white); border-radius: var(--q-radius-2xl); overflow: hidden; box-shadow: var(--q-shadow-sm); }
+    .si-card-header {
+      padding: 14px 20px 12px;
+      border-bottom: 1px solid var(--q-border);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .si-card-header .hdot { width: 8px; height: 8px; border-radius: 50%; }
+    .si-card-header .hlabel { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--q-fg-subtle); }
+    .before-dot { background: var(--q-grey-300); }
+    .after-dot  { background: var(--q-sage); }
+    .si-card-body { padding: 16px 20px; }
+    .si-record { font-family: var(--q-font-mono); font-size: 12px; line-height: 1.9; }
+    .si-row { display: flex; gap: 12px; padding: 2px 0; }
+    .si-key { color: var(--q-fg-muted); flex-shrink: 0; width: 230px; }
+    .si-val { color: var(--q-fg); font-weight: 500; }
+    .si-val.null { color: var(--q-grey-400); font-style: italic; }
+    .si-val.changed { color: var(--q-navy); font-weight: 700; }
+    .si-val.added { color: #5C8F2B; font-weight: 700; }
+    .badge {
+      display: inline-flex; align-items: center;
+      background: var(--q-sage-soft); color: var(--q-navy);
+      font-size: 9px; font-weight: 700;
+      letter-spacing: .08em; text-transform: uppercase;
+      padding: 1px 6px; border-radius: var(--q-radius-md);
+      margin-left: 8px; font-family: var(--q-font-sans);
+    }
+    .si-hr { height: 1px; background: var(--q-border); margin: 8px 0; }
+    .si-annotations { display: flex; flex-direction: column; gap: 12px; }
+    .si-ann {
+      background: var(--q-white);
+      border-radius: var(--q-radius-xl);
+      padding: 16px 20px;
+      box-shadow: var(--q-shadow-sm);
+      display: flex; gap: 14px;
+    }
+    .ann-icon {
+      width: 32px; height: 32px;
+      border-radius: var(--q-radius-md);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .ann-icon svg { width: 16px; height: 16px; }
+    .ann-blue   { background: var(--q-blue-bg);             color: var(--q-blue); }
+    .ann-sage   { background: var(--q-sage-soft);           color: #7DA14E; }
+    .ann-yellow { background: rgba(255,221,80,0.2);         color: #7A6800; }
+    .ann-title { font-size: 13px; font-weight: 600; color: var(--q-fg); margin-bottom: 4px; }
+    .ann-body  { font-size: 12px; color: var(--q-fg-muted); line-height: 1.6; }
+    .ann-body code { font-family: var(--q-font-mono); font-size: 11px; background: var(--q-grey-100); padding: 1px 6px; border-radius: 4px; color: var(--q-fg); }
+
+    @media (max-width: 720px) {
+      .wiz-header, .wiz-body, .wiz-footer, .stepper { padding-left: 20px; padding-right: 20px; }
+      .paywall-plans { grid-template-columns: 1fr; }
+      .si-cols { grid-template-columns: 1fr; }
+      .paywall-banner { flex-direction: column; }
+      .paywall-banner-tag { margin-left: 0; }
+      .si-key { width: 180px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════ PROTO BAR ═══════════ -->
+<div class="proto-bar">
+  <strong>Prototype · QP-3731 — MyCOA No-Online-Sales Bypass</strong>
+  <span>"I do not sell online" bypass on Wizard Step 1 — routes merchants without a storefront directly to the Paywall, skipping the Resume Shopping URL requirement.</span>
+  <span class="spacer"></span>
+  <a href="mycoa-setup-wizard-v1.html">← Wizard v1 (original)</a>
+  <a href="../index.html">← All mockups</a>
+</div>
+
+<!-- ═══════════ STATE TABS ═══════════ -->
+<div class="state-tabs" role="tablist">
+  <button class="state-tab active" onclick="showTab(0)">Step 1 · Default</button>
+  <button class="state-tab" onclick="showTab(1)">Step 1 · Bypass Hover</button>
+  <button class="state-tab" onclick="showTab(2)">Bypass → Loading</button>
+  <button class="state-tab" onclick="showTab(3)">Paywall</button>
+  <button class="state-tab" onclick="showTab(4)">State Indicator</button>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     VIEWS 0 + 1  Wizard (default & hover share DOM)
+═══════════════════════════════════════════════════ -->
+<div id="view-wizard" class="view active">
+  <div class="stage">
+    <div class="faux-portal" aria-hidden="true">
+      <div class="fp-top"><div class="fp-logo">Q</div><span>Qredible Merchant Portal · JC Green</span></div>
+      <div class="fp-body"></div>
+    </div>
+    <div class="scrim">
+      <div class="wizard" role="dialog" aria-modal="true" aria-labelledby="wizTitle">
+
+        <div class="wiz-header">
+          <span class="wiz-eyebrow"><span class="dot"></span> First-time setup · required</span>
+          <div class="wiz-title" id="wizTitle">Set up your MyCOA site</div>
+          <div class="wiz-sub">Two quick steps. We'll publish your default MyCOA site at the dynamic URL below — you can customize colors, text, and fonts later from the Display tab.</div>
+        </div>
+
+        <div class="stepper">
+          <div class="step active" id="wiz-s1"><span class="step-num">1</span><span class="step-label">Site Identity</span></div>
+          <div class="step-sep" id="wiz-sep"></div>
+          <div class="step" id="wiz-s2"><span class="step-num">2</span><span class="step-label">Branding</span></div>
+        </div>
+
+        <div class="wiz-body">
+
+          <!-- Slide 1 -->
+          <div class="slide active" data-slide="1">
+            <div class="field">
+              <div class="field-label">
+                Your company name
+                <span class="field-lock">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+                  Read-only
+                </span>
+              </div>
+              <input class="input" type="text" value="JC Green" readonly />
+              <div class="field-help">Pulled from your Qredible account. Contact support to change it.</div>
+            </div>
+
+            <div class="field">
+              <div class="field-label">Resume shopping URL <span class="req">*</span></div>
+              <input class="input" id="shoppingUrl" type="url" placeholder="https://shop.jcgreen.com" oninput="validateUrl()" />
+              <div class="field-help">Where customers will be sent when they click <strong>Resume Shopping</strong> from your MyCOA site. Must start with <code>https://</code>.</div>
+              <div class="field-error" id="urlError">Enter a valid URL starting with http:// or https://</div>
+            </div>
+
+            <!-- ── NEW: Bypass option ── -->
+            <div class="bypass-row">
+              <div class="bypass-divider"><span>or</span></div>
+              <button class="bypass-btn" id="bypassBtn" type="button" onclick="startBypass()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"/>
+                  <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/>
+                </svg>
+                I do not sell online
+              </button>
+              <div class="bypass-hint">MyCOA without a storefront — skip wizard and go to paywall</div>
+            </div>
+
+            <div class="field">
+              <div class="field-label">
+                Your dynamic URL
+                <span class="field-lock">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+                  Read-only
+                </span>
+              </div>
+              <div class="input-prefix">
+                <span class="prefix">https://</span>
+                <input class="input" type="text" value="jcgreen.mycoa.com" readonly />
+              </div>
+              <div class="field-help">Your published MyCOA site. Custom CNAME mapping is available later from the Display tab.</div>
+            </div>
+          </div><!-- /slide 1 -->
+
+          <!-- Slide 2 — stub -->
+          <div class="slide" data-slide="2">
+            <div class="out-of-scope-notice">
+              <div class="oos-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                </svg>
+              </div>
+              <div class="oos-title">Step 2 — Branding</div>
+              <div class="oos-body">
+                Step 2 is out of scope for QP-3731. Reaching here confirms the standard URL path still works — logo upload &amp; branding are unchanged from <a href="mycoa-setup-wizard-v1.html">Wizard v1 (QP-3714)</a>.
+              </div>
+            </div>
+          </div><!-- /slide 2 -->
+
+        </div><!-- /.wiz-body -->
+
+        <div class="wiz-footer">
+          <div class="left">Step <span id="stepLabel">1</span> of 2</div>
+          <div class="right">
+            <button class="btn btn-ghost"   id="backBtn"   style="display:none;" onclick="gotoStep(1)">Back</button>
+            <button class="btn btn-primary" id="nextBtn"   disabled onclick="gotoStep(2)">Continue</button>
+            <button class="btn btn-primary" id="finishBtn" style="display:none;">Finish setup</button>
+          </div>
+        </div>
+
+      </div><!-- /.wizard -->
+    </div><!-- /.scrim -->
+  </div><!-- /.stage -->
+</div><!-- /#view-wizard -->
+
+<!-- ═══════════════════════════════════════════════
+     VIEW 2  Bypass loading (transition state)
+═══════════════════════════════════════════════════ -->
+<div id="view-loading" class="view">
+  <div class="stage">
+    <div class="faux-portal" aria-hidden="true">
+      <div class="fp-top"><div class="fp-logo">Q</div><span>Qredible Merchant Portal · JC Green</span></div>
+      <div class="fp-body"></div>
+    </div>
+    <div class="scrim">
+      <div class="wizard" role="dialog" aria-modal="true" aria-label="Setting up account">
+        <div class="wiz-header">
+          <span class="wiz-eyebrow"><span class="dot"></span> First-time setup · required</span>
+          <div class="wiz-title">Set up your MyCOA site</div>
+          <div class="wiz-sub">Two quick steps. We'll publish your default MyCOA site at the dynamic URL below.</div>
+        </div>
+        <div class="stepper">
+          <div class="step done"><span class="step-num">1</span><span class="step-label">Site Identity</span></div>
+          <div class="step-sep filled"></div>
+          <div class="step"><span class="step-num">2</span><span class="step-label">Branding</span></div>
+        </div>
+        <div class="loading-body">
+          <div class="loading-spinner"></div>
+          <div class="loading-title">Setting up your account…</div>
+          <div class="loading-sub">No storefront? No problem. Routing you to plan selection — your MyCOA site will work without a shopping URL.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     VIEW 3  Paywall (destination stub)
+═══════════════════════════════════════════════════ -->
+<div id="view-paywall" class="view">
+  <div style="padding: 0 0 0 0;">
+    <div class="paywall-page">
+      <nav class="paywall-nav">
+        <div class="paywall-wordmark">MyCOA<sup>®</sup></div>
+        <a href="#" class="paywall-back" onclick="showTab(0); return false;">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+          Return to portal
+        </a>
+      </nav>
+
+      <div class="paywall-banner">
+        <div class="paywall-banner-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+            <polyline points="22 4 12 14.01 9 11.01"/>
+          </svg>
+        </div>
+        <div class="paywall-banner-text">
+          <div class="paywall-banner-title">You're all set — no storefront required.</div>
+          <div class="paywall-banner-sub">Your MyCOA account is configured without a shopping URL. Activate a plan to manage COAs, respond to payment processor cases, and publish your product transparency page.</div>
+        </div>
+        <div class="paywall-banner-tag">No website · flagged</div>
+      </div>
+
+      <div class="paywall-section-title">Choose your MyCOA plan</div>
+      <div class="paywall-section-sub">All plans include MyCOA page publishing, COA uploads, and QR code generation. Upgrade any time.</div>
+
+      <div class="paywall-plans">
+
+        <div class="plan-card">
+          <div class="plan-tier">Basic</div>
+          <div class="plan-price">Free</div>
+          <div class="plan-desc">For merchants just getting started with COA transparency. Publish your MyCOA page and let consumers verify products with QR codes.</div>
+          <button class="plan-cta">Get started free</button>
+          <div class="plan-section-label">Includes</div>
+          <ul class="plan-features">
+            <li><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>MyCOA public page</li>
+            <li><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Up to 25 COA uploads / mo</li>
+            <li><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>QR code generation</li>
+            <li><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Product assignment</li>
+          </ul>
+        </div>
+
+        <div class="plan-card featured">
+          <div class="plan-featured-badge">Most popular</div>
+          <div class="plan-tier">Professional</div>
+          <div class="plan-price"><sup>$</sup>79<span class="per"> / mo</span></div>
+          <div class="plan-desc">For merchants managing payment processor cases and needing priority compliance support. Includes case management and custom domain.</div>
+          <button class="plan-cta">Start 14-day trial</button>
+          <div class="plan-section-label">Everything in Basic, plus</div>
+          <ul class="plan-features">
+            <li><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Unlimited COA uploads</li>
+            <li><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Payment processor case management</li>
+            <li><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Custom CNAME domain</li>
+            <li><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Priority support</li>
+            <li><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Audit logs</li>
+          </ul>
+        </div>
+
+        <div class="plan-card">
+          <div class="plan-tier">Enterprise</div>
+          <div class="plan-price" style="font-size:24px;letter-spacing:-.01em;">Custom</div>
+          <div class="plan-desc">For large operations requiring dedicated support, white-labeling, and API access. Contact us for tailored pricing.</div>
+          <button class="plan-cta">Contact sales</button>
+          <div class="plan-section-label">Everything in Professional, plus</div>
+          <ul class="plan-features">
+            <li><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Dedicated CSM</li>
+            <li><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>White-label option</li>
+            <li><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>API access</li>
+            <li><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>SLA guarantee</li>
+          </ul>
+        </div>
+
+      </div><!-- /.paywall-plans -->
+
+      <div class="paywall-footnote">
+        <div class="fn-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <div><strong>Storefront-free configuration applied.</strong> The "Resume Shopping" button will not appear on your MyCOA page. You can add a shopping URL at any time from <strong>Settings → MyCOA → Site Identity</strong> to re-enable it.</div>
+      </div>
+
+    </div><!-- /.paywall-page -->
+  </div>
+</div><!-- /#view-paywall -->
+
+<!-- ═══════════════════════════════════════════════
+     VIEW 4  State indicator / annotation panel
+═══════════════════════════════════════════════════ -->
+<div id="view-state-indicator" class="view">
+  <div class="si-wrap">
+    <div class="si-page">
+
+      <h1>Merchant Record — State After Bypass</h1>
+      <p>When a merchant clicks "I do not sell online", two flags are written to their record. This panel documents the before/after state and downstream effects for engineering and product review.</p>
+
+      <div class="si-cols">
+
+        <div class="si-card">
+          <div class="si-card-header">
+            <span class="hdot before-dot"></span>
+            <span class="hlabel">Before bypass (wizard opens)</span>
+          </div>
+          <div class="si-card-body">
+            <div class="si-record">
+              <div class="si-row"><span class="si-key">merchant_id</span><span class="si-val">"jcgreen-001"</span></div>
+              <div class="si-row"><span class="si-key">name</span><span class="si-val">"JC Green"</span></div>
+              <div class="si-hr"></div>
+              <div class="si-row"><span class="si-key">resume_shopping_url</span><span class="si-val null">null</span></div>
+              <div class="si-row"><span class="si-key">no_online_sales</span><span class="si-val">false</span></div>
+              <div class="si-row"><span class="si-key">mycoa_wizard_completed</span><span class="si-val">false</span></div>
+              <div class="si-row"><span class="si-key">mycoa_wizard_bypass</span><span class="si-val null">null</span></div>
+              <div class="si-hr"></div>
+              <div class="si-row"><span class="si-key">paywall_status</span><span class="si-val null">null</span></div>
+              <div class="si-row"><span class="si-key">mycoa_active</span><span class="si-val">false</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="si-card">
+          <div class="si-card-header">
+            <span class="hdot after-dot"></span>
+            <span class="hlabel">After bypass (routed to paywall)</span>
+          </div>
+          <div class="si-card-body">
+            <div class="si-record">
+              <div class="si-row"><span class="si-key">merchant_id</span><span class="si-val">"jcgreen-001"</span></div>
+              <div class="si-row"><span class="si-key">name</span><span class="si-val">"JC Green"</span></div>
+              <div class="si-hr"></div>
+              <div class="si-row"><span class="si-key">resume_shopping_url</span><span class="si-val null">null</span></div>
+              <div class="si-row"><span class="si-key">no_online_sales</span><span class="si-val added">true <span class="badge">set</span></span></div>
+              <div class="si-row"><span class="si-key">mycoa_wizard_completed</span><span class="si-val changed">true <span class="badge">set</span></span></div>
+              <div class="si-row"><span class="si-key">mycoa_wizard_bypass</span><span class="si-val added">"no_online_sales" <span class="badge">new</span></span></div>
+              <div class="si-hr"></div>
+              <div class="si-row"><span class="si-key">paywall_status</span><span class="si-val changed">"pending" <span class="badge">set</span></span></div>
+              <div class="si-row"><span class="si-key">mycoa_active</span><span class="si-val">false</span></div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /.si-cols -->
+
+      <div class="si-annotations">
+
+        <div class="si-ann">
+          <div class="ann-icon ann-blue">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+          </div>
+          <div>
+            <div class="ann-title">MyCOA page published without "Resume Shopping" button</div>
+            <div class="ann-body">When <code>no_online_sales = true</code> and <code>resume_shopping_url = null</code>, the MyCOA template suppresses the hero CTA. The page still shows product search, COA explainer, and footer — but no outbound shopping link.</div>
+          </div>
+        </div>
+
+        <div class="si-ann">
+          <div class="ann-icon ann-sage">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <div>
+            <div class="ann-title">Wizard will not re-prompt for a shopping URL on future logins</div>
+            <div class="ann-body">Once <code>mycoa_wizard_bypass = "no_online_sales"</code> is set, the first-run gate checks this flag and skips directly to the Paywall (if <code>paywall_status = pending</code>) or the MyCOA dashboard (if active). The merchant won't see the URL prompt again unless they manually add one from Settings.</div>
+          </div>
+        </div>
+
+        <div class="si-ann">
+          <div class="ann-icon ann-yellow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          </div>
+          <div>
+            <div class="ann-title">Payment processor cases remain fully functional</div>
+            <div class="ann-body">Case management, COA uploads, and product assignment are not gated on <code>resume_shopping_url</code>. A merchant can receive and respond to cases from payment processors normally — the bypass only affects the wizard flow and the storefront CTA on their public MyCOA page.</div>
+          </div>
+        </div>
+
+      </div><!-- /.si-annotations -->
+
+    </div><!-- /.si-page -->
+  </div>
+</div><!-- /#view-state-indicator -->
+
+<script>
+  const TABS = ['wizard-default','wizard-hover','loading','paywall','state-indicator'];
+  const VIEW_IDS = {
+    'wizard-default':  'view-wizard',
+    'wizard-hover':    'view-wizard',
+    'loading':         'view-loading',
+    'paywall':         'view-paywall',
+    'state-indicator': 'view-state-indicator',
+  };
+
+  function showTab(idx) {
+    const tabId = TABS[idx];
+
+    document.querySelectorAll('.state-tab').forEach((t, i) => {
+      t.classList.toggle('active', i === idx);
+    });
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.getElementById(VIEW_IDS[tabId]).classList.add('active');
+
+    const bypassBtn = document.getElementById('bypassBtn');
+    if (bypassBtn) bypassBtn.classList.toggle('hover-demo', tabId === 'wizard-hover');
+
+    if (tabId === 'wizard-default' || tabId === 'wizard-hover') setWizardStep(1);
+  }
+
+  function validateUrl() {
+    const input = document.getElementById('shoppingUrl');
+    const errEl  = document.getElementById('urlError');
+    const val = input.value.trim();
+    let ok = false;
+    if (val) {
+      try { const u = new URL(val); ok = u.protocol === 'http:' || u.protocol === 'https:'; } catch(_) {}
+      input.classList.toggle('invalid', !ok);
+      errEl.classList.toggle('show', !ok);
+    } else {
+      input.classList.remove('invalid');
+      errEl.classList.remove('show');
+    }
+    document.getElementById('nextBtn').disabled = !ok;
+  }
+
+  function setWizardStep(n) {
+    document.querySelectorAll('.slide').forEach(s => {
+      s.classList.toggle('active', parseInt(s.dataset.slide) === n);
+    });
+    const s1 = document.getElementById('wiz-s1');
+    const s2 = document.getElementById('wiz-s2');
+    const sp = document.getElementById('wiz-sep');
+    if (n === 1) {
+      s1.className = 'step active'; s2.className = 'step'; sp.classList.remove('filled');
+    } else {
+      s1.className = 'step done'; s2.className = 'step active'; sp.classList.add('filled');
+    }
+    document.getElementById('stepLabel').textContent = n;
+    document.getElementById('backBtn').style.display   = n === 2 ? 'inline-flex' : 'none';
+    document.getElementById('nextBtn').style.display   = n === 1 ? 'inline-flex' : 'none';
+    document.getElementById('finishBtn').style.display = n === 2 ? 'inline-flex' : 'none';
+  }
+
+  function gotoStep(n) { setWizardStep(n); }
+
+  function startBypass() {
+    showTab(2);
+    setTimeout(() => showTab(3), 700);
+  }
+
+  validateUrl();
+</script>
+
+</body>
+</html>
